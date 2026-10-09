@@ -3,158 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="See a local contractor's work and text directly about your project.">
-  <title>Local Contractor · TexContractor</title>
+  <meta name="description" content="Find local TexContractor providers and text directly about your project.">
+  <title>Contractors Near You · TexContractor</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M18 20h28M32 20v25M24 45h16' stroke='%23f5b94c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
   <style>
-    :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --accent:#f5b94c; --green:#157347; --radius:18px; }
+    :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --soft:#f8fafc; --gold:#f5b94c; --gold-dark:#9a6200; --green:#10a37f; --radius:16px; }
     * { box-sizing:border-box; }
-    html { overflow-x:hidden; }
-    body { margin:0; color:var(--ink); background:#fff; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.45; overflow-x:hidden; }
+    body { margin:0; color:var(--ink); background:#fff; font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif; line-height:1.45; }
     a { color:inherit; }
-    .site-header { display:none; }
-    .brand { display:inline-flex; align-items:center; text-decoration:none; }
-    .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
+    .site-header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:14px clamp(18px,4vw,64px); background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(12px); }
+    .brand-logo { display:block; width:205px; height:auto; }
     .back-link { color:var(--muted); font-weight:700; text-decoration:none; }
     .back-link:hover { color:var(--ink); }
-    .page { width:100%; max-width:1068px; margin:0; padding:14px 6px 72px; overflow-x:hidden; }
-    .crumb { margin:0 0 14px; color:var(--muted); font-size:.94rem; }
-    h1 { margin:0; max-width:100%; overflow:visible; overflow-wrap:anywhere; font-size:clamp(1.8rem,4.2vw,3.4rem); line-height:1.04; letter-spacing:-.06em; text-wrap:balance; }
-    .intro { max-width:none; margin:16px 0 28px; color:var(--muted); font-size:1.08rem; }
-    .notice { display:flex; gap:10px; align-items:flex-start; padding:14px 16px; border:1px solid #f2d493; border-radius:14px; background:#fff8e8; color:#704a00; font-weight:650; }
-    .contractors { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:52px; margin-top:28px; }
-    .contractor-card { display:grid; grid-template-columns:50px minmax(0,1fr) 205px; gap:10px; align-items:center; min-width:0; padding:16px 0; border-bottom:1px solid var(--line); }
-    .avatar { display:grid; width:48px; height:48px; place-items:center; border-radius:50%; color:#fff; background:#b37a0c; font-weight:850; }
-    .avatar.navy { background:#182857; }
-    .avatar.slate { background:#9aa8bf; }
-    .avatar.teal { background:#087b72; }
-    .card-copy { min-width:0; }
-    .demand { margin:0 0 3px; color:#069b7e; font-size:.84rem; font-weight:800; white-space:nowrap; }
-    .contractor-name { margin:0; font-size:1.05rem; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .verified { display:none; }
-    .trade { margin:6px 0 0; color:var(--muted); font-size:.92rem; }
-    .rating { margin:5px 0 0; color:#f2a900; font-size:.94rem; white-space:nowrap; }
-    .rating .rating-meta { color:var(--muted); }
-    .card-actions { display:grid; gap:8px; }
-    .text-button { display:flex; align-items:center; justify-content:center; min-height:40px; border-radius:8px; color:#1d1708; background:var(--accent); font-weight:800; text-decoration:none; transition:filter .2s ease, transform .2s ease; }
+    .page { width:min(1180px,100%); margin:0 auto; padding:clamp(28px,5vw,58px) clamp(18px,4vw,64px) 68px; }
+    .crumb { margin:0 0 14px; color:var(--muted); font-size:.95rem; }
+    h1 { margin:0; max-width:980px; font-size:clamp(2rem,4.2vw,3.15rem); line-height:1.08; letter-spacing:-.045em; }
+    .intro { max-width:760px; margin:15px 0 26px; color:var(--muted); font-size:1.06rem; }
+    .notice { display:flex; gap:10px; align-items:center; padding:13px 18px; border:1px solid #f0c34e; border-radius:14px; background:#fff0b8; color:#2b2108; font-weight:700; }
+    .results-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-top:34px; }
+    .results-heading h2 { margin:0; font-size:1.55rem; letter-spacing:-.04em; }
+    .results-heading p { margin:5px 0 0; color:var(--muted); }
+    .providers { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 52px; margin-top:20px; }
+    .provider { display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:12px; min-height:116px; padding:17px 0; border-bottom:1px solid var(--line); }
+    .avatar { display:grid; width:48px; height:48px; place-items:center; border-radius:50%; color:#fff; font-size:.84rem; font-weight:900; letter-spacing:.02em; }
+    .avatar.a { background:#b27b13; } .avatar.b { background:#172554; } .avatar.c { background:#94a3b8; } .avatar.d { background:#0f766e; } .avatar.e { background:#475569; }
+    .provider-main { min-width:0; }
+    .provider-status { margin:0 0 2px; color:var(--green); font-size:.78rem; font-weight:800; }
+    .provider-status::before { content:""; display:inline-block; width:7px; height:7px; margin:0 5px 1px 0; border-radius:50%; background:var(--green); }
+    .provider-name { margin:0; overflow:hidden; font-size:1rem; text-overflow:ellipsis; white-space:nowrap; }
+    .provider-rating { margin:3px 0 0; color:#f2b90b; font-size:.88rem; letter-spacing:.04em; }
+    .provider-rating span { color:var(--muted); letter-spacing:0; }
+    .provider-trade { margin:5px 0 0; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .provider-actions { display:flex; flex-direction:column; gap:8px; align-items:stretch; }
+    .profile-button, .text-button { display:inline-flex; align-items:center; justify-content:center; min-width:150px; min-height:40px; padding:0 14px; border-radius:9px; font:700 .83rem inherit; text-decoration:none; transition:filter .2s ease, transform .2s ease; }
+    .profile-button { color:#fff; background:var(--green); border:1px solid var(--green); }
+    .profile-button:hover, .profile-button:focus-visible { filter:brightness(.92); transform:translateY(-1px); }
+    .profile-button:focus-visible, .text-button:focus-visible { outline:3px solid var(--gold-dark); outline-offset:2px; }
+    .text-button { color:#241a00; background:var(--gold); }
     .text-button:hover, .text-button:focus-visible { filter:brightness(.97); transform:translateY(-1px); }
-    .text-button:focus-visible { outline:3px solid #9a6200; outline-offset:2px; }
-    .card-actions a { display:flex; align-items:center; justify-content:center; min-height:40px; border-radius:8px; font-weight:800; text-decoration:none; transition:filter .2s ease, transform .2s ease; }
-    .profile-button { color:#fff; border:0; background:#13a581; }
-    .profile-button:hover, .profile-button:focus-visible { filter:brightness(.97); transform:translateY(-1px); }
-    .card-actions .text-button { margin-top:0; }
-    .card-actions a:focus-visible { outline:3px solid #157347; outline-offset:2px; }
-    .how { margin-top:42px; padding:24px; border-radius:var(--radius); background:var(--soft); }
-    .how h2 { margin:0 0 16px; font-size:1.25rem; }
-    .how-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin:0; padding:0; list-style:none; }
-    .how-steps li { display:flex; gap:10px; color:var(--muted); }
-    .step-number { flex:none; display:grid; width:28px; height:28px; place-items:center; border-radius:50%; color:#1d1708; background:var(--accent); font-weight:850; }
-    footer { padding:24px clamp(18px,4vw,56px); border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; text-align:center; }
-    @media (max-width:900px) { .contractors { column-gap:28px; } .contractor-card { grid-template-columns:46px minmax(0,1fr) 150px; } }
-    @media (max-width:640px) { .page { width:100%; padding:14px 16px 48px; } .site-header { min-height:70px; padding:5px 18px; } .brand-logo { width:172px; height:58px; } .contractors,.how-steps { grid-template-columns:1fr; } .contractor-card { grid-template-columns:46px minmax(0,1fr) 145px; } .back-link { font-size:.9rem; } }
-    @media (max-width:480px) { .contractor-card { grid-template-columns:46px minmax(0,1fr); } .card-actions { grid-column:2; grid-template-columns:1fr 1fr; } .card-actions a { min-height:42px; font-size:.85rem; } }
+    .blocked-message { margin:14px 0 0; color:var(--muted); font-size:.9rem; }
+    .how { margin-top:38px; padding:22px; border-radius:var(--radius); background:var(--soft); }
+    .how h2 { margin:0 0 14px; font-size:1.2rem; }
+    .how-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:0; padding:0; list-style:none; }
+    .how-steps li { display:flex; gap:9px; color:var(--muted); }
+    .step-number { flex:none; display:grid; width:27px; height:27px; place-items:center; border-radius:50%; color:#241a00; background:var(--gold); font-weight:900; }
+    footer { padding:22px clamp(18px,4vw,64px); border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; text-align:center; }
+    @media (max-width:850px) { .providers { grid-template-columns:1fr; gap:0; } }
+    @media (max-width:560px) {
+      .site-header { padding:12px 18px; } .brand-logo { width:174px; } .back-link { font-size:.88rem; }
+      .notice { align-items:flex-start; font-size:.92rem; } .provider { grid-template-columns:42px minmax(0,1fr); gap:10px; }
+      .avatar { width:42px; height:42px; font-size:.76rem; } .provider-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:center; } .profile-button, .text-button { min-width:0; min-height:38px; margin-top:2px; }
+      .how-steps { grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="index.html" aria-label="Text Contractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="Text Contractor · Precision Construction Solutions"></a>
+    <a href="index.html" aria-label="TexContractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="TexContractor"></a>
     <a class="back-link" href="index.html">← All services</a>
   </header>
-
   <main class="page">
+    <p class="crumb"><span id="location-label">Arlington, TX · ZIP 76015</span> · <span id="service-label">Local service</span></p>
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice">💬 <span>No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
-
     <section aria-labelledby="contractors-heading">
-      <div style="display:flex;align-items:end;justify-content:space-between;gap:16px;margin-top:38px;">
-        <div><h2 id="contractors-heading" style="margin:0;font-size:1.55rem;letter-spacing:-.04em;">Contractors near you</h2><p style="margin:5px 0 0;color:var(--muted);">Example profiles for the first version.</p></div>
+      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Example profiles for the first version.</p></div></div>
+      <div class="providers">
+        <article class="provider"><div class="avatar a">NS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">North Star Services</h3><p class="provider-rating">★★★★★ <span>4.9 · 138 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="north-star-services" href="profile.html?provider=north-star-services">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+        <article class="provider"><div class="avatar b">RW</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Right Way Pros</h3><p class="provider-rating">★★★★★ <span>4.8 · 99 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="right-way-pros" href="profile.html?provider=right-way-pros">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+        <article class="provider"><div class="avatar c">BO</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Blue Oak Works</h3><p class="provider-rating">★★★★★ <span>4.7 · 124 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="blue-oak-works" href="profile.html?provider=blue-oak-works">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+        <article class="provider"><div class="avatar d">LS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">Lone Star Repair Team</h3><p class="provider-rating">★★★★☆ <span>4.7 · 86 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="lone-star-repair-team" href="profile.html?provider=lone-star-repair-team">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+        <article class="provider"><div class="avatar e">HL</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">HomeCare Local</h3><p class="provider-rating">★★★★★ <span>4.9 · 65 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="homecare-local" href="profile.html?provider=homecare-local">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
       </div>
-      <div class="contractors" id="contractors" aria-live="polite"></div>
+      <p class="blocked-message" id="blocked-message" hidden>Blocked contractors are hidden from your results on this device.</p>
     </section>
-
-    <section class="how" aria-labelledby="how-heading">
-      <h2 id="how-heading">How it works</h2>
-      <ol class="how-steps">
-        <li><span class="step-number">1</span><span>Choose the service you need.</span></li>
-        <li><span class="step-number">2</span><span>Look at the contractor’s completed work.</span></li>
-        <li><span class="step-number">3</span><span>Send a direct text describing the problem.</span></li>
-      </ol>
-    </section>
+    <section class="how" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol class="how-steps"><li><span class="step-number">1</span><span>Choose the service you need.</span></li><li><span class="step-number">2</span><span>Review the provider profiles.</span></li><li><span class="step-number">3</span><span>Send a direct text describing the problem.</span></li></ol></section>
   </main>
-
   <footer>TexContractor · Local help by text</footer>
-
-  <script src="tex-auth.js"></script>
   <script>
-    window.scrollTo(0, 0);
     const params = new URLSearchParams(window.location.search);
     const service = params.get('service') || 'Local service';
+    const stored = JSON.parse(localStorage.getItem('texcontractor-location') || '{}');
+    const city = params.get('city') || stored.city || 'Arlington';
+    const state = params.get('state') || stored.state || 'TX';
+    const zip = params.get('zip') || stored.zip || '76015';
+    const locationText = `${city}, ${state} · ZIP ${zip}`;
     document.title = `${service} · TexContractor`;
+    document.getElementById('service-label').textContent = service;
+    document.getElementById('location-label').textContent = locationText;
     document.getElementById('page-title').textContent = `${service} contractors near you`;
-    const blockedContractors = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]'));
-    const examples = [
-      { id:'north-star', name:'North Star Services', initials:'NS', rating:'4.9 · 138 reviews', phone:'+18175550101', demand:'In high demand', tone:'' },
-      { id:'right-way', name:'Right Way Pros', initials:'RW', rating:'4.8 · 99 reviews', phone:'+18175550102', demand:'Great value', tone:'navy' },
-      { id:'blue-oak', name:'Blue Oak Works', initials:'BO', rating:'4.7 · 124 reviews', phone:'+18175550103', demand:'Great value', tone:'slate' },
-      { id:'lone-star', name:'Lone Star Repair Team', initials:'LS', rating:'4.7 · 86 reviews', phone:'+18175550104', demand:'In high demand', tone:'teal' }
-    ];
-    const normalize = (value) => String(value || '').trim().toLowerCase();
-    const savedContractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
-    const registered = savedContractors
-      .filter((provider) => normalize(provider.service) === normalize(service))
-      .map((provider) => ({ ...provider, name:provider.displayName, rating:'New profile', demand:'New provider', tone:'navy', registered:true }));
-    const providers = registered.length ? registered : examples.map((provider) => ({ ...provider, service, example:true }));
-    const contractors = document.getElementById('contractors');
-    const initialsFor = (provider) => provider.initials || String(provider.name || 'TC').split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
-    providers.forEach((provider) => {
-      if (blockedContractors.has(provider.id)) return;
-      const card = document.createElement('article');
-      card.className = 'contractor-card';
-      const avatar = document.createElement('div');
-      avatar.className = `avatar ${provider.tone || ''}`;
-      if (provider.profilePhoto) {
-        const photo = document.createElement('img');
-        photo.src = provider.profilePhoto;
-        photo.alt = `${provider.name} profile photo`;
-        photo.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
-        avatar.textContent = '';
-        avatar.appendChild(photo);
-      } else avatar.textContent = initialsFor(provider);
-      const copy = document.createElement('div');
-      copy.className = 'card-copy';
-      const demand = document.createElement('p');
-      demand.className = 'demand';
-      demand.textContent = `● ${provider.demand}`;
-      const name = document.createElement('h3');
-      name.className = 'contractor-name';
-      name.textContent = provider.name;
-      const rating = document.createElement('p');
-      rating.className = 'rating';
-      rating.textContent = provider.registered ? '★★★★★ ' : '★★★★★ ';
-      const ratingMeta = document.createElement('span');
-      ratingMeta.className = 'rating-meta';
-      ratingMeta.textContent = provider.rating;
-      rating.appendChild(ratingMeta);
-      const trade = document.createElement('p');
-      trade.className = 'trade';
-      trade.textContent = service;
-      copy.append(demand, name, rating, trade);
-      const actions = document.createElement('div');
-      actions.className = 'card-actions';
-      const profileLink = document.createElement('a');
-      profileLink.className = 'profile-button profile-link';
-      profileLink.href = `profile.html?contractor=${encodeURIComponent(provider.id)}&service=${encodeURIComponent(service)}`;
-      profileLink.textContent = 'View profile';
-      profileLink.dataset.contractor = provider.id;
-      const textLink = document.createElement('a');
-      textLink.className = 'text-button';
-      textLink.href = TexAuth.authHref(`profile.html?contractor=${encodeURIComponent(provider.id)}&service=${encodeURIComponent(service)}&contact=1`);
-      textLink.textContent = 'Text this contractor';
-      actions.append(profileLink, textLink);
-      card.append(avatar, copy, actions);
-      contractors.appendChild(card);
+    document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
+    const message = encodeURIComponent(`Hi, I need help with ${service} in ${locationText}. Please tell me your availability and estimated price.`);
+    document.querySelectorAll('.text-button').forEach((button) => { button.href = `sms:?body=${message}`; });
+    document.querySelectorAll('.profile-button').forEach((button) => {
+      const provider = button.dataset.provider;
+      button.href = `profile.html?provider=${encodeURIComponent(provider)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
     });
+    const blocked = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]'));
+    let hiddenCount = 0;
+    document.querySelectorAll('.profile-button').forEach((button) => {
+      if (blocked.has(button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
+    });
+    if (hiddenCount) document.getElementById('blocked-message').hidden = false;
   </script>
 </body>
 </html>
+
