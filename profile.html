@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contractor Profile · TexContractor</title>
+  <style>
+    :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --green:#157347; --red:#b42318; --gold:#f5b94c; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#fff; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
+    a { color:inherit; }
+    header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(18px,4vw,56px); background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:inline-flex; align-items:center; text-decoration:none; }
+    .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
+    .back-link { color:var(--muted); font-weight:700; text-decoration:none; }
+    .page { width:min(980px,100%); margin:0 auto; padding:clamp(28px,6vw,64px) clamp(18px,4vw,56px) 72px; }
+    .crumb { margin:0 0 14px; color:var(--muted); }
+    .profile-head { display:flex; align-items:center; gap:22px; padding-bottom:26px; border-bottom:1px solid var(--line); }
+    .avatar { display:grid; width:96px; height:96px; flex:none; place-items:center; border-radius:26px; color:#fff; background:linear-gradient(135deg,#0f172a,#157347); font-size:2.2rem; font-weight:900; overflow:hidden; }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:none; }
+    h1 { margin:0; font-size:clamp(2rem,5vw,3.3rem); line-height:1.05; letter-spacing:-.06em; }
+    .verified { margin:8px 0 0; color:var(--green); font-weight:800; }
+    .grid { display:grid; grid-template-columns:1.35fr .85fr; gap:24px; margin-top:28px; }
+    .panel { padding:22px; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:0 10px 24px rgba(16,24,40,.05); }
+    .panel h2 { margin:0 0 12px; font-size:1.25rem; }
+    .panel p { margin:0; color:var(--muted); }
+    .facts { display:grid; gap:12px; margin:0; }
+    .fact { display:flex; justify-content:space-between; gap:16px; padding-bottom:10px; border-bottom:1px solid #eef0f3; }
+    .fact:last-child { padding-bottom:0; border-bottom:0; }
+    .fact dt { color:var(--muted); }
+    .fact dd { margin:0; font-weight:800; text-align:right; }
+    .action-row { display:grid; gap:10px; margin-top:24px; }
+    .action { display:flex; align-items:center; justify-content:center; min-height:50px; border-radius:12px; font-weight:850; text-decoration:none; }
+    .text-action { color:#1d1708; background:var(--gold); }
+    .block-action { color:#fff; background:var(--red); border:0; font:inherit; cursor:pointer; }
+    .action:hover, .action:focus-visible { filter:brightness(.97); transform:translateY(-1px); }
+    .action:focus-visible { outline:3px solid currentColor; outline-offset:2px; }
+    .confirmation { display:none; margin-top:14px; padding:12px 14px; border-radius:12px; color:#7a271a; background:#fff1f0; font-weight:700; }
+    .confirmation.show { display:block; }
+    .work-gallery { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+    .work-gallery img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
+    @media (max-width:700px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="index.html" aria-label="Text Contractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="Text Contractor · Precision Construction Solutions"></a>
+    <a class="back-link" href="javascript:history.back()">← Back to results</a>
+  </header>
+  <main class="page">
+    <p class="crumb"><span id="service-label">Local service</span> · Contractor profile</p>
+    <section class="profile-head">
+      <div class="avatar" id="avatar"><span id="avatar-initials">NS</span><img id="avatar-image" alt="Contractor profile photo"></div>
+      <div><h1 id="contractor-name">North Star Services</h1><p class="verified">✓ Verified contractor</p></div>
+    </section>
+    <div class="grid">
+      <section class="panel">
+        <h2>About this contractor</h2>
+        <p id="about-copy">Experienced local service professional focused on clear communication, dependable work, and fast text-based responses. Review the service details before sending a message.</p>
+        <div class="action-row"><a class="action text-action" id="text-link" href="sms:+18175550101">Text this contractor</a></div>
+      </section>
+      <section class="panel" style="grid-column:1 / -1">
+        <h2>Work photos</h2>
+        <p>Photos shared by this contractor to show completed work.</p>
+        <div class="work-gallery" id="work-gallery" aria-live="polite"></div>
+      </section>
+      <aside class="panel">
+        <h2>Profile details</h2>
+        <dl class="facts">
+          <div class="fact"><dt>Rating</dt><dd id="rating">4.9 / 5</dd></div>
+          <div class="fact"><dt>Location</dt><dd id="location">Arlington, TX</dd></div>
+          <div class="fact"><dt>Experience</dt><dd>10+ years</dd></div>
+        </dl>
+        <div class="action-row">
+          <button class="action block-action" id="block-button" type="button">Block this contractor</button>
+          <div class="confirmation" id="confirmation" role="status">This contractor will no longer appear in your results on this device.</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <script src="tex-auth.js"></script>
+  <script>
+    const profiles = {
+      'north-star': { name:'North Star Services', initials:'NS', rating:'4.9 / 5', location:'Arlington, TX', phone:'+18175550101', work:['assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
+      'right-way': { name:'Right Way Pros', initials:'RW', rating:'4.8 / 5', location:'Fort Worth, TX', phone:'+18175550102', work:['assets-optimized/09.jpg','assets-optimized/04.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
+      'blue-oak': { name:'Blue Oak Works', initials:'BO', rating:'4.7 / 5', location:'Mansfield, TX', phone:'+18175550103', work:['assets-optimized/39.jpg','assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/21.jpg'] },
+      'lone-star': { name:'Lone Star Repair Team', initials:'LS', rating:'4.7 / 5', location:'Arlington, TX', phone:'+18175550104', work:['assets-optimized/21.jpg','assets-optimized/39.jpg','assets-optimized/09.jpg','assets-optimized/04.jpg'] }
+    };
+    const params = new URLSearchParams(location.search);
+    const key = params.get('contractor') || 'north-star';
+    const savedContractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
+    const savedProfile = savedContractors.find((provider) => provider.id === key);
+    const profile = savedProfile ? {
+      name:savedProfile.displayName,
+      initials:savedProfile.initials,
+      rating:savedProfile.rating || 'New profile',
+      location:savedProfile.location || 'Arlington, TX',
+      phone:savedProfile.phone || '',
+      about:savedProfile.about || 'This contractor has added a service profile and is ready to receive direct messages.',
+      profilePhoto:savedProfile.profilePhoto || '',
+      work:savedProfile.workPhotos || [],
+      years:savedProfile.years || '—'
+    } : (profiles[key] || profiles['north-star']);
+    const service = params.get('service') || 'Local service';
+    document.title = `${profile.name} · TexContractor`;
+    document.getElementById('contractor-name').textContent = profile.name;
+    document.getElementById('avatar-initials').textContent = profile.initials;
+    document.getElementById('rating').textContent = profile.rating;
+    document.getElementById('location').textContent = profile.location;
+    document.getElementById('service-label').textContent = service;
+    if (profile.about) document.getElementById('about-copy').textContent = profile.about;
+    if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
+    const contactRequested = params.get('contact') === '1';
+    const contactReturn = `profile.html?contractor=${encodeURIComponent(key)}&service=${encodeURIComponent(service)}&contact=1`;
+    const textLink = document.getElementById('text-link');
+    if (contactRequested) {
+      TexAuth.requireUser(contactReturn).then((user) => {
+        if (user) textLink.href = `sms:${profile.phone}`;
+      });
+    } else {
+      textLink.href = TexAuth.authHref(contactReturn);
+    }
+    const gallery = document.getElementById('work-gallery');
+    const addGalleryImage = (src, index) => {
+      const image = document.createElement('img');
+      image.src = src;
+      image.alt = `Completed work photo ${index + 1}`;
+      image.loading = 'lazy';
+      gallery.appendChild(image);
+    };
+    profile.work.forEach(addGalleryImage);
+    if (profile.profilePhoto) {
+        document.getElementById('avatar-image').src = profile.profilePhoto;
+        document.getElementById('avatar-image').style.display = 'block';
+        document.getElementById('avatar-initials').style.display = 'none';
+    }
+    document.getElementById('block-button').addEventListener('click', () => {
+      const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]');
+      if (!blocked.includes(key)) blocked.push(key);
+      localStorage.setItem('texcontractor-blocked', JSON.stringify(blocked));
+      document.getElementById('confirmation').classList.add('show');
+      document.getElementById('block-button').disabled = true;
+      document.getElementById('block-button').textContent = 'Contractor blocked';
+    });
+  </script>
+</body>
+</html>

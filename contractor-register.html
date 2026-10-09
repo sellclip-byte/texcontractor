@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register a contractor service on TexContractor.">
+  <title>Post a Service · TexContractor</title>
+  <style>
+    :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --green:#157347; --gold:#f5b94c; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#fbfcfd; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
+    a { color:inherit; }
+    header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(18px,4vw,56px); background:rgba(251,252,253,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:inline-flex; align-items:center; text-decoration:none; }
+    .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
+    .back-link { color:var(--muted); font-weight:700; text-decoration:none; }
+    .page { width:min(980px,100%); margin:0 auto; padding:clamp(28px,6vw,64px) clamp(18px,4vw,56px) 72px; }
+    h1 { margin:0; font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.06em; }
+    .intro { max-width:720px; margin:14px 0 28px; color:var(--muted); font-size:1.08rem; }
+    form { display:grid; gap:24px; }
+    .panel { padding:24px; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:0 10px 24px rgba(16,24,40,.05); }
+    .panel h2 { margin:0 0 16px; font-size:1.25rem; }
+    .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    label { display:grid; gap:7px; color:var(--ink); font-weight:750; }
+    label.full { grid-column:1 / -1; }
+    input, select, textarea { width:100%; border:1px solid #cbd5e1; border-radius:11px; padding:12px 13px; color:var(--ink); background:#fff; font:inherit; }
+    textarea { min-height:130px; resize:vertical; }
+    input:focus, select:focus, textarea:focus { outline:3px solid rgba(21,115,71,.16); border-color:var(--green); }
+    .hint { margin:0; color:var(--muted); font-size:.92rem; font-weight:500; }
+    .photo-preview { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+    .photo-preview img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
+    .profile-preview { width:126px; height:126px; margin-top:12px; }
+    .profile-preview img { width:100%; height:100%; object-fit:cover; border-radius:28px; background:var(--soft); }
+    .media-divider { height:1px; margin:24px 0; background:var(--line); }
+    .privacy { padding:14px 16px; border:1px solid #a9e8d2; border-radius:14px; color:var(--green); background:#ecfff8; font-weight:700; }
+    .submit { min-height:54px; border:0; border-radius:13px; color:#1d1708; background:var(--gold); font:inherit; font-weight:900; cursor:pointer; }
+    .submit:hover, .submit:focus-visible { filter:brightness(.97); transform:translateY(-1px); }
+    .submit:focus-visible { outline:3px solid #9a6200; outline-offset:2px; }
+    .success { display:none; padding:16px; border-radius:13px; color:#14532d; background:#dcfce7; font-weight:800; }
+    .success.show { display:block; }
+    body.auth-check { visibility:hidden; }
+    body.auth-check.auth-ready { visibility:visible; }
+    @media (max-width:680px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .fields { grid-template-columns:1fr; } label.full { grid-column:auto; } .photo-preview { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body class="auth-check">
+  <header>
+    <a class="brand" href="index.html" aria-label="Text Contractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="Text Contractor · Precision Construction Solutions"></a>
+    <a class="back-link" href="index.html">← Back to services</a>
+  </header>
+  <main class="page">
+    <h1>Post your service</h1>
+    <p class="intro">Sign in with your email first, then add your service so customers can find your profile and text you about the work they need.</p>
+    <form id="register-form">
+      <section class="panel">
+        <h2>Contact details</h2>
+        <div class="fields">
+          <label>Real name <span class="hint">Kept private from the public listing.</span><input name="realName" autocomplete="name" required></label>
+          <label>Phone number <span class="hint">Used for customer contact.</span><input name="phone" type="tel" autocomplete="tel" required></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" required></label>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Public profile</h2>
+        <div class="fields">
+          <label>Display name or company<input name="displayName" placeholder="Nickname or company name" required></label>
+          <label>Years in business<select name="years" required><option value="">Choose years</option><script>for(let i=1;i<=20;i++)document.write(`<option value="${i}">${i} year${i===1?'':'s'}</option>`);</script></select></label>
+          <label>City<input name="city" placeholder="City" autocomplete="address-level2" required></label>
+          <label>State<input name="state" placeholder="TX" maxlength="2" autocomplete="address-level1" required></label>
+          <label class="full">Service catalog<select name="service" required>
+            <option value="">Choose a service</option>
+            <option>Central Air Conditioning Repair or Maintenance</option><option>Electrical and Wiring Repair</option><option>TV Mounting</option><option>Tree Trimming and Removal</option><option>Furniture Assembly</option><option>Furniture Moving and Heavy Lifting</option><option>Mobile Auto Mechanic</option><option>Handyman</option><option>Outdoor Landscaping and Design</option><option>Interior Painting</option><option>Junk Removal</option><option>Roof Repair or Maintenance</option><option>Appliance Repair or Maintenance</option><option>Floor Installation or Replacement</option><option>Lock Installation and Repair</option><option>Garage Door Repair</option><option>Concrete Installation</option><option>Bathroom Remodel</option><option>Metalwork</option><option>Window Repair</option><option>Plumbing Drain Repair</option><option>Plumbing Pipe Repair</option><option>Heating System Repair or Maintenance</option><option>House Cleaning</option><option>Carpet Cleaning</option><option>Pressure Washing</option><option>Upholstery and Furniture Cleaning</option><option>Mobile Auto Detailing</option><option>Local Moving (under 50 miles)</option><option>Computer Repair</option><option>Notarization</option><option>Dog Grooming</option><option>DJ Services</option><option>Wedding and Event Makeup</option><option>Dog Training</option><option>Personal Training</option><option>Wedding and Event Photography</option><option>Pest Control Services</option><option>Fence and Gate Installation</option><option>Drywall Repair and Texturing</option><option>Deck or Porch Remodel or Addition</option><option>Swimming Pool Cleaning &amp; Maintenance</option><option>Lighting Installation</option><option>General Contracting</option><option>Gutter Cleaning and Maintenance</option><option>Door Installation</option><option>Window Tinting</option><option>Wedding Officiant</option><option>Event Planning</option><option>Interior Design</option><option>Architectural Services</option><option>Home Inspection Consulting</option><option>Home Foundation Repair</option><option>In-Home Nursing Care</option><option>Private Taxi &amp; Transportation Services</option><option>Lawn Mower, Water Pump &amp; Outdoor Equipment Repair</option>
+          </select></label>
+          <label class="full">About you and your work<textarea name="about" placeholder="Describe your experience and the work you provide." required></textarea></label>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Profile photo</h2>
+        <p class="hint">Upload one clear photo of yourself. This is the photo customers see beside your name; it is separate from your work photos.</p>
+        <input id="profile-photo" name="profilePhoto" type="file" accept="image/*">
+        <div class="profile-preview" id="profile-preview" aria-live="polite"></div>
+        <div class="media-divider"></div>
+        <h2>Work photos for customers</h2>
+        <p class="hint">Upload up to four photos of completed work. These four images appear in your public profile.</p>
+        <input id="work-photos" name="workPhotos" type="file" accept="image/*" multiple>
+        <div class="photo-preview" id="work-preview" aria-live="polite"></div>
+      </section>
+      <div class="privacy">Your real name and phone number are private. Customers see your display name, city, state, selected service, description, and profile images.</div>
+      <button class="submit" type="submit">Submit service for review</button>
+      <div class="success" id="success" role="status">Your service information was saved on this device and is ready for administrator review.</div>
+    </form>
+  </main>
+  <script src="tex-auth.js"></script>
+  <script>
+    let signedInUser = null;
+    TexAuth.requireUser(`contractor-register.html${window.location.search}`).then((user) => {
+      signedInUser = user;
+      if (user) document.body.classList.add('auth-ready');
+    });
+    const profileInput = document.getElementById('profile-photo');
+    const profilePreview = document.getElementById('profile-preview');
+    const workInput = document.getElementById('work-photos');
+    const workPreview = document.getElementById('work-preview');
+    const renderImages = (files, container, limit, alt) => {
+      container.innerHTML = '';
+      Array.from(files).slice(0, limit).forEach((file) => {
+        const image = document.createElement('img');
+        image.alt = alt;
+        image.src = URL.createObjectURL(file);
+        container.appendChild(image);
+      });
+    };
+    profileInput.addEventListener('change', () => renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo'));
+    workInput.addEventListener('change', () => renderImages(workInput.files, workPreview, 4, 'Selected completed work'));
+    const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', .78));
+        };
+        image.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('register-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      signedInUser = signedInUser || await TexAuth.requireUser(`contractor-register.html${window.location.search}`);
+      if (!signedInUser) return;
+      const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      delete data.profilePhoto;
+      delete data.workPhotos;
+      data.profilePhotoName = profileInput.files[0]?.name || '';
+      data.workPhotoCount = Math.min(workInput.files.length, 4);
+      data.ownerId = signedInUser.id;
+      data.ownerEmail = signedInUser.email || '';
+      const media = {
+        profilePhoto: await readImage(profileInput.files[0]),
+        workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
+      };
+      const draft = { ...data };
+      localStorage.setItem('texcontractor-registration-draft', JSON.stringify(draft));
+      localStorage.setItem('texcontractor-registration-media', JSON.stringify(media));
+      const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
+      const initials = data.displayName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+      contractors.push({
+        id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        displayName: data.displayName,
+        service: data.service,
+        years: data.years,
+        about: data.about,
+        phone: data.phone,
+        initials: initials || 'TC',
+        location: `${data.city.trim()}, ${data.state.trim().toUpperCase()}`,
+        rating: 'New profile',
+        profilePhoto: media.profilePhoto,
+        workPhotos: media.workPhotos,
+        ownerId: signedInUser.id,
+        ownerEmail: signedInUser.email || '',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('texcontractor-contractors', JSON.stringify(contractors));
+      document.getElementById('success').classList.add('show');
+      document.getElementById('success').textContent = `Your profile was added to the ${data.service} catalog and is ready for administrator review under ${signedInUser.email}.`;
+      document.getElementById('success').scrollIntoView({ behavior:'smooth', block:'center' });
+    });
+  </script>
+</body>
+</html>
