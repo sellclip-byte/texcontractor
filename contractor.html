@@ -63,12 +63,12 @@
     <a class="back-link" href="index.html">← All services</a>
   </header>
   <main class="page">
-    <p class="crumb"><span id="location-label">Arlington, TX · ZIP 76015</span> · <span id="service-label">Local service</span></p>
+    <p class="crumb"><span id="location-label">Location not specified</span> · <span id="service-label">Local service</span></p>
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice">💬 <span>No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
     <section aria-labelledby="contractors-heading">
-      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Example profiles for the first version.</p></div></div>
+      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Browse contractor profiles and contact options.</p></div></div>
       <div class="providers">
         <article class="provider"><div class="avatar a">NS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">North Star Services</h3><p class="provider-rating">★★★★★ <span>4.9 · 138 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="north-star-services" href="profile.html?provider=north-star-services">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
         <article class="provider"><div class="avatar b">RW</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Right Way Pros</h3><p class="provider-rating">★★★★★ <span>4.8 · 99 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="right-way-pros" href="profile.html?provider=right-way-pros">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
@@ -85,10 +85,11 @@
     const params = new URLSearchParams(window.location.search);
     const service = params.get('service') || 'Local service';
     const stored = JSON.parse(localStorage.getItem('texcontractor-location') || '{}');
-    const city = params.get('city') || stored.city || 'Arlington';
-    const state = params.get('state') || stored.state || 'TX';
-    const zip = params.get('zip') || stored.zip || '76015';
-    const locationText = `${city}, ${state} · ZIP ${zip}`;
+    const city = params.get('city') || stored.city || '';
+    const state = params.get('state') || stored.state || '';
+    const zip = params.get('zip') || stored.zip || '';
+    const cityState = [city, state].filter(Boolean).join(', ');
+    const locationText = [cityState, zip ? `ZIP ${zip}` : ''].filter(Boolean).join(' · ') || 'Location not specified';
     document.title = `${service} · TexContractor`;
     document.getElementById('service-label').textContent = service;
     document.getElementById('location-label').textContent = locationText;
@@ -97,16 +98,68 @@
     const message = encodeURIComponent(`Hi, I need help with ${service} in ${locationText}. Please tell me your availability and estimated price.`);
     document.querySelectorAll('.text-button').forEach((button) => { button.href = `sms:?body=${message}`; });
     document.querySelectorAll('.profile-button').forEach((button) => {
+      if (button.dataset.contractorId) {
+        button.href = `profile.html?contractor=${encodeURIComponent(button.dataset.contractorId)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
+        return;
+      }
       const provider = button.dataset.provider;
       button.href = `profile.html?provider=${encodeURIComponent(provider)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
+    });
+    const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
+    const providers = document.querySelector('.providers');
+    contractors.forEach((contractor) => {
+      const name = String(contractor.displayName || 'Local contractor');
+      const initials = String(contractor.initials || name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'TC');
+      const card = document.createElement('article');
+      card.className = 'provider';
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar e';
+      avatar.textContent = initials;
+      if (contractor.profilePhoto) {
+        const image = document.createElement('img');
+        image.src = contractor.profilePhoto;
+        image.alt = '';
+        image.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+        avatar.textContent = '';
+        avatar.appendChild(image);
+      }
+      const main = document.createElement('div');
+      main.className = 'provider-main';
+      const status = document.createElement('p');
+      status.className = 'provider-status';
+      status.textContent = contractor.rating || 'Registered contractor';
+      const title = document.createElement('h3');
+      title.className = 'provider-name';
+      title.textContent = name;
+      const rating = document.createElement('p');
+      rating.className = 'provider-rating';
+      rating.textContent = contractor.rating || 'New profile';
+      const trade = document.createElement('p');
+      trade.className = 'provider-trade';
+      trade.textContent = contractor.service || service;
+      main.append(status, title, rating, trade);
+      const actions = document.createElement('div');
+      actions.className = 'provider-actions';
+      const profile = document.createElement('a');
+      profile.className = 'profile-button';
+      profile.dataset.provider = contractor.id;
+      profile.dataset.contractorId = contractor.id;
+      profile.href = `profile.html?contractor=${encodeURIComponent(contractor.id)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
+      profile.textContent = 'View profile';
+      const text = document.createElement('a');
+      text.className = 'text-button';
+      text.href = `sms:${String(contractor.phone || '').replace(/[^\d+]/g, '')}?body=${message}`;
+      text.textContent = 'Text this contractor';
+      actions.append(profile, text);
+      card.append(avatar, main, actions);
+      providers.appendChild(card);
     });
     const blocked = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]'));
     let hiddenCount = 0;
     document.querySelectorAll('.profile-button').forEach((button) => {
-      if (blocked.has(button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
+      if (blocked.has(button.dataset.contractorId || button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
     });
     if (hiddenCount) document.getElementById('blocked-message').hidden = false;
   </script>
 </body>
 </html>
-
