@@ -17,9 +17,9 @@
     .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
     .back-link { color:var(--muted); font-weight:700; text-decoration:none; }
     .back-link:hover { color:var(--ink); }
-    .page { width:min(1068px,100%); margin:0; padding:14px 6px 72px; }
+    .page { width:100%; max-width:1068px; margin:0; padding:14px 6px 72px; overflow-x:hidden; }
     .crumb { margin:0 0 14px; color:var(--muted); font-size:.94rem; }
-    h1 { margin:0; max-width:none; font-size:clamp(2rem,5vw,4rem); line-height:1.04; letter-spacing:-.06em; text-wrap:balance; }
+    h1 { margin:0; max-width:100%; overflow:visible; overflow-wrap:anywhere; font-size:clamp(1.8rem,4.2vw,3.4rem); line-height:1.04; letter-spacing:-.06em; text-wrap:balance; }
     .intro { max-width:none; margin:16px 0 28px; color:var(--muted); font-size:1.08rem; }
     .notice { display:flex; gap:10px; align-items:flex-start; padding:14px 16px; border:1px solid #f2d493; border-radius:14px; background:#fff8e8; color:#704a00; font-weight:650; }
     .contractors { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:52px; margin-top:28px; }
