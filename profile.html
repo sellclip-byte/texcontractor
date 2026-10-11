@@ -52,12 +52,12 @@
     <p class="crumb"><span id="service-label">Local service</span> · Contractor profile</p>
     <section class="profile-head">
       <div class="avatar" id="avatar"><span id="avatar-initials">NS</span><img id="avatar-image" alt="Contractor profile photo"></div>
-      <div><h1 id="contractor-name">North Star Services</h1><p class="verified">Contractor profile</p></div>
+      <div><h1 id="contractor-name">Loading contractor profile…</h1><p class="verified">Contractor profile</p></div>
     </section>
     <div class="grid">
       <section class="panel">
         <h2>About this contractor</h2>
-        <p id="about-copy">Experienced local service professional focused on clear communication, dependable work, and fast text-based responses. Review the service details before sending a message.</p>
+        <p id="about-copy">Loading published contractor information…</p>
         <div class="action-row"><a class="action text-action" id="text-link" href="#">Text this contractor</a></div>
       </section>
       <section class="panel" style="grid-column:1 / -1">
@@ -68,9 +68,9 @@
       <aside class="panel">
         <h2>Profile details</h2>
         <dl class="facts">
-          <div class="fact"><dt>Rating</dt><dd id="rating">4.9 / 5</dd></div>
-          <div class="fact"><dt>Location</dt><dd id="location">Arlington, TX</dd></div>
-          <div class="fact"><dt>Experience</dt><dd>10+ years</dd></div>
+          <div class="fact"><dt>Rating</dt><dd id="rating">Not rated</dd></div>
+          <div class="fact"><dt>Location</dt><dd id="location">Not available</dd></div>
+          <div class="fact"><dt>Experience</dt><dd>Not provided</dd></div>
         </dl>
         <div class="action-row">
           <button class="action block-action" id="block-button" type="button">Block this contractor</button>
@@ -131,7 +131,7 @@
     async function loadPublicProfile() {
       if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) { document.getElementById('contractor-name').textContent = 'Contractor not available'; return; }
       const url = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=id,display_name,service,city,state,years,about,profile_photo_path,work_photo_paths&id=eq.' + encodeURIComponent(key) + '&is_published=eq.true&limit=1';
-      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
+      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization:'Bearer sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
       if (!response.ok) throw new Error('Profile request failed');
       const rows = await response.json();
       const record = Array.isArray(rows) ? rows[0] : null;
