@@ -131,7 +131,7 @@
     async function loadPublicProfile() {
       if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) { document.getElementById('contractor-name').textContent = 'Contractor not available'; return; }
       const url = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=id,display_name,service,city,state,years,about,profile_photo_path,work_photo_paths&id=eq.' + encodeURIComponent(key) + '&is_published=eq.true&limit=1';
-      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization:'Bearer sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
+      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
       if (!response.ok) throw new Error('Profile request failed');
       const rows = await response.json();
       const record = Array.isArray(rows) ? rows[0] : null;
