@@ -51,13 +51,13 @@
     <p class="crumb"><span id="service-label">Local service</span> · Contractor profile</p>
     <section class="profile-head">
       <div class="avatar" id="avatar"><span id="avatar-initials">NS</span><img id="avatar-image" alt="Contractor profile photo"></div>
-      <div><h1 id="contractor-name">North Star Services</h1><p class="verified">✓ Verified contractor</p></div>
+      <div><h1 id="contractor-name">North Star Services</h1><p class="verified">Contractor profile</p></div>
     </section>
     <div class="grid">
       <section class="panel">
         <h2>About this contractor</h2>
         <p id="about-copy">Experienced local service professional focused on clear communication, dependable work, and fast text-based responses. Review the service details before sending a message.</p>
-        <div class="action-row"><a class="action text-action" id="text-link" href="sms:+18175550101">Text this contractor</a></div>
+        <div class="action-row"><a class="action text-action" id="text-link" href="#">Text this contractor</a></div>
       </section>
       <section class="panel" style="grid-column:1 / -1">
         <h2>Work photos</h2>
@@ -113,11 +113,17 @@
     const contactRequested = params.get('contact') === '1';
     const contactReturn = `profile.html?contractor=${encodeURIComponent(key)}&service=${encodeURIComponent(service)}&contact=1`;
     const textLink = document.getElementById('text-link');
-    if (contactRequested) {
+    const contactNumber = String(profile.phone || '').replace(/[^\d+]/g, '');
+    if (!contactNumber || /\+?1817555010[1-4]$/.test(contactNumber)) {
+      textLink.removeAttribute('href');
+      textLink.textContent = 'Text contact unavailable';
+      textLink.setAttribute('aria-disabled', 'true');
+    }
+    if (contactRequested && contactNumber && !/\+?1817555010[1-4]$/.test(contactNumber)) {
       TexAuth.requireUser(contactReturn).then((user) => {
-        if (user) textLink.href = `sms:${profile.phone}?body=${encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!")}`;
+        if (user) textLink.href = `sms:${contactNumber}?body=${encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!")}`;
       });
-    } else {
+    } else if (contactNumber && !/\+?1817555010[1-4]$/.test(contactNumber)) {
       textLink.href = TexAuth.authHref(contactReturn);
     }
     const gallery = document.getElementById('work-gallery');
