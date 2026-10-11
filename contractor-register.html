@@ -143,17 +143,25 @@
       data.workPhotoCount = Math.min(workInput.files.length, 4);
       data.ownerId = signedInUser.id;
       data.ownerEmail = signedInUser.email || '';
-      const media = {
-        profilePhoto: await readImage(profileInput.files[0]),
-        workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
-      };
-      // Submit to the shared moderation queue. Never claim approval or publish local-only profiles.
-      const session = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null');
-      if (!session?.access_token) {
+      let media;
+      try {
+        media = {
+          profilePhoto: await readImage(profileInput.files[0]),
+          workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
+        };
+      } catch (error) {
+        console.error('Image preparation failed:', error);
+        document.getElementById('success').classList.add('show');
+        document.getElementById('success').textContent = 'Could not prepare your photos. Please select valid image files and try again.';
+        return;
+      }
+      const accessToken = await TexAuth.getAccessToken();
+      if (!accessToken) {
         document.getElementById('success').classList.add('show');
         document.getElementById('success').textContent = 'Your login expired. Please sign in again before submitting.';
         return;
       }
+      const session = {access_token:accessToken};
       const submission = {
         owner_id: signedInUser.id,
         owner_email: signedInUser.email || '',
