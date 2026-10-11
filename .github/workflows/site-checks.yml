@@ -20,3 +20,16 @@ jobs:
         with:
           node-version: '20'
       - run: node scripts/check-static-site.mjs
+      - name: Generate catalog SEO pages and sitemap
+        run: node scripts/generate-service-seo.mjs
+      - name: Verify generated pages
+        run: |
+          test -f sitemap.xml
+          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -ge 1
+      - name: Save generated SEO pages for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-service-pages
+          path: |
+            services/*.html
+            sitemap.xml
