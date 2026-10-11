@@ -95,7 +95,7 @@
     document.getElementById('location-label').textContent = locationText;
     document.getElementById('page-title').textContent = `${service} contractors near you`;
     document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
-    const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nPlease attach a photo or short video.");
+    const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!");
     document.querySelectorAll('.text-button').forEach((button) => { button.href = `sms:?body=${message}`; });
     document.querySelectorAll('.profile-button').forEach((button) => {
       if (button.dataset.contractorId) {
