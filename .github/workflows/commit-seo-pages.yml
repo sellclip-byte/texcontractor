@@ -1,5 +1,11 @@
 name: Commit generated SEO pages to review branch
 on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - '.github/workflows/commit-seo-pages.yml'
+      - 'scripts/generate-service-seo.mjs'
   workflow_dispatch:
 permissions:
   contents: write
