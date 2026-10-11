@@ -104,8 +104,14 @@
     });
     const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
     const providers = document.querySelector('.providers');
-    if (contractors.length) document.getElementById('no-providers-message').hidden = true;
-    contractors.forEach((contractor) => {
+    const normalizedService = value => String(value || '').trim().toLocaleLowerCase('en-US');
+    const matchingContractors = contractors.filter(contractor => {
+      const categories = Array.isArray(contractor.services) ? contractor.services : [contractor.service];
+      return categories.some(category => normalizedService(category) === normalizedService(service));
+    });
+    if (matchingContractors.length) document.getElementById('no-providers-message').hidden = true;
+    document.getElementById('no-providers-message').textContent = 'No matching contractors are listed for this service yet.';
+    matchingContractors.forEach((contractor) => {
       const name = String(contractor.displayName || 'Local contractor');
       const initials = String(contractor.initials || name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'TC');
       const card = document.createElement('article');
