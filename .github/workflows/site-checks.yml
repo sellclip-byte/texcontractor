@@ -25,7 +25,9 @@ jobs:
       - name: Verify generated pages
         run: |
           test -f sitemap.xml
-          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -ge 1
+          count="$(find services -maxdepth 1 -name '*.html' | wc -l)"
+          echo "SEO service pages generated: $count"
+          test "$count" -eq 61
       - name: Save generated SEO pages for review
         uses: actions/upload-artifact@v4
         with:
