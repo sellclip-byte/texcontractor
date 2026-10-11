@@ -6,11 +6,11 @@ const root = process.cwd();
 const html = readFileSync(join(root, 'index.html'), 'utf8');
 const found = new Map();
 // Read the actual catalog card titles; most cards use onclick handlers, not href links.
-for (const m of html.matchAll(/<h[234][^>]*class=["'][^"']*service-title[^"']*["'][^>]*>([\\s\\S]*?)<\\/h[234]>/gi)) {
+for (const m of html.matchAll(/<h[234][^>]*class=["'][^"']*service-title[^"']*["'][^>]*>([\s\S]*?)<\/h[234]>/gi)) {
   const service = m[1].replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
   if (service && service.length < 110 && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
 }
-for (const m of html.matchAll(/(?:href|data-href)\\s*=\\s*["']([^"']*contractor\\.html\\?[^"']+)["']/gi)) {
+for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.html\?[^"']+)["']/gi)) {
   const raw = m[1].replaceAll('&amp;', '&');
   let u;
   try { u = new URL(raw, 'https://texcontractor.com/'); } catch { continue; }
@@ -20,8 +20,8 @@ for (const m of html.matchAll(/(?:href|data-href)\\s*=\\s*["']([^"']*contractor\
 const services = [...found.values()].sort((a,b)=>a.localeCompare(b));
 if (services.length !== 61) {
   const patterns = [
-    /service\\s*[:=]\\s*["']([^"']{3,100})["']/gi,
-    /(?:catalog|category|service)[^\\n]{0,90}/gi
+    /service\s*[:=]\s*["']([^"']{3,100})["']/gi,
+    /(?:catalog|category|service)[^\n]{0,90}/gi
   ];
   for (const [i, re] of patterns.entries()) {
     const hits = [...html.matchAll(re)].slice(0, 45).map(m => m[1] || m[0]);
