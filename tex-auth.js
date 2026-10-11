@@ -155,6 +155,7 @@
     captureMagicLinkSession,
     getUser,
     requireUser,
+    getAccessToken: async () => (await getUser()) ? (readSession()?.access_token || null) : null,
     sendMagicLink,
     signOut,
     safeReturnTo
