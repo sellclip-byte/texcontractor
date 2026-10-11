@@ -1,0 +1,27 @@
+name: Independent GitHub backup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create complete repository backup
+        run: |
+          git bundle create texcontractor-repository.bundle --all
+          git bundle verify texcontractor-repository.bundle
+          tar -czf texcontractor-site-files.tar.gz --exclude=.git .
+      - name: Store recoverable backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: texcontractor-recovery-backup
+          path: |
+            texcontractor-repository.bundle
+            texcontractor-site-files.tar.gz
+          retention-days: 90
