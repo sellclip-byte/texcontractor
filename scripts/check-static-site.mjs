@@ -34,7 +34,7 @@ check('registration is not indexed', /name="robots" content="noindex, follow"/.t
 check('auth page is not indexed', /name="robots" content="noindex, follow"/.test(auth));
 check('sample contractor profiles are not indexed', /name="robots" content="noindex, follow"/.test(profile));
 check('unverified badge is not presented', !profile.includes('✓ Verified contractor'));
-check('sample phone numbers cannot receive SMS', profile.includes('Text contact unavailable'));
+check('profile contact uses authenticated lookup rather than sample numbers', profile.includes('contractor-contact') && profile.includes('getAccessToken') && !profile.includes('1817555010'));
 check('robots points to production sitemap', robots.includes('https://texcontractor.com/sitemap.xml'));
 check('sitemap lists canonical homepage', sitemap.includes('<loc>https://texcontractor.com/</loc>'));
 check('sitemap lists contractor directory', sitemap.includes('<loc>https://texcontractor.com/contractor.html</loc>'));
