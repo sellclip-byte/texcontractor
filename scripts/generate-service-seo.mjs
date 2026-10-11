@@ -13,6 +13,18 @@ for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.h
   if (service && service.length < 110 && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
 }
 const services = [...found.values()].sort((a,b)=>a.localeCompare(b));
+if (services.length !== 61) {
+  const patterns = [
+    /service\\s*[:=]\\s*["'`]([^"'`]{3,100})["'`]/gi,
+    /["'`]([^"'`]{4,90})["'`]\\s*:\\s*\\[/g,
+    /(?:catalog|category|service)[^\\n]{0,90}/gi
+  ];
+  for (const [i, re] of patterns.entries()) {
+    const hits = [...html.matchAll(re)].slice(0, 45).map(m => m[1] || m[0]);
+    console.log('CATALOG_DIAGNOSTIC_'+i, JSON.stringify(hits));
+  }
+  console.log('FOUND_SERVICES', JSON.stringify(services));
+}
 if (!services.length) throw Error('No real service links found in index.html; no SEO pages generated. Check the homepage catalog markup first.');
 const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
