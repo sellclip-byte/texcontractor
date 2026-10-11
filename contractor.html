@@ -71,11 +71,7 @@
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Browse contractor profiles and contact options.</p></div></div>
       <div class="providers">
-        <article class="provider"><div class="avatar a">NS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">North Star Services</h3><p class="provider-rating">★★★★★ <span>4.9 · 138 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="north-star-services" href="profile.html?provider=north-star-services">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar b">RW</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Right Way Pros</h3><p class="provider-rating">★★★★★ <span>4.8 · 99 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="right-way-pros" href="profile.html?provider=right-way-pros">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar c">BO</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Blue Oak Works</h3><p class="provider-rating">★★★★★ <span>4.7 · 124 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="blue-oak-works" href="profile.html?provider=blue-oak-works">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar d">LS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">Lone Star Repair Team</h3><p class="provider-rating">★★★★☆ <span>4.7 · 86 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="lone-star-repair-team" href="profile.html?provider=lone-star-repair-team">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar e">HL</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">HomeCare Local</h3><p class="provider-rating">★★★★★ <span>4.9 · 65 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="homecare-local" href="profile.html?provider=homecare-local">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+        <p id="no-providers-message">No contractors are currently available in this browser. Check back later.</p>
       </div>
       <p class="blocked-message" id="blocked-message" hidden>Blocked contractors are hidden from your results on this device.</p>
     </section>
@@ -108,6 +104,7 @@
     });
     const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
     const providers = document.querySelector('.providers');
+    if (contractors.length) document.getElementById('no-providers-message').hidden = true;
     contractors.forEach((contractor) => {
       const name = String(contractor.displayName || 'Local contractor');
       const initials = String(contractor.initials || name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'TC');
