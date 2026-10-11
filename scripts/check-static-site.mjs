@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // TexContractor non-destructive staging checks. Run: node scripts/check-static-site.mjs
 import { readFileSync, existsSync } from 'node:fs';
+import { Script } from 'node:vm';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 let errors = 0;
@@ -21,6 +22,24 @@ const auth = read('auth.html');
 const robots = read('robots.txt');
 const sitemap = read('sitemap.xml');
 const authJs = read('tex-auth.js');
+function validateInlineScripts(filename, html) {
+  const blocks = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  for (const [index, block] of blocks.entries()) {
+    const attrs = block[1] || '';
+    if (/\\bsrc\\s*=/.test(attrs) || /\\btype\\s*=\\s*['"](?:application\\/json|module)['"]/.test(attrs)) continue;
+    try {
+      new Script(block[2], {filename: filename + ':inline-script-' + (index + 1)});
+      check(filename + ' inline script ' + (index + 1) + ' parses', true);
+    } catch (error) {
+      check(filename + ' inline script ' + (index + 1) + ' parses: ' + error.message, false);
+    }
+  }
+}
+for (const [filename, html] of [['contractor.html',contractor],['profile.html',profile],['contractor-register.html',registration],['auth.html',auth]]) {
+  validateInlineScripts(filename,html);
+}
+try { new Script(authJs,{filename:'tex-auth.js'}); check('authentication script parses',true); }
+catch(error) { check('authentication script parses: '+error.message,false); }
 check('contractor catalog routes contact through contractor profiles', contractor.includes('profile.html') && contractor.includes('Contact details in profile'));
 check('contractor catalog retains profile link', contractor.includes('profile.html'));
 check('contractor catalog contains search description', /<meta name="description"/.test(contractor));
