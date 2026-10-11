@@ -15,8 +15,7 @@ for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.h
 const services = [...found.values()].sort((a,b)=>a.localeCompare(b));
 if (services.length !== 61) {
   const patterns = [
-    /service\\s*[:=]\\s*["'`]([^"'`]{3,100})["'`]/gi,
-    /["'`]([^"'`]{4,90})["'`]\\s*:\\s*\\[/g,
+    /service\\s*[:=]\\s*["']([^"']{3,100})["']/gi,
     /(?:catalog|category|service)[^\\n]{0,90}/gi
   ];
   for (const [i, re] of patterns.entries()) {
