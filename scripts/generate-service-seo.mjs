@@ -10,6 +10,11 @@ for (const m of html.matchAll(/<h[234][^>]*class=["'][^"']*service-title[^"']*["
   const service = m[1].replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
   if (service && service.length < 110 && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
 }
+// The homepage also uses div.service-title cards, not just heading tags.
+for (const m of html.matchAll(/<[^>]+class=["'][^"']*service-title[^"']*["'][^>]*>([^<]{2,110})</gi)) {
+  const service = m[1].replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
+  if (service && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
+}
 for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.html\?[^"']+)["']/gi)) {
   const raw = m[1].replaceAll('&amp;', '&');
   let u;
