@@ -23,10 +23,10 @@ const robots = read('robots.txt');
 const sitemap = read('sitemap.xml');
 const authJs = read('tex-auth.js');
 function validateInlineScripts(filename, html) {
-  const blocks = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   for (const [index, block] of blocks.entries()) {
     const attrs = block[1] || '';
-    if (/\\bsrc\\s*=/.test(attrs) || /\\btype\\s*=\\s*['"](?:application\\/json|module)['"]/.test(attrs)) continue;
+    if (/\bsrc\s*=/.test(attrs) || /\btype\s*=\s*['"](?:application\/json|module)['"]/.test(attrs)) continue;
     try {
       new Script(block[2], {filename: filename + ':inline-script-' + (index + 1)});
       check(filename + ' inline script ' + (index + 1) + ' parses', true);
