@@ -175,13 +175,56 @@
             apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',
             Authorization: 'Bearer ' + session.access_token,
             'Content-Type': 'application/json',
-            Prefer: 'return=minimal'
+            Prefer: 'return=representation'
           },
           body: JSON.stringify(submission)
         });
         if (!response.ok) throw new Error('HTTP ' + response.status);
+        const saved = await response.json();
+        const submissionId = saved?.[0]?.id;
+        if (!submissionId) throw new Error('Submission ID was not returned');
+        const base = 'https://rryehtaskbjnfbodymjj.supabase.co';
+        const upload = async (dataUrl, label) => {
+          if (!dataUrl) return '';
+          const blob = await (await fetch(dataUrl)).blob();
+          const path = signedInUser.id + '/' + submissionId + '/' + label + '.jpg';
+          const result = await fetch(base + '/storage/v1/object/texcontractor-media/' + path, {
+            method:'POST',
+            headers: {
+              apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',
+              Authorization:'Bearer ' + session.access_token,
+              'Content-Type':'image/jpeg',
+              'x-upsert':'false'
+            },
+            body:blob
+          });
+          if (!result.ok) throw new Error('Photo upload failed (' + result.status + ')');
+          return path;
+        };
+        let profilePath = '';
+        const workPaths = [];
+        let uploadError = '';
+        try {
+          profilePath = await upload(media.profilePhoto, 'profile');
+          for (let i = 0; i < media.workPhotos.length; i++) {
+            const path = await upload(media.workPhotos[i], 'work-' + (i+1));
+            if (path) workPaths.push(path);
+          }
+          if (profilePath || workPaths.length) {
+            const update = await fetch(base + '/rest/v1/texcontractor_submissions?id=eq.' + encodeURIComponent(submissionId), {
+              method:'PATCH',
+              headers: {
+                apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',
+                Authorization:'Bearer ' + session.access_token,
+                'Content-Type':'application/json'
+              },
+              body:JSON.stringify({profile_photo_path:profilePath || null,work_photo_paths:workPaths})
+            });
+            if (!update.ok) throw new Error('Could not attach uploaded photos (' + update.status + ')');
+          }
+        } catch (error) { uploadError = error.message || 'Photo upload failed'; }
         document.getElementById('success').classList.add('show');
-        document.getElementById('success').textContent = 'Your application was submitted for administrator review. It will not appear publicly until approved.';
+        document.getElementById('success').textContent = uploadError ? 'Application saved for review, but photos were not fully saved: ' + uploadError : 'Your application and photos were submitted for administrator review. Nothing appears publicly until approved.';
         document.getElementById('success').scrollIntoView({ behavior:'smooth', block:'center' });
       } catch (error) {
         console.error('Registration submission failed:', error);
