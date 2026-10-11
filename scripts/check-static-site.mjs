@@ -29,6 +29,9 @@ check('registration retains profile photo field', registration.includes('name="p
 check('registration retains work photo field', registration.includes('name="workPhotos"'));
 check('registration is not indexed', /name="robots" content="noindex, follow"/.test(registration));
 check('auth page is not indexed', /name="robots" content="noindex, follow"/.test(auth));
+check('sample contractor profiles are not indexed', /name="robots" content="noindex, follow"/.test(profile));
+check('unverified badge is not presented', !profile.includes('✓ Verified contractor'));
+check('sample phone numbers cannot receive SMS', profile.includes('Text contact unavailable'));
 check('robots points to production sitemap', robots.includes('https://texcontractor.com/sitemap.xml'));
 check('sitemap lists canonical homepage', sitemap.includes('<loc>https://texcontractor.com/</loc>'));
 check('sitemap lists contractor directory', sitemap.includes('<loc>https://texcontractor.com/contractor.html</loc>'));
