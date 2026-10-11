@@ -41,7 +41,7 @@ for (const service of services) {
   const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
-<meta name="robots" content="index,follow"><link rel="canonical" href="${canonical}">
+<meta name="robots" content="noindex,follow"><link rel="canonical" href="${canonical}">
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:auto;max-width:800px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:35px 0}a.cta{display:inline-block;padding:12px 20px;background:#075c80;color:white;border-radius:8px;text-decoration:none}</style>
 </head><body><header><a href="/">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
 <p>Looking for ${esc(service)} services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p>
