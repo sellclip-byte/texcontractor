@@ -113,7 +113,7 @@
     };
     profileInput.addEventListener('change', () => renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo'));
     workInput.addEventListener('change', () => renderImages(workInput.files, workPreview, 4, 'Selected completed work'));
-    const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
+    const readImage = (file, maxSize = 1200) => new Promise((resolve, reject) => {
       if (!file) return resolve('');
       const reader = new FileReader();
       reader.onload = () => {
@@ -126,8 +126,10 @@
           canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
           resolve(canvas.toDataURL('image/jpeg', .78));
         };
+        image.onerror = () => reject(new Error('Unable to process selected image'));
         image.src = reader.result;
       };
+      reader.onerror = () => reject(new Error('Unable to read selected image'));
       reader.readAsDataURL(file);
     });
     document.getElementById('register-form').addEventListener('submit', async (event) => {
