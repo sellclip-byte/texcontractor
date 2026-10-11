@@ -102,62 +102,8 @@
       const provider = button.dataset.provider;
       button.href = `profile.html?provider=${encodeURIComponent(provider)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
     });
-    const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
     const providers = document.querySelector('.providers');
     const normalizedService = value => String(value || '').trim().toLocaleLowerCase('en-US');
-    const matchingContractors = contractors.filter(contractor => {
-      const categories = Array.isArray(contractor.services) ? contractor.services : [contractor.service];
-      return categories.some(category => normalizedService(category) === normalizedService(service));
-    });
-    if (matchingContractors.length) document.getElementById('no-providers-message').hidden = true;
-    document.getElementById('no-providers-message').textContent = 'No matching contractors are listed for this service yet.';
-    matchingContractors.forEach((contractor) => {
-      const name = String(contractor.displayName || 'Local contractor');
-      const initials = String(contractor.initials || name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'TC');
-      const card = document.createElement('article');
-      card.className = 'provider';
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar e';
-      avatar.textContent = initials;
-      if (contractor.profilePhoto) {
-        const image = document.createElement('img');
-        image.src = contractor.profilePhoto;
-        image.alt = '';
-        image.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
-        avatar.textContent = '';
-        avatar.appendChild(image);
-      }
-      const main = document.createElement('div');
-      main.className = 'provider-main';
-      const status = document.createElement('p');
-      status.className = 'provider-status';
-      status.textContent = contractor.rating || 'Registered contractor';
-      const title = document.createElement('h3');
-      title.className = 'provider-name';
-      title.textContent = name;
-      const rating = document.createElement('p');
-      rating.className = 'provider-rating';
-      rating.textContent = contractor.rating || 'New profile';
-      const trade = document.createElement('p');
-      trade.className = 'provider-trade';
-      trade.textContent = contractor.service || service;
-      main.append(status, title, rating, trade);
-      const actions = document.createElement('div');
-      actions.className = 'provider-actions';
-      const profile = document.createElement('a');
-      profile.className = 'profile-button';
-      profile.dataset.provider = contractor.id;
-      profile.dataset.contractorId = contractor.id;
-      profile.href = `profile.html?contractor=${encodeURIComponent(contractor.id)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
-      profile.textContent = 'View profile';
-      const text = document.createElement('a');
-      text.className = 'text-button';
-      text.href = `sms:${String(contractor.phone || '').replace(/[^\d+]/g, '')}?body=${message}`;
-      text.textContent = 'Text this contractor';
-      actions.append(profile, text);
-      card.append(avatar, main, actions);
-      providers.appendChild(card);
-    });
     const blocked = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]'));
     // Read the shared, published directory. Never expose pending submissions or private phone numbers.
     async function loadPublishedContractors() {
@@ -211,11 +157,7 @@
       providers.appendChild(notice);
     });
 
-    let hiddenCount = 0;
-    document.querySelectorAll('.profile-button').forEach((button) => {
-      if (blocked.has(button.dataset.contractorId || button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
-    });
-    if (hiddenCount) document.getElementById('blocked-message').hidden = false;
+
   </script>
 </body>
 </html>
