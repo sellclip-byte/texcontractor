@@ -170,10 +170,11 @@
       submitButton.disabled = true;
       try {
         const base = 'https://rryehtaskbjnfbodymjj.supabase.co';
+        const uploadGroup = crypto.randomUUID();
         const upload = async (dataUrl, label) => {
           if (!dataUrl) return '';
           const blob = await (await fetch(dataUrl)).blob();
-          const path = signedInUser.id + '/' + crypto.randomUUID() + '/' + label + '.jpg';
+          const path = signedInUser.id + '/' + uploadGroup + '/' + label + '.jpg';
           const result = await fetch(base + '/storage/v1/object/texcontractor-media/' + path, {
             method:'POST',
             headers: {
