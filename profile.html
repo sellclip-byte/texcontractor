@@ -138,6 +138,37 @@
         document.getElementById('avatar-image').style.display = 'block';
         document.getElementById('avatar-initials').style.display = 'none';
     }
+    // Resolve public profiles by ID from the shared directory, not browser-local records.
+    async function loadPublicProfile() {
+      if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) return;
+      const url = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=id,display_name,service,city,state,years,about,profile_photo_path,work_photo_paths&id=eq.' + encodeURIComponent(key) + '&is_published=eq.true&limit=1';
+      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
+      if (!response.ok) throw new Error('Profile request failed');
+      const rows = await response.json();
+      const record = Array.isArray(rows) ? rows[0] : null;
+      if (!record) {
+        document.getElementById('contractor-name').textContent = 'Contractor not available';
+        document.getElementById('about-copy').textContent = 'This contractor has no published profile.';
+        return;
+      }
+      const name = String(record.display_name || 'Contractor');
+      document.title = name + ' · TexContractor';
+      document.getElementById('contractor-name').textContent = name;
+      document.getElementById('avatar-initials').textContent = name.trim().split(/\\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+      document.getElementById('service-label').textContent = record.service || service;
+      document.getElementById('location').textContent = [record.city,record.state].filter(Boolean).join(', ') || 'Not provided';
+      document.getElementById('about-copy').textContent = record.about || 'No description provided.';
+      document.getElementById('rating').textContent = 'Not rated';
+      document.querySelector('.fact:nth-child(3) dd').textContent = record.years ? String(record.years) + ' years' : 'Not provided';
+      // The public directory intentionally contains no phone number. Do not invent one.
+      textLink.removeAttribute('href');
+      textLink.textContent = 'Text contact unavailable';
+      textLink.setAttribute('aria-disabled','true');
+      gallery.replaceChildren();
+    }
+    loadPublicProfile().catch(() => {
+      document.getElementById('about-copy').textContent = 'Unable to load the contractor profile. Please try again.';
+    });
     document.getElementById('block-button').addEventListener('click', () => {
       const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]');
       if (!blocked.includes(key)) blocked.push(key);
