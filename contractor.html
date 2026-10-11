@@ -159,6 +159,56 @@
       providers.appendChild(card);
     });
     const blocked = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]'));
+    // Read the shared, published directory. Never expose pending submissions or private phone numbers.
+    async function loadPublishedContractors() {
+      const endpoint = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services';
+      const key = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+      const query = new URLSearchParams({
+        select: 'id,display_name,service,city,state,years,about,profile_photo_path',
+        is_published: 'eq.true',
+        service: 'eq.' + service,
+        limit: '100'
+      });
+      const response = await fetch(endpoint + '?' + query, { headers: { apikey: key } });
+      if (!response.ok) throw Error('Directory unavailable: HTTP ' + response.status);
+      const records = await response.json();
+      if (!Array.isArray(records)) throw Error('Invalid directory response');
+      // Clear browser-local cards; only shared published profiles belong in public results.
+      providers.replaceChildren();
+      for (const record of records) {
+        const card = document.createElement('article');
+        card.className = 'provider';
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar e';
+        const name = String(record.display_name || 'Contractor');
+        avatar.textContent = name.trim().split(/\\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+        const main = document.createElement('div'); main.className = 'provider-main';
+        const title = document.createElement('h3'); title.className = 'provider-name'; title.textContent = name;
+        const trade = document.createElement('p'); trade.className = 'provider-trade';
+        trade.textContent = [record.service, [record.city, record.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+        main.append(title, trade);
+        const actions = document.createElement('div'); actions.className = 'provider-actions';
+        const profile = document.createElement('a'); profile.className = 'profile-button';
+        profile.textContent = 'View profile'; profile.dataset.contractorId = record.id;
+        profile.href = 'profile.html?contractor=' + encodeURIComponent(record.id);
+        actions.append(profile);
+        card.append(avatar, main, actions);
+        if (!blocked.has(String(record.id))) providers.appendChild(card);
+      }
+      if (!providers.children.length) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No published contractors for this service yet.';
+        providers.appendChild(empty);
+      }
+    }
+    loadPublishedContractors().catch(error => {
+      console.error('Shared directory loading failed:', error);
+      providers.replaceChildren();
+      const notice = document.createElement('p');
+      notice.textContent = 'Contractor listings are temporarily unavailable. Please try again later.';
+      providers.appendChild(notice);
+    });
+
     let hiddenCount = 0;
     document.querySelectorAll('.profile-button').forEach((button) => {
       if (blocked.has(button.dataset.contractorId || button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
