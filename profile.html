@@ -115,7 +115,7 @@
     const textLink = document.getElementById('text-link');
     if (contactRequested) {
       TexAuth.requireUser(contactReturn).then((user) => {
-        if (user) textLink.href = `sms:${profile.phone}?body=${encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nPlease attach a photo or short video.")}`;
+        if (user) textLink.href = `sms:${profile.phone}?body=${encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!")}`;
       });
     } else {
       textLink.href = TexAuth.authHref(contactReturn);
