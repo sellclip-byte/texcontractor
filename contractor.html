@@ -166,7 +166,6 @@
       const query = new URLSearchParams({
         select: 'id,display_name,service,city,state,years,about,profile_photo_path',
         is_published: 'eq.true',
-        service: 'eq.' + service,
         limit: '100'
       });
       const response = await fetch(endpoint + '?' + query, { headers: { apikey: key } });
@@ -176,6 +175,9 @@
       // Clear browser-local cards; only shared published profiles belong in public results.
       providers.replaceChildren();
       for (const record of records) {
+        if (normalizedService(record.service) !== normalizedService(service)) continue;
+        if (city && normalizedService(record.city) !== normalizedService(city)) continue;
+        if (state && normalizedService(record.state) !== normalizedService(state)) continue;
         const card = document.createElement('article');
         card.className = 'provider';
         const avatar = document.createElement('div');
