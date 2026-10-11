@@ -114,7 +114,7 @@
         is_published: 'eq.true',
         limit: '1000'
       });
-      if (service) query.set('service', 'eq.' + service);
+      if (service && service !== 'Local service') query.set('service', 'eq.' + service);
       if (city) query.set('city', 'ilike.' + city);
       if (state) query.set('state', 'ilike.' + state);
       const response = await fetch(endpoint + '?' + query, { headers: { apikey: key } });
@@ -124,7 +124,7 @@
       // Clear browser-local cards; only shared published profiles belong in public results.
       providers.replaceChildren();
       for (const record of records) {
-        if (normalizedService(record.service) !== normalizedService(service)) continue;
+        if (service !== 'Local service' && normalizedService(record.service) !== normalizedService(service)) continue;
         if (city && normalizedService(record.city) !== normalizedService(city)) continue;
         if (state && normalizedService(record.state) !== normalizedService(state)) continue;
         const card = document.createElement('article');
