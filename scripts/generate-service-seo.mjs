@@ -5,7 +5,12 @@ import { join } from 'node:path';
 const root = process.cwd();
 const html = readFileSync(join(root, 'index.html'), 'utf8');
 const found = new Map();
-for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.html\?[^"']+)["']/gi)) {
+// Read the actual catalog card titles; most cards use onclick handlers, not href links.
+for (const m of html.matchAll(/<h[234][^>]*class=["'][^"']*service-title[^"']*["'][^>]*>([\\s\\S]*?)<\\/h[234]>/gi)) {
+  const service = m[1].replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
+  if (service && service.length < 110 && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
+}
+for (const m of html.matchAll(/(?:href|data-href)\\s*=\\s*["']([^"']*contractor\\.html\\?[^"']+)["']/gi)) {
   const raw = m[1].replaceAll('&amp;', '&');
   let u;
   try { u = new URL(raw, 'https://texcontractor.com/'); } catch { continue; }
