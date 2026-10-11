@@ -173,7 +173,7 @@
         const upload = async (dataUrl, label) => {
           if (!dataUrl) return '';
           const blob = await (await fetch(dataUrl)).blob();
-          const path = signedInUser.id + '/' + submissionId + '/' + label + '.jpg';
+          const path = signedInUser.id + '/' + crypto.randomUUID() + '/' + label + '.jpg';
           const result = await fetch(base + '/storage/v1/object/texcontractor-media/' + path, {
             method:'POST',
             headers: {
