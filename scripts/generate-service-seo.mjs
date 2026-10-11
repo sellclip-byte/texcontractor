@@ -5,7 +5,7 @@ import { join } from 'node:path';
 const root = process.cwd();
 const html = readFileSync(join(root, 'index.html'), 'utf8');
 const found = new Map();
-for (const m of html.matchAll(/(?:href|data-href)\\s*=\\s*["']([^"']*contractor\\.html\\?[^"']+)["']/gi)) {
+for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.html\?[^"']+)["']/gi)) {
   const raw = m[1].replaceAll('&amp;', '&');
   let u;
   try { u = new URL(raw, 'https://texcontractor.com/'); } catch { continue; }
@@ -15,7 +15,7 @@ for (const m of html.matchAll(/(?:href|data-href)\\s*=\\s*["']([^"']*contractor\
 const services = [...found.values()].sort((a,b)=>a.localeCompare(b));
 if (!services.length) throw Error('No real service links found in index.html; no SEO pages generated. Check the homepage catalog markup first.');
 const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
+const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
 const dir = join(root,'services'); mkdirSync(dir,{recursive:true});
 const used = new Set(); const urls = [];
 for (const service of services) {
@@ -40,7 +40,7 @@ for (const service of services) {
   writeFileSync(join(dir,id+'.html'),page);
   urls.push(canonical);
 }
-const xml = '<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'+
- ['https://texcontractor.com/','https://texcontractor.com/contractor.html',...urls].map(u=>'  <url><loc>'+u.replaceAll('&','&amp;')+'</loc></url>').join('\\n')+'\\n</urlset>\\n';
+const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
+ ['https://texcontractor.com/','https://texcontractor.com/contractor.html',...urls].map(u=>'  <url><loc>'+u.replaceAll('&','&amp;')+'</loc></url>').join('\n')+'\n</urlset>\n';
 writeFileSync(join(root,'sitemap.xml'),xml);
 console.log('Generated '+urls.length+' SEO service pages from existing homepage links.');
