@@ -168,7 +168,7 @@
         is_published: 'eq.true',
         limit: '100'
       });
-      const response = await fetch(endpoint + '?' + query, { headers: { apikey: key } });
+      const response = await fetch(endpoint + '?' + query, { headers: { apikey: key, Authorization: 'Bearer ' + key } });
       if (!response.ok) throw Error('Directory unavailable: HTTP ' + response.status);
       const records = await response.json();
       if (!Array.isArray(records)) throw Error('Invalid directory response');
