@@ -81,14 +81,8 @@
   </main>
   <script src="tex-auth.js"></script>
   <script>
-    const profiles = {
-      'north-star': { name:'North Star Services', initials:'NS', rating:'4.9 / 5', location:'Arlington, TX', phone:'+18175550101', work:['assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
-      'right-way': { name:'Right Way Pros', initials:'RW', rating:'4.8 / 5', location:'Fort Worth, TX', phone:'+18175550102', work:['assets-optimized/09.jpg','assets-optimized/04.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
-      'blue-oak': { name:'Blue Oak Works', initials:'BO', rating:'4.7 / 5', location:'Mansfield, TX', phone:'+18175550103', work:['assets-optimized/39.jpg','assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/21.jpg'] },
-      'lone-star': { name:'Lone Star Repair Team', initials:'LS', rating:'4.7 / 5', location:'Arlington, TX', phone:'+18175550104', work:['assets-optimized/21.jpg','assets-optimized/39.jpg','assets-optimized/09.jpg','assets-optimized/04.jpg'] }
-    };
     const params = new URLSearchParams(location.search);
-    const key = params.get('contractor') || 'north-star';
+    const key = params.get('contractor') || '';
     const savedContractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
     const savedProfile = savedContractors.find((provider) => provider.id === key);
     const profile = savedProfile ? {
@@ -101,7 +95,10 @@
       profilePhoto:savedProfile.profilePhoto || '',
       work:savedProfile.workPhotos || [],
       years:savedProfile.years || '—'
-    } : (profiles[key] || profiles['north-star']);
+    } : {
+      name:'Contractor not found', initials:'—', rating:'Not available', location:'Not available',
+      phone:'', about:'This contractor profile is not available on this device.', work:[], years:'—'
+    };
     const service = params.get('service') || 'Local service';
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
