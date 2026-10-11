@@ -143,7 +143,7 @@
       const name = String(record.display_name || 'Contractor');
       document.title = name + ' · TexContractor';
       document.getElementById('contractor-name').textContent = name;
-      document.getElementById('avatar-initials').textContent = name.trim().split(/\\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+      document.getElementById('avatar-initials').textContent = name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
       document.getElementById('service-label').textContent = record.service || service;
       document.getElementById('location').textContent = [record.city,record.state].filter(Boolean).join(', ') || 'Not provided';
       document.getElementById('about-copy').textContent = record.about || 'No description provided.';
