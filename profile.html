@@ -154,6 +154,22 @@
       textLink.textContent = 'Text contact unavailable';
       textLink.setAttribute('aria-disabled','true');
       gallery.replaceChildren();
+      const mediaUrl = path => {
+        if (typeof path !== 'string' || !path || !/^[a-zA-Z0-9_./-]+$/.test(path) || path.includes('..')) return '';
+        return 'https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/public/texcontractor-media/' + path.split('/').map(encodeURIComponent).join('/');
+      };
+      const avatarUrl = mediaUrl(record.profile_photo_path);
+      if (avatarUrl) {
+        const avatar = document.getElementById('avatar-image');
+        avatar.src = avatarUrl;
+        avatar.style.display = 'block';
+        document.getElementById('avatar-initials').style.display = 'none';
+      }
+      const photos = Array.isArray(record.work_photo_paths) ? record.work_photo_paths.slice(0, 4) : [];
+      photos.forEach((path, index) => {
+        const src = mediaUrl(path);
+        if (src) addGalleryImage(src, index);
+      });
     }
     loadPublicProfile().catch(() => {
       document.getElementById('about-copy').textContent = 'Unable to load the contractor profile. Please try again.';
