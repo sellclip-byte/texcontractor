@@ -118,8 +118,8 @@
         });
         if (!response.ok) throw new Error('Contact unavailable');
         const data = await response.json();
-        if (!/^\\+?[0-9]{10,15}$/.test(data.phone || '')) throw new Error('Invalid phone');
-        const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\\n\\nI need an estimate.\\n\\nMy ZIP code:\\n\\nProblem description:\\n\\nIf you need photos or a short video, please let me know.\\n\\nThank you!");
+        if (!/^\+?[0-9]{10,15}$/.test(data.phone || '')) throw new Error('Invalid phone');
+        const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!");
         location.href = 'sms:' + data.phone + '?body=' + message;
       } catch(error) {
         console.error('Contact lookup failed:',error);
