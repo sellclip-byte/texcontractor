@@ -83,21 +83,10 @@
   <script>
     const params = new URLSearchParams(location.search);
     const key = params.get('contractor') || '';
-    const savedContractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
-    const savedProfile = savedContractors.find((provider) => provider.id === key);
-    const profile = savedProfile ? {
-      name:savedProfile.displayName,
-      initials:savedProfile.initials,
-      rating:savedProfile.rating || 'New profile',
-      location:savedProfile.location || 'Arlington, TX',
-      phone:savedProfile.phone || '',
-      about:savedProfile.about || 'This contractor has added a service profile and is ready to receive direct messages.',
-      profilePhoto:savedProfile.profilePhoto || '',
-      work:savedProfile.workPhotos || [],
-      years:savedProfile.years || '—'
-    } : {
-      name:'Contractor not found', initials:'—', rating:'Not available', location:'Not available',
-      phone:'', about:'This contractor profile is not available on this device.', work:[], years:'—'
+    const profile = {
+      name:'Loading contractor profile', initials:'—', rating:'Not rated',
+      location:'Not available', phone:'', about:'Loading published contractor information…',
+      work:[], years:'—'
     };
     const service = params.get('service') || 'Local service';
     document.title = `${profile.name} · TexContractor`;
@@ -140,7 +129,7 @@
     }
     // Resolve public profiles by ID from the shared directory, not browser-local records.
     async function loadPublicProfile() {
-      if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) return;
+      if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) { document.getElementById('contractor-name').textContent = 'Contractor not available'; return; }
       const url = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=id,display_name,service,city,state,years,about,profile_photo_path,work_photo_paths&id=eq.' + encodeURIComponent(key) + '&is_published=eq.true&limit=1';
       const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
       if (!response.ok) throw new Error('Profile request failed');
@@ -170,9 +159,9 @@
       document.getElementById('about-copy').textContent = 'Unable to load the contractor profile. Please try again.';
     });
     document.getElementById('block-button').addEventListener('click', () => {
-      const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]');
+      const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]');
       if (!blocked.includes(key)) blocked.push(key);
-      localStorage.setItem('texcontractor-blocked', JSON.stringify(blocked));
+      localStorage.setItem('texcontractor-blocked-providers', JSON.stringify(blocked));
       document.getElementById('confirmation').classList.add('show');
       document.getElementById('block-button').disabled = true;
       document.getElementById('block-button').textContent = 'Contractor blocked';
