@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // TexContractor non-destructive staging checks. Run: node scripts/check-static-site.mjs
 import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 let errors = 0;
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 function check(label, condition) {
   process.stdout.write((condition ? 'PASS' : 'FAIL') + ' ' + label + '\n');
   if (!condition) errors++;
