@@ -23,8 +23,8 @@ jobs:
       - run: node scripts/generate-service-seo.mjs
       - name: Validate 56 known catalog pages
         run: |
-          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 56
-          test "$(grep -c '<url>' sitemap.xml)" -eq 58
+          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 57
+          test "$(grep -c '<url>' sitemap.xml)" -eq 59
       - name: Commit generated pages only to review branch
         run: |
           git config user.name "github-actions[bot]"
