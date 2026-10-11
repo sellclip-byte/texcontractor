@@ -71,7 +71,7 @@
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Browse contractor profiles and contact options.</p></div></div>
       <div class="providers">
-        <p id="no-providers-message">No contractors are currently available in this browser. Check back later.</p>
+        <p id="no-providers-message">Loading published contractors…</p>
       </div>
       <p class="blocked-message" id="blocked-message" hidden>Blocked contractors are hidden from your results on this device.</p>
     </section>
@@ -132,7 +132,7 @@
         const avatar = document.createElement('div');
         avatar.className = 'avatar e';
         const name = String(record.display_name || 'Contractor');
-        avatar.textContent = name.trim().split(/\\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+        avatar.textContent = name.trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
         const main = document.createElement('div'); main.className = 'provider-main';
         const title = document.createElement('h3'); title.className = 'provider-name'; title.textContent = name;
         const trade = document.createElement('p'); trade.className = 'provider-trade';
