@@ -165,6 +165,7 @@
         <button class="tab" type="button" data-tab="submissions" aria-selected="false">Contractor applications</button>
         <button class="tab" type="button" data-tab="reports" aria-selected="false">Reports</button>
         <button class="tab" type="button" data-tab="homepage-banner" aria-selected="false">Homepage banner</button>
+        <button class="tab" type="button" data-tab="contractor-notice" aria-selected="false">Contractor notice</button>
         <button class="tab" type="button" data-tab="side-ads" aria-selected="false">Side ads</button>
       </nav>
       <section class="dashboard-panel" id="members-panel" data-panel="members">
@@ -208,6 +209,18 @@
             <p class="settings-preview-label">Preview</p>
             <div class="settings-preview"><div class="settings-preview-text" id="banner-preview-text"></div></div>
             <div class="settings-actions"><button class="save" id="save-banner" type="submit">Save banner</button><p class="settings-hint">Changes appear on the public homepage after saving.</p></div>
+          </form>
+        </div>
+      </section>
+      <section class="dashboard-panel" id="contractor-notice-panel" data-panel="contractor-notice" hidden>
+        <div class="card settings-card">
+          <div class="card-head"><div><h2>Contractor notice</h2><p class="date">Edit the yellow message shown above contractor listings.</p></div></div>
+          <form id="contractor-notice-form">
+            <label class="settings-message" for="contractor-notice-message">Message shown to visitors<textarea id="contractor-notice-message" maxlength="300" required></textarea></label>
+            <p class="settings-preview-label">Preview</p>
+            <div class="settings-preview" style="background:#fff0b4;border-color:#eabf36"><div class="settings-preview-text" id="contractor-notice-preview"></div></div>
+            <div class="settings-actions"><button class="save" id="save-contractor-notice" type="submit">Save notice</button><button type="button" id="restore-contractor-notice">Restore default</button></div>
+            <p id="contractor-notice-status" role="status"></p>
           </form>
         </div>
       </section>
@@ -265,5 +278,6 @@
   <script src="tex-auth.js"></script>
   <script src="tex-admin.js"></script>
   <script src="contractor-admin.js"></script>
+  <script src="contractor-notice-editor.js"></script>
 </body>
 </html>
