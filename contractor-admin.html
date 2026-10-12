@@ -223,10 +223,10 @@
               <label>Border color <input type="color" id="contractor-notice-border-color" value="#eabf36"></label>
               <label>Font style <select id="contractor-notice-font"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
               <label>Flashing <select id="contractor-notice-flash"><option value="none">No flashing</option><option value="slow">Slow flashing</option><option value="fast">Fast flashing</option></select></label>
-              <label>Horizontal image URL (optional) <input type="url" id="contractor-notice-image" placeholder="https://example.com/banner.jpg"></label>
+              <label>Upload horizontal image from computer <input type="file" id="contractor-notice-image-file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif"></label><label>Saved image URL <input type="url" id="contractor-notice-image" placeholder="Image appears here after upload" readonly></label>
             </div>
             <p class="settings-preview-label">Preview</p>
-            <div class="settings-preview" id="contractor-notice-preview-box" style="background:#fff0b4;border-color:#eabf36"><div class="settings-preview-text" id="contractor-notice-preview"></div><img id="contractor-notice-preview-image" alt="Notice banner preview" style="display:none;max-width:100%;max-height:160px;object-fit:contain"></div>
+            <div class="settings-preview" id="contractor-notice-preview-box" style="background:#fff0b4;border-color:#eabf36"><div class="settings-preview-text" id="contractor-notice-preview"></div></div><div style="margin-top:12px"><img id="contractor-notice-preview-image" alt="Separate horizontal image preview" style="display:none;width:100%;max-height:230px;object-fit:contain;border-radius:12px"></div>
             <div class="settings-actions"><button class="save" id="save-contractor-notice" type="submit">Save notice</button><button type="button" id="restore-contractor-notice">Restore default</button></div>
             <p id="contractor-notice-status" role="status"></p>
           </form>
