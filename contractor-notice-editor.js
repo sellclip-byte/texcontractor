@@ -21,5 +21,24 @@ document.getElementById('contractor-notice-copy-image').addEventListener('click'
 document.getElementById('contractor-notice-remove-image').addEventListener('click',()=>{inputs.image.value='';redraw();status.textContent='Image removed from preview. Click Save notice to remove it from the public page.'});
 const load=async()=>{try{const {headers}=await auth();const r=await fetch(BASE+'?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1',{headers});if(!r.ok)throw Error('Could not load notice.');const rows=await r.json();if(edited)return;const row=rows[0]||{};field.value=row.message_text||DEFAULT;inputs.text.value=row.text_color||'#111827';inputs.background.value=row.background_color||'#fff0b4';inputs.border.value=row.accent_color||'#eabf36';inputs.font.value=row.font_style||'bold';inputs.flash.value=row.notice_flash_speed||'none';inputs.image.value=row.notice_image_url||'';inputs.link.value=row.notice_image_link_url||'';redraw();}catch(e){status.textContent=e.message}};
 load();
-form.addEventListener('submit',async e=>{e.preventDefault();const message_text=field.value.trim();if(!message_text){status.textContent='Enter a message.';return;}const button=document.getElementById('save-contractor-notice');button.disabled=true;status.textContent='Saving…';try{const {headers,user}=await auth();const r=await fetch(BASE+'?on_conflict=key',{method:'POST',headers:{...headers,Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({key:'contractor_notice',message_text,text_color:inputs.text.value,background_color:inputs.background.value,accent_color:inputs.border.value,font_style:inputs.font.value,notice_flash_speed:inputs.flash.value,notice_image_url:validImage(inputs.image.value),notice_image_link_url:validImage(inputs.link.value),updated_by:user.id})});if(!r.ok)throw Error((await r.text()).slice(0,200));const check=await fetch(BASE+'?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url&key=eq.contractor_notice&limit=1',{headers:{...headers,'Cache-Control':'no-cache'}});if(!check.ok)throw Error('Save could not be verified.');const saved=(await check.json())[0];if(!saved||saved.message_text!==message_text||saved.text_color.toLowerCase()!==inputs.text.value.toLowerCase()||saved.background_color.toLowerCase()!==inputs.background.value.toLowerCase()||saved.accent_color.toLowerCase()!==inputs.border.value.toLowerCase()||saved.font_style!==inputs.font.value||saved.notice_flash_speed!==inputs.flash.value||saved.notice_image_url!==validImage(inputs.image.value)||saved.notice_image_link_url!==validImage(inputs.link.value))throw Error('Settings were not stored correctly. Please try again.');status.textContent='Saved and verified in database. Refresh contractor listings to see changes.'}catch(e){status.textContent='Could not save: '+e.message}finally{button.disabled=false}});
+form.addEventListener('submit',async e=>{
+ e.preventDefault();
+ const message_text=field.value.trim();
+ if(!message_text){status.textContent='Enter a message.';return;}
+ const button=document.getElementById('save-contractor-notice');
+ button.disabled=true;status.textContent='Saving…';
+ try{
+  const {headers,user}=await auth();
+  const payload={message_text,text_color:inputs.text.value,background_color:inputs.background.value,accent_color:inputs.border.value,font_style:inputs.font.value,notice_flash_speed:inputs.flash.value,notice_image_url:validImage(inputs.image.value),notice_image_link_url:validImage(inputs.link.value),updated_by:user.id};
+  const r=await fetch(BASE+'?key=eq.contractor_notice',{method:'PATCH',headers:{...headers,Prefer:'return=representation'},body:JSON.stringify(payload)});
+  if(!r.ok)throw Error((await r.text()).slice(0,250));
+  const rows=await r.json();
+  if(!rows.length)throw Error('No settings record updated.');
+  const saved=rows[0];
+  const mismatch=Object.keys(payload).filter(k=>k!=='updated_by'&&String(saved[k]??'')!==String(payload[k]??''));
+  if(mismatch.length)throw Error('Settings mismatch: '+mismatch.join(', '));
+  status.textContent='Saved successfully. The image and notice are now published.';
+ }catch(error){status.textContent='Could not save: '+error.message}
+ finally{button.disabled=false}
+});
 })();
