@@ -100,6 +100,7 @@
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
+    <div id="contractor-notice-image-area" style="width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" src="https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/public/texcontractor-side-ads/contractor-notice/6d83440a-820a-4309-b666-cba8e24a8290/1791831774923-4d0tdq4.png" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"></div>
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Published profiles from professionals who offer this service.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
@@ -281,24 +282,23 @@
   <script src="tex-side-ads.js"></script>
 <script>
 (function(){
- const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1';
- fetch(url+'&_ts='+Date.now(),{cache:'no-store',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r','Cache-Control':'no-cache'}}).then(r=>{if(!r.ok)throw Error('load');return r.json()}).then(rows=>{
- const row=rows[0],el=document.getElementById('contractor-notice-text');if(!row||!el)return;
- if(row.message_text)el.textContent=row.message_text;
- const box=el.closest('.notice');if(!box)return;
- const safeHex=(x)=>/^#[0-9a-f]{6}$/i.test(x||'')?x:null;
- if(safeHex(row.text_color)){el.style.setProperty('color',row.text_color,'important');box.style.setProperty('color',row.text_color,'important');}
- if(safeHex(row.background_color))box.style.setProperty('background-color',row.background_color,'important');
- if(safeHex(row.accent_color))box.style.setProperty('border-color',row.accent_color,'important');
- el.style.setProperty('font-weight',row.font_style==='bold'?'700':'400','important');
- el.style.setProperty('font-style',row.font_style==='italic'?'italic':'normal','important');
- el.style.setProperty('text-transform',row.font_style==='uppercase'?'uppercase':'none','important');
- if(['slow','fast'].includes(row.notice_flash_speed)){
- const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.notice{animation:none!important}}';document.head.appendChild(style);
- box.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite';
+ const BASE='https://rryehtaskbjnfbodymjj.supabase.co';
+ const URL=BASE+'/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1&_ts='+Date.now();
+ const imageArea=document.getElementById('contractor-notice-image-area'),img=document.getElementById('contractor-notice-public-image');
+ const banner=document.getElementById('contractor-notice-banner'),label=document.getElementById('contractor-notice-text');
+ function validUrl(s){try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
+ function update(row){
+ if(!row)return;
+ if(label&&row.message_text)label.textContent=row.message_text;
+ const color=(v)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:null;
+ if(banner){if(color(row.background_color))banner.style.setProperty('background-color',row.background_color,'important');if(color(row.accent_color))banner.style.setProperty('border-color',row.accent_color,'important');if(color(row.text_color))banner.style.setProperty('color',row.text_color,'important');}
+ if(label){if(color(row.text_color))label.style.setProperty('color',row.text_color,'important');label.style.fontWeight=row.font_style==='bold'?'700':'400';label.style.fontStyle=row.font_style==='italic'?'italic':'normal';label.style.textTransform=row.font_style==='uppercase'?'uppercase':'none';}
+ if(banner){banner.style.animation='none';if(row.notice_flash_speed==='slow'||row.notice_flash_speed==='fast'){banner.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite'}}
+ const src=validUrl(row.notice_image_url);
+ if(imageArea&&img){imageArea.hidden=!src;if(src){img.src=src;const target=validUrl(row.notice_image_link_url);const parent=img.parentElement;if(target){let link=parent.tagName==='A'?parent:document.createElement('a');link.href=target;link.target='_blank';link.rel='noopener noreferrer';if(parent!==link){img.replaceWith(link);link.appendChild(img)}}else if(parent.tagName==='A')parent.replaceWith(img);}}
  }
- try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:14px auto 0;border-radius:12px';img.decoding='async';const imageArea=document.createElement('div');imageArea.id='contractor-notice-image-area';imageArea.style.cssText='width:100%;display:block;clear:both;text-align:center';let destination=null;try{const link=new URL(row.notice_image_link_url);if(['https:','http:'].includes(link.protocol))destination=link.href}catch(e){}if(destination){const a=document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label','Open image link');a.appendChild(img);imageArea.appendChild(a)}else imageArea.appendChild(img);box.insertAdjacentElement('afterend',imageArea)}}catch(e){}
- }).catch(()=>{});
+ const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){#contractor-notice-banner{animation:none!important}}';document.head.appendChild(style);
+ fetch(URL,{cache:'no-store',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>{if(!r.ok)throw Error('notice settings unavailable');return r.json()}).then(rows=>update(rows[0])).catch(()=>{});
 })();
 </script>
 </body>
