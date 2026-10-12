@@ -30,6 +30,8 @@ jobs:
         with:
           node-version: '20'
       - run: node scripts/check-static-site.mjs
+      - name: Audit 61 service pages and sitemap
+        run: node scripts/audit-seo.mjs
       - name: Generate catalog SEO pages and sitemap
         run: node scripts/generate-service-seo.mjs
       - name: Verify generated pages
