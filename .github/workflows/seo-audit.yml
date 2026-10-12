@@ -1,0 +1,21 @@
+name: SEO file audit
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - 'services/**'
+      - 'sitemap.xml'
+      - 'scripts/audit-seo.mjs'
+      - '.github/workflows/seo-audit.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate SEO files
+        run: node scripts/audit-seo.mjs
