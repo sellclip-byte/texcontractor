@@ -21,3 +21,5 @@ jobs:
           node-version: '22'
       - name: Validate SEO files
         run: node scripts/audit-seo.mjs
+      - name: Clarify indexing status
+        run: echo 'SEO audit checks repository structure; Google indexing and live deployment require separate verification.'
