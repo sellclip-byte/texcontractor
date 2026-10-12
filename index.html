@@ -472,7 +472,24 @@
       .footer-column h3 { font-size: 1rem; }
       .footer-column a { font-size: .92rem; }
     }
-  </style>
+  
+/* TexContractor mobile catalog display repair – 2026-10-12 */
+@media (max-width: 700px) {
+  header { padding: 10px 14px !important; }
+  .header-inner { display: flex !important; flex-wrap: wrap !important; gap: 10px !important; min-height: 0 !important; }
+  .header-inner > .logo { flex: 0 0 auto; }
+  .logo-image { width: min(170px, 43vw) !important; height: auto !important; }
+  .header-actions { flex: 1 1 100% !important; width: 100% !important; min-width: 0 !important; margin-left: 0 !important; flex-wrap: wrap !important; }
+  .header-search { display: flex !important; width: 100% !important; flex: 1 1 100% !important; min-width: 0 !important; gap: 8px !important; }
+  .header-search input { width: auto !important; min-width: 0 !important; flex: 1 1 auto !important; height: 44px !important; font-size: 16px !important; }
+  .header-search .search-button { flex: 0 0 auto !important; min-height: 44px !important; padding: 0 18px !important; }
+  .header-tools { flex-wrap: wrap !important; }
+  .services-grid { grid-template-columns: minmax(0,1fr) !important; }
+  .service-card { min-width: 0 !important; }
+  .service-card .img-wrapper { width: 100% !important; height: auto !important; aspect-ratio: 16 / 9 !important; display: block !important; overflow: hidden !important; background: #edf1f5 !important; }
+  .service-card .img-wrapper img { display: block !important; width: 100% !important; height: 100% !important; aspect-ratio: 16 / 9 !important; object-fit: cover !important; object-position: center !important; opacity: 1 !important; transform: none !important; }
+}
+</style>
 </head>
 <body>
 
