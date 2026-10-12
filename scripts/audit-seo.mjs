@@ -10,6 +10,9 @@ const issues = [];
 if (slugs.length !== 61) issues.push('Expected 61 directory links, found ' + slugs.length);
 if (new Set(slugs).size !== slugs.length) issues.push('Duplicate directory links');
 if (new Set(urls).size !== urls.length) issues.push('Duplicate sitemap URLs');
+if (urls.length !== 64) issues.push('Expected 64 sitemap URLs (61 services plus 3 core pages), found ' + urls.length);
+for (const url of urls) if (!url.startsWith('https://texcontractor.com/')) issues.push('Unexpected sitemap host: ' + url);
+for (const core of ['https://texcontractor.com/','https://texcontractor.com/contractor.html','https://texcontractor.com/services/']) if (!urls.includes(core)) issues.push('Missing core URL: ' + core);
 for (const slug of slugs) {
   const file = join(root, 'services', slug);
   if (!existsSync(file)) { issues.push('Missing service page: ' + slug); continue; }
@@ -17,6 +20,7 @@ for (const slug of slugs) {
   if (!html.includes('<title>')) issues.push('Missing title: ' + slug);
   if (!html.includes('name="description"')) issues.push('Missing description: ' + slug);
   if (!html.includes('rel="canonical"')) issues.push('Missing canonical: ' + slug);
+  if (!html.includes('href="https://texcontractor.com/contractor.html?service=')) issues.push('Missing service CTA: ' + slug);
   if (!urls.includes('https://texcontractor.com/services/' + slug)) issues.push('Missing sitemap URL: ' + slug);
   if (/name="robots"[^>]*noindex/i.test(html)) issues.push('NOT INDEXABLE (noindex): ' + slug);
 }
