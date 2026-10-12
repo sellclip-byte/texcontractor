@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contractor Notice Settings · TexContractor</title>
+<style>body{font:16px system-ui,Arial;background:#f8fafc;color:#0f172a;margin:0;padding:24px}main{max-width:700px;margin:5vh auto;background:white;border:1px solid #e2e8f0;border-radius:16px;padding:26px;box-shadow:0 12px 30px #0f172a12}h1{font-size:1.45rem}textarea{box-sizing:border-box;width:100%;min-height:130px;font:inherit;padding:14px;border:1px solid #94a3b8;border-radius:10px}button,.link{display:inline-block;border:0;border-radius:9px;background:#075c4b;color:white;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;margin:12px 8px 0 0}button.secondary{background:#e2e8f0;color:#0f172a}.preview{background:#fff0b4;border:1px solid #eabf36;padding:17px;border-radius:12px;margin:16px 0}#status{min-height:24px}small{color:#64748b}</style></head>
+<body><main><h1>Contractor Notice Settings</h1><p>Change the yellow message displayed on contractor results pages.</p><div id="auth-message">Checking administrator access…</div>
+<section id="editor" hidden><label for="notice">Yellow notice text</label><textarea id="notice" maxlength="300"></textarea><div class="preview" id="preview"></div><button id="save">Save Changes</button><button id="restore" class="secondary">Restore Default</button><p id="status" role="status"></p><small>Changes appear on contractor pages for all visitors after refresh.</small></section></main>
+<script src="tex-auth.js"></script><script>
+(async function(){
+ const DEFAULT='No calls or long forms. Tap “Text this contractor” and send the details from your phone.';
+ const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/';
+ const key='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+ const message=document.getElementById('auth-message'),editor=document.getElementById('editor'),notice=document.getElementById('notice'),preview=document.getElementById('preview'),status=document.getElementById('status');
+ const user=await window.TexAuth.getUser();
+ if(!user){message.innerHTML='Please <a href="auth.html?return_to=contractor-notice-admin.html">sign in</a> as an administrator.';return;}
+ const token=await window.TexAuth.getAccessToken();
+ const headers={apikey:key,Authorization:'Bearer '+token,'Content-Type':'application/json'};
+ const admin=await fetch(url+'texcontractor_admins?select=user_id&user_id=eq.'+encodeURIComponent(user.id)+'&limit=1',{headers}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+ if(!admin.length){message.textContent='Access denied: this account is not a TexContractor administrator.';return;}
+ message.hidden=true;editor.hidden=false;
+ const load=await fetch(url+'texcontractor_site_settings?select=message_text&key=eq.contractor_notice&limit=1',{headers}).then(r=>r.ok?r.json():[]).catch(()=>[]);
+ notice.value=load[0]?.message_text||DEFAULT;preview.textContent=notice.value;
+ notice.addEventListener('input',()=>preview.textContent=notice.value);
+ document.getElementById('restore').onclick=()=>{notice.value=DEFAULT;preview.textContent=DEFAULT;status.textContent='Default restored in editor. Click Save Changes to publish.'};
+ document.getElementById('save').onclick=async()=>{
+  const value=notice.value.trim();if(!value){status.textContent='Enter a message before saving.';return;}
+  status.textContent='Saving…';
+  try{const r=await fetch(url+'texcontractor_site_settings?on_conflict=key',{method:'POST',headers:{...headers,Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({key:'contractor_notice',message_text:value,updated_by:user.id})});if(!r.ok)throw Error((await r.text()).slice(0,180));status.textContent='Saved. The new notice is live after page refresh.'}
+  catch(e){status.textContent='Could not save: '+e.message}
+ };
+})();
+</script></body></html>
