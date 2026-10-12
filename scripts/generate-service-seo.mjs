@@ -23,7 +23,7 @@ for (const m of html.matchAll(/(?:href|data-href)\s*=\s*["']([^"']*contractor\.h
   if (service && service.length < 110 && !/[<>]/.test(service)) found.set(service.toLowerCase(), service);
 }
 const services = [...found.values()].sort((a,b)=>a.localeCompare(b));
-if (services.length !== 56) throw Error('Expected 56 verified catalog names in this GitHub snapshot, found '+services.length+'. Review catalog source before publishing.');
+if (services.length !== 61) throw Error('Expected 61 verified catalog names in the current homepage, found '+services.length+'. Review catalog source before publishing.');
 if (!services.length) throw Error('No real service links found in index.html; no SEO pages generated. Check the homepage catalog markup first.');
 const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
