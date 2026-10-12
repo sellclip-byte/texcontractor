@@ -130,7 +130,8 @@
     document.getElementById('page-title').textContent = `${service} contractors near you`;
     document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
     const messageTemplate = () => [
-      'Hello, I found your service on TexContractor.com.',
+      'Hello, I found your service on TexContractor:',
+      'https://texcontractor.com',
       'I need an estimate.',
       'My ZIP code: __________',
       'Problem description: ____________________',
