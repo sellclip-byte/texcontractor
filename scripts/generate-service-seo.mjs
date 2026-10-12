@@ -465,7 +465,7 @@ for (const service of services) {
   if (!id) continue;
   if (used.has(id)) throw Error('SEO slug collision: '+id);
   used.add(id);
-  const target = '../contractor.html?service='+encodeURIComponent(service);
+  const target = 'https://texcontractor.com/contractor.html?service='+encodeURIComponent(service);
   const canonical = 'https://texcontractor.com/services/'+id+'.html';
   const editorial = reviewed[service.toLowerCase()];
   const serviceCopy = editorial
@@ -478,10 +478,10 @@ for (const service of services) {
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <meta name="robots" content="noindex,follow"><link rel="canonical" href="${canonical}">
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:auto;max-width:800px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:35px 0}a.cta{display:inline-block;padding:12px 20px;background:#075c80;color:white;border-radius:8px;text-decoration:none}</style>
-</head><body><header><a href="../index.html">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
+</head><body><header><a href="/">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
 ${serviceCopy}
 <a class="cta" href="${esc(target)}">Browse ${esc(service)} contractors</a>
-</main><footer><a href="index.html">Browse all services</a></footer></body></html>`;
+</main><footer><a href="/services/">Browse all services</a></footer></body></html>`;
   writeFileSync(join(dir,id+'.html'),page);
   urls.push(canonical);
 }
