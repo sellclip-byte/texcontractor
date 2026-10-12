@@ -490,6 +490,32 @@
   .service-card .img-wrapper img { display: block !important; width: 100% !important; height: 100% !important; aspect-ratio: 16 / 9 !important; object-fit: cover !important; object-position: center !important; opacity: 1 !important; transform: none !important; }
 }
 </style>
+
+<!-- Mobile share panel viewport containment fix -->
+<style id="tex-mobile-share-panel-fix">
+@media (max-width: 768px) {
+  #media-menu.media-menu-panel {
+    position: fixed !important;
+    top: auto !important;
+    right: 12px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: min(75vh, 600px) !important;
+    max-height: min(75dvh, 600px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    box-sizing: border-box !important;
+    z-index: 99999 !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  #media-menu.media-menu-panel[hidden] { display: none !important; }
+  #media-menu .media-options { min-width: 0 !important; }
+  #media-menu .media-option { box-sizing: border-box; max-width: 100%; }
+}
+</style>
 </head>
 <body>
 
