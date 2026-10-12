@@ -281,8 +281,24 @@
   <script src="tex-side-ads.js"></script>
 <script>
 (function(){
- const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text&key=eq.contractor_notice&limit=1';
- fetch(url,{headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>{if(!r.ok)throw Error('load');return r.json()}).then(rows=>{const el=document.getElementById('contractor-notice-text');if(el&&rows[0]?.message_text)el.textContent=rows[0].message_text}).catch(()=>{});
+ const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url&key=eq.contractor_notice&limit=1';
+ fetch(url,{headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>{if(!r.ok)throw Error('load');return r.json()}).then(rows=>{
+ const row=rows[0],el=document.getElementById('contractor-notice-text');if(!row||!el)return;
+ if(row.message_text)el.textContent=row.message_text;
+ const box=el.closest('.notice');if(!box)return;
+ const safeHex=(x)=>/^#[0-9a-f]{6}$/i.test(x||'')?x:null;
+ if(safeHex(row.text_color))el.style.color=row.text_color;
+ if(safeHex(row.background_color))box.style.backgroundColor=row.background_color;
+ if(safeHex(row.accent_color))box.style.borderColor=row.accent_color;
+ el.style.fontWeight=row.font_style==='bold'?'700':'400';
+ el.style.fontStyle=row.font_style==='italic'?'italic':'normal';
+ el.style.textTransform=row.font_style==='uppercase'?'uppercase':'none';
+ if(['slow','fast'].includes(row.notice_flash_speed)){
+ const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.notice{animation:none!important}}';document.head.appendChild(style);
+ box.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite';
+ }
+ try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;max-height:240px;object-fit:contain;margin-top:12px';box.appendChild(img)}}catch(e){}
+ }).catch(()=>{});
 })();
 </script>
 </body>
