@@ -1,5 +1,8 @@
 name: Deploy staging site to GitHub Pages
 on:
+  push:
+    branches:
+      - seo-safe-review-20261011
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,6 +22,7 @@ jobs:
         with:
           node-version: '20'
       - run: node scripts/check-static-site.mjs
+      - run: node scripts/audit-seo.mjs
       - run: node scripts/generate-service-seo.mjs
       - name: Prepare staging build
         run: |
