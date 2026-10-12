@@ -1,8 +1,6 @@
 name: Live SEO check
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '20 11 * * 1'
   push:
     branches:
       - seo-safe-review-20261011
@@ -22,4 +20,13 @@ jobs:
         with:
           node-version: '22'
       - name: Check published URLs without modifying the website
-        run: node scripts/check-live-seo.mjs
+        run: |
+          set -o pipefail
+          node scripts/check-live-seo.mjs 2>&1 | tee live-seo-results.txt
+      - name: Save full live test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texcontractor-live-seo-report
+          path: live-seo-results.txt
+          if-no-files-found: warn
