@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
   <meta name="description" content="Sign in to TexContractor without a password.">
   <title>Sign in · TexContractor</title>
   <style>
@@ -21,7 +24,8 @@
     button, .back { width:100%; min-height:48px; border-radius:10px; font:inherit; font-weight:850; cursor:pointer; }
     .primary { margin-top:14px; border:0; color:#fff; background:var(--green); }
     .primary:hover { background:#064c3f; }
-    .google { margin-top:10px; border:1px solid #cbd5e1; color:#475569; background:#f8fafc; cursor:not-allowed; }
+    .google { margin-top:10px; border:1px solid #cbd5e1; color:#475569; background:#f8fafc; }
+    .google:disabled { cursor:wait; opacity:.7; }
     .divider { display:flex; align-items:center; gap:10px; margin:20px 0 14px; color:#98a2b3; font-size:.85rem; }
     .divider::before, .divider::after { content:""; height:1px; flex:1; background:var(--line); }
     .message { display:none; margin-top:14px; padding:12px 14px; border-radius:10px; color:#14532d; background:#ecfdf3; font-weight:700; line-height:1.45; }
@@ -36,14 +40,14 @@
   <main class="card">
     <a class="brand" href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor"></a>
     <h1>Sign in to continue</h1>
-    <p class="lead">Use your email to receive a secure one-time link. No password is needed.</p>
+    <p class="lead">Use your email or Google account to sign in securely. No password is needed.</p>
     <form id="auth-form">
       <label for="email">Email address<input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
       <button class="primary" type="submit" id="email-submit">Send me a sign-in link</button>
     </form>
     <div class="divider">or</div>
-    <button class="google" type="button" disabled title="Google sign-in will be enabled after OAuth setup">Continue with Google</button>
-    <p class="small">Google sign-in is being prepared. Email sign-in is ready now. By continuing, you confirm that you control this email address.</p>
+    <button class="google" type="button" id="google-submit">Continue with Google</button>
+    <p class="small">By continuing, you confirm that you control this email address.</p>
     <div class="message" id="message" role="status"></div>
     <a class="back" href="index.html">← Back to TexContractor</a>
   </main>
@@ -54,16 +58,23 @@
     const form = document.getElementById('auth-form');
     const emailInput = document.getElementById('email');
     const submitButton = document.getElementById('email-submit');
+    const googleButton = document.getElementById('google-submit');
     const message = document.getElementById('message');
     const showMessage = (text, isError = false) => { message.textContent = text; message.className = `message show${isError ? ' error' : ''}`; };
 
     async function continueIfSignedIn() {
-      const errorDescription = new URLSearchParams(window.location.hash.slice(1)).get('error_description');
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const queryParams = new URLSearchParams(window.location.search);
+      const errorDescription = hashParams.get('error_description') || queryParams.get('error_description') || hashParams.get('error') || queryParams.get('error');
       const captured = TexAuth.captureMagicLinkSession();
       const user = await TexAuth.getUser();
       if (user) {
         window.location.replace(returnTo);
         return true;
+      }
+      if (localStorage.getItem('texcontractor-access-blocked') === '1') {
+        localStorage.removeItem('texcontractor-access-blocked');
+        showMessage('Access to TexContractor is currently blocked by an administrator.', true);
       }
       if (captured) showMessage('Your sign-in link could not be verified. Please request a new link.', true);
       if (errorDescription) showMessage(errorDescription, true);
@@ -71,6 +82,17 @@
     }
 
     continueIfSignedIn();
+    googleButton.addEventListener('click', () => {
+      googleButton.disabled = true;
+      googleButton.textContent = 'Opening Google…';
+      try {
+        TexAuth.signInWithGoogle(returnTo);
+      } catch (error) {
+        googleButton.disabled = false;
+        googleButton.textContent = 'Continue with Google';
+        showMessage(error.message, true);
+      }
+    });
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       submitButton.disabled = true;
@@ -86,5 +108,7 @@
       }
     });
   </script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
 </body>
 </html>

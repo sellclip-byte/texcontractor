@@ -53,6 +53,56 @@
     return body;
   };
 
+  const syncTexContractorMember = async (user, accessToken) => {
+    if (!user?.id || !accessToken) return;
+    const metadata = user.user_metadata || {};
+    const provider = user.app_metadata?.provider || user.identities?.[0]?.provider || 'email';
+    await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_members?on_conflict=user_id`, {
+      method: 'POST',
+      headers: {
+        ...authHeaders(accessToken),
+        Prefer: 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        email: user.email || '',
+        display_name: metadata.full_name || metadata.name || null,
+        avatar_url: metadata.avatar_url || null,
+        provider,
+        last_sign_in_at: user.last_sign_in_at || null,
+        updated_at: new Date().toISOString()
+      })
+    }).catch(() => {});
+  };
+
+  const readTexContractorAccess = async (user, accessToken) => {
+    if (!user?.id || !accessToken) return { status: null, isAdmin: false };
+    try {
+      const userId = encodeURIComponent(user.id);
+      const memberResponse = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_members?select=status&user_id=eq.${userId}&limit=1`, { headers: authHeaders(accessToken) });
+      if (!memberResponse.ok) return { status: null, isAdmin: false };
+      const members = await memberResponse.json().catch(() => []);
+      const adminResponse = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_admins?select=user_id&user_id=eq.${userId}&limit=1`, { headers: authHeaders(accessToken) });
+      const admins = adminResponse.ok ? await adminResponse.json().catch(() => []) : [];
+      return { status: members?.[0]?.status || null, isAdmin: admins.length > 0 };
+    } catch (error) {
+      return { status: null, isAdmin: false };
+    }
+  };
+
+  const finalizeUser = async (user, accessToken, session) => {
+    saveSession({ ...session, user });
+    await syncTexContractorMember(user, accessToken);
+    const access = await readTexContractorAccess(user, accessToken);
+    if (access.status === 'blocked' && !access.isAdmin) {
+      localStorage.setItem('texcontractor-access-blocked', '1');
+      clearSession();
+      return null;
+    }
+    localStorage.removeItem('texcontractor-access-blocked');
+    return user;
+  };
+
   const refreshSession = async (session) => {
     if (!session?.refresh_token) return null;
     try {
@@ -81,8 +131,7 @@
         headers: authHeaders(session.access_token)
       });
       const current = readSession() || {};
-      saveSession({ ...current, user });
-      return user;
+      return finalizeUser(user, session.access_token, current);
     } catch (error) {
       const refreshed = await refreshSession(session);
       if (!refreshed?.access_token) return null;
@@ -90,13 +139,18 @@
         const user = await requestJson(`${SUPABASE_URL}/auth/v1/user`, {
           headers: authHeaders(refreshed.access_token)
         });
-        saveSession({ ...refreshed, user });
-        return user;
+        return finalizeUser(user, refreshed.access_token, refreshed);
       } catch (retryError) {
         clearSession();
         return null;
       }
     }
+  };
+
+  const getAccessToken = async () => {
+    const user = await getUser();
+    if (!user) return null;
+    return readSession()?.access_token || null;
   };
 
   const captureMagicLinkSession = () => {
@@ -132,6 +186,17 @@
     });
   };
 
+  const signInWithGoogle = (returnTo) => {
+    const redirectOrigin = ['texcontractor.com', 'www.texcontractor.com'].includes(window.location.hostname)
+      ? 'https://texcontractor.com/'
+      : window.location.href;
+    const redirectTo = new URL(authHref(returnTo), redirectOrigin).href;
+    const authorizeUrl = new URL(SUPABASE_URL + '/auth/v1/authorize');
+    authorizeUrl.searchParams.set('provider', 'google');
+    authorizeUrl.searchParams.set('redirect_to', redirectTo);
+    window.location.assign(authorizeUrl.href);
+  };
+
   const signOut = async () => {
     const session = readSession();
     if (session?.access_token) {
@@ -153,10 +218,11 @@
   window.TexAuth = {
     authHref,
     captureMagicLinkSession,
+    getAccessToken,
     getUser,
     requireUser,
-    getAccessToken: async () => (await getUser()) ? (readSession()?.access_token || null) : null,
     sendMagicLink,
+    signInWithGoogle,
     signOut,
     safeReturnTo
   };

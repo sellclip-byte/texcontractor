@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
   <title>Contractor Profile · TexContractor</title>
   <style>
     :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --green:#157347; --red:#b42318; --gold:#f5b94c; }
@@ -51,14 +54,14 @@
   <main class="page">
     <p class="crumb"><span id="service-label">Local service</span> · Contractor profile</p>
     <section class="profile-head">
-      <div class="avatar" id="avatar"><span id="avatar-initials">NS</span><img id="avatar-image" alt="Contractor profile photo"></div>
-      <div><h1 id="contractor-name">Loading contractor profile…</h1><p class="verified">Contractor profile</p></div>
+      <div class="avatar" id="avatar"><span id="avatar-initials">?</span><img id="avatar-image" alt="Contractor profile photo"></div>
+      <div><h1 id="contractor-name">Contractor profile</h1><p class="verified">✓ Verified contractor</p></div>
     </section>
     <div class="grid">
       <section class="panel">
         <h2>About this contractor</h2>
-        <p id="about-copy">Loading published contractor information…</p>
-        <div class="action-row"><a class="action text-action" id="text-link" href="#">Text this contractor</a></div>
+        <p id="about-copy">This profile is available after a real contractor submits a service and the administrator approves it.</p>
+        <div class="action-row"><a class="action text-action" id="text-link" href="contractor.html">Text this contractor</a></div>
       </section>
       <section class="panel" style="grid-column:1 / -1">
         <h2>Work photos</h2>
@@ -68,9 +71,9 @@
       <aside class="panel">
         <h2>Profile details</h2>
         <dl class="facts">
-          <div class="fact"><dt>Rating</dt><dd id="rating">Not rated</dd></div>
+          <div class="fact"><dt>Rating</dt><dd id="rating">Not available</dd></div>
           <div class="fact"><dt>Location</dt><dd id="location">Not available</dd></div>
-          <div class="fact"><dt>Experience</dt><dd>Not provided</dd></div>
+          <div class="fact"><dt>Experience</dt><dd>Not available</dd></div>
         </dl>
         <div class="action-row">
           <button class="action block-action" id="block-button" type="button">Block this contractor</button>
@@ -81,52 +84,85 @@
   </main>
   <script src="tex-auth.js"></script>
   <script>
+    const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
     const params = new URLSearchParams(location.search);
     const key = params.get('contractor') || '';
-    const profile = {
-      name:'Loading contractor profile', initials:'—', rating:'Not rated',
-      location:'Not available', phone:'', about:'Loading published contractor information…',
-      work:[], years:'—'
-    };
     const service = params.get('service') || 'Local service';
+    const mediaUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/texcontractor-media/${String(path).split('/').map(encodeURIComponent).join('/')}` : '';
+    const loadProfile = async () => {
+      if (!key) return null;
+      const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY } });
+      if (!response.ok) throw new Error('Profile could not be loaded.');
+      const row = (await response.json())[0];
+      return row ? {
+        name:row.display_name,
+        initials:String(row.display_name || 'T').trim().split(/\s+/).slice(0,2).map((part) => part[0]).join('').toUpperCase(),
+        rating:'Published profile',
+        location:[row.city, row.state].filter(Boolean).join(', ') || 'Texas',
+        id:row.id,
+        about:row.about || 'This contractor has added a service profile and is ready to receive direct messages.',
+        profilePhoto:mediaUrl(row.profile_photo_path),
+        work:(Array.isArray(row.work_photo_paths) ? row.work_photo_paths : []).map(mediaUrl),
+        years:row.years || '—',
+        service:row.service || service
+      } : null;
+    };
+    const renderProfile = async () => {
+      let profile = null;
+      try { profile = await loadProfile(); } catch (error) { profile = null; }
+    if (!profile) {
+      const destination = new URL('contractor.html', window.location.href);
+      destination.searchParams.set('service', service);
+      if (params.get('city')) destination.searchParams.set('city', params.get('city'));
+      if (params.get('state')) destination.searchParams.set('state', params.get('state'));
+      if (params.get('zip')) destination.searchParams.set('zip', params.get('zip'));
+      window.location.replace(destination.href);
+    } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
     document.getElementById('avatar-initials').textContent = profile.initials;
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
-    document.getElementById('service-label').textContent = service;
+    document.getElementById('service-label').textContent = profile.service;
     if (profile.about) document.getElementById('about-copy').textContent = profile.about;
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
-    const contactRequested = params.get('contact') === '1';
-    const contactReturn = `profile.html?contractor=${encodeURIComponent(key)}&service=${encodeURIComponent(service)}&contact=1`;
     const textLink = document.getElementById('text-link');
-    textLink.removeAttribute('href');
-    textLink.textContent = 'Text this contractor';
-    textLink.setAttribute('role','button');
+    const messageTemplate = [
+      `Hello ${profile.name},`,
+      '',
+      'ZIP code: __________',
+      'I need repair for: ____________________',
+      '',
+      'Please attach a photo or video of the problem.',
+      'Preferred contact: Call me / Text only',
+      '',
+      'Please send me your repair cost estimate.'
+    ].join('\n');
+    textLink.href = '#';
     textLink.addEventListener('click', async (event) => {
       event.preventDefault();
-      if (textLink.dataset.loading === '1') return;
-      textLink.dataset.loading = '1';
-      textLink.textContent = 'Connecting…';
+      textLink.textContent = 'Preparing message…';
       try {
         const token = await TexAuth.getAccessToken();
-        if (!token) { location.assign(TexAuth.authHref(contactReturn)); return; }
-        const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/functions/v1/contractor-contact', {
+        if (!token) {
+          await TexAuth.requireUser(`profile.html${window.location.search}`);
+          return;
+        }
+        const phoneResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_contractor_phone`, {
           method:'POST',
-          headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':'application/json'},
-          body:JSON.stringify({contractor_id:key})
+          headers:{ apikey:SUPABASE_KEY, Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
+          body:JSON.stringify({ p_service_id: profile.id })
         });
-        if (!response.ok) throw new Error('Contact unavailable');
-        const data = await response.json();
-        if (!/^\+?[0-9]{10,15}$/.test(data.phone || '')) throw new Error('Invalid phone');
-        const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!");
-        location.href = 'sms:' + data.phone + '?body=' + message;
-      } catch(error) {
-        console.error('Contact lookup failed:',error);
-        textLink.textContent = 'Contact unavailable — try again';
-      } finally {
-        textLink.dataset.loading = '0';
-        if (textLink.textContent === 'Connecting…') textLink.textContent = 'Text this contractor';
+        if (!phoneResponse.ok) throw new Error('The contractor phone number is not available yet.');
+        const rows = await phoneResponse.json();
+        const phone = String(rows?.[0]?.phone || '').replace(/[^\d+]/g, '');
+        if (!phone) throw new Error('The contractor phone number is not available yet.');
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate)}`;
+      } catch (error) {
+        textLink.textContent = 'Text this contractor';
+        window.alert(error.message);
       }
     });
     const gallery = document.getElementById('work-gallery');
@@ -143,60 +179,19 @@
         document.getElementById('avatar-image').style.display = 'block';
         document.getElementById('avatar-initials').style.display = 'none';
     }
-    // Resolve public profiles by ID from the shared directory, not browser-local records.
-    async function loadPublicProfile() {
-      if (!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(key)) { document.getElementById('contractor-name').textContent = 'Contractor not available'; return; }
-      const url = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=id,display_name,service,city,state,years,about,profile_photo_path,work_photo_paths&id=eq.' + encodeURIComponent(key) + '&is_published=eq.true&limit=1';
-      const response = await fetch(url, {headers: {apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});
-      if (!response.ok) throw new Error('Profile request failed');
-      const rows = await response.json();
-      const record = Array.isArray(rows) ? rows[0] : null;
-      if (!record) {
-        document.getElementById('contractor-name').textContent = 'Contractor not available';
-        document.getElementById('about-copy').textContent = 'This contractor has no published profile.';
-        return;
-      }
-      const name = String(record.display_name || 'Contractor');
-      document.title = name + ' · TexContractor';
-      document.getElementById('contractor-name').textContent = name;
-      document.getElementById('avatar-initials').textContent = name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
-      document.getElementById('service-label').textContent = record.service || service;
-      document.getElementById('location').textContent = [record.city,record.state].filter(Boolean).join(', ') || 'Not provided';
-      document.getElementById('about-copy').textContent = record.about || 'No description provided.';
-      document.getElementById('rating').textContent = 'Not rated';
-      document.querySelector('.fact:nth-child(3) dd').textContent = record.years ? String(record.years) + ' years' : 'Not provided';
-      // The public directory intentionally contains no phone number. Do not invent one.
-      textLink.textContent = 'Text this contractor';
-      textLink.removeAttribute('aria-disabled');
-      gallery.replaceChildren();
-      const mediaUrl = path => {
-        if (typeof path !== 'string' || !path || !/^[a-zA-Z0-9_./-]+$/.test(path) || path.includes('..')) return '';
-        return 'https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/public/texcontractor-media/' + path.split('/').map(encodeURIComponent).join('/');
-      };
-      const avatarUrl = mediaUrl(record.profile_photo_path);
-      if (avatarUrl) {
-        const avatar = document.getElementById('avatar-image');
-        avatar.src = avatarUrl;
-        avatar.style.display = 'block';
-        document.getElementById('avatar-initials').style.display = 'none';
-      }
-      const photos = Array.isArray(record.work_photo_paths) ? record.work_photo_paths.slice(0, 4) : [];
-      photos.forEach((path, index) => {
-        const src = mediaUrl(path);
-        if (src) addGalleryImage(src, index);
-      });
-    }
-    loadPublicProfile().catch(() => {
-      document.getElementById('about-copy').textContent = 'Unable to load the contractor profile. Please try again.';
-    });
     document.getElementById('block-button').addEventListener('click', () => {
-      const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]');
+      const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]');
       if (!blocked.includes(key)) blocked.push(key);
-      localStorage.setItem('texcontractor-blocked-providers', JSON.stringify(blocked));
+      localStorage.setItem('texcontractor-blocked', JSON.stringify(blocked));
       document.getElementById('confirmation').classList.add('show');
       document.getElementById('block-button').disabled = true;
       document.getElementById('block-button').textContent = 'Contractor blocked';
     });
+    }
+    };
+    renderProfile();
   </script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
 </body>
 </html>
