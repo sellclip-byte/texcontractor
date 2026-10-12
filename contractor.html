@@ -100,7 +100,7 @@
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
-    <div id="contractor-notice-image-area" style="display:block;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" src="https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/public/texcontractor-side-ads/contractor-notice/6d83440a-820a-4309-b666-cba8e24a8290/1791833002346-gk0lon0.png" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"></div>
+    <div id="contractor-notice-image-area" style="display:none;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"></div>
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Published profiles from professionals who offer this service.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
@@ -281,27 +281,30 @@
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js"></script>
 <script>
-(function(){
- const BASE='https://rryehtaskbjnfbodymjj.supabase.co';
- const URL=BASE+'/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1';
- const imageArea=document.getElementById('contractor-notice-image-area'),img=document.getElementById('contractor-notice-public-image');
- const banner=document.getElementById('contractor-notice-banner'),label=document.getElementById('contractor-notice-text');
- function validUrl(s){try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
- function update(row){
- if(!row)return;
- if(label&&row.message_text)label.textContent=row.message_text;
- const color=(v)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:null;
- if(banner){if(color(row.background_color))banner.style.setProperty('background-color',row.background_color,'important');if(color(row.accent_color))banner.style.setProperty('border-color',row.accent_color,'important');if(color(row.text_color))banner.style.setProperty('color',row.text_color,'important');}
- if(label){if(color(row.text_color))label.style.setProperty('color',row.text_color,'important');label.style.fontWeight=row.font_style==='bold'?'700':'400';label.style.fontStyle=row.font_style==='italic'?'italic':'normal';label.style.textTransform=row.font_style==='uppercase'?'uppercase':'none';}
- if(banner){banner.style.animation='none';if(row.notice_flash_speed==='slow'||row.notice_flash_speed==='fast'){banner.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite'}}
- const src=validUrl(row.notice_image_url);
- const selectedService=new URLSearchParams(location.search).get('service');
- if(selectedService){const key=selectedService.trim().replace(/\\s+/g,' ').toLowerCase();fetch(BASE+'/rest/v1/texcontractor_catalog_images?select=image_url,click_url&service_key=eq.'+encodeURIComponent(key)+'&limit=1',{cache:'no-store',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>r.ok?r.json():[]).then(rows=>{const selected=rows[0];if(!selected||!validUrl(selected.image_url))return;const area=document.getElementById('contractor-notice-image-area'),image=document.getElementById('contractor-notice-public-image');if(!area||!image)return;area.style.display='block';image.src=selected.image_url;const destination=validUrl(selected.click_url);const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}).catch(()=>{})}
-
- if(imageArea&&img){if(src){imageArea.style.display='block';if(img.getAttribute('src')!==src)img.setAttribute('src',src);const target=validUrl(row.notice_image_link_url);const parent=img.parentElement;if(target){let link=parent.tagName==='A'?parent:document.createElement('a');link.href=target;link.target='_blank';link.rel='noopener noreferrer';if(parent!==link){img.replaceWith(link);link.appendChild(img)}}else if(parent.tagName==='A')parent.replaceWith(img);}}
+(async function(){
+ const base='https://rryehtaskbjnfbodymjj.supabase.co';
+ const key='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+ const headers={apikey:key};
+ const area=document.getElementById('contractor-notice-image-area');
+ const image=document.getElementById('contractor-notice-public-image');
+ const banner=document.getElementById('contractor-notice-banner');
+ const label=document.getElementById('contractor-notice-text');
+ const safe=s=>{try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}};
+ const get=async path=>{const r=await fetch(base+path,{headers,cache:'no-store'});if(!r.ok)throw Error('Request '+r.status);return r.json()};
+ let general=null,catalog=null;
+ try{general=(await get('/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1'))[0]}catch(e){console.warn('Notice settings unavailable',e)}
+ const service=new URLSearchParams(location.search).get('service');
+ if(service){const normalized=service.trim().replace(/\s+/g,' ').toLowerCase();try{catalog=(await get('/rest/v1/texcontractor_catalog_images?select=image_url,click_url&service_key=eq.'+encodeURIComponent(normalized)+'&limit=1'))[0]}catch(e){console.warn('Catalog image unavailable',e)}}
+ if(general){
+  if(label&&general.message_text)label.textContent=general.message_text;
+  const hex=x=>/^#[0-9a-f]{6}$/i.test(x||'');
+  if(banner){if(hex(general.background_color))banner.style.setProperty('background-color',general.background_color,'important');if(hex(general.accent_color))banner.style.setProperty('border-color',general.accent_color,'important')}
+  if(label){if(hex(general.text_color))label.style.setProperty('color',general.text_color,'important');label.style.fontWeight=general.font_style==='bold'?'700':'400';label.style.fontStyle=general.font_style==='italic'?'italic':'normal';label.style.textTransform=general.font_style==='uppercase'?'uppercase':'none'}
+  if(banner&&(general.notice_flash_speed==='slow'||general.notice_flash_speed==='fast')){const s=document.createElement('style');s.textContent='@keyframes texNoticePulse{50%{opacity:.45}}';document.head.appendChild(s);banner.style.animation='texNoticePulse '+(general.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite'}
  }
- const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){#contractor-notice-banner{animation:none!important}}';document.head.appendChild(style);
- fetch(URL,{cache:'no-store',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>{if(!r.ok)throw Error('notice settings unavailable');return r.json()}).then(rows=>update(rows[0])).catch(()=>{});
+ const src=safe(catalog?.image_url)||safe(general?.notice_image_url);
+ const destination=safe(catalog?.image_url?catalog.click_url:general?.notice_image_link_url);
+ if(area&&image){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
 })();
 </script>
 </body>
