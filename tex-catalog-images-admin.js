@@ -7,7 +7,18 @@ const valid=s=>{try{let u=new URL(s);return ['https:','http:'].includes(u.protoc
 let records=new Map(),busy=false;
 async function auth(){const user=await TexAuth.getUser(),token=await TexAuth.getAccessToken();if(!user||!token)throw Error('Sign in as administrator');return {user,token,headers:{apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'}}}
 function show(){const key=normalize(service.value),saved=records.get(key);url.value=saved?.image_url||'';link.value=saved?.click_url||'';preview.src=url.value;preview.style.display=url.value?'block':'none';status.textContent=saved?'Existing image loaded for this catalog.':'No custom image for this catalog yet.'}
-async function load(){try{const r=await fetch(S+'/rest/v1/texcontractor_catalog_images?select=service_key,service_name,image_url,click_url',{headers:{apikey:KEY},cache:'no-store'});if(!r.ok)throw Error('Could not load catalog images');records=new Map((await r.json()).map(x=>[x.service_key,x]));const names=new Set([...records.values()].map(x=>x.service_name));const services=await fetch(S+'/rest/v1/texcontractor_public_services?select=service&is_published=eq.true&limit=1000',{headers:{apikey:KEY}});if(services.ok)(await services.json()).forEach(x=>{if(x.service)names.add(x.service)});$('catalog-image-service-list').replaceChildren(...[...names].sort().map(n=>{const o=document.createElement('option');o.value=n;return o}));if(service.value)show()}catch(e){status.textContent=e.message}}
+async function load(){try{
+ const r=await fetch(S+'/rest/v1/texcontractor_catalog_images?select=service_key,service_name,image_url,click_url',{headers:{apikey:KEY},cache:'no-store'});
+ if(!r.ok)throw Error('Could not load catalog images');
+ records=new Map((await r.json()).map(x=>[x.service_key,x]));
+ const names=new Set([...records.values()].map(x=>x.service_name));
+ const services=await fetch(S+'/rest/v1/texcontractor_public_services?select=service&limit=1000',{headers:{apikey:KEY},cache:'no-store'});
+ if(services.ok)(await services.json()).forEach(x=>{if(x.service)names.add(x.service)});
+ const options=[...names].filter(Boolean).sort((a,b)=>a.localeCompare(b)).map(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;return o});
+ service.replaceChildren(Object.assign(document.createElement('option'),{value:'',textContent:'Select a contractor catalog'}),...options);
+ if(!options.length)status.textContent='No catalogs loaded. Please refresh the Admin page.';
+ if(service.value)show();
+}catch(e){status.textContent=e.message}}
 service.addEventListener('change',show);
 service.addEventListener('blur',show);
 file.addEventListener('change',async()=>{const f=file.files?.[0];if(!f)return;const key=normalize(service.value);if(!key){status.textContent='Choose the catalog before uploading.';file.value='';return}if(!['image/jpeg','image/png','image/webp','image/avif','image/gif'].includes(f.type)||f.size>10*1024*1024){status.textContent='Use a JPG, PNG, WebP, GIF or AVIF image under 10 MB.';return}file.disabled=true;status.textContent='Uploading catalog image…';try{const {user,token}=await auth();const ext=f.name.split('.').pop().replace(/[^a-z0-9]/gi,'').slice(0,6)||'jpg';const path='catalog-images/'+user.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;const r=await fetch(S+'/storage/v1/object/texcontractor-side-ads/'+path,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+token,'Content-Type':f.type},body:f});if(!r.ok)throw Error((await r.text()).slice(0,200));url.value=S+'/storage/v1/object/public/texcontractor-side-ads/'+path;preview.src=url.value;preview.style.display='block';status.textContent='Uploaded. Click Save this catalog image.'}catch(e){status.textContent='Upload failed: '+e.message}finally{file.disabled=false;file.value=''}});
