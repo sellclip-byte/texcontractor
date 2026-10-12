@@ -281,7 +281,7 @@
   <script src="tex-side-ads.js"></script>
 <script>
 (function(){
- const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url&key=eq.contractor_notice&limit=1';
+ const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1';
  fetch(url+'&_ts='+Date.now(),{cache:'no-store',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r','Cache-Control':'no-cache'}}).then(r=>{if(!r.ok)throw Error('load');return r.json()}).then(rows=>{
  const row=rows[0],el=document.getElementById('contractor-notice-text');if(!row||!el)return;
  if(row.message_text)el.textContent=row.message_text;
@@ -297,7 +297,7 @@
  const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.notice{animation:none!important}}';document.head.appendChild(style);
  box.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite';
  }
- try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:14px auto 0;border-radius:12px';img.decoding='async';const imageArea=document.createElement('div');imageArea.id='contractor-notice-image-area';imageArea.style.cssText='width:100%;display:block;clear:both;text-align:center';imageArea.appendChild(img);box.insertAdjacentElement('afterend',imageArea)}}catch(e){}
+ try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:14px auto 0;border-radius:12px';img.decoding='async';const imageArea=document.createElement('div');imageArea.id='contractor-notice-image-area';imageArea.style.cssText='width:100%;display:block;clear:both;text-align:center';let destination=null;try{const link=new URL(row.notice_image_link_url);if(['https:','http:'].includes(link.protocol))destination=link.href}catch(e){}if(destination){const a=document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label','Open image link');a.appendChild(img);imageArea.appendChild(a)}else imageArea.appendChild(img);box.insertAdjacentElement('afterend',imageArea)}}catch(e){}
  }).catch(()=>{});
 })();
 </script>
