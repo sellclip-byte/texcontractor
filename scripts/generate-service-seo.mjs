@@ -28,6 +28,7 @@ if (!services.length) throw Error('No real service links found in index.html; no
 const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
 const dir = join(root,'services'); mkdirSync(dir,{recursive:true});
+// Keep generated landing pages noindex until substantive, unique content and live-domain verification are complete.
 const used = new Set(); const urls = [];
 for (const service of services) {
   let id = slug(service);
@@ -51,7 +52,7 @@ for (const service of services) {
   writeFileSync(join(dir,id+'.html'),page);
   urls.push(canonical);
 }
-const directoryLinks = services.map(service => '<li><a href="/services/'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\\n');
+const directoryLinks = services.map(service => '<li><a href="/services/'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
 const directoryPage = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="/">TexContractor home</a></p></main></body></html>';
 writeFileSync(join(dir,'index.html'),directoryPage);
 const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
