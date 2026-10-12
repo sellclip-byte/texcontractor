@@ -38,6 +38,62 @@ const reviewed = {
     safetyHeading: 'Garage door safety',
     safety: 'Garage door springs and cables are under high tension. Do not attempt to loosen or remove them yourself. If a spring or cable appears damaged, stop operating the door and ask a qualified technician to assess it.'
   },
+  'roof repair or maintenance': {
+    intro: 'Roof repair requests may involve missing shingles, damaged flashing, leaks around vents, or storm-related wear. Describe where and when you noticed the issue.',
+    heading: 'Information to share before a roof inspection',
+    details: 'Tell the contractor the approximate roof age, roofing material if known, whether water enters during rain, and whether you see damage from the ground. Ask about inspection scope, repair options, written estimates, and cleanup.',
+    safetyHeading: 'Roof access safety',
+    safety: 'Avoid climbing onto a wet, steep, or damaged roof. If water is entering near electrical fixtures, keep clear of the affected area and seek appropriate professional help.'
+  },
+  'electrical and wiring repair': {
+    intro: 'Electrical repair can include outlets that stop working, tripping breakers, flickering lights, damaged switches, and wiring faults. A qualified electrician can evaluate the cause.',
+    heading: 'Describe the electrical symptoms',
+    details: 'Explain which rooms or circuits are affected, when the problem began, and whether you noticed heat, buzzing, or a burning smell. Ask about licensing, diagnosis charges, permits where applicable, and a written repair estimate.',
+    safetyHeading: 'Electrical safety',
+    safety: 'Do not touch exposed wires or repeatedly reset a breaker that keeps tripping. If you notice smoke or signs of fire, move to safety and contact emergency services.'
+  },
+  'central air conditioning repair or maintenance': {
+    intro: 'Air-conditioning service may involve weak airflow, warm air from vents, unusual noises, thermostat problems, or routine filter and equipment checks.',
+    heading: 'Prepare for an AC service request',
+    details: 'Provide the system type if known, whether the outdoor unit runs, any error codes, and the rooms affected. Ask whether diagnostic fees, replacement parts, and maintenance work are quoted separately.',
+    safetyHeading: 'AC system precautions',
+    safety: 'Switch off equipment that is leaking heavily, sparking, or making severe mechanical noises. Refrigerant handling and electrical repairs should be performed by qualified professionals.'
+  },
+  'home foundation repair': {
+    intro: 'Foundation concerns can include new wall cracks, sticking doors, uneven floors, or visible movement around a slab or pier-and-beam structure.',
+    heading: 'Document foundation movement',
+    details: 'Share photos of cracks and note when they appeared, whether they are widening, and any drainage or soil problems around the property. Ask about inspection methods, engineering evaluation, repair proposals, and warranty terms.',
+    safetyHeading: 'Structural safety',
+    safety: 'If you see sudden major movement, severe structural cracking, or a risk of collapse, avoid the affected area and seek urgent professional assessment.'
+  },
+  'plumbing pipe repair': {
+    intro: 'Pipe repair work may address dripping joints, leaking supply lines, low water pressure, corrosion, or damaged drain and water pipes.',
+    heading: 'Details that help a plumber estimate the job',
+    details: 'Identify the leak location, whether it occurs constantly, the visible pipe material if known, and whether water service has been shut off. Ask about leak detection, access repairs, replacement materials, and a written estimate.',
+    safetyHeading: 'Water leak precautions',
+    safety: 'If a pipe is actively flooding the property, use the main water shutoff when safe. Keep away from electrical equipment exposed to water.'
+  },
+  'tree trimming and removal': {
+    intro: 'Tree services can involve pruning overgrown limbs, removing dead branches, storm cleanup, or assessing trees that lean toward buildings and power lines.',
+    heading: 'Describe the tree and access conditions',
+    details: 'Tell the provider the approximate tree size, proximity to structures, access for equipment, and whether debris removal or stump work is needed. Ask about insurance, permits where required, and cleanup.',
+    safetyHeading: 'Tree work safety',
+    safety: 'Do not approach fallen power lines or attempt to cut suspended limbs. Large-tree removal and work near utility lines require appropriately equipped professionals.'
+  },
+  'lawn mower water pump and outdoor equipment repair': {
+    intro: 'Outdoor equipment repair can cover lawn mowers, water pumps, and small-engine machines that will not start, run unevenly, leak, or stop under load.',
+    heading: 'Identify the equipment and failure',
+    details: 'Share the make, model, engine type if known, and whether the unit starts, stalls, or has visible leaks. Ask about mobile service availability, diagnostic fees, parts, and repair-versus-replacement costs.',
+    safetyHeading: 'Equipment safety',
+    safety: 'Shut down equipment and disconnect its power source before inspection. Do not run fuel-powered engines indoors or touch moving blades and belts.'
+  },
+  'fence and gate installation': {
+    intro: 'Fence and gate projects include replacing damaged panels, installing posts, repairing latches, and planning new wood, metal, or other boundary fencing.',
+    heading: 'Plan your fence or gate project',
+    details: 'Describe the approximate length, desired height and material, gate width, terrain, and whether old fencing must be removed. Ask about property-line checks, local requirements, materials, and a written quote.',
+    safetyHeading: 'Before digging',
+    safety: 'Have underground utilities located before excavation. Confirm property boundaries and applicable permits before installation.'
+  },
   'plumbing drain repair': {
     intro: 'Find contractors who work on slow-draining sinks, clogged tubs, backed-up toilets, and blocked household drain lines. Describe the symptoms before arranging a visit.',
     heading: 'What to tell a drain repair contractor',
