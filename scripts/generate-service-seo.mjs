@@ -35,7 +35,15 @@ const reviewed = {
     intro: 'Find contractors for garage door problems such as a door that will not open or close, noisy operation, broken springs, damaged cables, misaligned tracks, or opener and remote-control issues.',
     heading: 'Describe your garage door problem',
     details: 'When contacting a contractor, mention whether the door is stuck open or closed, whether the opener motor runs, and any unusual sounds or visible damage. Share your city or ZIP code and ask about inspection fees, parts, availability, and a written estimate before scheduling.',
+    safetyHeading: 'Garage door safety',
     safety: 'Garage door springs and cables are under high tension. Do not attempt to loosen or remove them yourself. If a spring or cable appears damaged, stop operating the door and ask a qualified technician to assess it.'
+  },
+  'plumbing drain repair': {
+    intro: 'Find contractors who work on slow-draining sinks, clogged tubs, backed-up toilets, and blocked household drain lines. Describe the symptoms before arranging a visit.',
+    heading: 'What to tell a drain repair contractor',
+    details: 'Explain which fixtures are affected, whether the problem is recurring, and whether water is backing up in more than one drain. Share your city or ZIP code, and ask whether diagnostic work, drain clearing, and any follow-up repairs are priced separately.',
+    safetyHeading: 'Drain and sewage precautions',
+    safety: 'If wastewater is backing up, avoid using affected plumbing fixtures until the problem is assessed. Do not mix chemical drain cleaners, and tell the contractor if any cleaning products were already poured into the drain.'
   }
 };
 const used = new Set(); const urls = [];
@@ -48,8 +56,8 @@ for (const service of services) {
   const canonical = 'https://texcontractor.com/services/'+id+'.html';
   const editorial = reviewed[service.toLowerCase()];
   const serviceCopy = editorial
-    ? '<p>'+esc(editorial.intro)+'</p>\\n<h2>'+esc(editorial.heading)+'</h2><p>'+esc(editorial.details)+'</p>\\n<h2>Garage door safety</h2><p>'+esc(editorial.safety)+'</p>\\n<p>Browse available TexContractor profiles below. Listings and availability vary by location; review each contractor’s information and contact them directly by text message.</p>'
-    : '<p>Looking for '+esc(service)+' services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p>\\n<p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>';
+    ? '<p>'+esc(editorial.intro)+'</p><h2>'+esc(editorial.heading)+'</h2><p>'+esc(editorial.details)+'</p><h2>'+esc(editorial.safetyHeading)+'</h2><p>'+esc(editorial.safety)+'</p><p>Browse available TexContractor profiles below. Listings and availability vary by location; review each contractor’s information and contact them directly by text message.</p>'
+    : '<p>Looking for '+esc(service)+' services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p><p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>';
   const title = service+' Contractors | TexContractor';
   const desc = 'Explore '+service+' contractors on TexContractor. Compare service profiles and contact contractors directly by text message.';
   const page = `<!doctype html>
