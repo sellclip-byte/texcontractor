@@ -1,6 +1,8 @@
 name: Live SEO check
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '20 11 * * 1'
   push:
     branches:
       - seo-safe-review-20261011
