@@ -1,5 +1,15 @@
 name: Staging site checks
 on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - '*.html'
+      - '*.js'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'scripts/**'
+      - '.github/workflows/site-checks.yml'
   pull_request:
     paths:
       - '*.html'
