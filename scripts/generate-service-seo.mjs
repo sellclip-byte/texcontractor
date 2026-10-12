@@ -29,6 +29,15 @@ const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>'
 const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
 const dir = join(root,'services'); mkdirSync(dir,{recursive:true});
 // Keep generated landing pages noindex until substantive, unique content and live-domain verification are complete.
+// Reviewed, service-specific editorial copy. Other categories remain noindex until reviewed.
+const reviewed = {
+  'garage door repair': {
+    intro: 'Find contractors for garage door problems such as a door that will not open or close, noisy operation, broken springs, damaged cables, misaligned tracks, or opener and remote-control issues.',
+    heading: 'Describe your garage door problem',
+    details: 'When contacting a contractor, mention whether the door is stuck open or closed, whether the opener motor runs, and any unusual sounds or visible damage. Share your city or ZIP code and ask about inspection fees, parts, availability, and a written estimate before scheduling.',
+    safety: 'Garage door springs and cables are under high tension. Do not attempt to loosen or remove them yourself. If a spring or cable appears damaged, stop operating the door and ask a qualified technician to assess it.'
+  }
+};
 const used = new Set(); const urls = [];
 for (const service of services) {
   let id = slug(service);
@@ -37,6 +46,10 @@ for (const service of services) {
   used.add(id);
   const target = '../contractor.html?service='+encodeURIComponent(service);
   const canonical = 'https://texcontractor.com/services/'+id+'.html';
+  const editorial = reviewed[service.toLowerCase()];
+  const serviceCopy = editorial
+    ? '<p>'+esc(editorial.intro)+'</p>\\n<h2>'+esc(editorial.heading)+'</h2><p>'+esc(editorial.details)+'</p>\\n<h2>Garage door safety</h2><p>'+esc(editorial.safety)+'</p>\\n<p>Browse available TexContractor profiles below. Listings and availability vary by location; review each contractor’s information and contact them directly by text message.</p>'
+    : '<p>Looking for '+esc(service)+' services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p>\\n<p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>';
   const title = service+' Contractors | TexContractor';
   const desc = 'Explore '+service+' contractors on TexContractor. Compare service profiles and contact contractors directly by text message.';
   const page = `<!doctype html>
@@ -45,8 +58,7 @@ for (const service of services) {
 <meta name="robots" content="noindex,follow"><link rel="canonical" href="${canonical}">
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:auto;max-width:800px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:35px 0}a.cta{display:inline-block;padding:12px 20px;background:#075c80;color:white;border-radius:8px;text-decoration:none}</style>
 </head><body><header><a href="../index.html">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
-<p>Looking for ${esc(service)} services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p>
-<p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>
+${serviceCopy}
 <a class="cta" href="${esc(target)}">Browse ${esc(service)} contractors</a>
 </main><footer><a href="index.html">Browse all services</a></footer></body></html>`;
   writeFileSync(join(dir,id+'.html'),page);
