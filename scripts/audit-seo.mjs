@@ -19,7 +19,7 @@ for (const slug of slugs) {
   if (!existsSync(file)) { issues.push('Missing service page: ' + slug); continue; }
   const html = readFileSync(file, 'utf8');
   if (!html.includes('<h2>')) issues.push('Missing service-specific guidance: ' + slug);
-  if (!html.includes('name="robots" content="noindex,follow"')) warnings.push('Robots indexing policy changed; review manually: ' + slug);
+  if (!html.includes('name="robots" content="index,follow"')) warnings.push('Robots indexing policy changed; review manually: ' + slug);
   const canonical = 'https://texcontractor.com/services/' + slug;
   if (!html.includes('rel="canonical" href="' + canonical + '"')) issues.push('Incorrect canonical: ' + slug);
   const cta = html.match(/<a class="cta" href="([^"]+)"/);
@@ -29,7 +29,7 @@ for (const slug of slugs) {
   if (!html.includes('rel="canonical"')) issues.push('Missing canonical: ' + slug);
   if (!html.includes('href="../contractor.html?service=') && !html.includes('href="https://texcontractor.com/contractor.html?service=')) issues.push('Missing service CTA: ' + slug);
   if (!urls.includes('https://texcontractor.com/services/' + slug)) issues.push('Missing sitemap URL: ' + slug);
-  if (/name="robots"[^>]*noindex/i.test(html)) warnings.push('INTENTIONALLY NOT INDEXABLE (noindex): ' + slug);
+  if (/name="robots"[^>]*noindex/i.test(html)) issues.push('Unexpected noindex: ' + slug);
 }
 console.log('Directory links:', slugs.length, '| Sitemap URLs:', urls.length);
 console.log('This is a local file audit, NOT a live-domain availability or Google indexing test.');
