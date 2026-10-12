@@ -297,7 +297,7 @@
  const style=document.createElement('style');style.textContent='@keyframes texNoticePulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.notice{animation:none!important}}';document.head.appendChild(style);
  box.style.animation='texNoticePulse '+(row.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite';
  }
- try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;max-height:240px;object-fit:contain;margin-top:12px';box.appendChild(img)}}catch(e){}
+ try{const u=new URL(row.notice_image_url);if(['https:','http:'].includes(u.protocol)){const img=document.createElement('img');img.src=u.href;img.alt='Contractor notice';img.loading='lazy';img.style.cssText='display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:14px auto 0;border-radius:12px';img.decoding='async';const imageArea=document.createElement('div');imageArea.id='contractor-notice-image-area';imageArea.style.cssText='width:100%;display:block;clear:both;text-align:center';imageArea.appendChild(img);box.insertAdjacentElement('afterend',imageArea)}}catch(e){}
  }).catch(()=>{});
 })();
 </script>
