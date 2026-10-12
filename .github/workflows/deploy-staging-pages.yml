@@ -37,12 +37,11 @@ jobs:
           p = Path('_site/index.html')
           html = p.read_text(encoding='utf-8')
           tag = '<link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">'
-          svg = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
           if '</head>' not in html.lower():
               raise SystemExit('Homepage has no closing head tag; favicon setup aborted')
           import re
           html = re.sub(r'<link[^>]*rel=["\x27](?:shortcut +)?icon["\x27][^>]*>', '', html, flags=re.I)
-          html = re.sub(r'</head>', lambda m: '  '+svg+chr(10)+'  '+tag+chr(10)+'</head>', html, count=1, flags=re.I)
+          html = re.sub(r'</head>', lambda m: '  '+tag+chr(10)+'</head>', html, count=1, flags=re.I)
           p.write_text(html, encoding='utf-8')
           print('Homepage favicon links set in published artifact')
           PY
