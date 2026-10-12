@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 const xml = readFileSync(new URL('../sitemap.xml', import.meta.url), 'utf8');
 const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1].replaceAll('&amp;', '&'));
 const failures = [];
+const pending = [];
+const normalize = value => value.replace(/\s+/g, ' ').trim();
 let passed = 0;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 for (const [i, url] of urls.entries()) {
@@ -14,7 +16,7 @@ for (const [i, url] of urls.entries()) {
     if (url.endsWith('.html') && url.includes('/services/')) {
       const canonical = '<link rel="canonical" href="' + url + '">';
       if (!html.includes(canonical)) throw new Error('Canonical mismatch');
-      if (!html.includes('<h2>')) throw new Error('Missing service guidance');
+      if (!/<h2(?:\\s[^>]*)?>/i.test(html)) throw new Error('Missing service guidance; final URL: ' + response.url + '; bytes: ' + Buffer.byteLength(html) + '; title: ' + (html.match(/<title[^>]*>([^<]*)/i)?.[1] ?? 'missing') + '; cache: ' + (response.headers.get('cache-control') ?? 'unknown'));
       if (!html.includes('https://texcontractor.com/contractor.html?service=')) throw new Error('Missing contractor link');
       if (!html.includes('name="robots" content="noindex,follow"')) throw new Error('Robots policy changed');
     }
