@@ -135,7 +135,7 @@
       'My ZIP code: __________',
       'Problem description: ____________________',
       'Please see the attached photo or short video.'
-    ].join('\\n');
+    ].join('\n');
     const getContractorPhone = async (serviceId) => {
       const token = await TexAuth.getAccessToken();
       if (!token) {
