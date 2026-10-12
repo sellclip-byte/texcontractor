@@ -129,17 +129,13 @@
     document.getElementById('location-label').textContent = locationText;
     document.getElementById('page-title').textContent = `${service} contractors near you`;
     document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
-    const messageTemplate = (providerName) => [
-      `Hello ${providerName},`,
-      '',
-      'ZIP code: __________',
-      'I need repair for: ____________________',
-      '',
-      'Please attach a photo or video of the problem.',
-      'Preferred contact: Call me / Text only',
-      '',
-      'Please send me your repair cost estimate.'
-    ].join('\n');
+    const messageTemplate = () => [
+      'Hello, I found your service on TexContractor.com.',
+      'I need an estimate.',
+      'My ZIP code: __________',
+      'Problem description: ____________________',
+      'Please see the attached photo or short video.'
+    ].join('\\n');
     const getContractorPhone = async (serviceId) => {
       const token = await TexAuth.getAccessToken();
       if (!token) {
