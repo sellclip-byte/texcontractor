@@ -16,7 +16,7 @@ for (const [i, url] of urls.entries()) {
       if (!html.includes(canonical)) throw new Error('Canonical mismatch');
       if (!/<h2(?:\s[^>]*)?>/i.test(html)) throw new Error('Missing service guidance; final URL: ' + response.url + '; bytes: ' + Buffer.byteLength(html) + '; title: ' + (html.match(/<title[^>]*>([^<]*)/i)?.[1] ?? 'missing') + '; cache: ' + (response.headers.get('cache-control') ?? 'unknown'));
       if (!html.includes('https://texcontractor.com/contractor.html?service=')) throw new Error('Missing contractor link');
-      if (!html.includes('name="robots" content="noindex,follow"')) throw new Error('Robots policy changed');
+      if (!html.includes('name="robots" content="index,follow"')) throw new Error('Robots policy changed');
     }
     passed++;
   } catch (error) {
