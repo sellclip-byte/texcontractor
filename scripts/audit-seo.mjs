@@ -21,7 +21,7 @@ for (const slug of slugs) {
   if (!html.includes('<title>')) issues.push('Missing title: ' + slug);
   if (!html.includes('name="description"')) issues.push('Missing description: ' + slug);
   if (!html.includes('rel="canonical"')) issues.push('Missing canonical: ' + slug);
-  if (!html.includes('href="https://texcontractor.com/contractor.html?service=')) issues.push('Missing service CTA: ' + slug);
+  if (!html.includes('href="../contractor.html?service=') && !html.includes('href="https://texcontractor.com/contractor.html?service=')) issues.push('Missing service CTA: ' + slug);
   if (!urls.includes('https://texcontractor.com/services/' + slug)) issues.push('Missing sitemap URL: ' + slug);
   if (/name="robots"[^>]*noindex/i.test(html)) warnings.push('INTENTIONALLY NOT INDEXABLE (noindex): ' + slug);
 }
