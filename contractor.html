@@ -99,7 +99,7 @@
     <p class="crumb"><span id="location-label">Arlington, TX · ZIP 76015</span> · <span id="service-label">Local service</span></p>
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
-    <div class="notice">💬 <span>No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
+    <div class="notice">💬 <span id="contractor-notice-text">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Published profiles from professionals who offer this service.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
@@ -279,6 +279,12 @@
   <script src="tex-auth.js"></script>
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js"></script>
+<script>
+(function(){
+ const url='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_site_settings?select=message_text&key=eq.contractor_notice&limit=1';
+ fetch(url,{headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}}).then(r=>{if(!r.ok)throw Error('load');return r.json()}).then(rows=>{const el=document.getElementById('contractor-notice-text');if(el&&rows[0]?.message_text)el.textContent=rows[0].message_text}).catch(()=>{});
+})();
+</script>
 </body>
 </html>
 
