@@ -1,0 +1,23 @@
+name: Live SEO check
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - scripts/check-live-seo.mjs
+      - sitemap.xml
+      - .github/workflows/live-seo-check.yml
+jobs:
+  verify-live-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check published URLs without modifying the website
+        run: node scripts/check-live-seo.mjs
