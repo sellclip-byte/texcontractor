@@ -32,6 +32,20 @@ jobs:
           test -s _site/index.html
           test -s _site/contractor.html
           test -s _site/profile.html
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('_site/index.html')
+          html = p.read_text(encoding='utf-8')
+          tag = '<link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">'
+          svg = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
+          if '</head>' not in html.lower():
+              raise SystemExit('Homepage has no closing head tag; favicon setup aborted')
+          import re
+          html = re.sub(r'<link\\b[^>]*\\brel=["\\\'](?:shortcut\\s+)?icon["\\\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'</head>', '  '+svg+'\\n  '+tag+'\\n</head>', html, count=1, flags=re.I)
+          p.write_text(html, encoding='utf-8')
+          print('Homepage favicon links set in published artifact')
+          PY
           test -s _site/favicon.svg
           test -s _site/texcontractor-icon-192.png
           echo 'Verified: favicon.svg and PNG icon included in published Pages artifact'
