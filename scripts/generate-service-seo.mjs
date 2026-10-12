@@ -35,7 +35,7 @@ for (const service of services) {
   if (!id) continue;
   if (used.has(id)) throw Error('SEO slug collision: '+id);
   used.add(id);
-  const target = 'https://texcontractor.com/contractor.html?service='+encodeURIComponent(service);
+  const target = '../contractor.html?service='+encodeURIComponent(service);
   const canonical = 'https://texcontractor.com/services/'+id+'.html';
   const title = service+' Contractors | TexContractor';
   const desc = 'Explore '+service+' contractors on TexContractor. Compare service profiles and contact contractors directly by text message.';
@@ -44,16 +44,16 @@ for (const service of services) {
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <meta name="robots" content="noindex,follow"><link rel="canonical" href="${canonical}">
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:auto;max-width:800px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:35px 0}a.cta{display:inline-block;padding:12px 20px;background:#075c80;color:white;border-radius:8px;text-decoration:none}</style>
-</head><body><header><a href="/">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
+</head><body><header><a href="../index.html">TexContractor</a> / Services</header><main><h1>${esc(service)} Contractors</h1>
 <p>Looking for ${esc(service)} services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p>
 <p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>
 <a class="cta" href="${esc(target)}">Browse ${esc(service)} contractors</a>
-</main><footer><a href="/">Browse all services</a></footer></body></html>`;
+</main><footer><a href="index.html">Browse all services</a></footer></body></html>`;
   writeFileSync(join(dir,id+'.html'),page);
   urls.push(canonical);
 }
-const directoryLinks = services.map(service => '<li><a href="/services/'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
-const directoryPage = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="/">TexContractor home</a></p></main></body></html>';
+const directoryLinks = services.map(service => '<li><a href="'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
+const directoryPage = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="../index.html">TexContractor home</a></p></main></body></html>';
 writeFileSync(join(dir,'index.html'),directoryPage);
 const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
  ['https://texcontractor.com/','https://texcontractor.com/contractor.html','https://texcontractor.com/services/',...urls].map(u=>'  <url><loc>'+u.replaceAll('&','&amp;')+'</loc></url>').join('\n')+'\n</urlset>\n';
