@@ -7,6 +7,8 @@ on:
       - 'services/**'
       - 'sitemap.xml'
       - 'scripts/audit-seo.mjs'
+      - 'scripts/generate-service-seo.mjs'
+      - '.github/workflows/site-checks.yml'
       - '.github/workflows/seo-audit.yml'
   workflow_dispatch:
 jobs:
