@@ -283,7 +283,7 @@
 <script>
 (function(){
  const BASE='https://rryehtaskbjnfbodymjj.supabase.co';
- const URL=BASE+'/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1&_ts='+Date.now();
+ const URL=BASE+'/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1';
  const imageArea=document.getElementById('contractor-notice-image-area'),img=document.getElementById('contractor-notice-public-image');
  const banner=document.getElementById('contractor-notice-banner'),label=document.getElementById('contractor-notice-text');
  function validUrl(s){try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
