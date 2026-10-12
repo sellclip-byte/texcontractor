@@ -18,6 +18,12 @@ for (const slug of slugs) {
   const file = join(root, 'services', slug);
   if (!existsSync(file)) { issues.push('Missing service page: ' + slug); continue; }
   const html = readFileSync(file, 'utf8');
+  if (!html.includes('<h2>')) issues.push('Missing service-specific guidance: ' + slug);
+  if (!html.includes('name="robots" content="noindex,follow"')) warnings.push('Robots indexing policy changed; review manually: ' + slug);
+  const canonical = 'https://texcontractor.com/services/' + slug;
+  if (!html.includes('rel="canonical" href="' + canonical + '"')) issues.push('Incorrect canonical: ' + slug);
+  const cta = html.match(/<a class="cta" href="([^"]+)"/);
+  if (cta && !cta[1].startsWith('https://texcontractor.com/contractor.html?service=')) issues.push('Unexpected CTA destination: ' + slug);
   if (!html.includes('<title>')) issues.push('Missing title: ' + slug);
   if (!html.includes('name="description"')) issues.push('Missing description: ' + slug);
   if (!html.includes('rel="canonical"')) issues.push('Missing canonical: ' + slug);
