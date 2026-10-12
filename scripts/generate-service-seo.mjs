@@ -485,7 +485,7 @@ ${serviceCopy}
   writeFileSync(join(dir,id+'.html'),page);
   urls.push(canonical);
 }
-const directoryLinks = services.map(service => '<li><a href="'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
+const directoryLinks = services.map(service => '<li><a href="/services/'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
 const directoryPage = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="/">TexContractor home</a></p></main></body></html>';
 writeFileSync(join(dir,'index.html'),directoryPage);
 const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
