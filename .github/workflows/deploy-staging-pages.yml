@@ -32,6 +32,9 @@ jobs:
           test -s _site/index.html
           test -s _site/contractor.html
           test -s _site/profile.html
+          test -s _site/favicon.svg
+          test -s _site/texcontractor-icon-192.png
+          echo 'Verified: favicon.svg and PNG icon included in published Pages artifact'
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
