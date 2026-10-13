@@ -97,6 +97,7 @@
         <h2>Work photos for customers</h2>
         <p class="hint">Upload up to 10 photos of completed work. These images appear in your public profile.</p>
         <input id="work-photos" name="workPhotos" type="file" accept="image/*" multiple>
+        <p class="hint" id="work-photo-count" role="status" aria-live="polite">0 of 10 work photos selected</p>
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
       <div class="privacy">Your real name and phone number are private. Customers see your display name, city, state, selected service, description, and profile images.</div>
@@ -184,8 +185,10 @@
     const profilePreview = document.getElementById('profile-preview');
     const workInput = document.getElementById('work-photos');
     const workPreview = document.getElementById('work-preview');
+    const workPhotoCount = document.getElementById('work-photo-count');
     let selectedWorkPhotos = [];
     const renderWorkPhotos = () => {
+      workPhotoCount.textContent = `${selectedWorkPhotos.length} of 10 work photos selected`;
       workPreview.replaceChildren();
       selectedWorkPhotos.forEach((file, index) => {
         const holder = document.createElement('div');
@@ -222,6 +225,7 @@
       }
       workInput.value = '';
       renderWorkPhotos();
+      if (selectedWorkPhotos.length === 10) workPhotoCount.textContent = '10 of 10 work photos selected — ready to submit';
     });
     const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
       if (!file) return resolve('');
@@ -257,7 +261,7 @@
       otherCityInput.value = '';
       profilePreview.replaceChildren();
       selectedWorkPhotos = [];
-      workPreview.replaceChildren();
+      renderWorkPhotos();
       const email = registerForm.elements.namedItem('email');
       if (email?.closest('label')?.hidden) email.value = signedInUser?.email || '';
       const realName = registerForm.elements.namedItem('realName');
@@ -297,6 +301,7 @@
       delete data.otherCity;
       delete data.profilePhoto;
       delete data.workPhotos;
+      if (selectedWorkPhotos.length > 10) throw new Error('Only 10 work photos are allowed.');
       const media = {
         profilePhoto: await readImage(profileInput.files[0]),
         workPhotos: await Promise.all(selectedWorkPhotos.map((file) => readImage(file)))
