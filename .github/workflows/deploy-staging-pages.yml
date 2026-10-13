@@ -42,6 +42,19 @@ jobs:
           import re
           html = re.sub(r'<link[^>]*rel=["\x27](?:shortcut +)?icon["\x27][^>]*>', '', html, flags=re.I)
           html = re.sub(r'</head>', lambda m: '  '+tag+chr(10)+'</head>', html, count=1, flags=re.I)
+          # Show the welcome screen once per browser, not again on page navigation.
+          old = """if (sessionStorage.getItem('texcontractor-welcome-closed') === '1') {
+      welcomeScreen.hidden = true;
+    }"""
+          new = """if (localStorage.getItem('texcontractor-welcome-seen') === '1') {
+      welcomeScreen.hidden = true;
+    } else {
+      localStorage.setItem('texcontractor-welcome-seen', '1');
+    }"""
+          if old not in html:
+              raise SystemExit('Expected welcome-screen code missing; refusing unsafe build')
+          html = html.replace(old, new, 1)
+          html = html.replace("sessionStorage.setItem('texcontractor-welcome-closed', '1');", "localStorage.setItem('texcontractor-welcome-seen', '1');", 1)
           p.write_text(html, encoding='utf-8')
           print('Homepage favicon links set in published artifact')
           PY
