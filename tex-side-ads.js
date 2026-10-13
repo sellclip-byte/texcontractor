@@ -106,3 +106,18 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
+
+/* Keep the welcome panel dismissed across browser sessions. */
+(function () {
+  const key = 'texcontractor-welcome-closed';
+  const panel = document.getElementById('welcome-screen');
+  const close = document.getElementById('welcome-close');
+  if (!panel || !close) return;
+  try {
+    if (window.localStorage.getItem(key) === '1') panel.hidden = true;
+  } catch (_) {}
+  close.addEventListener('click', function () {
+    panel.hidden = true;
+    try { window.localStorage.setItem(key, '1'); } catch (_) {}
+  });
+})();
