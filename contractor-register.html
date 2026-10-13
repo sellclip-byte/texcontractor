@@ -252,7 +252,20 @@
         await TexAdminApi.createSubmission({ user: signedInUser, data, media });
         success.classList.add('show');
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
-        submitButton.textContent = 'Submitted for review';
+        // Clear the completed service form, including image selections and previews.
+        registerForm.reset();
+        profilePreview.replaceChildren();
+        workPreview.replaceChildren();
+        cityInput.replaceChildren(new Option('Choose a city', ''));
+        otherCityField.hidden = true;
+        otherCityInput.required = false;
+        otherCityInput.value = '';
+        const emailInput = registerForm.elements.namedItem('email');
+        if (emailInput && emailInput.closest('label')?.hidden) emailInput.value = signedInUser?.email || '';
+        const realNameInput = registerForm.elements.namedItem('realName');
+        if (realNameInput && emailInput?.closest('label')?.hidden) realNameInput.value = 'texcontractor user';
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit another service';
       } catch (error) {
         submitButton.disabled = false;
         submitButton.textContent = 'Submit service for review';
