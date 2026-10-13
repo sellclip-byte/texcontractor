@@ -69,9 +69,30 @@
     }).catch(() => {});
   };
 
+  const requireUsPosting = async (token) => {
+    let response;
+    try {
+      response = await fetch(`${SUPABASE_URL}/functions/v1/texcontractor-us-posting-check`, {
+        method: 'POST',
+        headers: apiHeaders(token),
+        body: '{}',
+        cache: 'no-store'
+      });
+    } catch (error) {
+      throw new Error('Unable to verify your location. Please try again.');
+    }
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('Service posting is available only within the United States.');
+      }
+      throw new Error('Unable to verify your location. Please try again.');
+    }
+  };
+
   const createSubmission = async ({ user, data, media }) => {
     const token = await TexAuth.getAccessToken();
     if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
+    await requireUsPosting(token);
     const id = crypto.randomUUID();
     const uploaded = [];
     try {
