@@ -265,4 +265,24 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
+  // Persist dismissal of the homepage welcome panel across browser sessions.
+  // The homepage's legacy handler uses sessionStorage; this adds persistent memory.
+  function persistWelcomeDismissal() {
+    const panel = document.getElementById('welcome-screen');
+    const close = document.getElementById('welcome-close');
+    if (!panel || !close) return;
+    try {
+      if (localStorage.getItem('texcontractor-welcome-closed') === '1') panel.hidden = true;
+    } catch (_) { /* Storage may be blocked; keep close button functional. */ }
+    close.addEventListener('click', () => {
+      panel.hidden = true;
+      try { localStorage.setItem('texcontractor-welcome-closed', '1'); } catch (_) {}
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', persistWelcomeDismissal, { once: true });
+  } else {
+    persistWelcomeDismissal();
+  }
+
 })();
