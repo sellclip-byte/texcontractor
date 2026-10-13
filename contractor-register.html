@@ -59,7 +59,7 @@
   <main class="page">
     <h1>Post your service</h1>
     <p class="intro">Sign in with your email first, then add your service so customers can find your profile and text you about the work they need.</p>
-    <form id="register-form">
+    <form id="register-form" autocomplete="off">
       <section class="panel">
         <h2>Contact details</h2>
         <div class="fields">
@@ -213,6 +213,31 @@
       reader.readAsDataURL(file);
     });
     const registerForm = document.getElementById('register-form');
+    // Clear prior posting values even if the browser restores a cached form.
+    const clearPostingForm = () => {
+      registerForm.reset();
+      for (const field of registerForm.querySelectorAll('input, textarea, select')) {
+        if (field.type === 'file') field.value = '';
+        else if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
+        else field.value = '';
+      }
+      stateInput.value = '';
+      cityInput.replaceChildren(new Option('Choose a state first', ''));
+      cityInput.value = '';
+      otherCityField.hidden = true;
+      otherCityInput.required = false;
+      otherCityInput.value = '';
+      profilePreview.replaceChildren();
+      workPreview.replaceChildren();
+      const email = registerForm.elements.namedItem('email');
+      if (email?.closest('label')?.hidden) email.value = signedInUser?.email || '';
+      const realName = registerForm.elements.namedItem('realName');
+      if (realName && email?.closest('label')?.hidden) realName.value = 'texcontractor user';
+    };
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) clearPostingForm();
+    });
+    clearPostingForm();
     const submitButton = registerForm.querySelector('.submit');
     const success = document.getElementById('success');
     registerForm.addEventListener('invalid', () => {
@@ -252,18 +277,7 @@
         await TexAdminApi.createSubmission({ user: signedInUser, data, media });
         success.classList.add('show');
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
-        // Clear the completed service form, including image selections and previews.
-        registerForm.reset();
-        profilePreview.replaceChildren();
-        workPreview.replaceChildren();
-        cityInput.replaceChildren(new Option('Choose a city', ''));
-        otherCityField.hidden = true;
-        otherCityInput.required = false;
-        otherCityInput.value = '';
-        const emailInput = registerForm.elements.namedItem('email');
-        if (emailInput && emailInput.closest('label')?.hidden) emailInput.value = signedInUser?.email || '';
-        const realNameInput = registerForm.elements.namedItem('realName');
-        if (realNameInput && emailInput?.closest('label')?.hidden) realNameInput.value = 'texcontractor user';
+        clearPostingForm();
         submitButton.disabled = false;
         submitButton.textContent = 'Submit another service';
       } catch (error) {
