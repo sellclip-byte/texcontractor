@@ -184,6 +184,27 @@
     const profilePreview = document.getElementById('profile-preview');
     const workInput = document.getElementById('work-photos');
     const workPreview = document.getElementById('work-preview');
+    let selectedWorkPhotos = [];
+    const renderWorkPhotos = () => {
+      workPreview.replaceChildren();
+      selectedWorkPhotos.forEach((file, index) => {
+        const holder = document.createElement('div');
+        const image = document.createElement('img');
+        image.alt = 'Selected work photo ' + (index + 1);
+        image.src = URL.createObjectURL(file);
+        image.onload = () => URL.revokeObjectURL(image.src);
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Remove';
+        remove.setAttribute('aria-label', 'Remove work photo ' + (index + 1));
+        remove.addEventListener('click', () => {
+          selectedWorkPhotos.splice(index, 1);
+          renderWorkPhotos();
+        });
+        holder.append(image, remove);
+        workPreview.append(holder);
+      });
+    };
     const renderImages = (files, container, limit, alt) => {
       container.innerHTML = '';
       Array.from(files).slice(0, limit).forEach((file) => {
@@ -194,7 +215,14 @@
       });
     };
     profileInput.addEventListener('change', () => renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo'));
-    workInput.addEventListener('change', () => renderImages(workInput.files, workPreview, 4, 'Selected completed work'));
+    workInput.addEventListener('change', () => {
+      for (const file of Array.from(workInput.files)) {
+        const alreadySelected = selectedWorkPhotos.some(old => old.name === file.name && old.size === file.size && old.lastModified === file.lastModified);
+        if (!alreadySelected && selectedWorkPhotos.length < 4) selectedWorkPhotos.push(file);
+      }
+      workInput.value = '';
+      renderWorkPhotos();
+    });
     const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
       if (!file) return resolve('');
       const reader = new FileReader();
@@ -228,6 +256,7 @@
       otherCityInput.required = false;
       otherCityInput.value = '';
       profilePreview.replaceChildren();
+      selectedWorkPhotos = [];
       workPreview.replaceChildren();
       const email = registerForm.elements.namedItem('email');
       if (email?.closest('label')?.hidden) email.value = signedInUser?.email || '';
@@ -270,7 +299,7 @@
       delete data.workPhotos;
       const media = {
         profilePhoto: await readImage(profileInput.files[0]),
-        workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
+        workPhotos: await Promise.all(selectedWorkPhotos.map((file) => readImage(file)))
       };
       submitButton.textContent = 'Sending securely…';
       try {
