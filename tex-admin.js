@@ -92,7 +92,6 @@
   const createSubmission = async ({ user, data, media }) => {
     const token = await TexAuth.getAccessToken();
     if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
-    await requireUsPosting(token);
     const id = crypto.randomUUID();
     const uploaded = [];
     try {
