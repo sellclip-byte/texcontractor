@@ -95,7 +95,7 @@
         <div class="profile-preview" id="profile-preview" aria-live="polite"></div>
         <div class="media-divider"></div>
         <h2>Work photos for customers</h2>
-        <p class="hint">Upload up to four photos of completed work. These four images appear in your public profile.</p>
+        <p class="hint">Upload up to 10 photos of completed work. These images appear in your public profile.</p>
         <input id="work-photos" name="workPhotos" type="file" accept="image/*" multiple>
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
@@ -218,7 +218,7 @@
     workInput.addEventListener('change', () => {
       for (const file of Array.from(workInput.files)) {
         const alreadySelected = selectedWorkPhotos.some(old => old.name === file.name && old.size === file.size && old.lastModified === file.lastModified);
-        if (!alreadySelected && selectedWorkPhotos.length < 4) selectedWorkPhotos.push(file);
+        if (!alreadySelected && selectedWorkPhotos.length < 10) selectedWorkPhotos.push(file);
       }
       workInput.value = '';
       renderWorkPhotos();
