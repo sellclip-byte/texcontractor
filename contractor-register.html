@@ -33,7 +33,10 @@
     textarea { min-height:130px; resize:vertical; }
     input:focus, select:focus, textarea:focus { outline:3px solid rgba(21,115,71,.16); border-color:var(--green); }
     .hint { margin:0; color:var(--muted); font-size:.92rem; font-weight:500; }
-    .photo-preview { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+    .photo-preview { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:12px; }
+    .photo-preview > div { min-width:0; }
+    .photo-preview button { display:block; width:100%; margin-top:5px; border:1px solid #cbd5e1; border-radius:8px; padding:6px; background:white; cursor:pointer; }
+    @media (max-width:750px) { .photo-preview { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     .photo-preview img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
     .profile-preview { width:126px; height:126px; margin-top:12px; }
     .profile-preview img { width:100%; height:100%; object-fit:cover; border-radius:28px; background:var(--soft); }
