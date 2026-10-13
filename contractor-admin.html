@@ -121,6 +121,8 @@
     .side-ad-file { padding:10px; border:1px dashed #cbd5e1; border-radius:10px; background:#f8fafc; }
     .side-ad-remove { min-height:38px; padding:8px 12px; border:1px solid #fecaca; border-radius:9px; color:#991b1b; background:#fff; font:inherit; font-weight:800; cursor:pointer; }
     .side-ad-remove:disabled { opacity:.55; cursor:wait; }
+    .homepage-image-height-control small { color:var(--muted); font-size:.75rem; font-weight:500; }
+    .homepage-image-height-control[hidden] { display:none; }
     @media (max-width:980px) { .side-ads-grid { grid-template-columns:1fr; } }
     @media (max-width:760px) { .settings-grid { grid-template-columns:1fr; } }
     body.auth-check { visibility:hidden; }
@@ -262,6 +264,7 @@
                   <label>Text format<select id="side-left-font"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
                   <label>Motion<select id="side-left-animation"><option value="static">Static</option><option value="pulse">Gentle pulse</option><option value="scroll">Scrolling text</option></select></label>
                   <label>Image description<input id="side-left-alt" maxlength="160" placeholder="Optional alt text"></label>
+                   <label class="homepage-image-height-control" data-homepage-height-for="left">Homepage image height (px)<input id="side-left-image-height" type="number" min="100" max="600" step="10" inputmode="numeric" placeholder="Auto (current size)"><small>Homepage only. Leave blank to keep the original proportional height.</small></label>
                   <label>Text color<span class="color-input"><input id="side-left-text-color" type="color"><span id="side-left-text-color-value"></span></span></label>
                   <label>Background color<span class="color-input"><input id="side-left-background-color" type="color"><span id="side-left-background-color-value"></span></span></label>
                   <label>Accent color<span class="color-input"><input id="side-left-accent-color" type="color"><span id="side-left-accent-color-value"></span></span></label>
@@ -283,6 +286,7 @@
                   <label>Text format<select id="side-right-font"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
                   <label>Motion<select id="side-right-animation"><option value="static">Static</option><option value="pulse">Gentle pulse</option><option value="scroll">Scrolling text</option></select></label>
                   <label>Image description<input id="side-right-alt" maxlength="160" placeholder="Optional alt text"></label>
+                   <label class="homepage-image-height-control" data-homepage-height-for="right">Homepage image height (px)<input id="side-right-image-height" type="number" min="100" max="600" step="10" inputmode="numeric" placeholder="Auto (current size)"><small>Homepage only. Leave blank to keep the original proportional height.</small></label>
                   <label>Text color<span class="color-input"><input id="side-right-text-color" type="color"><span id="side-right-text-color-value"></span></span></label>
                   <label>Background color<span class="color-input"><input id="side-right-background-color" type="color"><span id="side-right-background-color-value"></span></span></label>
                   <label>Accent color<span class="color-input"><input id="side-right-accent-color" type="color"><span id="side-right-accent-color-value"></span></span></label>
@@ -300,7 +304,7 @@
   </main>
   <script src="tex-auth.js"></script>
   <script src="tex-admin.js"></script>
-  <script src="contractor-admin.js"></script>
+  <script src="contractor-admin.js?v=20261013-height"></script>
   <script src="contractor-notice-editor.js?v=20261012b"></script>
   <script src="tex-catalog-images-admin.js?v=2"></script>
 </body>
