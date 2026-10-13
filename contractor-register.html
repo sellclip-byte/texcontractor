@@ -130,6 +130,21 @@
       window.clearTimeout(authFallbackTimer);
       showAuthFallback();
     });
+    // Admin-only service posting: no repeated contact email entry.
+    // Regular contractors continue using the existing registration form.
+    const configureAdminPosting = async (user) => {
+      const admin = await TexAdminApi.getAdminRecord(user).catch(() => null);
+      if (!admin) return;
+      const realName = document.querySelector('[name="realName"]');
+      const email = document.querySelector('[name="email"]');
+      if (realName && !realName.value.trim()) realName.value = 'texcontractor user';
+      if (email) {
+        email.value = user?.email || '';
+        email.required = false;
+        email.closest('label').hidden = true;
+      }
+    };
+    TexAuth.requireUser(returnTo).then(user => { if (user) configureAdminPosting(user); }).catch(() => {});
     const profileInput = document.getElementById('profile-photo');
     const stateInput = document.getElementById('register-state');
     const cityInput = document.getElementById('register-city');
