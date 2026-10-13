@@ -51,10 +51,23 @@ jobs:
     } else {
       localStorage.setItem('texcontractor-welcome-seen', '1');
     }"""
-          if old not in html:
-              raise SystemExit('Expected welcome-screen code missing; refusing unsafe build')
-          html = html.replace(old, new, 1)
-          html = html.replace("sessionStorage.setItem('texcontractor-welcome-closed', '1');", "localStorage.setItem('texcontractor-welcome-seen', '1');", 1)
+          if old in html:
+              html = html.replace(old, new, 1)
+          html = html.replace("sessionStorage.setItem('texcontractor-welcome-closed', '1');", "localStorage.setItem('texcontractor-welcome-seen', '1');")
+          # Apply the returning-visitor rule before the welcome overlay is painted.
+          early = """<script>
+          try {
+            if (localStorage.getItem('texcontractor-welcome-seen') === '1') {
+              document.documentElement.classList.add('tex-welcome-already-seen');
+            }
+          } catch (e) {}
+          </script>
+          <style>
+          html.tex-welcome-already-seen #welcome-screen,
+          html.tex-welcome-already-seen .welcome-screen,
+          html.tex-welcome-already-seen #welcomeScreen { display:none !important; }
+          </style>"""
+          html = re.sub(r'<head>', lambda m: m.group(0)+chr(10)+early, html, count=1, flags=re.I)
           p.write_text(html, encoding='utf-8')
           print('Homepage favicon links set in published artifact')
           PY
