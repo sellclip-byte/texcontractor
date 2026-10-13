@@ -42,9 +42,10 @@
     .action:focus-visible { outline:3px solid currentColor; outline-offset:2px; }
     .confirmation { display:none; margin-top:14px; padding:12px 14px; border-radius:12px; color:#7a271a; background:#fff1f0; font-weight:700; }
     .confirmation.show { display:block; }
-    .work-gallery { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+    .work-gallery { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:14px; }
     .work-gallery img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
-    @media (max-width:700px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
+    @media (max-width:900px) { .work-gallery { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:700px) { .work-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -174,7 +175,7 @@
       image.loading = 'lazy';
       gallery.appendChild(image);
     };
-    profile.work.forEach(addGalleryImage);
+    profile.work.slice(0, 10).forEach(addGalleryImage);
     if (profile.profilePhoto) {
         document.getElementById('avatar-image').src = profile.profilePhoto;
         document.getElementById('avatar-image').style.display = 'block';
