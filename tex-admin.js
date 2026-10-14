@@ -339,5 +339,19 @@
     }
   };
 
-  window.TexAdminApi = { uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  const uploadSubmissionPhotos = async (submission, files, placement, user, replaceIndex = -1) => {
+    const selected = Array.from(files || []);
+    if (!selected.length) throw new Error('Choose photos first.');
+    if (placement === 'profile' && selected.length !== 1) throw new Error('Choose one profile photo.');
+    if (replaceIndex >= 0 && selected.length !== 1) throw new Error('Choose one photo when replacing.');
+    const existing = Array.isArray(submission.work_photo_paths) ? submission.work_photo_paths : [];
+    if (placement !== 'profile' && replaceIndex < 0 && existing.length + selected.length > 10) throw new Error(`You can add only ${10 - existing.length} more work photos.`);
+    let latest = submission;
+    for (let i = 0; i < selected.length; i++) {
+      latest = await uploadSubmissionPhoto(latest, selected[i], placement, user, i === 0 ? replaceIndex : -1);
+    }
+    return latest;
+  };
+
+  window.TexAdminApi = { uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
