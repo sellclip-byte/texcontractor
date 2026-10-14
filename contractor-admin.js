@@ -176,6 +176,10 @@
         <p class="about">${escapeHtml(row.about)}</p>
         <div class="review">
           <label>Status<select data-status><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
+          <label>Photo placement<select data-photo-placement><option value="profile">Profile photo</option><option value="work">Work photos (up to 10)</option><option value="both">Both</option></select></label>
+          <label>Add Photo<input data-photo-file type="file" accept="image/*"></label>
+          <img data-photo-preview alt="Selected photo preview" style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px">
+          <button data-photo-save type="button">Save Photo</button>
           <label>Admin notes<textarea data-notes placeholder="Optional internal note"></textarea></label>
           <button class="save" type="button">Save review</button>
         </div>
@@ -192,6 +196,28 @@
       const statusSelect = card.querySelector('[data-status]');
       const notes = card.querySelector('[data-notes]');
       const save = card.querySelector('.save');
+      const photoInput = card.querySelector('[data-photo-file]');
+      const photoPreview = card.querySelector('[data-photo-preview]');
+      const photoSave = card.querySelector('[data-photo-save]');
+      photoInput.addEventListener('change', () => {
+        const file = photoInput.files?.[0];
+        if (!file) { photoPreview.style.display = 'none'; return; }
+        photoPreview.src = URL.createObjectURL(file);
+        photoPreview.style.display = 'block';
+        photoPreview.onload = () => URL.revokeObjectURL(photoPreview.src);
+      });
+      photoSave.addEventListener('click', async () => {
+        if (!photoInput.files?.[0]) { showMessage('Choose a photo first.', 'error'); return; }
+        photoSave.disabled = true;
+        try {
+          await TexAdminApi.uploadSubmissionPhoto(row, photoInput.files[0], card.querySelector('[data-photo-placement]').value, currentUser);
+          showMessage('Photo saved. You can approve this contractor using Status and Save review.', 'ok');
+          await loadDashboard();
+        } catch (error) {
+          showMessage(`Photo upload failed: ${error.message}`, 'error');
+          photoSave.disabled = false;
+        }
+      });
       statusSelect.value = status;
       notes.value = row.admin_notes || '';
       save.addEventListener('click', async () => {
