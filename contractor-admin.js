@@ -173,7 +173,7 @@
           <label>Photo placement<select data-photo-placement><option value="profile">Profile photo</option><option value="work">Work photos (up to 10)</option><option value="both">Both</option></select></label>
           <label>Work photo action<select data-work-action><option value="add">Add new photo</option><option value="replace">Replace existing photo</option></select></label>
           <label data-replace-label style="display:none">Photo to replace<select data-replace-index></select></label>
-          <label>Add Photo<input data-photo-file type="file" accept="image/*"></label>
+          <label data-photo-label>Choose profile photo<input data-photo-file type="file" accept="image/*"></label>
           <img data-photo-preview alt="Selected photo preview" style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px">
           <button data-photo-save type="button">Save Photo</button>
           <label>Admin notes<textarea data-notes placeholder="Optional internal note"></textarea></label>
@@ -195,6 +195,7 @@
       const photoInput = card.querySelector('[data-photo-file]');
       const photoPreview = card.querySelector('[data-photo-preview]');
       const photoSave = card.querySelector('[data-photo-save]');
+      const photoLabel = card.querySelector('[data-photo-label]');
       const placementSelect = card.querySelector('[data-photo-placement]');
       const workAction = card.querySelector('[data-work-action]');
       const replaceLabel = card.querySelector('[data-replace-label]');
@@ -211,6 +212,10 @@
         workAction.querySelector('[value="replace"]').disabled = !existingWork.length;
         workAction.parentElement.style.display = placementSelect.value === 'profile' ? 'none' : '';
         replaceLabel.style.display = placementSelect.value !== 'profile' && workAction.value === 'replace' ? '' : 'none';
+        photoInput.multiple = placementSelect.value !== 'profile' && workAction.value !== 'replace';
+        photoLabel.firstChild.textContent = placementSelect.value === 'profile' ? 'Choose profile photo (one image)' : photoInput.multiple ? 'Choose work photos (multiple images, up to 10)' : 'Choose replacement work photo';
+        photoInput.value = '';
+        photoPreview.style.display = 'none';
       };
       placementSelect.addEventListener('change', syncPhotoControls);
       workAction.addEventListener('change', syncPhotoControls);
@@ -226,7 +231,11 @@
         if (!photoInput.files?.[0]) { showMessage('Choose a photo first.', 'error'); return; }
         photoSave.disabled = true;
         try {
-          await TexAdminApi.uploadSubmissionPhoto(row, photoInput.files[0], placementSelect.value, currentUser, placementSelect.value !== 'profile' && workAction.value === 'replace' ? Number(replaceSelect.value) : -1);
+          const selectedFiles = Array.from(photoInput.files);
+          const available = 10 - (Array.isArray(row.work_photo_paths) ? row.work_photo_paths.length : 0);
+          if (placementSelect.value !== 'profile' && workAction.value !== 'replace' && selectedFiles.length > available) throw new Error(`Select no more than ${available} work photos.`);
+          photoSave.textContent = 'Saving photos…';
+          await TexAdminApi.uploadSubmissionPhotos(row, selectedFiles, placementSelect.value, currentUser, placementSelect.value !== 'profile' && workAction.value === 'replace' ? Number(replaceSelect.value) : -1);
           const fresh = await TexAdminApi.listSubmissions('all');
           const saved = fresh.find((item) => item.id === row.id);
           if (!saved) throw new Error('Could not verify the saved photo.');
@@ -245,11 +254,13 @@
           card.querySelectorAll('.media').forEach((element) => element.remove());
           makeMedia(card, row);
           photoSave.disabled = false;
+          photoSave.textContent = 'Save Photo';
           photoInput.value = '';
           showMessage('Photo saved and verified. You can continue editing this contractor.', 'ok');
         } catch (error) {
           showMessage(`Photo upload failed: ${error.message}`, 'error');
           photoSave.disabled = false;
+          photoSave.textContent = 'Save Photo';
         }
       });
       statusSelect.value = status;
