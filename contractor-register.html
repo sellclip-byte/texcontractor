@@ -140,7 +140,7 @@
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
       // Phone numbers belong in the dedicated phone field only.
       // Check all free-text public inputs before saving any draft or profile.
-      const publicPhonePattern = /(?<!\\d)(?:\\+?1[\\s.\\-]*)?(?:\\([2-9]\\d{2}\\)|[2-9]\\d{2})[\\s.\\-]*[2-9]\\d{2}[\\s.\\-]*\\d{4}(?!\\d)/;
+      const publicPhonePattern = /(?<!\d)(?:\+?1[\s.\-]*)?(?:\([2-9]\d{2}\)|[2-9]\d{2})[\s.\-]*[2-9]\d{2}[\s.\-]*\d{4}(?!\d)/;
       const publicFields = ['displayName', 'about'];
       const violatingField = publicFields.find((key) => publicPhonePattern.test(String(data[key] || '')));
       if (violatingField) {
