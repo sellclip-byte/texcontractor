@@ -30,6 +30,12 @@
   const bannerBackgroundColor = $('#banner-background-color');
   const bannerAccentColor = $('#banner-accent-color');
   const bannerPreviewText = $('#banner-preview-text');
+  const bannerImageFile = $('#banner-image-file');
+  const bannerImageUrl = $('#banner-image-url');
+  const bannerImageLinkUrl = $('#banner-image-link-url');
+  const bannerHeight = $('#banner-height');
+  const bannerWidth = $('#banner-width');
+  const bannerFontSize = $('#banner-font-size');
   const sideAdValue = (side, name) => document.getElementById(`side-${side}-${name}`);
   const sideAdPreview = (side) => document.getElementById(`side-${side}-preview`);
   const sideAdPreviewNote = (side) => document.getElementById(`side-${side}-preview-note`);
@@ -230,6 +236,13 @@
       accent_color: bannerAccentColor.value
     };
     bannerPreviewText.textContent = value.message_text;
+    bannerPreviewText.style.minHeight = `${Math.max(60,Math.min(700,Number(bannerHeight.value)||180))}px`;
+    bannerPreviewText.style.width = `${Math.max(30,Math.min(100,Number(bannerWidth.value)||100))}%`;
+    bannerPreviewText.style.fontSize = `${Math.max(12,Math.min(80,Number(bannerFontSize.value)||28))}px`;
+    bannerPreviewText.style.backgroundImage = bannerImageUrl.value.trim() ? `url(${JSON.stringify(bannerImageUrl.value.trim())})` : 'none';
+    bannerPreviewText.style.backgroundSize = 'contain';
+    bannerPreviewText.style.backgroundPosition = 'center';
+    bannerPreviewText.style.backgroundRepeat = 'no-repeat';
     bannerPreviewText.style.color = value.text_color;
     bannerPreviewText.style.background = value.background_color;
     bannerPreviewText.style.border = value.style === 'outline' ? `2px solid ${value.accent_color}` : value.style === 'card' ? `1px solid ${value.accent_color}` : '0';
@@ -243,6 +256,11 @@
   const fillBannerForm = (row) => {
     homepageBanner = row || {};
     bannerMessage.value = row?.message_text || '';
+    bannerImageUrl.value = row?.banner_image_url || '';
+    bannerImageLinkUrl.value = row?.banner_image_link_url || '';
+    bannerHeight.value = row?.banner_height_px || 180;
+    bannerWidth.value = row?.banner_width_percent || 100;
+    bannerFontSize.value = row?.banner_font_size_px || 28;
     bannerStyle.value = row?.style || 'card';
     bannerFontStyle.value = row?.font_style || 'bold';
     bannerAnimation.value = row?.animation || 'static';
@@ -460,13 +478,20 @@
     });
     input.addEventListener('change', renderBannerPreview);
   });
+  [bannerImageUrl,bannerImageLinkUrl,bannerHeight,bannerWidth,bannerFontSize].forEach(el => el.addEventListener('input', renderBannerPreview));
   bannerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const button = $('#save-banner');
     button.disabled = true;
     button.textContent = 'Saving…';
     try {
+      if (bannerImageFile.files[0]) bannerImageUrl.value = await TexAdminApi.uploadBannerImage(bannerImageFile.files[0], currentUser);
       const row = await TexAdminApi.updateHomepageBanner({
+        banner_image_url: bannerImageUrl.value.trim() || null,
+        banner_image_link_url: bannerImageLinkUrl.value.trim() || null,
+        banner_height_px: Number(bannerHeight.value),
+        banner_width_percent: Number(bannerWidth.value),
+        banner_font_size_px: Number(bannerFontSize.value),
         message_text: bannerMessage.value.trim(),
         style: bannerStyle.value,
         font_style: bannerFontStyle.value,
