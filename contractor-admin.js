@@ -171,6 +171,8 @@
         <div class="review">
           <label>Status<select data-status><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
           <label>Photo placement<select data-photo-placement><option value="profile">Profile photo</option><option value="work">Work photos (up to 10)</option><option value="both">Both</option></select></label>
+          <label>Work photo action<select data-work-action><option value="add">Add new photo</option><option value="replace">Replace existing photo</option></select></label>
+          <label data-replace-label style="display:none">Photo to replace<select data-replace-index></select></label>
           <label>Add Photo<input data-photo-file type="file" accept="image/*"></label>
           <img data-photo-preview alt="Selected photo preview" style="display:none;width:120px;height:120px;object-fit:cover;border-radius:12px">
           <button data-photo-save type="button">Save Photo</button>
@@ -193,6 +195,26 @@
       const photoInput = card.querySelector('[data-photo-file]');
       const photoPreview = card.querySelector('[data-photo-preview]');
       const photoSave = card.querySelector('[data-photo-save]');
+      const placementSelect = card.querySelector('[data-photo-placement]');
+      const workAction = card.querySelector('[data-work-action]');
+      const replaceLabel = card.querySelector('[data-replace-label]');
+      const replaceSelect = card.querySelector('[data-replace-index]');
+      const existingWork = Array.isArray(row.work_photo_paths) ? row.work_photo_paths : [];
+      existingWork.forEach((path, i) => {
+        const option = document.createElement('option');
+        option.value = String(i);
+        option.textContent = `Work photo ${i + 1}`;
+        replaceSelect.appendChild(option);
+      });
+      const syncPhotoControls = () => {
+        if (!existingWork.length) workAction.value = 'add';
+        workAction.querySelector('[value="replace"]').disabled = !existingWork.length;
+        workAction.parentElement.style.display = placementSelect.value === 'profile' ? 'none' : '';
+        replaceLabel.style.display = placementSelect.value !== 'profile' && workAction.value === 'replace' ? '' : 'none';
+      };
+      placementSelect.addEventListener('change', syncPhotoControls);
+      workAction.addEventListener('change', syncPhotoControls);
+      syncPhotoControls();
       photoInput.addEventListener('change', () => {
         const file = photoInput.files?.[0];
         if (!file) { photoPreview.style.display = 'none'; return; }
@@ -204,7 +226,7 @@
         if (!photoInput.files?.[0]) { showMessage('Choose a photo first.', 'error'); return; }
         photoSave.disabled = true;
         try {
-          await TexAdminApi.uploadSubmissionPhoto(row, photoInput.files[0], card.querySelector('[data-photo-placement]').value, currentUser);
+          await TexAdminApi.uploadSubmissionPhoto(row, photoInput.files[0], placementSelect.value, currentUser, placementSelect.value !== 'profile' && workAction.value === 'replace' ? Number(replaceSelect.value) : -1);
           showMessage('Photo saved. You can approve this contractor using Status and Save review.', 'ok');
           await loadDashboard();
         } catch (error) {
