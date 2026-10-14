@@ -227,8 +227,26 @@
         photoSave.disabled = true;
         try {
           await TexAdminApi.uploadSubmissionPhoto(row, photoInput.files[0], placementSelect.value, currentUser, placementSelect.value !== 'profile' && workAction.value === 'replace' ? Number(replaceSelect.value) : -1);
-          showMessage('Photo saved. You can approve this contractor using Status and Save review.', 'ok');
-          await loadDashboard();
+          const fresh = await TexAdminApi.listSubmissions('all');
+          const saved = fresh.find((item) => item.id === row.id);
+          if (!saved) throw new Error('Could not verify the saved photo.');
+          const photoPath = saved.profile_photo_path;
+          const workPaths = Array.isArray(saved.work_photo_paths) ? saved.work_photo_paths : [];
+          if ((placementSelect.value === 'profile' || placementSelect.value === 'both') && !photoPath) throw new Error('Profile photo was not saved.');
+          if (placementSelect.value !== 'profile' && !workPaths.length) throw new Error('Work photo was not saved.');
+          Object.assign(row, saved);
+          submissions = fresh;
+          if (photoPath) {
+            const image = document.createElement('img');
+            image.src = TexAdminApi.publicUrl(photoPath) + '?v=' + Date.now();
+            image.alt = 'Contractor profile photo';
+            avatar.replaceChildren(image);
+          }
+          card.querySelectorAll('.media').forEach((element) => element.remove());
+          makeMedia(card, row);
+          photoSave.disabled = false;
+          photoInput.value = '';
+          showMessage('Photo saved and verified. You can continue editing this contractor.', 'ok');
         } catch (error) {
           showMessage(`Photo upload failed: ${error.message}`, 'error');
           photoSave.disabled = false;
@@ -241,8 +259,12 @@
         save.textContent = 'Saving…';
         try {
           await TexAdminApi.updateSubmission(row.id, { status: statusSelect.value, admin_notes: notes.value.trim() }, currentUser);
-          showMessage('Review saved.', 'ok');
-          await loadDashboard();
+          row.status = statusSelect.value;
+          row.admin_notes = notes.value.trim();
+          card.querySelector('.status').className = 'status ' + row.status;
+          card.querySelector('.status').textContent = row.status;
+          updateSummary();
+          showMessage('Review saved. You can continue working in the admin dashboard.', 'ok');
         } catch (error) {
           showMessage(`Could not save this review: ${error.message}`, 'error');
           save.disabled = false;
