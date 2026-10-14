@@ -200,6 +200,12 @@
           <form id="banner-form">
             <label class="settings-message" for="banner-message">Message shown to visitors<textarea id="banner-message" maxlength="300" required></textarea></label>
             <div class="settings-grid">
+              <label>Upload banner image <input id="banner-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif"></label>
+              <label>Image URL <input id="banner-image-url" type="url" placeholder="https://example.com/image.jpg"></label>
+              <label>Image click-through link (optional) <input id="banner-image-link-url" type="url" placeholder="https://example.com"></label>
+              <label>Banner height (60–700 px) <input id="banner-height" type="number" min="60" max="700" value="180"></label>
+              <label>Banner width (30–100%) <input id="banner-width" type="number" min="30" max="100" value="100"></label>
+              <label>Font size (12–80 px) <input id="banner-font-size" type="number" min="12" max="80" value="28"></label>
               <label for="banner-style">Visual style<select id="banner-style"><option value="card">Card</option><option value="outline">Outline</option><option value="minimal">Minimal</option></select></label>
               <label for="banner-font-style">Text format<select id="banner-font-style"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
               <label for="banner-animation">Motion<select id="banner-animation"><option value="static">Static</option><option value="pulse">Gentle pulse</option><option value="scroll">Scrolling text</option></select></label>
@@ -304,7 +310,7 @@
   </main>
   <script src="tex-auth.js"></script>
   <script src="tex-admin.js"></script>
-  <script src="contractor-admin.js?v=20261013-height"></script>
+  <script src="contractor-admin.js?v=20261013-banner-controls"></script>
   <script src="contractor-notice-editor.js?v=20261012b"></script>
   <script src="tex-catalog-images-admin.js?v=2"></script>
 </body>
