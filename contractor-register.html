@@ -129,11 +129,27 @@
       };
       reader.readAsDataURL(file);
     });
+    ['displayName', 'about'].forEach((key) => {
+      const field = document.getElementById('register-form').elements.namedItem(key);
+      field?.addEventListener('input', () => field.setCustomValidity(''));
+    });
     document.getElementById('register-form').addEventListener('submit', async (event) => {
       event.preventDefault();
       signedInUser = signedInUser || await TexAuth.requireUser(`contractor-register.html${window.location.search}`);
       if (!signedInUser) return;
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      // Phone numbers belong in the dedicated phone field only.
+      // Check all free-text public inputs before saving any draft or profile.
+      const publicPhonePattern = /(?<!\\d)(?:\\+?1[\\s.\\-]*)?(?:\\([2-9]\\d{2}\\)|[2-9]\\d{2})[\\s.\\-]*[2-9]\\d{2}[\\s.\\-]*\\d{4}(?!\\d)/;
+      const publicFields = ['displayName', 'about'];
+      const violatingField = publicFields.find((key) => publicPhonePattern.test(String(data[key] || '')));
+      if (violatingField) {
+        const field = event.currentTarget.elements.namedItem(violatingField);
+        field?.setCustomValidity('Do not enter phone numbers here. Use the Phone number field only.');
+        field?.reportValidity();
+        field?.focus();
+        return;
+      }
       delete data.profilePhoto;
       delete data.workPhotos;
       data.profilePhotoName = profileInput.files[0]?.name || '';
