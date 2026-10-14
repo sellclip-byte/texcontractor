@@ -1,0 +1,123 @@
+(function () {
+  const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+  const BUCKET = 'texcontractor-side-ads';
+  const pageKey = () => {
+    const page = window.location.pathname.split('/').pop().toLowerCase();
+    return ({
+      '': 'homepage',
+      'index.html': 'homepage',
+      'index': 'homepage',
+      'contractor.html': 'contractor',
+      'contractor': 'contractor',
+      'contractor-register.html': 'register',
+      'contractor-register': 'register',
+      'messages.html': 'messages',
+      'messages': 'messages',
+      'profile.html': 'profile',
+      'profile': 'profile',
+      'auth.html': 'auth',
+      'auth': 'auth'
+    })[page] || 'other';
+  };
+  const encodePath = (path) => path.split('/').map((part) => encodeURIComponent(part)).join('/');
+  const imageUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${encodePath(path)}` : '';
+  const getAds = async () => {
+    const params = new URLSearchParams({
+      select: 'side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled',
+      is_enabled: 'eq.true',
+      order: 'side.asc'
+    });
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_side_ads?${params.toString()}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!response.ok) return [];
+    const rows = await response.json();
+    const current = pageKey();
+    const candidates = Array.isArray(rows) ? rows.filter((row) => row.placement === current || row.placement === 'all') : [];
+    return ['left', 'right'].map((side) => {
+      const sideRows = candidates.filter((row) => row.side === side);
+      return sideRows.find((row) => row.placement === current) || sideRows.find((row) => row.placement === 'all');
+    }).filter(Boolean);
+  };
+  const render = (ad) => {
+    const aside = document.createElement('aside');
+    aside.className = `tc-side-ad tc-side-ad-${ad.side}`;
+    aside.style.setProperty('--side-ad-text', ad.text_color || '#075c4b');
+    aside.style.setProperty('--side-ad-background', ad.background_color || '#ecfff8');
+    aside.style.setProperty('--side-ad-accent', ad.accent_color || '#a9e8d2');
+    const body = document.createElement('div');
+    body.className = `tc-side-ad-body ad-${ad.style || 'card'} font-${ad.font_style || 'bold'} motion-${ad.animation || 'static'}`;
+    if (ad.image_path) {
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'tc-side-ad-image-wrap';
+      const image = document.createElement('img');
+      image.src = imageUrl(ad.image_path);
+      image.alt = ad.image_alt || 'TexContractor advertisement';
+      image.loading = 'lazy';
+      imageWrap.appendChild(image);
+      body.appendChild(imageWrap);
+    }
+    if (ad.message_text) {
+      const copy = document.createElement('div');
+      copy.className = 'tc-side-ad-copy';
+      copy.textContent = ad.message_text;
+      body.appendChild(copy);
+    }
+    aside.appendChild(body);
+    document.body.appendChild(aside);
+  };
+  const injectStyles = () => {
+    if (document.getElementById('tc-side-ads-style')) return;
+    const style = document.createElement('style');
+    style.id = 'tc-side-ads-style';
+    style.textContent = `
+      .tc-side-ad { box-sizing: border-box; position: fixed; z-index: 40; top: 150px; width: min(160px, 12vw); max-height: calc(100vh - 170px); color: var(--side-ad-text); pointer-events: none; }
+      .tc-side-ad-left { left: 14px; }
+      .tc-side-ad-right { right: 14px; }
+      .tc-side-ad-body { box-sizing: border-box; max-height: calc(100vh - 170px); overflow: hidden; border-radius: 14px; padding: 9px; text-align: center; background: var(--side-ad-background); border: 1px solid var(--side-ad-accent); box-shadow: 0 10px 26px rgba(15,23,42,.12); }
+      .tc-side-ad-body.ad-outline { background: transparent; border: 2px solid var(--side-ad-accent); box-shadow: none; }
+      .tc-side-ad-body.ad-minimal { padding: 4px 0; background: transparent; border: 0; border-bottom: 2px solid var(--side-ad-accent); border-radius: 0; box-shadow: none; }
+      .tc-side-ad-image-wrap { display: flex; align-items: center; justify-content: center; width: 100%; max-height: calc(100vh - 250px); min-height: 0; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,.72); }
+      .tc-side-ad-image-wrap img { display: block; width: 100%; max-width: 100%; height: auto; max-height: calc(100vh - 250px); object-fit: contain; }
+      .tc-side-ad-copy { padding: 8px 3px 2px; font-size: .88rem; line-height: 1.35; overflow-wrap: anywhere; }
+      .tc-side-ad-body.font-normal .tc-side-ad-copy { font-weight: 500; }
+      .tc-side-ad-body.font-bold .tc-side-ad-copy { font-weight: 900; }
+      .tc-side-ad-body.font-italic .tc-side-ad-copy { font-style: italic; }
+      .tc-side-ad-body.font-uppercase .tc-side-ad-copy { font-weight: 900; text-transform: uppercase; }
+      .tc-side-ad-body.motion-pulse { animation: tc-side-ad-pulse 2.8s ease-in-out infinite; }
+      .tc-side-ad-body.motion-scroll .tc-side-ad-copy { white-space: nowrap; animation: tc-side-ad-scroll 15s linear infinite; }
+      @keyframes tc-side-ad-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: .84; } }
+      @keyframes tc-side-ad-scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+      @media (max-width: 1120px) { .tc-side-ad { display: none; } }
+    `;
+    document.head.appendChild(style);
+  };
+  const init = async () => {
+    try {
+      const ads = await getAds();
+      if (!ads.length) return;
+      injectStyles();
+      ads.forEach(render);
+    } catch (error) {
+      // Side advertising is optional and must never interrupt the main site.
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
+})();
+
+/* Keep the welcome panel dismissed across browser sessions. */
+(function () {
+  const key = 'texcontractor-welcome-closed';
+  const panel = document.getElementById('welcome-screen');
+  const close = document.getElementById('welcome-close');
+  if (!panel || !close) return;
+  try {
+    if (window.localStorage.getItem(key) === '1') panel.hidden = true;
+  } catch (_) {}
+  close.addEventListener('click', function () {
+    panel.hidden = true;
+    try { window.localStorage.setItem(key, '1'); } catch (_) {}
+  });
+})();

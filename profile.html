@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
   <title>Contractor Profile · TexContractor</title>
   <style>
     :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --green:#157347; --red:#b42318; --gold:#f5b94c; }
@@ -37,9 +42,16 @@
     .action:focus-visible { outline:3px solid currentColor; outline-offset:2px; }
     .confirmation { display:none; margin-top:14px; padding:12px 14px; border-radius:12px; color:#7a271a; background:#fff1f0; font-weight:700; }
     .confirmation.show { display:block; }
-    .work-gallery { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+    .work-gallery { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:14px; }
     .work-gallery img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
-    @media (max-width:700px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
+    @media (max-width:900px) { .work-gallery { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:700px) { .work-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
+    .gallery-contact { margin-top:20px; text-align:center; }
+    .gallery-contact p { margin:0 0 12px; }
+    .gallery-text-cta { display:inline-block; padding:12px 22px; border-radius:12px; background:#b91c1c; color:white; font-weight:800; text-decoration:none; box-shadow:0 0 0 2px rgba(185,28,28,.15); animation:galleryPulse 2.2s ease-in-out infinite; }
+    .gallery-text-cta:hover { background:#991b1b; }
+    @keyframes galleryPulse { 0%,100% { opacity:1; box-shadow:0 0 0 2px rgba(185,28,28,.15); } 50% { opacity:.75; box-shadow:0 0 0 7px rgba(185,28,28,.06); } }
+    @media (prefers-reduced-motion:reduce) { .gallery-text-cta { animation:none; } }
   </style>
 </head>
 <body>
@@ -50,26 +62,30 @@
   <main class="page">
     <p class="crumb"><span id="service-label">Local service</span> · Contractor profile</p>
     <section class="profile-head">
-      <div class="avatar" id="avatar"><span id="avatar-initials">NS</span><img id="avatar-image" alt="Contractor profile photo"></div>
-      <div><h1 id="contractor-name">North Star Services</h1><p class="verified">✓ Verified contractor</p></div>
+      <div class="avatar" id="avatar"><span id="avatar-initials">?</span><img id="avatar-image" alt="Contractor profile photo"></div>
+      <div><h1 id="contractor-name">Contractor profile</h1><p class="verified">Contractor profile</p></div>
     </section>
     <div class="grid">
       <section class="panel">
         <h2>About this contractor</h2>
-        <p id="about-copy">Experienced local service professional focused on clear communication, dependable work, and fast text-based responses. Review the service details before sending a message.</p>
-        <div class="action-row"><a class="action text-action" id="text-link" href="sms:+18175550101">Text this contractor</a></div>
+        <p id="about-copy">This profile is available after a real contractor submits a service and the administrator approves it.</p>
+        <div class="action-row"><a class="action text-action" id="text-link" href="contractor.html">Text this contractor</a></div>
       </section>
       <section class="panel" style="grid-column:1 / -1">
         <h2>Work photos</h2>
-        <p>Photos shared by this contractor to show completed work.</p>
+        <p>Photos of the contractor’s work or illustrative images representing the services they offer.</p>
         <div class="work-gallery" id="work-gallery" aria-live="polite"></div>
+        <div class="gallery-contact">
+          <p>These photos may represent the services offered. For more information, text the contractor directly.</p>
+          <a href="#" id="gallery-text-link" class="gallery-text-cta">Text Contractor</a>
+        </div>
       </section>
       <aside class="panel">
         <h2>Profile details</h2>
         <dl class="facts">
-          <div class="fact"><dt>Rating</dt><dd id="rating">4.9 / 5</dd></div>
-          <div class="fact"><dt>Location</dt><dd id="location">Arlington, TX</dd></div>
-          <div class="fact"><dt>Experience</dt><dd>10+ years</dd></div>
+          <div class="fact"><dt>Rating</dt><dd id="rating">Not available</dd></div>
+          <div class="fact"><dt>Location</dt><dd id="location">Not available</dd></div>
+          <div class="fact"><dt>Experience</dt><dd>Not available</dd></div>
         </dl>
         <div class="action-row">
           <button class="action block-action" id="block-button" type="button">Block this contractor</button>
@@ -80,46 +96,91 @@
   </main>
   <script src="tex-auth.js"></script>
   <script>
-    const profiles = {
-      'north-star': { name:'North Star Services', initials:'NS', rating:'4.9 / 5', location:'Arlington, TX', phone:'+18175550101', work:['assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
-      'right-way': { name:'Right Way Pros', initials:'RW', rating:'4.8 / 5', location:'Fort Worth, TX', phone:'+18175550102', work:['assets-optimized/09.jpg','assets-optimized/04.jpg','assets-optimized/39.jpg','assets-optimized/21.jpg'] },
-      'blue-oak': { name:'Blue Oak Works', initials:'BO', rating:'4.7 / 5', location:'Mansfield, TX', phone:'+18175550103', work:['assets-optimized/39.jpg','assets-optimized/04.jpg','assets-optimized/09.jpg','assets-optimized/21.jpg'] },
-      'lone-star': { name:'Lone Star Repair Team', initials:'LS', rating:'4.7 / 5', location:'Arlington, TX', phone:'+18175550104', work:['assets-optimized/21.jpg','assets-optimized/39.jpg','assets-optimized/09.jpg','assets-optimized/04.jpg'] }
-    };
+    const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
     const params = new URLSearchParams(location.search);
-    const key = params.get('contractor') || 'north-star';
-    const savedContractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
-    const savedProfile = savedContractors.find((provider) => provider.id === key);
-    const profile = savedProfile ? {
-      name:savedProfile.displayName,
-      initials:savedProfile.initials,
-      rating:savedProfile.rating || 'New profile',
-      location:savedProfile.location || 'Arlington, TX',
-      phone:savedProfile.phone || '',
-      about:savedProfile.about || 'This contractor has added a service profile and is ready to receive direct messages.',
-      profilePhoto:savedProfile.profilePhoto || '',
-      work:savedProfile.workPhotos || [],
-      years:savedProfile.years || '—'
-    } : (profiles[key] || profiles['north-star']);
+    const key = params.get('contractor') || '';
     const service = params.get('service') || 'Local service';
+    const mediaUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/texcontractor-media/${String(path).split('/').map(encodeURIComponent).join('/')}` : '';
+    const loadProfile = async () => {
+      if (!key) return null;
+      const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY } });
+      if (!response.ok) throw new Error('Profile could not be loaded.');
+      const row = (await response.json())[0];
+      return row ? {
+        name:row.display_name,
+        initials:String(row.display_name || 'T').trim().split(/\s+/).slice(0,2).map((part) => part[0]).join('').toUpperCase(),
+        rating:'Published profile',
+        location:[row.city, row.state].filter(Boolean).join(', ') || 'Texas',
+        id:row.id,
+        about:row.about || 'This contractor has added a service profile and is ready to receive direct messages.',
+        profilePhoto:mediaUrl(row.profile_photo_path),
+        work:(Array.isArray(row.work_photo_paths) ? row.work_photo_paths : []).map(mediaUrl),
+        years:row.years || '—',
+        service:row.service || service
+      } : null;
+    };
+    const renderProfile = async () => {
+      let profile = null;
+      try { profile = await loadProfile(); } catch (error) { profile = null; }
+    if (!profile) {
+      const destination = new URL('contractor.html', window.location.href);
+      destination.searchParams.set('service', service);
+      if (params.get('city')) destination.searchParams.set('city', params.get('city'));
+      if (params.get('state')) destination.searchParams.set('state', params.get('state'));
+      if (params.get('zip')) destination.searchParams.set('zip', params.get('zip'));
+      window.location.replace(destination.href);
+    } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
     document.getElementById('avatar-initials').textContent = profile.initials;
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
-    document.getElementById('service-label').textContent = service;
+    document.getElementById('service-label').textContent = profile.service;
     if (profile.about) document.getElementById('about-copy').textContent = profile.about;
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
-    const contactRequested = params.get('contact') === '1';
-    const contactReturn = `profile.html?contractor=${encodeURIComponent(key)}&service=${encodeURIComponent(service)}&contact=1`;
     const textLink = document.getElementById('text-link');
-    if (contactRequested) {
-      TexAuth.requireUser(contactReturn).then((user) => {
-        if (user) textLink.href = `sms:${profile.phone}?body=${encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!")}`;
-      });
-    } else {
-      textLink.href = TexAuth.authHref(contactReturn);
-    }
+    const messageTemplate = [
+      `Hello ${profile.name},`,
+      '',
+      'ZIP code: __________',
+      'I need repair for: ____________________',
+      '',
+      'Please attach a photo or video of the problem.',
+      'Preferred contact: Call me / Text only',
+      '',
+      'Please send me your repair cost estimate.'
+    ].join('\n');
+    textLink.href = '#';
+    textLink.addEventListener('click', async (event) => {
+      event.preventDefault();
+      textLink.textContent = 'Preparing message…';
+      try {
+        const token = await TexAuth.getAccessToken();
+        if (!token) {
+          await TexAuth.requireUser(`profile.html${window.location.search}`);
+          return;
+        }
+        const phoneResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_contractor_phone`, {
+          method:'POST',
+          headers:{ apikey:SUPABASE_KEY, Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
+          body:JSON.stringify({ p_service_id: profile.id })
+        });
+        if (!phoneResponse.ok) throw new Error('The contractor phone number is not available yet.');
+        const rows = await phoneResponse.json();
+        const phone = String(rows?.[0]?.phone || '').replace(/[^\d+]/g, '');
+        if (!phone) throw new Error('The contractor phone number is not available yet.');
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate)}`;
+      } catch (error) {
+        textLink.textContent = 'Text this contractor';
+        window.alert(error.message);
+      }
+    });
+    document.getElementById('gallery-text-link').addEventListener('click', (event) => {
+      event.preventDefault();
+      document.getElementById('text-link').click();
+    });
     const gallery = document.getElementById('work-gallery');
     const addGalleryImage = (src, index) => {
       const image = document.createElement('img');
@@ -128,7 +189,7 @@
       image.loading = 'lazy';
       gallery.appendChild(image);
     };
-    profile.work.forEach(addGalleryImage);
+    profile.work.slice(0, 10).forEach(addGalleryImage);
     if (profile.profilePhoto) {
         document.getElementById('avatar-image').src = profile.profilePhoto;
         document.getElementById('avatar-image').style.display = 'block';
@@ -142,6 +203,11 @@
       document.getElementById('block-button').disabled = true;
       document.getElementById('block-button').textContent = 'Contractor blocked';
     });
+    }
+    };
+    renderProfile();
   </script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
 </body>
 </html>

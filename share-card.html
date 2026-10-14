@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#075c4b">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <title>Share TexContractor · Local Services by Text</title>
+  <style>
+    :root { --ink:#0f172a; --muted:#64748b; --green:#075c4b; --gold:#f5b94c; --line:#dbe5e2; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:linear-gradient(145deg,#f1fbf8,#fffaf0); font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif; }
+    .page { width:min(620px,100%); margin:0 auto; padding:28px 18px 42px; }
+    .back { display:inline-block; color:var(--muted); font-weight:800; text-decoration:none; margin-bottom:18px; }
+    .share-card { overflow:hidden; border-radius:26px; background:#fff; border:1px solid var(--line); box-shadow:0 20px 55px rgba(15,23,42,.13); }
+    .card-top { padding:28px 26px 24px; color:#fff; background:linear-gradient(135deg,#063e34,#0b7c65); }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand img { width:190px; height:auto; filter:brightness(0) invert(1); }
+    .eyebrow { margin:28px 0 8px; color:#f9d77d; font-size:.86rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    h1 { margin:0; max-width:500px; font-size:clamp(2rem,7vw,3.1rem); line-height:1.04; letter-spacing:-.05em; }
+    .tagline { margin:14px 0 0; color:#e0f7ef; font-size:1.05rem; }
+    .card-body { padding:24px 26px 26px; }
+    .benefits { display:grid; gap:14px; margin:0; padding:0; list-style:none; }
+    .benefits li { display:flex; gap:12px; align-items:flex-start; color:#334155; }
+    .check { display:grid; width:25px; height:25px; flex:none; place-items:center; border-radius:50%; color:#fff; background:var(--green); font-weight:900; }
+    .benefits strong { display:block; color:var(--ink); }
+    .benefits span { display:block; margin-top:2px; color:var(--muted); font-size:.92rem; }
+    .card-link { margin:24px 0 0; padding:13px 15px; border-radius:12px; color:#075c4b; background:#effcf8; font-weight:900; text-align:center; overflow-wrap:anywhere; }
+    .actions { display:grid; gap:10px; margin-top:20px; }
+    button, .secondary { min-height:48px; border-radius:11px; font:inherit; font-weight:900; cursor:pointer; text-align:center; text-decoration:none; }
+    #share-button { border:0; color:#1e1600; background:var(--gold); }
+    #sms-button { display:grid; place-items:center; color:#fff; background:#2563eb; }
+    #whatsapp-button { display:grid; place-items:center; color:#fff; background:#128c7e; }
+    .secondary { display:grid; place-items:center; border:1px solid var(--line); color:var(--muted); background:#fff; }
+    .feedback { min-height:20px; margin:4px 0 0; color:var(--green); font-weight:800; text-align:center; }
+    @media (max-width:420px) { .card-top,.card-body { padding-left:20px; padding-right:20px; } .brand img { width:165px; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back" href="javascript:history.back()">← Back</a>
+    <article class="share-card">
+      <section class="card-top">
+        <div class="brand"><img src="texcontractor-logo.png" alt="TexContractor"></div>
+        <p class="eyebrow">Local help by text</p>
+        <h1>Find the right professional faster.</h1>
+        <p class="tagline">Share this card with anyone who needs a local service or wants more customers.</p>
+      </section>
+      <section class="card-body">
+        <ul class="benefits">
+          <li><b class="check">✓</b><div><strong>All kinds of local services</strong><span>Find a professional for the work you need.</span></div></li>
+          <li><b class="check">✓</b><div><strong>Fast text connection</strong><span>Send the problem, photos, and ZIP code directly from your phone.</span></div></li>
+          <li><b class="check">✓</b><div><strong>Quick first cost estimate</strong><span>Ask for an estimate of the repair cost and time.</span></div></li>
+          <li><b class="check">✓</b><div><strong>Professionals can earn more</strong><span>Add the services you offer and receive direct customer requests.</span></div></li>
+        </ul>
+        <p class="card-link" id="card-link"></p>
+        <div class="actions">
+          <button id="share-button" type="button">↗ Share This Card</button>
+          <a id="sms-button" href="#">Send by Text Message</a>
+          <a id="whatsapp-button" href="#">Send by WhatsApp</a>
+          <button id="copy-button" class="secondary" type="button">Copy card link</button>
+          <a class="secondary" href="contractor.html">Browse services</a>
+          <p class="feedback" id="feedback" role="status"></p>
+        </div>
+      </section>
+    </article>
+  </main>
+  <script>
+    const cardUrl = `${window.location.origin}/share-card.html`;
+    const shareText = 'Find local services fast with TexContractor. Share this card with someone who needs help or wants more customers.';
+    document.getElementById('card-link').textContent = cardUrl;
+    document.getElementById('sms-button').href = `sms:?body=${encodeURIComponent(`${shareText}\n${cardUrl}`)}`;
+    document.getElementById('whatsapp-button').href = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${cardUrl}`)}`;
+    document.getElementById('share-button').addEventListener('click', async () => {
+      try {
+        if (navigator.share) await navigator.share({ title:'TexContractor', text:shareText, url:cardUrl });
+        else { await navigator.clipboard.writeText(cardUrl); document.getElementById('feedback').textContent = 'Card link copied. You can paste it anywhere.'; }
+      } catch (error) { if (error.name !== 'AbortError') document.getElementById('feedback').textContent = 'Use WhatsApp or copy the card link below.'; }
+    });
+    document.getElementById('copy-button').addEventListener('click', async () => { try { await navigator.clipboard.writeText(cardUrl); document.getElementById('feedback').textContent = 'Card link copied.'; } catch (error) { window.prompt('Copy this link:', cardUrl); } });
+  </script>
+</body>
+</html>

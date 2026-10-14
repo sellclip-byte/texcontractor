@@ -1,0 +1,32 @@
+name: Live SEO check
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - scripts/check-live-seo.mjs
+      - sitemap.xml
+      - .github/workflows/live-seo-check.yml
+jobs:
+  verify-live-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check published URLs without modifying the website
+        run: |
+          set -o pipefail
+          node scripts/check-live-seo.mjs 2>&1 | tee live-seo-results.txt
+      - name: Save full live test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texcontractor-live-seo-report
+          path: live-seo-results.txt
+          if-no-files-found: warn

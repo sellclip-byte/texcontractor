@@ -1,0 +1,36 @@
+name: Commit generated SEO pages to review branch
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - '.github/workflows/commit-seo-pages.yml'
+      - 'scripts/generate-service-seo.mjs'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/seo-safe-review-20261011'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/generate-service-seo.mjs
+      - name: Validate 56 known catalog pages
+        run: |
+          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 57
+          test "$(grep -c '<url>' sitemap.xml)" -eq 59
+      - name: Commit generated pages only to review branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add services/ sitemap.xml
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate 56 catalog SEO pages from existing homepage"
+            git push origin HEAD:seo-safe-review-20261011
+          fi

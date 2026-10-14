@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
   <meta name="description" content="Register a contractor service on TexContractor.">
   <title>Post a Service · TexContractor</title>
   <style>
@@ -13,6 +18,7 @@
     header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:16px clamp(18px,4vw,56px); background:rgba(251,252,253,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
     .brand { display:inline-flex; align-items:center; text-decoration:none; }
     .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
+    .header-links { display:flex; align-items:center; gap:16px; }
     .back-link { color:var(--muted); font-weight:700; text-decoration:none; }
     .page { width:min(980px,100%); margin:0 auto; padding:clamp(28px,6vw,64px) clamp(18px,4vw,56px) 72px; }
     h1 { margin:0; font-size:clamp(2rem,5vw,3.4rem); line-height:1.05; letter-spacing:-.06em; }
@@ -27,7 +33,10 @@
     textarea { min-height:130px; resize:vertical; }
     input:focus, select:focus, textarea:focus { outline:3px solid rgba(21,115,71,.16); border-color:var(--green); }
     .hint { margin:0; color:var(--muted); font-size:.92rem; font-weight:500; }
-    .photo-preview { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+    .photo-preview { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:12px; }
+    .photo-preview > div { min-width:0; }
+    .photo-preview button { display:block; width:100%; margin-top:5px; border:1px solid #cbd5e1; border-radius:8px; padding:6px; background:white; cursor:pointer; }
+    @media (max-width:750px) { .photo-preview { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     .photo-preview img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
     .profile-preview { width:126px; height:126px; margin-top:12px; }
     .profile-preview img { width:100%; height:100%; object-fit:cover; border-radius:28px; background:var(--soft); }
@@ -38,20 +47,22 @@
     .submit:focus-visible { outline:3px solid #9a6200; outline-offset:2px; }
     .success { display:none; padding:16px; border-radius:13px; color:#14532d; background:#dcfce7; font-weight:800; }
     .success.show { display:block; }
-    body.auth-check { visibility:hidden; }
+    body.auth-check { visibility:visible; }
     body.auth-check.auth-ready { visibility:visible; }
+    .auth-status { max-width:720px; margin:0 auto 24px; padding:16px 18px; border:1px solid #f3c969; border-radius:13px; color:#704f00; background:#fff8df; font-weight:700; }
+    .auth-status a { color:var(--green); }
     @media (max-width:680px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .fields { grid-template-columns:1fr; } label.full { grid-column:auto; } .photo-preview { grid-template-columns:repeat(2,1fr); } }
   </style>
 </head>
 <body class="auth-check">
   <header>
     <a class="brand" href="index.html" aria-label="Text Contractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="Text Contractor · Precision Construction Solutions"></a>
-    <a class="back-link" href="index.html">← Back to services</a>
+    <div class="header-links"><a class="back-link" href="messages.html">Messages</a><a class="back-link" href="index.html">← Back to services</a></div>
   </header>
   <main class="page">
     <h1>Post your service</h1>
     <p class="intro">Sign in with your email first, then add your service so customers can find your profile and text you about the work they need.</p>
-    <form id="register-form">
+    <form id="register-form" autocomplete="off">
       <section class="panel">
         <h2>Contact details</h2>
         <div class="fields">
@@ -65,10 +76,16 @@
         <div class="fields">
           <label>Display name or company<input name="displayName" placeholder="Nickname or company name" required></label>
           <label>Years in business<select name="years" required><option value="">Choose years</option><script>for(let i=1;i<=20;i++)document.write(`<option value="${i}">${i} year${i===1?'':'s'}</option>`);</script></select></label>
-          <label>City<input name="city" placeholder="City" autocomplete="address-level2" required></label>
-          <label>State<input name="state" placeholder="TX" maxlength="2" autocomplete="address-level1" required></label>
+          <label>State<select name="state" id="register-state" autocomplete="address-level1" required>
+            <option value="">Choose a state</option>
+            <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option><option value="DC">Washington, D.C.</option>
+          </select></label>
+          <label>City <span class="hint">Choose a city after selecting the state.</span><select name="city" id="register-city" autocomplete="address-level2" required><option value="">Choose a state first</option></select></label>
+          <label id="other-city-field" hidden>Other city <span class="hint">Type your city if it is not listed.</span><input name="otherCity" id="other-city" placeholder="City name" autocomplete="address-level2"></label>
           <label class="full">Service catalog<select name="service" required>
             <option value="">Choose a service</option>
+            <option>Tutoring &amp; Education Services</option><option>Specialty Meal Preparation &amp; Dietary Cooking</option><option>Dog Training &amp; Horse Riding Lessons</option>
+            <option>Barber &amp; Hair Styling Services</option>
             <option>Central Air Conditioning Repair or Maintenance</option><option>Electrical and Wiring Repair</option><option>TV Mounting</option><option>Tree Trimming and Removal</option><option>Furniture Assembly</option><option>Furniture Moving and Heavy Lifting</option><option>Mobile Auto Mechanic</option><option>Handyman</option><option>Outdoor Landscaping and Design</option><option>Interior Painting</option><option>Junk Removal</option><option>Roof Repair or Maintenance</option><option>Appliance Repair or Maintenance</option><option>Floor Installation or Replacement</option><option>Lock Installation and Repair</option><option>Garage Door Repair</option><option>Concrete Installation</option><option>Bathroom Remodel</option><option>Metalwork</option><option>Window Repair</option><option>Plumbing Drain Repair</option><option>Plumbing Pipe Repair</option><option>Heating System Repair or Maintenance</option><option>House Cleaning</option><option>Carpet Cleaning</option><option>Pressure Washing</option><option>Upholstery and Furniture Cleaning</option><option>Mobile Auto Detailing</option><option>Local Moving (under 50 miles)</option><option>Computer Repair</option><option>Notarization</option><option>Dog Grooming</option><option>DJ Services</option><option>Wedding and Event Makeup</option><option>Dog Training</option><option>Personal Training</option><option>Wedding and Event Photography</option><option>Pest Control Services</option><option>Fence and Gate Installation</option><option>Drywall Repair and Texturing</option><option>Deck or Porch Remodel or Addition</option><option>Swimming Pool Cleaning &amp; Maintenance</option><option>Lighting Installation</option><option>General Contracting</option><option>Gutter Cleaning and Maintenance</option><option>Door Installation</option><option>Window Tinting</option><option>Wedding Officiant</option><option>Event Planning</option><option>Interior Design</option><option>Architectural Services</option><option>Home Inspection Consulting</option><option>Home Foundation Repair</option><option>In-Home Nursing Care</option><option>Private Taxi &amp; Transportation Services</option><option>Lawn Mower, Water Pump &amp; Outdoor Equipment Repair</option>
           </select></label>
           <label class="full">About you and your work<textarea name="about" placeholder="Describe your experience and the work you provide." required></textarea></label>
@@ -81,26 +98,149 @@
         <div class="profile-preview" id="profile-preview" aria-live="polite"></div>
         <div class="media-divider"></div>
         <h2>Work photos for customers</h2>
-        <p class="hint">Upload up to four photos of completed work. These four images appear in your public profile.</p>
+        <p class="hint">Upload up to 10 photos of completed work. These images appear in your public profile.</p>
         <input id="work-photos" name="workPhotos" type="file" accept="image/*" multiple>
+        <p class="hint" id="work-photo-count" role="status" aria-live="polite">0 of 10 work photos selected</p>
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
       <div class="privacy">Your real name and phone number are private. Customers see your display name, city, state, selected service, description, and profile images.</div>
       <button class="submit" type="submit">Submit service for review</button>
-      <div class="success" id="success" role="status">Your service information was saved on this device and is ready for administrator review.</div>
+      <div class="success" id="success" role="status"></div>
     </form>
   </main>
   <script src="tex-auth.js"></script>
+  <script src="tex-admin.js?v=99dd02a1"></script>
   <script>
     let signedInUser = null;
-    TexAuth.requireUser(`contractor-register.html${window.location.search}`).then((user) => {
+    const returnTo = `contractor-register.html${window.location.search}`;
+    const authStatus = document.createElement('div');
+    authStatus.className = 'auth-status';
+    const showAuthFallback = () => {
+      if (document.body.classList.contains('auth-ready')) return;
+      authStatus.textContent = 'The sign-in check is taking too long. Please sign in again, then return to this page.';
+      const link = document.createElement('a');
+      link.href = TexAuth.authHref(returnTo);
+      link.textContent = ' Open sign-in';
+      authStatus.appendChild(link);
+      document.querySelector('.page')?.prepend(authStatus);
+      document.body.classList.add('auth-ready');
+    };
+    const authFallbackTimer = window.setTimeout(showAuthFallback, 8000);
+    TexAuth.requireUser(returnTo).then((user) => {
+      window.clearTimeout(authFallbackTimer);
       signedInUser = user;
       if (user) document.body.classList.add('auth-ready');
+    }).catch(() => {
+      window.clearTimeout(authFallbackTimer);
+      showAuthFallback();
     });
+    // Admin-only service posting: no repeated contact email entry.
+    // Regular contractors continue using the existing registration form.
+    const configureAdminPosting = async (user) => {
+      const admin = await TexAdminApi.getAdminRecord(user).catch(() => null);
+      if (!admin) return;
+      const realName = document.querySelector('[name="realName"]');
+      const email = document.querySelector('[name="email"]');
+      if (realName && !realName.value.trim()) realName.value = 'texcontractor user';
+      if (email) {
+        email.value = user?.email || '';
+        email.required = false;
+        email.closest('label').hidden = true;
+      }
+    };
+    TexAuth.requireUser(returnTo).then(user => { if (user) configureAdminPosting(user); }).catch(() => {});
     const profileInput = document.getElementById('profile-photo');
+    const stateInput = document.getElementById('register-state');
+    const cityInput = document.getElementById('register-city');
+    const otherCityField = document.getElementById('other-city-field');
+    const otherCityInput = document.getElementById('other-city');
+    const citiesByState = {
+      AL:['Birmingham','Montgomery','Mobile','Huntsville'], AK:['Anchorage','Fairbanks','Juneau'], AZ:['Phoenix','Tucson','Mesa','Scottsdale'], AR:['Little Rock','Fayetteville','Fort Smith','Springdale'],
+      CA:['Los Angeles','San Diego','San Jose','San Francisco','Sacramento','Fresno'], CO:['Denver','Colorado Springs','Aurora','Fort Collins'], CT:['Bridgeport','New Haven','Hartford','Stamford'], DE:['Wilmington','Dover','Newark'],
+      FL:['Jacksonville','Miami','Tampa','Orlando','St. Petersburg','Tallahassee'], GA:['Atlanta','Augusta','Columbus','Savannah','Macon'], HI:['Honolulu','Hilo','Kailua-Kona'], ID:['Boise','Meridian','Nampa','Idaho Falls'],
+      IL:['Chicago','Aurora','Rockford','Joliet','Springfield'], IN:['Indianapolis','Fort Wayne','Evansville','South Bend'], IA:['Des Moines','Cedar Rapids','Davenport','Sioux City'], KS:['Wichita','Overland Park','Kansas City','Topeka'],
+      KY:['Louisville','Lexington','Bowling Green','Covington'], LA:['New Orleans','Baton Rouge','Shreveport','Lafayette','Kenner'], ME:['Portland','Lewiston','Bangor','Augusta'], MD:['Baltimore','Frederick','Rockville','Gaithersburg','Annapolis'],
+      MA:['Boston','Worcester','Springfield','Cambridge','Lowell'], MI:['Detroit','Grand Rapids','Warren','Sterling Heights','Lansing'], MN:['Minneapolis','Saint Paul','Rochester','Duluth'], MS:['Jackson','Gulfport','Southaven','Hattiesburg'],
+      MO:['Kansas City','St. Louis','Springfield','Columbia','Independence'], MT:['Billings','Missoula','Great Falls','Bozeman','Helena'], NE:['Omaha','Lincoln','Bellevue','Grand Island'], NV:['Las Vegas','Henderson','Reno','North Las Vegas','Carson City'],
+      NH:['Manchester','Nashua','Concord','Dover'], NJ:['Newark','Jersey City','Paterson','Elizabeth','Trenton'], NM:['Albuquerque','Las Cruces','Rio Rancho','Santa Fe'], NY:['New York City','Buffalo','Rochester','Yonkers','Syracuse','Albany'],
+      NC:['Charlotte','Raleigh','Greensboro','Durham','Winston-Salem','Fayetteville'], ND:['Fargo','Bismarck','Grand Forks','Minot'], OH:['Columbus','Cleveland','Cincinnati','Toledo','Akron','Dayton'], OK:['Oklahoma City','Tulsa','Norman','Broken Arrow','Edmond'],
+      OR:['Portland','Eugene','Salem','Gresham','Hillsboro'], PA:['Philadelphia','Pittsburgh','Allentown','Erie','Reading','Harrisburg'], RI:['Providence','Warwick','Cranston','Pawtucket'], SC:['Charleston','Columbia','North Charleston','Mount Pleasant','Greenville'],
+      SD:['Sioux Falls','Rapid City','Aberdeen','Pierre'], TN:['Nashville','Memphis','Knoxville','Chattanooga','Clarksville'], TX:['Houston','San Antonio','Dallas','Dallas–Fort Worth','Austin','Fort Worth','Arlington','El Paso','Corpus Christi','Plano','Irving','Garland','Grand Prairie','Mansfield','Kenner'],
+      UT:['Salt Lake City','West Valley City','Provo','West Jordan','Orem','St. George'], VT:['Burlington','South Burlington','Rutland','Montpelier'], VA:['Virginia Beach','Norfolk','Chesapeake','Richmond','Arlington','Alexandria','Newport News'],
+      WA:['Seattle','Spokane','Tacoma','Vancouver','Bellevue','Everett','Olympia'], WV:['Charleston','Huntington','Morgantown','Parkersburg'], WI:['Milwaukee','Madison','Green Bay','Kenosha','Racine'], WY:['Cheyenne','Casper','Laramie','Gillette'], DC:['Washington']
+    };
+    // Full US city directory (approximately 29,880 records). Keep the built-in
+    // list as a fallback when the external directory is unavailable.
+    const US_CITIES_CSV = 'https://cdn.jsdelivr.net/gh/kelvins/US-Cities-Database@main/csv/us_cities.csv';
+    let fullCitiesPromise;
+    const loadFullCities = () => {
+      if (!fullCitiesPromise) fullCitiesPromise = fetch(US_CITIES_CSV, { cache: 'force-cache' })
+        .then(response => { if (!response.ok) throw new Error('City directory unavailable'); return response.text(); })
+        .then(csv => {
+          const grouped = {};
+          for (const line of csv.split(/\r?\n/)) {
+            const match = line.match(/^\d+,([A-Z]{2}),[^,]+,(?:"([^"]+)"|([^,]+)),/);
+            if (!match) continue;
+            const name = (match[2] || match[3] || '').trim();
+            if (name) (grouped[match[1]] ||= new Set()).add(name);
+          }
+          if (!grouped.TX || grouped.TX.size < 100) throw new Error('Incomplete city directory');
+          return grouped;
+        }).catch(error => { console.warn('Using built-in city choices:', error); return null; });
+      return fullCitiesPromise;
+    };
+    let citySelectionVersion = 0;
+    stateInput.addEventListener('change', async () => {
+      const version = ++citySelectionVersion;
+      const state = stateInput.value;
+      cityInput.replaceChildren(new Option('Loading cities…', ''));
+      cityInput.disabled = true;
+      otherCityField.hidden = true;
+      otherCityInput.required = false;
+      otherCityInput.value = '';
+      const fullCities = await loadFullCities();
+      if (version !== citySelectionVersion || stateInput.value !== state) return;
+      const names = new Set([...(citiesByState[state] || []), ...(fullCities?.[state] || [])]);
+      if (state === 'TX') names.add('Dallas–Fort Worth');
+      if (state === 'TX') names.delete('Kenner'); // Kenner is in Louisiana.
+      const cities = [...names].sort((a,b) => a.localeCompare(b, 'en'));
+      cityInput.replaceChildren(new Option('Choose a city', ''));
+      cities.forEach(city => cityInput.add(new Option(city, city)));
+      cityInput.add(new Option('Other city — type below', '__other__'));
+      cityInput.disabled = !state;
+    });
+    cityInput.addEventListener('change', () => {
+      const isOther = cityInput.value === '__other__';
+      otherCityField.hidden = !isOther;
+      otherCityInput.required = isOther;
+      if (isOther) otherCityInput.focus();
+    });
     const profilePreview = document.getElementById('profile-preview');
     const workInput = document.getElementById('work-photos');
     const workPreview = document.getElementById('work-preview');
+    const workPhotoCount = document.getElementById('work-photo-count');
+    let selectedWorkPhotos = [];
+    const renderWorkPhotos = () => {
+      workPhotoCount.textContent = `${selectedWorkPhotos.length} of 10 work photos selected`;
+      workPreview.replaceChildren();
+      selectedWorkPhotos.forEach((file, index) => {
+        const holder = document.createElement('div');
+        const image = document.createElement('img');
+        image.alt = 'Selected work photo ' + (index + 1);
+        image.src = URL.createObjectURL(file);
+        image.onload = () => URL.revokeObjectURL(image.src);
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Remove';
+        remove.setAttribute('aria-label', 'Remove work photo ' + (index + 1));
+        remove.addEventListener('click', () => {
+          selectedWorkPhotos.splice(index, 1);
+          renderWorkPhotos();
+        });
+        holder.append(image, remove);
+        workPreview.append(holder);
+      });
+    };
     const renderImages = (files, container, limit, alt) => {
       container.innerHTML = '';
       Array.from(files).slice(0, limit).forEach((file) => {
@@ -111,7 +251,15 @@
       });
     };
     profileInput.addEventListener('change', () => renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo'));
-    workInput.addEventListener('change', () => renderImages(workInput.files, workPreview, 4, 'Selected completed work'));
+    workInput.addEventListener('change', () => {
+      for (const file of Array.from(workInput.files)) {
+        const alreadySelected = selectedWorkPhotos.some(old => old.name === file.name && old.size === file.size && old.lastModified === file.lastModified);
+        if (!alreadySelected && selectedWorkPhotos.length < 10) selectedWorkPhotos.push(file);
+      }
+      workInput.value = '';
+      renderWorkPhotos();
+      if (selectedWorkPhotos.length === 10) workPhotoCount.textContent = '10 of 10 work photos selected — ready to submit';
+    });
     const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
       if (!file) return resolve('');
       const reader = new FileReader();
@@ -129,47 +277,88 @@
       };
       reader.readAsDataURL(file);
     });
-    document.getElementById('register-form').addEventListener('submit', async (event) => {
+    const registerForm = document.getElementById('register-form');
+    // Clear prior posting values even if the browser restores a cached form.
+    const clearPostingForm = () => {
+      registerForm.reset();
+      for (const field of registerForm.querySelectorAll('input, textarea, select')) {
+        if (field.type === 'file') field.value = '';
+        else if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
+        else field.value = '';
+      }
+      stateInput.value = '';
+      cityInput.replaceChildren(new Option('Choose a state first', ''));
+      cityInput.value = '';
+      otherCityField.hidden = true;
+      otherCityInput.required = false;
+      otherCityInput.value = '';
+      profilePreview.replaceChildren();
+      selectedWorkPhotos = [];
+      renderWorkPhotos();
+      const email = registerForm.elements.namedItem('email');
+      if (email?.closest('label')?.hidden) email.value = signedInUser?.email || '';
+      const realName = registerForm.elements.namedItem('realName');
+      if (realName && email?.closest('label')?.hidden) realName.value = 'texcontractor user';
+    };
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) clearPostingForm();
+    });
+    clearPostingForm();
+    const submitButton = registerForm.querySelector('.submit');
+    const success = document.getElementById('success');
+    registerForm.addEventListener('invalid', () => {
+      success.classList.add('show');
+      success.style.color = '#704f00';
+      success.style.background = '#fff8df';
+      success.textContent = 'Please complete all required fields before submitting.';
+    }, true);
+    registerForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      signedInUser = signedInUser || await TexAuth.requireUser(`contractor-register.html${window.location.search}`);
-      if (!signedInUser) return;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Checking sign-in…';
+      success.classList.remove('show');
+      try {
+        signedInUser = signedInUser || await TexAuth.requireUser(`contractor-register.html${window.location.search}`);
+        if (!signedInUser) return;
+      } catch (error) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit service for review';
+        success.classList.add('show');
+        success.style.color = '#991b1b';
+        success.style.background = '#fff1f2';
+        success.textContent = `Sign-in check failed: ${error.message}`;
+        return;
+      }
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      if (data.city === '__other__') data.city = String(data.otherCity || '').trim();
+      delete data.otherCity;
       delete data.profilePhoto;
       delete data.workPhotos;
-      data.profilePhotoName = profileInput.files[0]?.name || '';
-      data.workPhotoCount = Math.min(workInput.files.length, 4);
-      data.ownerId = signedInUser.id;
-      data.ownerEmail = signedInUser.email || '';
+      if (selectedWorkPhotos.length > 10) throw new Error('Only 10 work photos are allowed.');
       const media = {
         profilePhoto: await readImage(profileInput.files[0]),
-        workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
+        workPhotos: await Promise.all(selectedWorkPhotos.map((file) => readImage(file)))
       };
-      const draft = { ...data };
-      localStorage.setItem('texcontractor-registration-draft', JSON.stringify(draft));
-      localStorage.setItem('texcontractor-registration-media', JSON.stringify(media));
-      const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
-      const initials = data.displayName.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
-      contractors.push({
-        id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        displayName: data.displayName,
-        service: data.service,
-        years: data.years,
-        about: data.about,
-        phone: data.phone,
-        initials: initials || 'TC',
-        location: `${data.city.trim()}, ${data.state.trim().toUpperCase()}`,
-        rating: 'New profile',
-        profilePhoto: media.profilePhoto,
-        workPhotos: media.workPhotos,
-        ownerId: signedInUser.id,
-        ownerEmail: signedInUser.email || '',
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem('texcontractor-contractors', JSON.stringify(contractors));
-      document.getElementById('success').classList.add('show');
-      document.getElementById('success').textContent = `Your profile was added to the ${data.service} catalog and is ready for administrator review under ${signedInUser.email}.`;
-      document.getElementById('success').scrollIntoView({ behavior:'smooth', block:'center' });
+      submitButton.textContent = 'Sending securely…';
+      try {
+        await TexAdminApi.createSubmission({ user: signedInUser, data, media });
+        success.classList.add('show');
+        success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
+        clearPostingForm();
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit another service';
+      } catch (error) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit service for review';
+        success.classList.add('show');
+        success.style.color = '#991b1b';
+        success.style.background = '#fff1f2';
+        success.textContent = `We could not submit your service yet: ${error.message}`;
+      }
+      success.scrollIntoView({ behavior:'smooth', block:'center' });
     });
   </script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
 </body>
 </html>

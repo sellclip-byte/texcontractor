@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/texcontractor-logo.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
   <meta name="description" content="Find local TexContractor providers and text directly about your project.">
   <title>Contractors Near You · TexContractor</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M18 20h28M32 20v25M24 45h16' stroke='%23f5b94c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
   <style>
     :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --soft:#f8fafc; --gold:#f5b94c; --gold-dark:#9a6200; --green:#10a37f; --radius:16px; }
     * { box-sizing:border-box; }
@@ -23,9 +26,20 @@
     .results-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-top:34px; }
     .results-heading h2 { margin:0; font-size:1.55rem; letter-spacing:-.04em; }
     .results-heading p { margin:5px 0 0; color:var(--muted); }
+    .share-card-callout { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-top:18px; padding:16px 18px; border:1px solid #bfe8dc; border-radius:14px; background:linear-gradient(115deg,#effcf8,#fffaf0); }
+    .share-card-callout strong { display:block; color:#075c4b; font-size:1rem; }
+    .share-card-callout span { display:block; margin-top:3px; color:var(--muted); font-size:.9rem; }
+    .share-card-button { display:inline-flex; flex:none; align-items:center; justify-content:center; min-height:42px; padding:0 16px; border-radius:10px; color:#fff; background:#075c4b; font-weight:850; text-decoration:none; box-shadow:0 5px 12px rgba(7,92,75,.16); }
+    .share-card-button:hover, .share-card-button:focus-visible { background:#064c3e; transform:translateY(-1px); }
+    .share-card-button:focus-visible { outline:3px solid var(--gold-dark); outline-offset:2px; }
     .providers { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 52px; margin-top:20px; }
+    .empty-state { grid-column:1 / -1; padding:28px; border:1px dashed var(--line); border-radius:var(--radius); background:var(--soft); }
+    .empty-state h3 { margin:0; font-size:1.2rem; }
+    .empty-state p { max-width:650px; margin:8px 0 0; color:var(--muted); }
+    .empty-state .profile-button { margin-top:18px; }
     .provider { display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:12px; min-height:116px; padding:17px 0; border-bottom:1px solid var(--line); }
     .avatar { display:grid; width:48px; height:48px; place-items:center; border-radius:50%; color:#fff; font-size:.84rem; font-weight:900; letter-spacing:.02em; }
+    .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
     .avatar.a { background:#b27b13; } .avatar.b { background:#172554; } .avatar.c { background:#94a3b8; } .avatar.d { background:#0f766e; } .avatar.e { background:#475569; }
     .provider-main { min-width:0; }
     .provider-status { margin:0 0 2px; color:var(--green); font-size:.78rem; font-weight:800; }
@@ -41,6 +55,22 @@
     .profile-button:focus-visible, .text-button:focus-visible { outline:3px solid var(--gold-dark); outline-offset:2px; }
     .text-button { color:#241a00; background:var(--gold); }
     .text-button:hover, .text-button:focus-visible { filter:brightness(.97); transform:translateY(-1px); }
+    .report-button { min-height:34px; padding:5px 9px; border:1px solid #fecdd3; border-radius:8px; color:#991b1b; background:#fff; font:700 .76rem inherit; cursor:pointer; }
+    .report-button:hover, .report-button:focus-visible { background:#fff1f2; }
+    .report-modal { position:fixed; inset:0; z-index:30; display:none; place-items:center; padding:18px; background:rgba(15,23,42,.52); }
+    .report-modal.show { display:grid; }
+    .report-dialog { width:min(520px,100%); padding:24px; border-radius:18px; background:#fff; box-shadow:0 22px 70px rgba(15,23,42,.28); }
+    .report-dialog h2 { margin:0; font-size:1.35rem; }
+    .report-dialog p { margin:8px 0 18px; color:var(--muted); }
+    .report-dialog label { display:grid; gap:7px; margin:12px 0; color:var(--ink); font-weight:750; }
+    .report-dialog select, .report-dialog textarea { width:100%; border:1px solid #cbd5e1; border-radius:10px; padding:10px; font:inherit; }
+    .report-dialog textarea { min-height:80px; resize:vertical; }
+    .report-check { display:flex !important; grid-template-columns:auto 1fr; align-items:center; gap:9px !important; font-weight:700 !important; }
+    .report-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:18px; }
+    .report-actions button { min-height:42px; padding:8px 13px; border-radius:9px; font:inherit; font-weight:850; cursor:pointer; }
+    .report-cancel { border:1px solid var(--line); color:var(--muted); background:#fff; }
+    .report-send { border:0; color:#fff; background:#991b1b; }
+    .report-feedback { min-height:20px; margin:8px 0 0 !important; color:#991b1b !important; font-size:.88rem; font-weight:700; }
     .blocked-message { margin:14px 0 0; color:var(--muted); font-size:.9rem; }
     .how { margin-top:38px; padding:22px; border-radius:var(--radius); background:var(--soft); }
     .how h2 { margin:0 0 14px; font-size:1.2rem; }
@@ -54,6 +84,8 @@
       .notice { align-items:flex-start; font-size:.92rem; } .provider { grid-template-columns:42px minmax(0,1fr); gap:10px; }
       .avatar { width:42px; height:42px; font-size:.76rem; } .provider-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:center; } .profile-button, .text-button { min-width:0; min-height:38px; margin-top:2px; }
       .how-steps { grid-template-columns:1fr; }
+      .share-card-callout { align-items:flex-start; flex-direction:column; }
+      .share-card-button { width:100%; }
     }
   </style>
 </head>
@@ -63,103 +95,224 @@
     <a class="back-link" href="index.html">← All services</a>
   </header>
   <main class="page">
-    <p class="crumb"><span id="location-label">Location not specified</span> · <span id="service-label">Local service</span></p>
+    <p class="crumb"><span id="location-label">Arlington, TX · ZIP 76015</span> · <span id="service-label">Local service</span></p>
     <h1 id="page-title">Local contractors who can help</h1>
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
-    <div class="notice">💬 <span>No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
+    <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
+    <div id="contractor-notice-image-area" style="display:none;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"></div>
     <section aria-labelledby="contractors-heading">
-      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Browse contractor profiles and contact options.</p></div></div>
-      <div class="providers">
-        <article class="provider"><div class="avatar a">NS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">North Star Services</h3><p class="provider-rating">★★★★★ <span>4.9 · 138 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="north-star-services" href="profile.html?provider=north-star-services">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar b">RW</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Right Way Pros</h3><p class="provider-rating">★★★★★ <span>4.8 · 99 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="right-way-pros" href="profile.html?provider=right-way-pros">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar c">BO</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">Blue Oak Works</h3><p class="provider-rating">★★★★★ <span>4.7 · 124 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="blue-oak-works" href="profile.html?provider=blue-oak-works">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar d">LS</div><div class="provider-main"><p class="provider-status">In high demand</p><h3 class="provider-name">Lone Star Repair Team</h3><p class="provider-rating">★★★★☆ <span>4.7 · 86 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="lone-star-repair-team" href="profile.html?provider=lone-star-repair-team">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
-        <article class="provider"><div class="avatar e">HL</div><div class="provider-main"><p class="provider-status">Great value</p><h3 class="provider-name">HomeCare Local</h3><p class="provider-rating">★★★★★ <span>4.9 · 65 reviews</span></p><p class="provider-trade">Local service contractor</p></div><div class="provider-actions"><a class="profile-button" data-provider="homecare-local" href="profile.html?provider=homecare-local">View profile</a><a class="text-button" href="sms:">Text this contractor</a></div></article>
+      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Published profiles from professionals who offer this service.</p></div></div>
+      <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
+      <div class="providers" id="providers">
+        <div class="empty-state" id="empty-state">
+          <h3>No published contractor profiles yet</h3>
+          <p>Contractor profiles appear here immediately after they submit their service.</p>
+          <a class="profile-button" href="contractor-register.html">Post your service</a>
+        </div>
       </div>
-      <p class="blocked-message" id="blocked-message" hidden>Blocked contractors are hidden from your results on this device.</p>
     </section>
     <section class="how" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol class="how-steps"><li><span class="step-number">1</span><span>Choose the service you need.</span></li><li><span class="step-number">2</span><span>Review the provider profiles.</span></li><li><span class="step-number">3</span><span>Send a direct text describing the problem.</span></li></ol></section>
   </main>
   <footer>TexContractor · Local help by text</footer>
   <script>
+    const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
     const params = new URLSearchParams(window.location.search);
     const service = params.get('service') || 'Local service';
     const stored = JSON.parse(localStorage.getItem('texcontractor-location') || '{}');
-    const city = params.get('city') || stored.city || '';
-    const state = params.get('state') || stored.state || '';
-    const zip = params.get('zip') || stored.zip || '';
-    const cityState = [city, state].filter(Boolean).join(', ');
-    const locationText = [cityState, zip ? `ZIP ${zip}` : ''].filter(Boolean).join(' · ') || 'Location not specified';
+    const city = params.get('city') || stored.city || 'Arlington';
+    const state = params.get('state') || stored.state || 'TX';
+    const zip = params.get('zip') || stored.zip || '76015';
+    const locationText = `${city}, ${state} · ZIP ${zip}`;
     document.title = `${service} · TexContractor`;
     document.getElementById('service-label').textContent = service;
     document.getElementById('location-label').textContent = locationText;
     document.getElementById('page-title').textContent = `${service} contractors near you`;
     document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
-    const message = encodeURIComponent("Hello, I found your service on TexContractor.com.\n\nI need an estimate.\n\nMy ZIP code:\n\nProblem description:\n\nIf you need photos or a short video, please let me know.\n\nThank you!");
-    document.querySelectorAll('.text-button').forEach((button) => { button.href = `sms:?body=${message}`; });
-    document.querySelectorAll('.profile-button').forEach((button) => {
-      if (button.dataset.contractorId) {
-        button.href = `profile.html?contractor=${encodeURIComponent(button.dataset.contractorId)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
-        return;
+    const messageTemplate = () => [
+      'Hello, I found your service on TexContractor:',
+      'https://texcontractor.com',
+      'I need an estimate.',
+      'My ZIP code: __________',
+      'Problem description: ____________________',
+      'If you would like photos or a video, I can send them. Thank you.'
+    ].join('\n');
+    const getContractorPhone = async (serviceId) => {
+      const token = await TexAuth.getAccessToken();
+      if (!token) {
+        await TexAuth.requireUser(`contractor.html${window.location.search}`);
+        return '';
       }
-      const provider = button.dataset.provider;
-      button.href = `profile.html?provider=${encodeURIComponent(provider)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_contractor_phone`, {
+        method: 'POST',
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_service_id: serviceId })
+      });
+      if (!response.ok) throw new Error('The contractor phone number is not available yet.');
+      const rows = await response.json();
+      const phone = String(rows?.[0]?.phone || '').replace(/[^\d+]/g, '');
+      if (!phone) throw new Error('The contractor phone number is not available yet.');
+      return phone;
+    };
+    const providers = document.getElementById('providers');
+    const emptyState = document.getElementById('empty-state');
+    const blockedKey = 'texcontractor-blocked-providers';
+    const blockedProviders = new Set(JSON.parse(localStorage.getItem(blockedKey) || '[]').map(String));
+    const reportReasons = ['Fake or not a real professional', 'Does not reply to messages', 'Misleading profile or photos', 'Unsafe, abusive, or inappropriate behavior', 'Offers services unrelated to this site', 'Other'];
+    const reportModal = document.createElement('div');
+    reportModal.className = 'report-modal';
+    reportModal.innerHTML = `<div class="report-dialog" role="dialog" aria-modal="true" aria-labelledby="report-title"><h2 id="report-title">Report this contractor</h2><p id="report-subtitle"></p><label>Reason<select id="report-reason"><option value="">Choose a reason</option>${reportReasons.map((reason) => `<option>${reason}</option>`).join('')}</select></label><label>Additional details (optional)<textarea id="report-details" maxlength="1000" placeholder="Tell us what happened."></textarea></label><label class="report-check"><input id="report-block" type="checkbox"> Block this contractor on this device</label><p class="report-feedback" id="report-feedback"></p><div class="report-actions"><button class="report-cancel" type="button">Cancel</button><button class="report-send" type="button">Send report</button></div></div>`;
+    document.body.appendChild(reportModal);
+    const reportReason = reportModal.querySelector('#report-reason');
+    const reportDetails = reportModal.querySelector('#report-details');
+    const reportBlock = reportModal.querySelector('#report-block');
+    const reportFeedback = reportModal.querySelector('#report-feedback');
+    const closeReport = () => { reportModal.classList.remove('show'); reportReason.value = ''; reportDetails.value = ''; reportBlock.checked = false; reportFeedback.textContent = ''; };
+    reportModal.querySelector('.report-cancel').addEventListener('click', closeReport);
+    reportModal.addEventListener('click', (event) => { if (event.target === reportModal) closeReport(); });
+    let activeReport = null;
+    reportModal.querySelector('.report-send').addEventListener('click', async () => {
+      if (!activeReport || !reportReason.value) { reportFeedback.textContent = 'Choose a reason first.'; return; }
+      const button = reportModal.querySelector('.report-send');
+      button.disabled = true;
+      reportFeedback.textContent = 'Sending report…';
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_reports`, { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json', Prefer:'return=minimal' }, body:JSON.stringify({ technician_id: activeReport.id, reason: reportReason.value, details: reportDetails.value.trim() || null }) });
+        if (!response.ok) throw new Error('Report could not be sent.');
+        if (reportBlock.checked) { blockedProviders.add(String(activeReport.id)); localStorage.setItem(blockedKey, JSON.stringify([...blockedProviders])); }
+        const targetCard = activeReport.card;
+        closeReport();
+        if (targetCard && reportBlock.checked) targetCard.remove();
+      } catch (error) { reportFeedback.textContent = error.message; }
+      button.disabled = false;
     });
-    const contractors = JSON.parse(localStorage.getItem('texcontractor-contractors') || '[]');
-    const providers = document.querySelector('.providers');
-    contractors.forEach((contractor) => {
-      const name = String(contractor.displayName || 'Local contractor');
-      const initials = String(contractor.initials || name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'TC');
+    const initials = (name) => String(name || 'T').trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+    const mediaUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/texcontractor-media/${String(path).split('/').map(encodeURIComponent).join('/')}` : '';
+    const showEmpty = (text) => {
+      providers.innerHTML = '';
+      const card = emptyState.cloneNode(true);
+      card.querySelector('p').textContent = text;
+      providers.appendChild(card);
+    };
+    const renderProvider = (provider, index) => {
       const card = document.createElement('article');
       card.className = 'provider';
       const avatar = document.createElement('div');
-      avatar.className = 'avatar e';
-      avatar.textContent = initials;
-      if (contractor.profilePhoto) {
+      avatar.className = `avatar ${['a','b','c','d','e'][index % 5]}`;
+      if (provider.profile_photo_path) {
         const image = document.createElement('img');
-        image.src = contractor.profilePhoto;
-        image.alt = '';
-        image.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
-        avatar.textContent = '';
+        image.src = mediaUrl(provider.profile_photo_path);
+        image.alt = `${provider.display_name} profile photo`;
         avatar.appendChild(image);
-      }
+      } else avatar.textContent = initials(provider.display_name);
       const main = document.createElement('div');
       main.className = 'provider-main';
       const status = document.createElement('p');
       status.className = 'provider-status';
-      status.textContent = contractor.rating || 'Registered contractor';
-      const title = document.createElement('h3');
-      title.className = 'provider-name';
-      title.textContent = name;
+      status.textContent = 'Published profile';
+      const name = document.createElement('h3');
+      name.className = 'provider-name';
+      name.textContent = provider.display_name;
       const rating = document.createElement('p');
       rating.className = 'provider-rating';
-      rating.textContent = contractor.rating || 'New profile';
+      rating.textContent = `${provider.city}, ${provider.state} · ${provider.years} years`;
       const trade = document.createElement('p');
       trade.className = 'provider-trade';
-      trade.textContent = contractor.service || service;
-      main.append(status, title, rating, trade);
+      trade.textContent = provider.service;
+      main.append(status, name, rating, trade);
       const actions = document.createElement('div');
       actions.className = 'provider-actions';
-      const profile = document.createElement('a');
-      profile.className = 'profile-button';
-      profile.dataset.provider = contractor.id;
-      profile.dataset.contractorId = contractor.id;
-      profile.href = `profile.html?contractor=${encodeURIComponent(contractor.id)}&service=${encodeURIComponent(service)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&zip=${encodeURIComponent(zip)}`;
-      profile.textContent = 'View profile';
-      const text = document.createElement('a');
-      text.className = 'text-button';
-      text.href = `sms:${String(contractor.phone || '').replace(/[^\d+]/g, '')}?body=${message}`;
-      text.textContent = 'Text this contractor';
-      actions.append(profile, text);
+      const textButton = document.createElement('a');
+      textButton.className = 'text-button';
+      textButton.textContent = 'Text this contractor';
+      textButton.href = '#';
+      textButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        textButton.textContent = 'Preparing message…';
+        try {
+          const phone = await getContractorPhone(provider.id);
+          if (!phone) return;
+          window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name))}`;
+        } catch (error) {
+          textButton.textContent = 'Text this contractor';
+          window.alert(error.message);
+        }
+      });
+      const profileButton = document.createElement('a');
+      profileButton.className = 'profile-button';
+      profileButton.textContent = 'View profile';
+      const profileParams = new URLSearchParams({ contractor: provider.id, service: provider.service || service, city: provider.city || city, state: provider.state || state, zip });
+      profileButton.href = `profile.html?${profileParams.toString()}`;
+      actions.append(profileButton, textButton);
+      const reportButton = document.createElement('button');
+      reportButton.className = 'report-button';
+      reportButton.type = 'button';
+      reportButton.textContent = 'Report this contractor';
+      reportButton.addEventListener('click', () => {
+        activeReport = { ...provider, card };
+        reportModal.querySelector('#report-subtitle').textContent = `Tell us what happened with ${provider.display_name}.`;
+        reportModal.classList.add('show');
+        reportReason.focus();
+      });
+      actions.appendChild(reportButton);
       card.append(avatar, main, actions);
-      providers.appendChild(card);
-    });
-    const blocked = new Set(JSON.parse(localStorage.getItem('texcontractor-blocked-providers') || '[]'));
-    let hiddenCount = 0;
-    document.querySelectorAll('.profile-button').forEach((button) => {
-      if (blocked.has(button.dataset.contractorId || button.dataset.provider)) { button.closest('.provider').hidden = true; hiddenCount += 1; }
-    });
-    if (hiddenCount) document.getElementById('blocked-message').hidden = false;
+      return card;
+    };
+    async function loadProviders() {
+      try {
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc', limit: '100' });
+        if (service !== 'Local service') query.set('service', `eq.${service}`);
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers: { apikey: SUPABASE_KEY } });
+        if (!response.ok) throw new Error('Could not load published profiles.');
+        const rows = await response.json();
+        const isDfw = value => ['dallas', 'fort worth', 'dallas–fort worth', 'dallas-fort worth'].includes(String(value || '').trim().toLowerCase());
+        const locationScore = provider => {
+          if (String(provider.state || '').toUpperCase() !== String(state || '').toUpperCase()) return 0;
+          if (String(provider.city || '').toLowerCase() === String(city || '').toLowerCase()) return 3;
+          if (isDfw(city) && isDfw(provider.city)) return 2;
+          return 1;
+        };
+        rows.sort((a, b) => locationScore(b) - locationScore(a));
+        if (!rows.length) return showEmpty('No contractor has published this service yet. Be the first to post your service.');
+        providers.innerHTML = '';
+        rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
+        if (!providers.children.length) showEmpty('You blocked the available contractor on this device.');
+      } catch (error) {
+        showEmpty('Published profiles could not be loaded right now. Please try again.');
+      }
+    }
+    loadProviders();
   </script>
+  <script src="tex-auth.js"></script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
+<script>
+(async function(){
+ const base='https://rryehtaskbjnfbodymjj.supabase.co';
+ const key='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+ const headers={apikey:key};
+ const area=document.getElementById('contractor-notice-image-area');
+ const image=document.getElementById('contractor-notice-public-image');
+ const banner=document.getElementById('contractor-notice-banner');
+ const label=document.getElementById('contractor-notice-text');
+ const safe=s=>{try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}};
+ const get=async path=>{const r=await fetch(base+path,{headers,cache:'no-store'});if(!r.ok)throw Error('Request '+r.status);return r.json()};
+ let general=null,catalog=null;
+ try{general=(await get('/rest/v1/texcontractor_site_settings?select=message_text,text_color,background_color,accent_color,font_style,notice_flash_speed,notice_image_url,notice_image_link_url&key=eq.contractor_notice&limit=1'))[0]}catch(e){console.warn('Notice settings unavailable',e)}
+ const service=new URLSearchParams(location.search).get('service');
+ if(service){const normalized=service.trim().replace(/\s+/g,' ').toLowerCase();try{catalog=(await get('/rest/v1/texcontractor_catalog_images?select=image_url,click_url&service_key=eq.'+encodeURIComponent(normalized)+'&limit=1'))[0]}catch(e){console.warn('Catalog image unavailable',e)}}
+ if(general){
+  if(label&&general.message_text)label.textContent=general.message_text;
+  const hex=x=>/^#[0-9a-f]{6}$/i.test(x||'');
+  if(banner){if(hex(general.background_color))banner.style.setProperty('background-color',general.background_color,'important');if(hex(general.accent_color))banner.style.setProperty('border-color',general.accent_color,'important')}
+  if(label){if(hex(general.text_color))label.style.setProperty('color',general.text_color,'important');label.style.fontWeight=general.font_style==='bold'?'700':'400';label.style.fontStyle=general.font_style==='italic'?'italic':'normal';label.style.textTransform=general.font_style==='uppercase'?'uppercase':'none'}
+  if(banner&&(general.notice_flash_speed==='slow'||general.notice_flash_speed==='fast')){const s=document.createElement('style');s.textContent='@keyframes texNoticePulse{50%{opacity:.45}}';document.head.appendChild(s);banner.style.animation='texNoticePulse '+(general.notice_flash_speed==='fast'?'0.6s':'2.5s')+' ease-in-out infinite'}
+ }
+ const src=safe(catalog?.image_url)||safe(general?.notice_image_url);
+ const destination=safe(catalog?.image_url?catalog.click_url:general?.notice_image_link_url);
+ if(area&&image){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
+})();
+</script>
 </body>
 </html>
+

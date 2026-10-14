@@ -1,0 +1,81 @@
+name: Deploy staging site to GitHub Pages
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: staging-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/check-static-site.mjs
+      - run: node scripts/audit-seo.mjs
+      - run: node scripts/generate-service-seo.mjs
+      - name: Prepare staging build
+        run: |
+          mkdir -p _site
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' --exclude='CNAME' ./ _site/
+          touch _site/.nojekyll
+          test -s _site/index.html
+          test -s _site/contractor.html
+          test -s _site/profile.html
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('_site/index.html')
+          html = p.read_text(encoding='utf-8')
+          tag = '<link rel="icon" type="image/png" href="/texcontractor-logo.png">'
+          if '</head>' not in html.lower():
+              raise SystemExit('Homepage has no closing head tag; favicon setup aborted')
+          import re
+          html = re.sub(r'<link[^>]*rel=["\x27](?:shortcut +)?icon["\x27][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'</head>', lambda m: '  '+tag+chr(10)+'</head>', html, count=1, flags=re.I)
+          # Show the welcome screen once per browser, not again on page navigation.
+          old = """if (sessionStorage.getItem('texcontractor-welcome-closed') === '1') {
+      welcomeScreen.hidden = true;
+    }"""
+          new = """if (localStorage.getItem('texcontractor-welcome-seen') === '1') {
+      welcomeScreen.hidden = true;
+    } else {
+      localStorage.setItem('texcontractor-welcome-seen', '1');
+    }"""
+          if old in html:
+              html = html.replace(old, new, 1)
+          html = html.replace("sessionStorage.setItem('texcontractor-welcome-closed', '1');", "localStorage.setItem('texcontractor-welcome-seen', '1');")
+          # Apply the returning-visitor rule before the welcome overlay is painted.
+          early = """<script>
+          try {
+            if (localStorage.getItem('texcontractor-welcome-seen') === '1') {
+              document.documentElement.classList.add('tex-welcome-already-seen');
+            }
+          } catch (e) {}
+          </script>
+          <style>
+          html.tex-welcome-already-seen #welcome-screen,
+          html.tex-welcome-already-seen .welcome-screen,
+          html.tex-welcome-already-seen #welcomeScreen { display:none !important; }
+          </style>"""
+          html = re.sub(r'<head>', lambda m: m.group(0)+chr(10)+early, html, count=1, flags=re.I)
+          p.write_text(html, encoding='utf-8')
+          print('Homepage favicon links set in published artifact')
+          PY
+          test -s _site/favicon.svg
+          test -s _site/texcontractor-logo.png
+          echo 'Verified: favicon.svg and PNG icon included in published Pages artifact'
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - uses: actions/deploy-pages@v4

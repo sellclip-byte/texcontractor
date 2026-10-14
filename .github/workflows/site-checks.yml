@@ -1,0 +1,49 @@
+name: Staging site checks
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - '*.html'
+      - '*.js'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'scripts/**'
+      - '.github/workflows/site-checks.yml'
+  pull_request:
+    paths:
+      - '*.html'
+      - '*.js'
+      - 'robots.txt'
+      - 'sitemap.xml'
+      - 'scripts/**'
+      - '.github/workflows/site-checks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/check-static-site.mjs
+      - name: Audit 61 service pages and sitemap
+        run: node scripts/audit-seo.mjs
+      - name: Generate catalog SEO pages and sitemap
+        run: node scripts/generate-service-seo.mjs
+      - name: Verify generated pages
+        run: |
+          test -f sitemap.xml
+          count="$(find services -maxdepth 1 -name '*.html' | wc -l)"
+          echo "SEO service pages generated: $count"
+          test "$count" -eq 62
+      - name: Save generated SEO pages for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-service-pages
+          path: |
+            services/*.html
+            sitemap.xml

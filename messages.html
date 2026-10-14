@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
+  <meta name="description" content="Private messages on TexContractor.">
+  <title>Messages · TexContractor</title>
+  <style>
+    :root { --ink:#101828; --muted:#667085; --line:#e4e7ec; --soft:#f7f9fc; --green:#157347; --gold:#f5b94c; --blue:#175cd3; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#fbfcfd; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
+    a { color:inherit; }
+    header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:12px clamp(18px,4vw,56px); background:rgba(251,252,253,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:inline-flex; align-items:center; text-decoration:none; }
+    .brand-logo { display:block; width:224px; height:68px; object-fit:contain; object-position:left center; }
+    .header-actions { display:flex; align-items:center; gap:10px; }
+    .header-link, .signout { min-height:42px; padding:9px 13px; border:1px solid var(--line); border-radius:10px; color:var(--muted); background:#fff; font:inherit; font-weight:800; text-decoration:none; cursor:pointer; }
+    .header-link:hover, .signout:hover, .header-link:focus-visible, .signout:focus-visible { color:var(--ink); border-color:#98a2b3; }
+    .page { width:min(1120px,100%); margin:0 auto; padding:clamp(28px,5vw,58px) clamp(18px,4vw,56px) 72px; }
+    .eyebrow { margin:0 0 8px; color:var(--green); font-weight:900; letter-spacing:.08em; text-transform:uppercase; font-size:.78rem; }
+    h1 { margin:0; font-size:clamp(2.2rem,5vw,4rem); line-height:1.02; letter-spacing:-.065em; }
+    .intro { max-width:680px; margin:14px 0 24px; color:var(--muted); font-size:1.05rem; }
+    .message { display:none; margin:0 0 18px; padding:14px 16px; border-radius:13px; font-weight:750; }
+    .message.show { display:block; }
+    .message.error { color:#991b1b; background:#fff1f2; border:1px solid #fecdd3; }
+    .message.ok { color:#14532d; background:#ecfdf3; border:1px solid #a7f3d0; }
+    .messaging-grid { display:grid; grid-template-columns:320px minmax(0,1fr); min-height:560px; overflow:hidden; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:0 12px 30px rgba(16,24,40,.06); }
+    .conversations { border-right:1px solid var(--line); background:#fbfcfd; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px; border-bottom:1px solid var(--line); }
+    .panel-head h2 { margin:0; font-size:1.12rem; }
+    .new-message, .send { min-height:38px; padding:8px 11px; border:0; border-radius:9px; color:#1d1708; background:var(--gold); font:inherit; font-weight:900; cursor:pointer; }
+    .new-message:hover, .send:hover, .new-message:focus-visible, .send:focus-visible { filter:brightness(.97); }
+    .new-message:disabled, .send:disabled { cursor:wait; opacity:.65; }
+    .conversation-list { display:grid; }
+    .conversation { display:grid; gap:4px; width:100%; padding:15px 16px; border:0; border-bottom:1px solid #eef0f3; color:var(--ink); background:transparent; font:inherit; text-align:left; cursor:pointer; }
+    .conversation:hover, .conversation.active { background:#fff; }
+    .conversation.active { box-shadow:inset 4px 0 0 var(--green); }
+    .conversation-title { font-weight:900; overflow-wrap:anywhere; }
+    .conversation-preview { color:var(--muted); font-size:.88rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .conversation-meta { display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--muted); font-size:.76rem; }
+    .unread { display:inline-flex; padding:2px 7px; border-radius:999px; color:#174ea6; background:#eff6ff; font-weight:900; }
+    .chat { display:flex; min-width:0; flex-direction:column; }
+    .chat-empty { display:grid; flex:1; min-height:400px; place-items:center; padding:30px; color:var(--muted); text-align:center; }
+    .chat-window { display:flex; min-height:560px; flex:1; flex-direction:column; }
+    .chat-head { padding:17px 20px; border-bottom:1px solid var(--line); }
+    .chat-head h2 { margin:0; font-size:1.2rem; overflow-wrap:anywhere; }
+    .chat-head p { margin:3px 0 0; color:var(--muted); font-size:.88rem; overflow-wrap:anywhere; }
+    .chat-messages { display:flex; flex:1; min-height:340px; flex-direction:column; gap:10px; padding:20px; overflow:auto; background:#fcfdfd; }
+    .bubble-row { display:flex; }
+    .bubble-row.outgoing { justify-content:flex-end; }
+    .bubble { max-width:min(78%,560px); padding:10px 13px; border-radius:15px; background:#eef2f4; }
+    .outgoing .bubble { color:#fff; background:var(--green); border-bottom-right-radius:4px; }
+    .incoming .bubble { border-bottom-left-radius:4px; }
+    .bubble p { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .bubble time { display:block; margin-top:5px; color:var(--muted); font-size:.72rem; }
+    .outgoing .bubble time { color:#d8f4e5; }
+    .message-form { display:flex; align-items:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--line); background:#fff; }
+    .message-form textarea { min-height:48px; max-height:150px; flex:1; resize:vertical; border:1px solid #cbd5e1; border-radius:11px; padding:11px 12px; color:var(--ink); background:#fff; font:inherit; }
+    .message-form textarea:focus { outline:3px solid rgba(21,115,71,.16); border-color:var(--green); }
+    body.auth-check { visibility:hidden; }
+    body.auth-check.auth-ready { visibility:visible; }
+    @media (max-width:760px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .messaging-grid { grid-template-columns:1fr; } .conversations { border-right:0; border-bottom:1px solid var(--line); } .conversation-list { max-height:220px; overflow:auto; } .chat-window { min-height:480px; } }
+    @media (max-width:480px) { .header-link { display:none; } .message-form { align-items:stretch; flex-direction:column; } .send { width:100%; } .bubble { max-width:88%; } }
+  </style>
+</head>
+<body class="auth-check">
+  <header>
+    <a class="brand" href="index.html" aria-label="TexContractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="TexContractor · Precision Construction Solutions"></a>
+    <div class="header-actions"><a class="header-link" id="admin-link" href="contractor-admin.html" hidden>Admin</a><a class="header-link" href="index.html">View site</a><button class="header-link" id="refresh" type="button">Refresh</button><button class="signout" id="signout" type="button">Sign out</button></div>
+  </header>
+  <main class="page">
+    <p class="eyebrow">TexContractor</p>
+    <h1>Messages</h1>
+    <p class="intro">Private messages stay inside TexContractor. Members can contact the administration, and the administration can reply from the protected dashboard.</p>
+    <div class="message" id="message" role="status"></div>
+    <section class="messaging-grid" id="messages-app" hidden>
+      <aside class="conversations">
+        <div class="panel-head"><h2>Conversations</h2><button class="new-message" id="new-message" type="button">New message</button></div>
+        <div class="conversation-list" id="conversation-list"><div class="chat-empty">Loading conversations…</div></div>
+      </aside>
+      <section class="chat" aria-live="polite">
+        <div class="chat-empty" id="chat-empty">Choose a conversation to read or send a message.</div>
+        <div class="chat-window" id="chat-window" hidden>
+          <div class="chat-head"><h2 id="chat-title">TexContractor Support</h2><p id="chat-subtitle">Private conversation</p></div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <form class="message-form" id="message-form"><textarea id="message-input" maxlength="4000" placeholder="Write your message…" required></textarea><button class="send" type="submit">Send</button></form>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="tex-auth.js"></script>
+  <script src="tex-admin.js"></script>
+  <script src="tex-messages.js"></script>
+  <script src="messages-page.js"></script>
+  <script src="tex-language.js"></script>
+  <script src="tex-side-ads.js"></script>
+</body>
+</html>
