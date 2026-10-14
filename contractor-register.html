@@ -178,8 +178,8 @@
         .then(response => { if (!response.ok) throw new Error('City directory unavailable'); return response.text(); })
         .then(csv => {
           const grouped = {};
-          for (const line of csv.split(/\\r?\\n/)) {
-            const match = line.match(/^\\d+,([A-Z]{2}),[^,]+,(?:"([^"]+)"|([^,]+)),/);
+          for (const line of csv.split(/\r?\n/)) {
+            const match = line.match(/^\d+,([A-Z]{2}),[^,]+,(?:"([^"]+)"|([^,]+)),/);
             if (!match) continue;
             const name = (match[2] || match[3] || '').trim();
             if (name) (grouped[match[1]] ||= new Set()).add(name);
