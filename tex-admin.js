@@ -309,5 +309,35 @@
     return updated;
   };
 
-  window.TexAdminApi = { createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  const uploadSubmissionPhoto = async (submission, file, placement, user) => {
+    const token = await TexAuth.getAccessToken();
+    if (!token || !user?.id) throw new Error('Sign in as admin again.');
+    if (!file || !file.type.startsWith('image/')) throw new Error('Choose an image file.');
+    if (file.size > 8 * 1024 * 1024) throw new Error('Maximum image size is 8 MB.');
+    if (!['profile', 'work', 'both'].includes(placement)) throw new Error('Invalid photo placement.');
+    const existing = Array.isArray(submission.work_photo_paths) ? submission.work_photo_paths : [];
+    if (placement !== 'profile' && existing.length >= 10) throw new Error('Maximum 10 work photos.');
+    const extension = ['image/png','image/webp','image/gif'].includes(file.type) ? file.type.split('/')[1] : 'jpg';
+    const path = `${submission.owner_id}/${submission.id}/admin-${crypto.randomUUID()}.${extension}`;
+    const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${encodeObjectPath(path)}`, {
+      method: 'POST', headers: { ...apiHeaders(token, false), 'Content-Type': file.type, 'x-upsert': 'false' }, body: file
+    });
+    if (!response.ok) {
+      const error = await readBody(response);
+      throw new Error(error?.message || error?.error || 'Photo upload failed.');
+    }
+    const patch = {};
+    if (placement === 'profile' || placement === 'both') patch.profile_photo_path = path;
+    if (placement === 'work' || placement === 'both') patch.work_photo_paths = [...existing, path];
+    try {
+      const updated = await updateSubmission(submission.id, patch, user);
+      if (!updated) throw new Error('Could not update contractor photo.');
+      return updated;
+    } catch (error) {
+      await removeObjects(token, [path]);
+      throw error;
+    }
+  };
+
+  window.TexAdminApi = { uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
