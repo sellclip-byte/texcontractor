@@ -10,6 +10,11 @@
     background_color: '#ecfff8',
     accent_color: '#a9e8d2',
     animation: 'static',
+    banner_image_url: null,
+    banner_image_link_url: null,
+    banner_height_px: 180,
+    banner_width_percent: 100,
+    banner_font_size_px: 28,
     is_enabled: true
   };
 
@@ -27,13 +32,18 @@
       background_color: safeHex(source.background_color, DEFAULT_BANNER.background_color),
       accent_color: safeHex(source.accent_color, DEFAULT_BANNER.accent_color),
       animation: allowed(source.animation, ['static', 'pulse', 'scroll'], DEFAULT_BANNER.animation),
+      banner_image_url: /^https:\/\//i.test(source.banner_image_url || '') ? source.banner_image_url : null,
+      banner_image_link_url: /^https:\/\//i.test(source.banner_image_link_url || '') ? source.banner_image_link_url : null,
+      banner_height_px: Math.max(60,Math.min(700,Number(source.banner_height_px)||180)),
+      banner_width_percent: Math.max(30,Math.min(100,Number(source.banner_width_percent)||100)),
+      banner_font_size_px: Math.max(12,Math.min(80,Number(source.banner_font_size_px)||28)),
       is_enabled: source.is_enabled !== false
     };
   };
 
   const getHomepageBanner = async () => {
     const params = new URLSearchParams({
-      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled',
+      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url,banner_image_link_url,banner_height_px,banner_width_percent,banner_font_size_px',
       key: 'eq.homepage_banner',
       limit: '1'
     });
