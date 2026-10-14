@@ -46,6 +46,12 @@
     .work-gallery img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; background:var(--soft); }
     @media (max-width:900px) { .work-gallery { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     @media (max-width:700px) { .work-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .profile-head { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns:1fr; } }
+    .gallery-contact { margin-top:20px; text-align:center; }
+    .gallery-contact p { margin:0 0 12px; }
+    .gallery-text-cta { display:inline-block; padding:12px 22px; border-radius:12px; background:#b91c1c; color:white; font-weight:800; text-decoration:none; box-shadow:0 0 0 2px rgba(185,28,28,.15); animation:galleryPulse 2.2s ease-in-out infinite; }
+    .gallery-text-cta:hover { background:#991b1b; }
+    @keyframes galleryPulse { 0%,100% { opacity:1; box-shadow:0 0 0 2px rgba(185,28,28,.15); } 50% { opacity:.75; box-shadow:0 0 0 7px rgba(185,28,28,.06); } }
+    @media (prefers-reduced-motion:reduce) { .gallery-text-cta { animation:none; } }
   </style>
 </head>
 <body>
@@ -69,6 +75,10 @@
         <h2>Work photos</h2>
         <p>Photos of the contractor’s work or illustrative images representing the services they offer.</p>
         <div class="work-gallery" id="work-gallery" aria-live="polite"></div>
+        <div class="gallery-contact">
+          <p>These photos may represent the services offered. For more information, text the contractor directly.</p>
+          <a href="#" id="gallery-text-link" class="gallery-text-cta">Text Contractor</a>
+        </div>
       </section>
       <aside class="panel">
         <h2>Profile details</h2>
@@ -166,6 +176,10 @@
         textLink.textContent = 'Text this contractor';
         window.alert(error.message);
       }
+    });
+    document.getElementById('gallery-text-link').addEventListener('click', (event) => {
+      event.preventDefault();
+      document.getElementById('text-link').click();
     });
     const gallery = document.getElementById('work-gallery');
     const addGalleryImage = (src, index) => {
