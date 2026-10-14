@@ -82,6 +82,8 @@
   </main>
   <footer>TexContractor · Local help by text</footer>
   <script>
+    // Hide US phone numbers in public-facing text. Keep dedicated phone/SMS fields intact.
+    const hidePublicPhones = (value) => String(value ?? '').replace(/(?<!\d)(?:\+?1[\s.\-]*)?(?:\([2-9]\d{2}\)|[2-9]\d{2})[\s.\-]*[2-9]\d{2}[\s.\-]*\d{4}(?!\d)/g, '[phone hidden]');
     const params = new URLSearchParams(window.location.search);
     const service = params.get('service') || 'Local service';
     const stored = JSON.parse(localStorage.getItem('texcontractor-location') || '{}');
@@ -127,16 +129,16 @@
       main.className = 'provider-main';
       const status = document.createElement('p');
       status.className = 'provider-status';
-      status.textContent = contractor.rating || 'Registered contractor';
+      status.textContent = hidePublicPhones(contractor.rating || 'Registered contractor');
       const title = document.createElement('h3');
       title.className = 'provider-name';
-      title.textContent = name;
+      title.textContent = hidePublicPhones(name);
       const rating = document.createElement('p');
       rating.className = 'provider-rating';
       rating.textContent = contractor.rating || 'New profile';
       const trade = document.createElement('p');
       trade.className = 'provider-trade';
-      trade.textContent = contractor.service || service;
+      trade.textContent = hidePublicPhones(contractor.service || service);
       main.append(status, title, rating, trade);
       const actions = document.createElement('div');
       actions.className = 'provider-actions';
