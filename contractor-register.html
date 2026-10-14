@@ -76,7 +76,10 @@
       </section>
       <section class="panel">
         <h2>Profile photo</h2>
-        <p class="hint">Upload one clear photo of yourself. This is the photo customers see beside your name; it is separate from your work photos.</p>
+        <p class="hint">Choose a profile image from the TexContractor gallery or upload your own. Gallery illustrations are for profile avatars only, never completed-work photos.</p>
+        <button type="button" id="open-profile-gallery" style="padding:10px 16px;border:1px solid #157347;border-radius:10px;background:#fff;color:#157347;font-weight:700;cursor:pointer">Choose from TexContractor Gallery</button>
+        <div id="profile-gallery" hidden style="margin:12px 0;padding:12px;border:1px solid #e4e7ec;border-radius:12px"><p class="hint" id="gallery-status">Select a service catalog to see its available images.</p><div id="gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px"></div></div>
+        <p class="hint" style="margin-top:12px">Or upload your own profile photo:</p>
         <input id="profile-photo" name="profilePhoto" type="file" accept="image/*">
         <div class="profile-preview" id="profile-preview" aria-live="polite"></div>
         <div class="media-divider"></div>
@@ -110,7 +113,55 @@
         container.appendChild(image);
       });
     };
-    profileInput.addEventListener('change', () => renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo'));
+    let selectedGalleryPhoto = '';
+    const galleryPanel = document.getElementById('profile-gallery');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const galleryStatus = document.getElementById('gallery-status');
+    const serviceSelect = document.querySelector('select[name="service"]');
+    const galleryImageCache = new Map();
+    async function loadProfileGallery() {
+      const service = serviceSelect.value;
+      galleryGrid.replaceChildren();
+      selectedGalleryPhoto = '';
+      if (!service) { galleryStatus.textContent = 'Choose a service catalog first.'; return; }
+      galleryStatus.textContent = 'Loading available profile images…';
+      try {
+        const response = await fetch('texcontractor-profile-gallery.json', {cache:'no-store'});
+        if (!response.ok) throw new Error('Gallery unavailable');
+        const catalogImages = await response.json();
+        const images = Array.isArray(catalogImages[service]) ? catalogImages[service] : [];
+        if (!images.length) { galleryStatus.textContent = 'No gallery images have been published for this catalog yet. You can upload your own photo.'; return; }
+        galleryStatus.textContent = 'Choose one image for your profile (not for completed work).';
+        for (const src of images) {
+          if (typeof src !== 'string' || !/^gallery\/[a-zA-Z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/.test(src)) continue;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.style.cssText = 'padding:3px;border:2px solid #e4e7ec;border-radius:10px;background:white;cursor:pointer';
+          const image = document.createElement('img');
+          image.src = src; image.alt = service + ' profile illustration';
+          image.loading = 'lazy'; image.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px';
+          button.appendChild(image);
+          button.addEventListener('click', async () => {
+            selectedGalleryPhoto = src;
+            profileInput.value = '';
+            galleryGrid.querySelectorAll('button').forEach(b => b.style.borderColor = '#e4e7ec');
+            button.style.borderColor = '#157347';
+            profilePreview.replaceChildren(image.cloneNode());
+          });
+          galleryGrid.appendChild(button);
+        }
+      } catch (_) { galleryStatus.textContent = 'Gallery is temporarily unavailable. Please upload your own photo.'; }
+    }
+    document.getElementById('open-profile-gallery').addEventListener('click', () => {
+      galleryPanel.hidden = !galleryPanel.hidden;
+      if (!galleryPanel.hidden) loadProfileGallery();
+    });
+    serviceSelect.addEventListener('change', () => { selectedGalleryPhoto = ''; if (!galleryPanel.hidden) loadProfileGallery(); });
+    profileInput.addEventListener('change', () => {
+      selectedGalleryPhoto = '';
+      galleryGrid.querySelectorAll('button').forEach(b => b.style.borderColor = '#e4e7ec');
+      renderImages(profileInput.files, profilePreview, 1, 'Selected profile photo');
+    });
     workInput.addEventListener('change', () => renderImages(workInput.files, workPreview, 4, 'Selected completed work'));
     const readImage = (file, maxSize = 1200) => new Promise((resolve) => {
       if (!file) return resolve('');
@@ -152,12 +203,12 @@
       }
       delete data.profilePhoto;
       delete data.workPhotos;
-      data.profilePhotoName = profileInput.files[0]?.name || '';
+      data.profilePhotoName = profileInput.files[0]?.name || (selectedGalleryPhoto ? 'TexContractor gallery illustration' : '');
       data.workPhotoCount = Math.min(workInput.files.length, 4);
       data.ownerId = signedInUser.id;
       data.ownerEmail = signedInUser.email || '';
       const media = {
-        profilePhoto: await readImage(profileInput.files[0]),
+        profilePhoto: selectedGalleryPhoto || await readImage(profileInput.files[0]),
         workPhotos: await Promise.all(Array.from(workInput.files).slice(0, 4).map((file) => readImage(file)))
       };
       const draft = { ...data };
