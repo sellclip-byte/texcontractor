@@ -165,19 +165,49 @@
       NH:['Manchester','Nashua','Concord','Dover'], NJ:['Newark','Jersey City','Paterson','Elizabeth','Trenton'], NM:['Albuquerque','Las Cruces','Rio Rancho','Santa Fe'], NY:['New York City','Buffalo','Rochester','Yonkers','Syracuse','Albany'],
       NC:['Charlotte','Raleigh','Greensboro','Durham','Winston-Salem','Fayetteville'], ND:['Fargo','Bismarck','Grand Forks','Minot'], OH:['Columbus','Cleveland','Cincinnati','Toledo','Akron','Dayton'], OK:['Oklahoma City','Tulsa','Norman','Broken Arrow','Edmond'],
       OR:['Portland','Eugene','Salem','Gresham','Hillsboro'], PA:['Philadelphia','Pittsburgh','Allentown','Erie','Reading','Harrisburg'], RI:['Providence','Warwick','Cranston','Pawtucket'], SC:['Charleston','Columbia','North Charleston','Mount Pleasant','Greenville'],
-      SD:['Sioux Falls','Rapid City','Aberdeen','Pierre'], TN:['Nashville','Memphis','Knoxville','Chattanooga','Clarksville'], TX:['Houston','San Antonio','Dallas','Austin','Fort Worth','Arlington','El Paso','Corpus Christi','Plano','Irving','Garland','Grand Prairie','Mansfield','Kenner'],
+      SD:['Sioux Falls','Rapid City','Aberdeen','Pierre'], TN:['Nashville','Memphis','Knoxville','Chattanooga','Clarksville'], TX:['Houston','San Antonio','Dallas','Dallas–Fort Worth','Austin','Fort Worth','Arlington','El Paso','Corpus Christi','Plano','Irving','Garland','Grand Prairie','Mansfield','Kenner'],
       UT:['Salt Lake City','West Valley City','Provo','West Jordan','Orem','St. George'], VT:['Burlington','South Burlington','Rutland','Montpelier'], VA:['Virginia Beach','Norfolk','Chesapeake','Richmond','Arlington','Alexandria','Newport News'],
       WA:['Seattle','Spokane','Tacoma','Vancouver','Bellevue','Everett','Olympia'], WV:['Charleston','Huntington','Morgantown','Parkersburg'], WI:['Milwaukee','Madison','Green Bay','Kenosha','Racine'], WY:['Cheyenne','Casper','Laramie','Gillette'], DC:['Washington']
     };
-    stateInput.addEventListener('change', () => {
-      const cities = citiesByState[stateInput.value] || [];
-      cityInput.replaceChildren(new Option('Choose a city', ''));
-      cities.forEach((city) => cityInput.add(new Option(city, city)));
-      cityInput.add(new Option('Other city — type below', '__other__'));
+    // Full US city directory (approximately 29,880 records). Keep the built-in
+    // list as a fallback when the external directory is unavailable.
+    const US_CITIES_CSV = 'https://cdn.jsdelivr.net/gh/kelvins/US-Cities-Database@main/csv/us_cities.csv';
+    let fullCitiesPromise;
+    const loadFullCities = () => {
+      if (!fullCitiesPromise) fullCitiesPromise = fetch(US_CITIES_CSV, { cache: 'force-cache' })
+        .then(response => { if (!response.ok) throw new Error('City directory unavailable'); return response.text(); })
+        .then(csv => {
+          const grouped = {};
+          for (const line of csv.split(/\\r?\\n/)) {
+            const match = line.match(/^\\d+,([A-Z]{2}),[^,]+,(?:"([^"]+)"|([^,]+)),/);
+            if (!match) continue;
+            const name = (match[2] || match[3] || '').trim();
+            if (name) (grouped[match[1]] ||= new Set()).add(name);
+          }
+          if (!grouped.TX || grouped.TX.size < 100) throw new Error('Incomplete city directory');
+          return grouped;
+        }).catch(error => { console.warn('Using built-in city choices:', error); return null; });
+      return fullCitiesPromise;
+    };
+    let citySelectionVersion = 0;
+    stateInput.addEventListener('change', async () => {
+      const version = ++citySelectionVersion;
+      const state = stateInput.value;
+      cityInput.replaceChildren(new Option('Loading cities…', ''));
+      cityInput.disabled = true;
       otherCityField.hidden = true;
       otherCityInput.required = false;
       otherCityInput.value = '';
-      cityInput.focus();
+      const fullCities = await loadFullCities();
+      if (version !== citySelectionVersion || stateInput.value !== state) return;
+      const names = new Set([...(citiesByState[state] || []), ...(fullCities?.[state] || [])]);
+      if (state === 'TX') names.add('Dallas–Fort Worth');
+      if (state === 'TX') names.delete('Kenner'); // Kenner is in Louisiana.
+      const cities = [...names].sort((a,b) => a.localeCompare(b, 'en'));
+      cityInput.replaceChildren(new Option('Choose a city', ''));
+      cities.forEach(city => cityInput.add(new Option(city, city)));
+      cityInput.add(new Option('Other city — type below', '__other__'));
+      cityInput.disabled = !state;
     });
     cityInput.addEventListener('change', () => {
       const isOther = cityInput.value === '__other__';
