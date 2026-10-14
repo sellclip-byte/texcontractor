@@ -180,6 +180,64 @@
           <button class="save" type="button">Save review</button>
         </div>
         <p class="private-note">Private contact details are visible only inside this protected dashboard.</p>`;
+      if (status === 'pending') {
+        const review = card.querySelector('.review');
+        review.innerHTML = `
+          <label>Profile photo (one image)<input data-pending-profile type="file" accept="image/*"></label>
+          <label>Work photos (select up to 10 images)<input data-pending-work type="file" accept="image/*" multiple></label>
+          <div data-pending-preview style="display:flex;flex-wrap:wrap;gap:8px;grid-column:1/-1"></div>
+          <button data-pending-approve class="save" type="button" style="grid-column:1/-1">Approve &amp; Publish</button>
+        `;
+        const profileInput = review.querySelector('[data-pending-profile]');
+        const workInput = review.querySelector('[data-pending-work]');
+        const preview = review.querySelector('[data-pending-preview]');
+        const approve = review.querySelector('[data-pending-approve]');
+        const refreshPreview = () => {
+          preview.replaceChildren();
+          const selected = [...Array.from(profileInput.files || []), ...Array.from(workInput.files || [])];
+          selected.forEach((file, index) => {
+            const image = document.createElement('img');
+            const url = URL.createObjectURL(file);
+            image.src = url;
+            image.alt = index === 0 && profileInput.files.length ? 'Selected profile photo' : 'Selected work photo';
+            image.style.cssText = 'width:90px;height:90px;object-fit:cover;border-radius:10px';
+            image.onload = () => URL.revokeObjectURL(url);
+            preview.appendChild(image);
+          });
+        };
+        profileInput.addEventListener('change', refreshPreview);
+        workInput.addEventListener('change', refreshPreview);
+        approve.addEventListener('click', async () => {
+          const profileFiles = Array.from(profileInput.files || []);
+          const workFiles = Array.from(workInput.files || []);
+          const existingWork = Array.isArray(row.work_photo_paths) ? row.work_photo_paths.length : 0;
+          if (existingWork + workFiles.length > 10) {
+            showMessage('Maximum 10 work photos. Choose fewer images.', 'error');
+            return;
+          }
+          approve.disabled = true;
+          approve.textContent = 'Uploading and publishing…';
+          try {
+            let updated = row;
+            if (profileFiles.length) updated = await TexAdminApi.uploadSubmissionPhotos(updated, profileFiles, 'profile', currentUser);
+            if (workFiles.length) updated = await TexAdminApi.uploadSubmissionPhotos(updated, workFiles, 'work', currentUser);
+            const approved = await TexAdminApi.updateSubmission(row.id, { status: 'approved' }, currentUser);
+            if (!approved || approved.status !== 'approved') throw new Error('Approval could not be confirmed.');
+            row.status = 'approved';
+            row.profile_photo_path = approved.profile_photo_path;
+            row.work_photo_paths = approved.work_photo_paths;
+            updateSummary();
+            renderSubmissions();
+            showMessage('Contractor approved and published. Continue with the next pending contractor.', 'ok');
+          } catch (error) {
+            showMessage('Could not publish: ' + error.message + '. You can retry without leaving this page.', 'error');
+            approve.disabled = false;
+            approve.textContent = 'Approve & Publish';
+          }
+        });
+        submissionsList.appendChild(card);
+        return;
+      }
       const avatar = card.querySelector('.avatar');
       if (row.profile_photo_path) {
         const image = document.createElement('img');
