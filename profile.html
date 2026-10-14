@@ -102,13 +102,15 @@
       years:savedProfile.years || '—'
     } : (profiles[key] || profiles['north-star']);
     const service = params.get('service') || 'Local service';
-    document.title = `${profile.name} · TexContractor`;
-    document.getElementById('contractor-name').textContent = profile.name;
+    // Hide US phone numbers in public-facing text. Keep dedicated phone/SMS fields intact.
+    const hidePublicPhones = (value) => String(value ?? '').replace(/(?<!\d)(?:\+?1[\s.\-]*)?(?:\([2-9]\d{2}\)|[2-9]\d{2})[\s.\-]*[2-9]\d{2}[\s.\-]*\d{4}(?!\d)/g, '[phone hidden]');
+    document.title = `${hidePublicPhones(profile.name)} · TexContractor`;
+    document.getElementById('contractor-name').textContent = hidePublicPhones(profile.name);
     document.getElementById('avatar-initials').textContent = profile.initials;
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = service;
-    if (profile.about) document.getElementById('about-copy').textContent = profile.about;
+    if (profile.about) document.getElementById('about-copy').textContent = hidePublicPhones(profile.about);
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
     const contactRequested = params.get('contact') === '1';
     const contactReturn = `profile.html?contractor=${encodeURIComponent(key)}&service=${encodeURIComponent(service)}&contact=1`;
