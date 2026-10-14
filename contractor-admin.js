@@ -264,7 +264,14 @@
           card.querySelector('.status').className = 'status ' + row.status;
           card.querySelector('.status').textContent = row.status;
           updateSummary();
-          showMessage('Review saved. You can continue working in the admin dashboard.', 'ok');
+          if (statusFilter.value === 'pending' && row.status !== 'pending') {
+            renderSubmissions();
+            showMessage('Review saved. Contractor published and removed from Pending review. Find it under Approved or All applications to edit photos.', 'ok');
+          } else {
+            showMessage('Review saved. You can continue working in the admin dashboard.', 'ok');
+          }
+          save.disabled = false;
+          save.textContent = 'Save review';
         } catch (error) {
           showMessage(`Could not save this review: ${error.message}`, 'error');
           save.disabled = false;
