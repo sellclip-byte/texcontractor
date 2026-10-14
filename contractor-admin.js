@@ -527,13 +527,24 @@
     URL.revokeObjectURL(link.href);
   };
 
-  document.querySelectorAll('[data-tab]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const target = button.dataset.tab;
-      document.querySelectorAll('[data-tab]').forEach((tab) => { tab.classList.toggle('active', tab === button); tab.setAttribute('aria-selected', tab === button ? 'true' : 'false'); });
-      document.querySelectorAll('[data-panel]').forEach((panel) => { panel.hidden = panel.dataset.panel !== target; });
+  const ADMIN_TAB_KEY = 'texcontractor-admin-active-tab';
+  const selectAdminTab = (target) => {
+    const tab = Array.from(document.querySelectorAll('[data-tab]')).find((item) => item.dataset.tab === target);
+    if (!tab) return;
+    document.querySelectorAll('[data-tab]').forEach((item) => {
+      item.classList.toggle('active', item === tab);
+      item.setAttribute('aria-selected', item === tab ? 'true' : 'false');
     });
+    document.querySelectorAll('[data-panel]').forEach((panel) => { panel.hidden = panel.dataset.panel !== target; });
+    try { sessionStorage.setItem(ADMIN_TAB_KEY, target); } catch (error) {}
+  };
+  document.querySelectorAll('[data-tab]').forEach((button) => {
+    button.addEventListener('click', () => selectAdminTab(button.dataset.tab));
   });
+  const requestedTab = new URLSearchParams(window.location.search).get('tab');
+  let savedTab = '';
+  try { savedTab = sessionStorage.getItem(ADMIN_TAB_KEY) || ''; } catch (error) {}
+  selectAdminTab(requestedTab || savedTab || 'submissions');
   memberSearch.addEventListener('input', renderMembers);
   statusFilter.addEventListener('change', renderSubmissions);
   bindSideAd('left');
