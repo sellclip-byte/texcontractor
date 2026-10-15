@@ -11,7 +11,7 @@
     accent_color: '#a9e8d2',
     animation: 'static',
     is_enabled: true,
-    banner_image_url: null
+    banner_image_url: null,\n    banner_image_enabled: true
   };
 
   const safeHex = (value, fallback) => /^#[0-9a-f]{6}$/i.test(String(value || '')) ? String(value) : fallback;
@@ -29,13 +29,13 @@
       accent_color: safeHex(source.accent_color, DEFAULT_BANNER.accent_color),
       animation: allowed(source.animation, ['static', 'pulse', 'scroll'], DEFAULT_BANNER.animation),
       banner_image_url: typeof source.banner_image_url === 'string' ? source.banner_image_url : null,
-      is_enabled: source.is_enabled !== false
+      banner_image_enabled: source.banner_image_enabled !== false,\n      is_enabled: source.is_enabled !== false
     };
   };
 
   const getHomepageBanner = async () => {
     const params = new URLSearchParams({
-      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url',
+      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url,banner_image_enabled',
       key: 'eq.homepage_banner',
       limit: '1'
     });
