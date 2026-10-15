@@ -194,9 +194,11 @@
       </section>
       <section class="dashboard-panel" id="homepage-banner-panel" data-panel="homepage-banner" hidden>
         <div class="card settings-card">
-          <div class="card-head"><div><h2>Homepage banner</h2><p class="date">Control the text shown where the illustration was removed.</p></div></div>
-          <form id="banner-form">\n            <p class="settings-hint">Manage the text banner and image banner independently. Each can be shown or hidden separately.</p>
-            <fieldset style="border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0"><legend><strong>Text Banner / البنر النصي</strong></legend>\n            <label class="settings-message" for="banner-message">Message shown to visitors<textarea id="banner-message" maxlength="300"></textarea></label>
+          <div class="card-head"><div><h2>Homepage banner</h2><p class="date">Manage the text banner and image banner separately.</p></div></div>
+          <form id="banner-form">
+            <p class="settings-hint">Manage the text banner and image banner independently. Each can be shown or hidden separately.</p>
+            <fieldset style="border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0"><legend><strong>Text Banner / البنر النصي</strong></legend>
+            <label class="settings-message" for="banner-message">Message shown to visitors<textarea id="banner-message" maxlength="300"></textarea></label>
             <div class="settings-grid">
               <label for="banner-style">Visual style<select id="banner-style"><option value="card">Card</option><option value="outline">Outline</option><option value="minimal">Minimal</option></select></label>
               <label for="banner-font-style">Text format<select id="banner-font-style"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
@@ -208,7 +210,10 @@
             </div>
             <p class="settings-preview-label">Text banner preview</p>
             <div class="settings-preview"><div class="settings-preview-text" id="banner-preview-text"></div></div>
+            <div class="settings-actions"><button class="save" id="save-banner" type="submit">Save text banner</button></div>
             </fieldset>
+          </form>
+          <form id="banner-image-form">
             <fieldset style="border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0"><legend><strong>Image Banner / بنر الصورة</strong></legend>
             <label for="banner-image-enabled">Image visibility<select id="banner-image-enabled"><option value="true">Show image banner</option><option value="false">Hide image banner</option></select></label>
             <div style="margin:16px 0;display:grid;gap:8px">
@@ -218,8 +223,8 @@
               <div id="banner-image-preview" style="max-width:100%;min-height:60px"></div>
               <label><input type="checkbox" id="banner-remove-image"> Remove existing banner image / حذف صورة البنر الحالية</label>
             </div>
+            <div class="settings-actions"><button class="save" id="save-banner-image" type="submit">Save image banner</button><p class="settings-hint">Changes appear on the public homepage after saving.</p></div>
             </fieldset>
-            <div class="settings-actions"><button class="save" id="save-banner" type="submit">Save banner</button><p class="settings-hint">Changes appear on the public homepage after saving.</p></div>
           </form>
         </div>
       </section>
@@ -310,8 +315,8 @@
     </section>
   </main>
   <script src="tex-auth.js"></script>
-  <script src="tex-admin.js?v=20261014-multi-photos"></script>
-  <script src="contractor-admin.js?v=20261015-admin-edit-technicians"></script>
+  <script src="tex-admin.js?v=20261015-banner-save"></script>
+  <script src="contractor-admin.js?v=20261015-separate-banners"></script>
   <script src="contractor-notice-editor.js?v=20261012b"></script>
   <script src="tex-catalog-images-admin.js?v=2"></script>
 </body>

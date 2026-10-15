@@ -184,7 +184,8 @@
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify(body)
     }, token);
-    return rows?.[0] || null;
+    if (!rows?.[0]) throw new Error('Banner was not saved. Refresh and check your admin access.');
+    return rows[0];
   };
 
   const uploadHomepageBannerImage = async (file, user) => {

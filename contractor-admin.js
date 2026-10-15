@@ -608,7 +608,8 @@
     bannerStyle.value = row?.style || 'card';
     bannerFontStyle.value = row?.font_style || 'bold';
     bannerAnimation.value = row?.animation || 'static';
-    bannerEnabled.value = String(row?.is_enabled !== false);\n    document.getElementById('banner-image-enabled').value = String(row?.banner_image_enabled !== false);
+    bannerEnabled.value = String(row?.is_enabled !== false);
+    document.getElementById('banner-image-enabled').value = String(row?.banner_image_enabled !== false);
     bannerTextColor.value = row?.text_color || '#075c4b';
     bannerBackgroundColor.value = row?.background_color || '#ecfff8';
     bannerAccentColor.value = row?.accent_color || '#a9e8d2';
@@ -879,29 +880,54 @@
     button.disabled = true;
     button.textContent = 'Saving…';
     try {
-      const bannerFile = document.getElementById('banner-image-file').files[0];
-      const removeImage = document.getElementById('banner-remove-image').checked;
-      const imagePatch = {};
-      if (bannerFile) imagePatch.banner_image_url = await TexAdminApi.uploadHomepageBannerImage(bannerFile,currentUser);
-      else if (removeImage) imagePatch.banner_image_url = null;
       const row = await TexAdminApi.updateHomepageBanner({
-        ...imagePatch,
         message_text: bannerMessage.value.trim(),
         style: bannerStyle.value,
         font_style: bannerFontStyle.value,
         animation: bannerAnimation.value,
-        is_enabled: bannerEnabled.value === 'true',\n        banner_image_enabled: document.getElementById('banner-image-enabled').value === 'true',
+        is_enabled: bannerEnabled.value === 'true',
         text_color: bannerTextColor.value,
         background_color: bannerBackgroundColor.value,
         accent_color: bannerAccentColor.value
       }, currentUser);
-      fillBannerForm(row);
-      showMessage('Homepage banner saved.', 'ok');
+      homepageBanner = row;
+      showMessage('Text banner saved.', 'ok');
     } catch (error) {
       showMessage(`Could not save the homepage banner: ${error.message}`, 'error');
     } finally {
       button.disabled = false;
-      button.textContent = 'Save banner';
+      button.textContent = 'Save text banner';
+    }
+  });
+  document.getElementById('banner-image-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = document.getElementById('save-banner-image');
+    button.disabled = true;
+    button.textContent = 'Saving…';
+    try {
+      const file = bannerFileInput.files?.[0];
+      const patch = { banner_image_enabled: document.getElementById('banner-image-enabled').value === 'true' };
+      if (file) patch.banner_image_url = await TexAdminApi.uploadHomepageBannerImage(file, currentUser);
+      else if (document.getElementById('banner-remove-image').checked) patch.banner_image_url = null;
+      const row = await TexAdminApi.updateHomepageBanner(patch, currentUser);
+      homepageBanner = row;
+      bannerFileInput.value = '';
+      document.getElementById('banner-remove-image').checked = false;
+      const preview = document.getElementById('banner-image-preview');
+      preview.replaceChildren();
+      if (row.banner_image_url) {
+        const img = document.createElement('img');
+        img.src = row.banner_image_url;
+        img.alt = 'Saved homepage image banner';
+        img.style.cssText = 'display:block;width:100%;max-width:800px;height:auto;object-fit:contain;border-radius:10px';
+        preview.appendChild(img);
+      }
+      showMessage('Image banner saved.', 'ok');
+    } catch (error) {
+      showMessage(`Could not save the image banner: ${error.message}`, 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Save image banner';
     }
   });
   $('#export-members').addEventListener('click', exportMembers);
