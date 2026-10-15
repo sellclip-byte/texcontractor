@@ -563,9 +563,15 @@
       submissions = result[1];
       try {
         const token = await TexAuth.getAccessToken();
-        const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=business_name,service,city,state,phone,website,about,review_status&order=business_name.asc&limit=200', { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
-        if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
-        importedBusinesses = await importedResponse.json();
+        importedBusinesses = [];
+        const pageSize = 500;
+        for (let offset = 0; ; offset += pageSize) {
+          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=business_name,service,city,state,phone,website,about,review_status&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+          if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
+          const page = await importedResponse.json();
+          importedBusinesses.push(...page);
+          if (page.length < pageSize) break;
+        }
       } catch (error) { importedBusinesses = []; showMessage('Imported applications could not load: ' + error.message, 'error'); }
       reports = result[2];
       updateSummary();
