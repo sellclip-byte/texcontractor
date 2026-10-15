@@ -304,68 +304,10 @@
           return 1;
         };
         rows.sort((a, b) => locationScore(b) - locationScore(a));
+        if (!rows.length) return showEmpty('No contractor has published this service yet. Be the first to post your service.');
         providers.innerHTML = '';
         rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
-        // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
-        if (service === 'Mobile Auto Detailing' || service === 'Local service') {
-          try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,website,about',service:'eq.Mobile Auto Detailing',limit:'100'});
-            const response = await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+params,{headers:{apikey:SUPABASE_KEY},cache:'no-store'});
-            if (!response.ok) throw new Error('Approved listings unavailable');
-            const imported = await response.json();
-            imported.sort((a,b)=>locationScore(b)-locationScore(a));
-            for (const entry of imported) {
-              if (blockedProviders.has(String(entry.id))) continue;
-              const card=document.createElement('article');card.className='provider';
-              const avatar=document.createElement('div');avatar.className='avatar '+['a','b','c','d','e'][providers.children.length%5];
-              avatar.textContent=initials(entry.business_name);
-              const main=document.createElement('div');main.className='provider-main';
-              const status=document.createElement('p');status.className='provider-status';status.textContent='Local business';
-              const name=document.createElement('h3');name.className='provider-name';name.textContent=entry.business_name;
-              const location=document.createElement('p');location.className='provider-rating';location.textContent=entry.city+', '+entry.state;
-              const trade=document.createElement('p');trade.className='provider-trade';trade.textContent=entry.service;
-              main.append(status,name,location,trade);
-              const actions=document.createElement('div');actions.className='provider-actions';
-              const sms=document.createElement('a');sms.className='text-button';sms.href='#';sms.textContent='Text this contractor';
-              sms.addEventListener('click',async event=>{
-                event.preventDefault();
-                try {
-                  const token=await TexAuth.getAccessToken();
-                  if(!token){alert('Please sign in to contact this business.');return;}
-                  const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/texcontractor_imported_phone',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
-                  if(!res.ok)throw new Error('Contact unavailable');
-                  const phone=await res.json();
-                  if(!phone)throw new Error('Phone unavailable');
-                  window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
-                }catch(e){alert(e.message);}
-              });
-              const profile=document.createElement('button');profile.type='button';profile.className='profile-button';profile.textContent='View profile';
-              profile.addEventListener('click',()=>{
-                const overlay=document.createElement('div');overlay.className='report-modal show';
-                const dialog=document.createElement('div');dialog.className='report-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
-                dialog.style.cssText='position:relative;max-width:520px;width:100%;padding:26px;border-radius:18px';
-                const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Close profile');
-                close.style.cssText='position:absolute;right:18px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer';
-                close.addEventListener('click',()=>overlay.remove());
-                const heading=document.createElement('h2');heading.textContent=entry.business_name;heading.style.margin='4px 32px 12px 0';
-                const place=document.createElement('p');place.textContent=entry.city+', '+entry.state+' · '+entry.service;
-                dialog.append(close,heading,place);
-                // Do not display unverified descriptions, missing-data placeholders or external links.
-                overlay.append(dialog);
-                overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
-                document.body.append(overlay);close.focus();
-              });
-              const report=document.createElement('button');report.type='button';report.className='report-button';report.textContent='Report this contractor';
-              report.addEventListener('click',()=>{
-                const subject='TexContractor business listing report: '+entry.business_name;
-                const body='Business: '+entry.business_name+'\\nLocation: '+entry.city+', '+entry.state+'\\nListing ID: '+entry.id+'\\nReason: ';
-                window.location.href='mailto:texcontractor.help@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
-              });
-              actions.append(profile,sms,report);card.append(avatar,main,actions);providers.appendChild(card);
-            }
-          } catch(e) { console.warn('Business directory unavailable',e); }
-        }
-        if (!providers.children.length) showEmpty('No matching service providers found.');
+        if (!providers.children.length) showEmpty('You blocked the available contractor on this device.');
       } catch (error) {
         showEmpty('Published profiles could not be loaded right now. Please try again.');
       }
