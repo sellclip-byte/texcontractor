@@ -68,7 +68,7 @@
         <h2>Contact details</h2>
         <div class="fields">
           <label>Real name <span class="hint">Kept private from the public listing.</span><input name="realName" autocomplete="name" required></label>
-          <label>Phone number <span class="hint">Used for customer contact.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
+          <label>Mobile number for SMS <span class="hint">Use a number you control that receives customer texts and allows replies. Landlines, fax and voice-only numbers are not allowed.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" required></label>
         </div>
       </section>
@@ -110,7 +110,9 @@
         <p class="hint" id="work-photo-count" role="status" aria-live="polite">0 of 10 work photos selected</p>
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
-      <div class="privacy">Your real name and phone number are private. Customers see your display name, city, state, selected service, description, and profile images.</div>
+      <div class="privacy">Your real name is not shown in the public listing. Signed-in customers can access your phone number through the contact tools. Your display name, city, state, service, description and profile images are public.</div>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="smsPhoneConfirmed" value="yes" required style="width:20px;height:20px;flex:none"> <span>I control this SMS-capable mobile number and can receive and reply to customer texts. It is not a landline, fax or voice-only number.</span></label>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       <button class="submit" type="submit">Submit service for review</button>
       <div class="success" id="success" role="status"></div>
     </form>
@@ -400,6 +402,11 @@
         return;
       }
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      if (data.smsPhoneConfirmed !== 'yes' || data.rulesAccepted !== 'yes') {
+        submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.textContent='Confirm the SMS mobile number requirement and accept the terms before submitting.';return;
+      }
+      delete data.smsPhoneConfirmed;
+      delete data.rulesAccepted;
       const forbiddenLink=/(?:https?:\/\/|www\.|[a-z0-9-]+\.(?:com|net|org|io|co|us|biz|info|me|app|site|link|ly)\b)/i;
       const phoneLike=/(?:\+?1[\s.()-]*)?(?:\(?[2-9]\d{2}\)?[\s.()-]*)[2-9]\d{2}[\s.()-]*\d{4}\b/;
       const phone=String(data.phone||'').trim();
