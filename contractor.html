@@ -339,8 +339,8 @@
                   window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
                 }catch(e){alert(e.message);}
               });
-              const profile=document.createElement('button');profile.type='button';profile.className='profile-button';profile.textContent='View profile';
-              profile.addEventListener('click',()=>{const url=new URL('profile.html',location.href);url.searchParams.set('imported',entry.id);url.searchParams.set('service',entry.service);location.href=url.href;});
+              const profile=document.createElement('a');profile.className='profile-button';profile.textContent='View profile';
+              const profileUrl=new URL('profile.html',window.location.href);profileUrl.searchParams.set('imported',entry.id);profileUrl.searchParams.set('service',entry.service);profile.href=profileUrl.href;
               const report=document.createElement('button');report.type='button';report.className='report-button';report.textContent='Report this contractor';
               report.addEventListener('click',()=>{
                 const subject='TexContractor business listing report: '+entry.business_name;
