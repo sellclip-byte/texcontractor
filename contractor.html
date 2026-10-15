@@ -241,7 +241,7 @@
       call.addEventListener('click', async () => {
         call.disabled = true;
         try {
-          const phone = String(await loadPhone() || '').replace(/[^\\d+]/g, '');
+          const phone = String(await loadPhone() || '').replace(/[^\d+]/g, '');
           if (phone) window.location.href = 'tel:' + phone;
         } catch (error) { window.alert(error.message); }
         finally { call.disabled = false; }
