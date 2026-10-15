@@ -358,7 +358,7 @@
                 const body='Business: '+entry.business_name+'\\nLocation: '+entry.city+', '+entry.state+'\\nListing ID: '+entry.id+'\\nReason: ';
                 window.location.href='mailto:texcontractor.help@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
               });
-              actions.prepend(profile);actions.append(report);card.append(avatar,main,actions);providers.appendChild(card);
+              actions.append(profile,sms,report);card.append(avatar,main,actions);providers.appendChild(card);
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
