@@ -616,6 +616,16 @@
       const label = document.getElementById(`${input.id}-value`);
       if (label) label.textContent = input.value;
     });
+    const preview = document.getElementById('banner-image-preview');
+    if (preview) {
+      preview.replaceChildren();
+      if (row?.banner_image_url) {
+        const img = document.createElement('img');
+        img.src = row.banner_image_url; img.alt = 'Current homepage banner';
+        img.style.cssText = 'display:block;width:100%;max-width:800px;aspect-ratio:4/1;object-fit:contain;border-radius:10px';
+        preview.appendChild(img);
+      }
+    }
     renderBannerPreview();
   };
 
@@ -851,7 +861,13 @@
     button.disabled = true;
     button.textContent = 'Saving…';
     try {
+      const bannerFile = document.getElementById('banner-image-file').files[0];
+      const removeImage = document.getElementById('banner-remove-image').checked;
+      const imagePatch = {};
+      if (bannerFile) imagePatch.banner_image_url = await TexAdminApi.uploadHomepageBannerImage(bannerFile,currentUser);
+      else if (removeImage) imagePatch.banner_image_url = null;
       const row = await TexAdminApi.updateHomepageBanner({
+        ...imagePatch,
         message_text: bannerMessage.value.trim(),
         style: bannerStyle.value,
         font_style: bannerFontStyle.value,
