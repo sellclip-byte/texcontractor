@@ -257,14 +257,29 @@
     return rows?.[0] || null;
   };
 
+  // PostgREST caps each response; load every page before calculating dashboard totals.
+  const requestAllRows = async (path, params, token) => {
+    const rows = [];
+    const pageSize = 500;
+    for (let offset = 0; ; offset += pageSize) {
+      const query = new URLSearchParams(params);
+      query.set('limit', String(pageSize));
+      query.set('offset', String(offset));
+      const page = await request(`${path}?${query.toString()}`, { method: 'GET', cache: 'no-store' }, token);
+      if (!Array.isArray(page)) throw new Error('The complete admin list could not be loaded.');
+      rows.push(...page);
+      if (page.length < pageSize) return rows;
+    }
+  };
+
   const listMembers = async () => {
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
       select: 'user_id,email,display_name,avatar_url,provider,status,status_note,status_changed_at,created_at,last_sign_in_at,updated_at',
-      order: 'created_at.desc'
+      order: 'created_at.desc,user_id.desc'
     });
-    return request(`/rest/v1/texcontractor_members?${params.toString()}`, { method: 'GET' }, token) || [];
+    return requestAllRows('/rest/v1/texcontractor_members', params, token);
   };
 
   const updateMember = async (userId, patch, user) => {
@@ -288,9 +303,9 @@
   const listSubmissions = async (status = 'all') => {
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
-    const params = new URLSearchParams({ select: '*', order: 'created_at.desc' });
+    const params = new URLSearchParams({ select: '*', order: 'created_at.desc,id.desc' });
     if (status && status !== 'all') params.set('status', `eq.${status}`);
-    return request(`/rest/v1/${TABLE}?${params.toString()}`, { method: 'GET' }, token) || [];
+    return requestAllRows(`/rest/v1/${TABLE}`, params, token);
   };
 
   const listReports = async () => {
