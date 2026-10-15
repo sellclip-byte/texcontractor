@@ -165,7 +165,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
-      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url',
+      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url,banner_image_enabled',
       key: 'eq.homepage_banner',
       limit: '1'
     });
@@ -178,7 +178,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
     const body = { ...patch, updated_by: user.id, updated_at: new Date().toISOString() };
-    const query = '?key=eq.homepage_banner&select=key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url';
+    const query = '?key=eq.homepage_banner&select=key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url,banner_image_enabled';
     const rows = await request(`/rest/v1/texcontractor_site_settings${query}`, {
       method: 'PATCH',
       headers: { Prefer: 'return=representation' },
