@@ -145,6 +145,42 @@
     card.appendChild(gallery);
   };
 
+  const editTechnician = async (row, imported) => {
+    const fields = imported
+      ? [['business_name','Business name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description'],['website','Website']]
+      : [['display_name','Display name'],['real_name','Private real name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description'],['email','Email'],['years','Years of experience']];
+    const changes = {};
+    for (const [field,label] of fields) {
+      const original = String(row[field] ?? '');
+      const entered = window.prompt('Edit ' + label + ' (Cancel stops editing)', original);
+      if (entered === null) return;
+      if (entered.trim() !== original) changes[field] = field === 'years' ? Number(entered) : entered.trim();
+    }
+    if (!Object.keys(changes).length) { showMessage('No changes to save.'); return; }
+    if (!window.confirm('Save these changes to this technician profile?')) return;
+    try {
+      if (imported) {
+        const token = await TexAuth.getAccessToken();
+        if (!token) throw new Error('Sign in again');
+        const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?id=eq.' + encodeURIComponent(row.id), {
+          method:'PATCH',
+          headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':'application/json',Prefer:'return=representation'},
+          body:JSON.stringify(changes)
+        });
+        if (!response.ok) throw new Error('Update failed (HTTP ' + response.status + ')');
+        const result = await response.json();
+        if (result.length !== 1) throw new Error('Update permission denied or record not found');
+        Object.assign(row,result[0]);
+      } else {
+        const result = await TexAdminApi.updateSubmission(row.id,changes,currentUser);
+        if (!result) throw new Error('Update was not confirmed');
+        Object.assign(row,result);
+      }
+      showMessage('Technician profile changes saved.', 'ok');
+      renderSubmissions();
+    } catch(error) { showMessage('Could not save changes: ' + error.message,'error'); }
+  };
+
   const renderSubmissions = () => {
     const filter = statusFilter.value;
     const rows = submissions.filter((row) => filter === 'all' || row.status === filter);
@@ -190,6 +226,10 @@
         });
         actions.appendChild(button);
       }
+      const edit = document.createElement('button');
+      edit.type = 'button'; edit.textContent = 'Edit / تعديل';
+      edit.addEventListener('click', () => editTechnician(entry,true));
+      actions.appendChild(edit);
       card.appendChild(actions);
       submissionsList.appendChild(card);
     });
@@ -278,6 +318,10 @@
             approve.textContent = 'Approve & Publish';
           }
         });
+        const editPending = document.createElement('button');
+        editPending.type = 'button'; editPending.textContent = 'Edit / تعديل';
+        editPending.addEventListener('click', () => editTechnician(row,false));
+        review.prepend(editPending);
         submissionsList.appendChild(card);
         return;
       }
@@ -290,6 +334,11 @@
         avatar.replaceChildren(image);
       }
       makeMedia(card, row);
+      const editProfile = document.createElement('button');
+      editProfile.type = 'button'; editProfile.textContent = 'Edit / تعديل';
+      editProfile.className = 'save';
+      editProfile.addEventListener('click', () => editTechnician(row,false));
+      card.querySelector('.review').prepend(editProfile);
       const statusSelect = card.querySelector('[data-status]');
       const notes = card.querySelector('[data-notes]');
       const save = card.querySelector('.save');
