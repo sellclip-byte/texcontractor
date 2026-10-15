@@ -148,7 +148,7 @@
   const editTechnician = (row, imported) => {
     document.querySelector('[data-technician-editor]')?.remove();
     const fields = imported
-      ? [['business_name','Business name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description'],['website','Website']]
+      ? [['business_name','Business name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description']]
       : [['display_name','Display name'],['real_name','Private real name'],['phone','Phone'],['email','Email'],['city','City'],['state','State'],['service','Service catalog'],['years','Years of experience'],['about','Description']];
     const overlay = document.createElement('div');
     overlay.dataset.technicianEditor = 'true';
