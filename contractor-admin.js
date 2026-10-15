@@ -341,7 +341,7 @@
       card.querySelector('.review').prepend(editProfile);
       const statusSelect = card.querySelector('[data-status]');
       const notes = card.querySelector('[data-notes]');
-      const save = card.querySelector('.save');
+      const save = card.querySelector('.review > button.save:last-of-type');
       const photoInput = card.querySelector('[data-photo-file]');
       const photoPreview = card.querySelector('[data-photo-preview]');
       const photoSave = card.querySelector('[data-photo-save]');
@@ -650,7 +650,7 @@
         importedBusinesses = [];
         const pageSize = 500;
         for (let offset = 0; ; offset += pageSize) {
-          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=business_name,service,city,state,phone,website,about,review_status&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,website,about,review_status&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
           if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
           const page = await importedResponse.json();
           importedBusinesses.push(...page);
