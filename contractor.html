@@ -307,9 +307,9 @@
         providers.innerHTML = '';
         rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
-        if (service === 'Mobile Auto Detailing' || service === 'Computer Repair' || service === 'Notarization' || service === 'Dog Grooming' || service === 'Local service') {
+        if (service === 'Mobile Auto Detailing' || service === 'Computer Repair' || service === 'Notarization' || service === 'Dog Grooming' || service === 'DJ Services' || service === 'Local service') {
           try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,website,about',service:'eq.'+(['Computer Repair','Notarization','Dog Grooming'].includes(service) ? service : 'Mobile Auto Detailing'),limit:'100'});
+            const params = new URLSearchParams({select:'id,business_name,service,city,state,website,about',service:'eq.'+(['Computer Repair','Notarization','Dog Grooming','DJ Services'].includes(service) ? service : 'Mobile Auto Detailing'),limit:'100'});
             const response = await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+params,{headers:{apikey:SUPABASE_KEY},cache:'no-store'});
             if (!response.ok) throw new Error('Approved listings unavailable');
             const imported = await response.json();
