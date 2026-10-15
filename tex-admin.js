@@ -165,7 +165,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
-      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled',
+      select: 'key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url',
       key: 'eq.homepage_banner',
       limit: '1'
     });
@@ -178,13 +178,28 @@
     const token = await TexAuth.getAccessToken();
     if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
     const body = { ...patch, updated_by: user.id, updated_at: new Date().toISOString() };
-    const query = '?key=eq.homepage_banner&select=key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled';
+    const query = '?key=eq.homepage_banner&select=key,message_text,style,font_style,text_color,background_color,accent_color,animation,is_enabled,banner_image_url';
     const rows = await request(`/rest/v1/texcontractor_site_settings${query}`, {
       method: 'PATCH',
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify(body)
     }, token);
     return rows?.[0] || null;
+  };
+
+  const uploadHomepageBannerImage = async (file, user) => {
+    if (!user?.id) throw new Error('Admin sign-in required');
+    if (!file || !['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Choose JPG, PNG or WebP');
+    if (file.size > 10 * 1024 * 1024) throw new Error('Maximum image size is 10 MB');
+    const token = await TexAuth.getAccessToken();
+    if (!token) throw new Error('Admin sign-in expired');
+    const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = 'admin/homepage-banner-' + crypto.randomUUID() + '.' + ext;
+    const response = await fetch(SUPABASE_URL+'/storage/v1/object/'+SIDE_AD_BUCKET+'/'+encodeObjectPath(path),{
+      method:'POST',headers:{...apiHeaders(token,false),'Content-Type':file.type,'x-upsert':'false'},body:file
+    });
+    if (!response.ok) { const body = await readBody(response); throw new Error(body?.message || body?.error || 'Banner image upload failed'); }
+    return sideAdPublicUrl(path);
   };
 
   const listSideAds = async () => {
@@ -353,5 +368,5 @@
     return latest;
   };
 
-  window.TexAdminApi = { uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
