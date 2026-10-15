@@ -774,7 +774,7 @@
         importedBusinesses = [];
         const pageSize = 500;
         for (let offset = 0; ; offset += pageSize) {
-          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,website,about,review_status,profile_photo_path,work_photo_paths&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,about,review_status,profile_photo_path,work_photo_paths&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
           if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
           const page = await importedResponse.json();
           importedBusinesses.push(...page);
