@@ -164,18 +164,42 @@
     const libraryNotice=document.createElement('p');libraryNotice.className='hint';
     avatarLibrary.before(libraryNotice);
     const savedImagesByService={
-      'Central Air Conditioning Repair or Maintenance':['01','02'],
-      'Electrical and Wiring Repair':['03'],
-      'TV Mounting':['04'],
-      'Tree Trimming and Removal':['05'],
-      'Furniture Assembly':['06','08'],
-      'Local Moving (under 50 miles)':['07','11'],
-      'Mobile Auto Mechanic':['09'],
-      'Handyman':['10'],
-      'Outdoor Landscaping and Design':['09'],
-      'Interior Painting':['10'],
-      'Roof Repair or Maintenance':['12']
-    };
+      "Central Air Conditioning Repair or Maintenance": [
+            "01"
+      ],
+      "Electrical and Wiring Repair": [
+            "02"
+      ],
+      "TV Mounting": [
+            "03"
+      ],
+      "Tree Trimming and Removal": [
+            "04"
+      ],
+      "Furniture Assembly": [
+            "05",
+            "08"
+      ],
+      "Local Moving (under 50 miles)": [
+            "06",
+            "11"
+      ],
+      "Mobile Auto Mechanic": [
+            "07"
+      ],
+      "Handyman": [
+            "08"
+      ],
+      "Outdoor Landscaping and Design": [
+            "09"
+      ],
+      "Interior Painting": [
+            "10"
+      ],
+      "Roof Repair or Maintenance": [
+            "12"
+      ]
+};
     function refreshAvatarLibrary(){
       avatarLibrary.replaceChildren();chosenLibraryImage='';
       const service=serviceCatalog.value;
