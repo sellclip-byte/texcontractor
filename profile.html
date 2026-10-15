@@ -148,8 +148,8 @@
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = profile.service;
     document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
-    if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
-    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Not provided';}
+    if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Will be added soon' : `${profile.years} years`;
+    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [
       `Hello ${profile.name},`,
