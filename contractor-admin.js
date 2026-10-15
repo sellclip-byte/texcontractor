@@ -145,40 +145,83 @@
     card.appendChild(gallery);
   };
 
-  const editTechnician = async (row, imported) => {
+  const editTechnician = (row, imported) => {
+    document.querySelector('[data-technician-editor]')?.remove();
     const fields = imported
       ? [['business_name','Business name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description'],['website','Website']]
-      : [['display_name','Display name'],['real_name','Private real name'],['phone','Phone'],['city','City'],['state','State'],['service','Service catalog'],['about','Description'],['email','Email'],['years','Years of experience']];
-    const changes = {};
-    for (const [field,label] of fields) {
-      const original = String(row[field] ?? '');
-      const entered = window.prompt('Edit ' + label + ' (Cancel stops editing)', original);
-      if (entered === null) return;
-      if (entered.trim() !== original) changes[field] = field === 'years' ? Number(entered) : entered.trim();
+      : [['display_name','Display name'],['real_name','Private real name'],['phone','Phone'],['email','Email'],['city','City'],['state','State'],['service','Service catalog'],['years','Years of experience'],['about','Description']];
+    const overlay = document.createElement('div');
+    overlay.dataset.technicianEditor = 'true';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:16px';
+    const panel = document.createElement('form');
+    panel.style.cssText = 'background:white;color:#111827;border-radius:16px;padding:24px;width:min(680px,100%);max-height:90vh;overflow:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px';
+    const heading = document.createElement('h2');
+    heading.textContent = 'Edit technician / تعديل بيانات الفني';
+    heading.style.cssText = 'grid-column:1/-1;margin:0 0 8px';
+    panel.appendChild(heading);
+    const inputs = {};
+    for (const [key,label] of fields) {
+      const wrap = document.createElement('label');
+      wrap.textContent = label;
+      wrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;font-weight:600';
+      const input = key === 'about' ? document.createElement('textarea') : document.createElement('input');
+      if (key === 'years') { input.type = 'number'; input.min = '0'; input.max = '80'; }
+      else if (key === 'email') input.type = 'email';
+      else if (key === 'website') input.type = 'url';
+      else input.type = 'text';
+      input.value = String(row[key] ?? '');
+      input.style.cssText = 'width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;color:#111827;background:#fff';
+      wrap.appendChild(input); panel.appendChild(wrap); inputs[key] = input;
     }
-    if (!Object.keys(changes).length) { showMessage('No changes to save.'); return; }
-    if (!window.confirm('Save these changes to this technician profile?')) return;
-    try {
-      if (imported) {
-        const token = await TexAuth.getAccessToken();
-        if (!token) throw new Error('Sign in again');
-        const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?id=eq.' + encodeURIComponent(row.id), {
-          method:'PATCH',
-          headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':'application/json',Prefer:'return=representation'},
-          body:JSON.stringify(changes)
-        });
-        if (!response.ok) throw new Error('Update failed (HTTP ' + response.status + ')');
-        const result = await response.json();
-        if (result.length !== 1) throw new Error('Update permission denied or record not found');
-        Object.assign(row,result[0]);
-      } else {
-        const result = await TexAdminApi.updateSubmission(row.id,changes,currentUser);
-        if (!result) throw new Error('Update was not confirmed');
-        Object.assign(row,result);
+    if (!imported) {
+      const photoInfo = document.createElement('p');
+      photoInfo.textContent = 'Profile and work photos: use the existing photo controls in this technician card (up to 10 work photos).';
+      photoInfo.style.cssText = 'grid-column:1/-1';
+      panel.appendChild(photoInfo);
+    }
+    const actions = document.createElement('div');
+    actions.style.cssText = 'grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px';
+    const cancel = document.createElement('button');
+    cancel.type = 'button'; cancel.textContent = 'Cancel / إلغاء';
+    cancel.addEventListener('click',()=>overlay.remove());
+    const save = document.createElement('button');
+    save.type = 'submit'; save.textContent = 'Save Changes / حفظ التعديلات';
+    save.className = 'save';
+    actions.append(cancel,save);panel.appendChild(actions);overlay.appendChild(panel);document.body.appendChild(overlay);
+    panel.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const changes = {};
+      for (const [key] of fields) {
+        const value = inputs[key].value.trim();
+        if (value !== String(row[key] ?? '')) changes[key] = key === 'years' ? (value === '' ? null : Number(value)) : value;
       }
-      showMessage('Technician profile changes saved.', 'ok');
-      renderSubmissions();
-    } catch(error) { showMessage('Could not save changes: ' + error.message,'error'); }
+      if (!Object.keys(changes).length) { overlay.remove(); return; }
+      save.disabled = true; save.textContent = 'Saving…';
+      try {
+        let updated;
+        if (imported) {
+          const token = await TexAuth.getAccessToken();
+          if (!token) throw new Error('Sign in again');
+          const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?id=eq.' + encodeURIComponent(row.id), {
+            method:'PATCH',
+            headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':'application/json',Prefer:'return=representation'},
+            body:JSON.stringify(changes)
+          });
+          if (!response.ok) throw new Error('Update failed (HTTP ' + response.status + ')');
+          const result = await response.json();
+          if (result.length !== 1) throw new Error('Permission denied or record not found');
+          updated = result[0];
+        } else {
+          updated = await TexAdminApi.updateSubmission(row.id,changes,currentUser);
+          if (!updated) throw new Error('Update was not confirmed');
+        }
+        Object.assign(row,updated);overlay.remove();renderSubmissions();
+        showMessage('Technician profile changes saved.', 'ok');
+      } catch(error) {
+        showMessage('Could not save changes: ' + error.message,'error');
+        save.disabled = false; save.textContent = 'Save Changes / حفظ التعديلات';
+      }
+    });
   };
 
   const renderSubmissions = () => {
