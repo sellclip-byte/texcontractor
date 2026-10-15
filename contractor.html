@@ -343,12 +343,15 @@
               profile.addEventListener('click',()=>{
                 const overlay=document.createElement('div');overlay.className='report-modal show';
                 const dialog=document.createElement('div');dialog.className='report-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
-                const heading=document.createElement('h2');heading.textContent=entry.business_name;
+                dialog.style.cssText='position:relative;max-width:520px;width:100%;padding:26px;border-radius:18px';
+                const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Close profile');
+                close.style.cssText='position:absolute;right:18px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer';
+                close.addEventListener('click',()=>overlay.remove());
+                const heading=document.createElement('h2');heading.textContent=entry.business_name;heading.style.margin='4px 32px 12px 0';
                 const place=document.createElement('p');place.textContent=entry.city+', '+entry.state+' · '+entry.service;
-                const about=document.createElement('p');about.textContent=entry.about||'No additional business description available.';
-                const notice=document.createElement('p');notice.textContent='Public business listing — not a registered TexContractor profile.';
-                const close=document.createElement('button');close.type='button';close.textContent='Close';close.addEventListener('click',()=>overlay.remove());
-                dialog.append(heading,place,about,notice,close);overlay.append(dialog);
+                dialog.append(close,heading,place);
+                // Do not display unverified descriptions, missing-data placeholders or external links.
+                overlay.append(dialog);
                 overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
                 document.body.append(overlay);close.focus();
               });
