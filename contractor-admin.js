@@ -51,8 +51,8 @@
 
   const updateSummary = () => {
     $('#member-total').textContent = members.length;
-    $('#submission-total').textContent = submissions.length;
-    $('#pending-total').textContent = submissions.filter((row) => row.status === 'pending').length;
+    $('#submission-total').textContent = submissions.length + importedBusinesses.length;
+    $('#pending-total').textContent = submissions.filter((row) => row.status === 'pending').length + importedBusinesses.length;
     $('#approved-total').textContent = submissions.filter((row) => row.status === 'approved').length;
   };
 
@@ -155,7 +155,7 @@
     imported.forEach((entry) => {
       const card = document.createElement('article');
       card.className = 'card';
-      card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar"><span>🚘</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p><p class="date">Imported public business · Awaiting admin review</p></div></div><span class="status pending">pending</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div><div class="detail"><span class="detail-label">Website</span><span class="detail-value"><a href="${escapeHtml(entry.website)}" target="_blank" rel="noopener noreferrer">View source</a></span></div><div class="detail"><span class="detail-label">Account</span><span class="detail-value">Public listing · no registered owner</span></div></div><p class="about">${escapeHtml(entry.about || 'Public business listing pending review. No additional description supplied.')}</p><p class="date">Imported listing: publishing as a registered contractor is not available until account details are supplied.</p>`;
+      card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar"><span>🚘</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p><p class="date">Imported public business · Awaiting admin review</p></div></div><span class="status pending">pending</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div><div class="detail"><span class="detail-label">Website</span><span class="detail-value"><a href="${escapeHtml(entry.website)}" target="_blank" rel="noopener noreferrer">View source</a></span></div><div class="detail"><span class="detail-label">Account</span><span class="detail-value">Public listing · no registered owner</span></div></div><p class="about">${escapeHtml(entry.about || 'Public business listing pending review. No additional description supplied.')}</p><p class="date">${entry.phone ? 'Phone on file · Check the linked business source before approval.' : 'MISSING PHONE · Do not approve or publish this listing.'}</p>`;
       submissionsList.appendChild(card);
     });
     rows.forEach((row) => {
