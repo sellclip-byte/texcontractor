@@ -45,7 +45,7 @@ check('contractor catalog retains profile link', contractor.includes('profile.ht
 check('contractor catalog contains search description', /<meta name="description"/.test(contractor));
 check('profile retains SMS action', profile.includes('sms:'));
 check('profile is not indexed until real server-backed profiles exist', /name="robots" content="noindex, follow"/.test(profile));
-check('sample profile numbers are not directly contactable', !profile.includes('1817555010') && profile.includes('rpc/get_contractor_phone'));
+check('sample profile numbers are not directly contactable', !profile.includes('1817555010') && (profile.includes('/rest/v1/rpc/') && profile.includes('get_contractor_phone')));
 check('profile does not claim unverified verification', !profile.includes('✓ Verified contractor'));
 check('registration retains profile photo field', registration.includes('name="profilePhoto"'));
 check('registration retains work photo field', registration.includes('name="workPhotos"'));
@@ -53,7 +53,7 @@ check('registration is not indexed', /name="robots" content="noindex, follow"/.t
 check('auth page is not indexed', /name="robots" content="noindex, follow"/.test(auth));
 check('sample contractor profiles are not indexed', /name="robots" content="noindex, follow"/.test(profile));
 check('unverified badge is not presented', !profile.includes('✓ Verified contractor'));
-check('profile contact uses authenticated lookup rather than sample numbers', profile.includes('rpc/get_contractor_phone') && profile.includes('getAccessToken') && !profile.includes('1817555010'));
+check('profile contact uses authenticated lookup rather than sample numbers', (profile.includes('/rest/v1/rpc/') && profile.includes('get_contractor_phone')) && profile.includes('getAccessToken') && !profile.includes('1817555010'));
 check('robots points to production sitemap', robots.includes('https://texcontractor.com/sitemap.xml'));
 check('sitemap lists canonical homepage', sitemap.includes('<loc>https://texcontractor.com/</loc>'));
 check('sitemap lists contractor directory', sitemap.includes('<loc>https://texcontractor.com/contractor.html</loc>'));
