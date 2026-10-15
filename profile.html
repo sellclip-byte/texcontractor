@@ -132,6 +132,7 @@
     const renderProfile = async () => {
       let profile = null;
       try { profile = importedId ? await loadImportedProfile() : await loadProfile(); } catch (error) { profile = null; }
+    if (!profile && importedId) { document.getElementById('contractor-name').textContent='Profile temporarily unavailable'; document.getElementById('about-copy').textContent='Please return to the contractor list and try again.'; return; }
     if (!profile) {
       const destination = new URL('contractor.html', window.location.href);
       destination.searchParams.set('service', service);
