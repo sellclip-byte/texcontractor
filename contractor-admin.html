@@ -206,6 +206,13 @@
               <label>Background color<span class="color-input"><input id="banner-background-color" type="color" value="#ecfff8"><span id="banner-background-color-value">#ecfff8</span></span></label>
               <label>Border/accent color<span class="color-input"><input id="banner-accent-color" type="color" value="#a9e8d2"><span id="banner-accent-color-value">#a9e8d2</span></span></label>
             </div>
+            <div style="margin:16px 0;display:grid;gap:8px">
+              <label for="banner-image-file"><strong>Upload Banner Image / رفع صورة البنر</strong></label>
+              <p class="settings-hint">Recommended image size: 1600 × 400 pixels (4:1). JPG, PNG or WebP; maximum 10 MB. Keep text inside the image and leave margins for mobile screens.</p>
+              <input id="banner-image-file" type="file" accept="image/jpeg,image/png,image/webp">
+              <div id="banner-image-preview" style="max-width:100%;min-height:60px"></div>
+              <label><input type="checkbox" id="banner-remove-image"> Remove existing banner image / حذف صورة البنر الحالية</label>
+            </div>
             <p class="settings-preview-label">Preview</p>
             <div class="settings-preview"><div class="settings-preview-text" id="banner-preview-text"></div></div>
             <div class="settings-actions"><button class="save" id="save-banner" type="submit">Save banner</button><p class="settings-hint">Changes appear on the public homepage after saving.</p></div>
