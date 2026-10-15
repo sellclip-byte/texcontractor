@@ -121,9 +121,17 @@
         service:row.service || service
       } : null;
     };
+    const importedId=params.get('imported');
+    async function loadImportedProfile(){
+      const q=new URLSearchParams({select:'id,business_name,service,city,state,about',id:'eq.'+importedId,limit:'1'});
+      const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY}});
+      if(!r.ok)throw Error('Profile unavailable');
+      const e=(await r.json())[0];if(!e)return null;
+      return {id:e.id,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
+    }
     const renderProfile = async () => {
       let profile = null;
-      try { profile = await loadProfile(); } catch (error) { profile = null; }
+      try { profile = importedId ? await loadImportedProfile() : await loadProfile(); } catch (error) { profile = null; }
     if (!profile) {
       const destination = new URL('contractor.html', window.location.href);
       destination.searchParams.set('service', service);
@@ -138,8 +146,9 @@
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = profile.service;
-    if (profile.about) document.getElementById('about-copy').textContent = profile.about;
+    document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
+    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.getElementById('work-gallery').closest('.panel').hidden=true;}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [
       `Hello ${profile.name},`,
@@ -162,14 +171,14 @@
           await TexAuth.requireUser(`profile.html${window.location.search}`);
           return;
         }
-        const phoneResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_contractor_phone`, {
+        const phoneResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${profile.imported?'texcontractor_imported_phone':'get_contractor_phone'}`, {
           method:'POST',
           headers:{ apikey:SUPABASE_KEY, Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
-          body:JSON.stringify({ p_service_id: profile.id })
+          body:JSON.stringify(profile.imported?{p_id:profile.id}:{p_service_id:profile.id})
         });
         if (!phoneResponse.ok) throw new Error('The contractor phone number is not available yet.');
         const rows = await phoneResponse.json();
-        const phone = String(rows?.[0]?.phone || '').replace(/[^\d+]/g, '');
+        const phone = String(profile.imported ? (typeof rows==='string'?rows:rows?.phone||'') : rows?.[0]?.phone||'').replace(/[^\d+]/g, '');
         if (!phone) throw new Error('The contractor phone number is not available yet.');
         window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate)}`;
       } catch (error) {
