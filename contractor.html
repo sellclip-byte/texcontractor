@@ -117,13 +117,19 @@
       const avatar = document.createElement('div');
       avatar.className = 'avatar e';
       avatar.textContent = initials;
-      if (contractor.profilePhoto) {
+      // Keep real profile photos first. For profiles without one, use a catalog
+      // image only if that asset exists; otherwise retain the existing initials.
+      const tradeName = String(contractor.service || service).trim();
+      const catalogSlug = tradeName.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const fallbackImage = catalogSlug ? 'catalog-profile-images/' + catalogSlug + '.webp' : '';
+      const imageSource = contractor.profilePhoto || fallbackImage;
+      if (imageSource) {
         const image = document.createElement('img');
-        image.src = contractor.profilePhoto;
-        image.alt = '';
+        image.alt = contractor.profilePhoto ? '' : tradeName + ' representative service image';
         image.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
-        avatar.textContent = '';
-        avatar.appendChild(image);
+        image.onload = () => { avatar.textContent = ''; avatar.appendChild(image); };
+        image.onerror = () => { /* Missing catalog asset: keep initials, never show a broken image. */ };
+        image.src = imageSource;
       }
       const main = document.createElement('div');
       main.className = 'provider-main';
