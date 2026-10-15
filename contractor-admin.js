@@ -155,7 +155,42 @@
     imported.forEach((entry) => {
       const card = document.createElement('article');
       card.className = 'card';
-      card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar" style="background:${['linear-gradient(135deg,#1d4ed8,#0e7490)','linear-gradient(135deg,#7c3aed,#db2777)','linear-gradient(135deg,#b45309,#ea580c)','linear-gradient(135deg,#0f766e,#15803d)','linear-gradient(135deg,#9f1239,#7c2d12)','linear-gradient(135deg,#4338ca,#0369a1)'][Array.from(entry.business_name || '').reduce((sum,char)=>sum+char.charCodeAt(0),0)%6]}"><span>${escapeHtml(initials(entry.business_name))}</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p></div></div><span class="status pending">pending</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div></div><p class="about">${escapeHtml(entry.about || '')}</p>`;
+      card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar" style="background:${['linear-gradient(135deg,#1d4ed8,#0e7490)','linear-gradient(135deg,#7c3aed,#db2777)','linear-gradient(135deg,#b45309,#ea580c)','linear-gradient(135deg,#0f766e,#15803d)','linear-gradient(135deg,#9f1239,#7c2d12)','linear-gradient(135deg,#4338ca,#0369a1)'][Array.from(entry.business_name || '').reduce((sum,char)=>sum+char.charCodeAt(0),0)%6]}"><span>${escapeHtml(initials(entry.business_name))}</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p></div></div><span class="status ${escapeHtml(entry.review_status || 'pending')}">${escapeHtml(entry.review_status || 'pending')}</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div></div><p class="about">${escapeHtml(entry.about || '')}</p>`;
+      const actions = document.createElement('div');
+      actions.className = 'review';
+      for (const [label, value] of [['Approve', 'approved'], ['Reject', 'rejected']]) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = label;
+        button.addEventListener('click', async () => {
+          button.disabled = true;
+          try {
+            const token = await TexAuth.getAccessToken();
+            const endpoint = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?service=eq.' + encodeURIComponent(entry.service) + '&website=eq.' + encodeURIComponent(entry.website);
+            const response = await fetch(endpoint, {
+              method: 'PATCH',
+              headers: {
+                apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                Prefer: 'return=representation'
+              },
+              body: JSON.stringify({ review_status: value })
+            });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const changed = await response.json();
+            if (changed.length !== 1) throw new Error('Permission denied or record not found');
+            entry.review_status = changed[0].review_status;
+            updateSummary();
+            renderSubmissions();
+          } catch (error) {
+            button.disabled = false;
+            showMessage('Review update failed: ' + error.message, 'error');
+          }
+        });
+        actions.appendChild(button);
+      }
+      card.appendChild(actions);
       submissionsList.appendChild(card);
     });
     rows.forEach((row) => {
