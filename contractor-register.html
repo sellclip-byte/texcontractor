@@ -351,14 +351,15 @@
         return;
       }
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-      const forbiddenLink=/(?:https?:\\/\\/|www\\.|[a-z0-9-]+\\.(?:com|net|org|io|co|us|biz|info|me|app|site|link|ly)(?:\\/|\\b)|@[a-z0-9_.-]+\\.(?:com|net|org))/i;
+      const forbiddenLink=/(?:https?:\/\/|www\.|[a-z0-9-]+\.(?:com|net|org|io|co|us|biz|info|me|app|site|link|ly)\b)/i;
+      const phoneLike=/(?:\+?1[\s.()-]*)?(?:\(?[2-9]\d{2}\)?[\s.()-]*)[2-9]\d{2}[\s.()-]*\d{4}\b/;
       const phone=String(data.phone||'').trim();
-      if(!/^[+0-9() .-]{10,22}$/.test(phone)||phone.replace(/\\D/g,'').length<10||phone.replace(/\\D/g,'').length>15){
-        submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.textContent='Enter a valid phone number in the phone field only.';return;
-      }
-      if(Object.entries(data).some(([field,value])=>field!=='email'&&field!=='phone'&&typeof value==='string'&&forbiddenLink.test(value))){
-        submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.textContent='External website and social-media links are not permitted in service profiles.';return;
-      }
+      const invalidPhone=!/^[+0-9() .-]{10,22}$/.test(phone)||phone.replace(/\D/g,'').length<10||phone.replace(/\D/g,'').length>15;
+      const publicText=Object.entries(data).filter(([field,value])=>!['phone','email','profilePhoto','workPhotos','avatarChoice'].includes(field)&&typeof value==='string');
+      const reject=(message)=>{submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.style.color='#991b1b';success.textContent=message;};
+      if(invalidPhone){reject('Enter a valid phone number in the phone field only.');return;}
+      if(publicText.some(([,value])=>forbiddenLink.test(value))){reject('External links are not allowed in service profiles.');return;}
+      if(publicText.some(([,value])=>phoneLike.test(value))){reject('Phone numbers are allowed only in the phone number field.');return;}
       if (data.city === '__other__') data.city = String(data.otherCity || '').trim();
       delete data.otherCity;
       delete data.profilePhoto;
