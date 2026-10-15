@@ -55,3 +55,26 @@
 
   window.TexSiteSettings = { DEFAULT_BANNER, getHomepageBanner, normalise };
 })();
+
+// Keep footer guidance in a dedicated, shareable page without altering catalog artwork.
+(function () {
+  const footer = document.querySelector('.site-footer');
+  if (!footer) return;
+  const existing = Array.from(footer.querySelectorAll('[data-footer-key]'));
+  for (const link of existing) {
+    link.href = 'site-guide.html#' + link.dataset.footerKey;
+    link.removeAttribute('data-footer-key');
+  }
+  const addLink = (anchor, topic, label) => {
+    if (!anchor || footer.querySelector('a[href="site-guide.html#' + topic + '"]')) return;
+    const link = document.createElement('a');
+    link.href = 'site-guide.html#' + topic;
+    link.textContent = label;
+    anchor.after(link);
+    return link;
+  };
+  const about = footer.querySelector('a[href="site-guide.html#about"]');
+  const features = addLink(about, 'features', 'Website Features');
+  addLink(features || about, 'share', 'Share TexContractor');
+  addLink(footer.querySelector('a[href="site-guide.html#help"]'), 'install', 'Add to Your Phone');
+})();
