@@ -174,7 +174,7 @@
       wrap.appendChild(input); panel.appendChild(wrap); inputs[key] = input;
     }
     let profileFile, workFiles, photoAction, replaceIndex;
-    if (!imported) {
+    {
       const photos = document.createElement('section');
       photos.style.cssText = 'grid-column:1/-1;border-top:1px solid #ddd;padding-top:12px;display:grid;gap:10px';
       const title = document.createElement('h3');
@@ -252,7 +252,38 @@
           if (!updated) throw new Error('Update was not confirmed');
         }
         Object.assign(row,updated);
-        if (!imported) {
+        if (imported) {
+          const token = await TexAuth.getAccessToken();
+          const upload = async (file) => {
+            if (!file.type.startsWith('image/') || file.size > 8*1024*1024) throw new Error('Choose an image under 8 MB');
+            const ext = ['image/png','image/webp','image/gif'].includes(file.type) ? file.type.split('/')[1] : 'jpg';
+            const path = 'imported/' + row.id + '/admin-' + crypto.randomUUID() + '.' + ext;
+            const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/texcontractor-media/' + path, {method:'POST',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':file.type,'x-upsert':'false'},body:file});
+            if (!response.ok) throw new Error('Photo storage permission denied (HTTP ' + response.status + ')');
+            return path;
+          };
+          const patch = {};
+          if (profileFile.files.length) patch.profile_photo_path = await upload(profileFile.files[0]);
+          if (workFiles.files.length) {
+            const selected = Array.from(workFiles.files);
+            const existing = Array.isArray(row.work_photo_paths) ? [...row.work_photo_paths] : [];
+            if (photoAction.value === 'replace') {
+              if (selected.length !== 1 || !existing.length) throw new Error('Choose one work photo to replace');
+              existing[Number(replaceIndex.value)] = await upload(selected[0]);
+            } else {
+              if (existing.length + selected.length > 10) throw new Error('Maximum 10 work photos');
+              for (const file of selected) existing.push(await upload(file));
+            }
+            patch.work_photo_paths = existing;
+          }
+          if (Object.keys(patch).length) {
+            const response = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?id=eq.'+encodeURIComponent(row.id),{method:'PATCH',headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',Authorization:'Bearer '+token,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(patch)});
+            if (!response.ok) throw new Error('Photo metadata save failed (HTTP '+response.status+')');
+            const saved = await response.json();
+            if (saved.length !== 1) throw new Error('Photo update not confirmed');
+            Object.assign(row,saved[0]);
+          }
+        } else {
           if (profileFile.files.length) {
             Object.assign(row,await TexAdminApi.uploadSubmissionPhotos(row,Array.from(profileFile.files),'profile',currentUser));
           }
@@ -284,6 +315,7 @@
       const card = document.createElement('article');
       card.className = 'card';
       card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar" style="background:${['linear-gradient(135deg,#1d4ed8,#0e7490)','linear-gradient(135deg,#7c3aed,#db2777)','linear-gradient(135deg,#b45309,#ea580c)','linear-gradient(135deg,#0f766e,#15803d)','linear-gradient(135deg,#9f1239,#7c2d12)','linear-gradient(135deg,#4338ca,#0369a1)'][Array.from(entry.business_name || '').reduce((sum,char)=>sum+char.charCodeAt(0),0)%6]}"><span>${escapeHtml(initials(entry.business_name))}</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p></div></div><span class="status ${escapeHtml(entry.review_status || 'pending')}">${escapeHtml(entry.review_status || 'pending')}</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div></div><p class="about">${escapeHtml(entry.about || '')}</p>`;
+      if (entry.profile_photo_path) { const avatar = card.querySelector('.avatar'); if (avatar) { const img = document.createElement('img'); img.src = TexAdminApi.publicUrl(entry.profile_photo_path); img.alt = 'Profile photo'; avatar.replaceChildren(img); } }
       const actions = document.createElement('div');
       actions.className = 'review';
       for (const [label, value] of [['Approve', 'approved'], ['Reject', 'rejected']]) {
@@ -742,7 +774,7 @@
         importedBusinesses = [];
         const pageSize = 500;
         for (let offset = 0; ; offset += pageSize) {
-          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,website,about,review_status&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,website,about,review_status,profile_photo_path,work_photo_paths&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
           if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
           const page = await importedResponse.json();
           importedBusinesses.push(...page);
