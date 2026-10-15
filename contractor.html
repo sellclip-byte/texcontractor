@@ -351,7 +351,7 @@
                 const place=document.createElement('p');place.textContent=entry.city+', '+entry.state;
                 const tradeLine=document.createElement('p');tradeLine.textContent=entry.service;
                 dialog.append(close,heading,place,tradeLine);
-                const cleanAbout=String(entry.about||'').replace(/(?:https?:\\/\\/|www\\.)\\S+/gi,'').trim();
+                const cleanAbout=String(entry.about||'').replace(/(?:https?:\/\/|www\.)\S+/gi,'').trim();
                 if(cleanAbout && !/public business listing|pending review|no additional description/i.test(cleanAbout)){
                   const about=document.createElement('p');about.textContent=cleanAbout;dialog.append(about);
                 }
