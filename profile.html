@@ -149,7 +149,7 @@
     document.getElementById('service-label').textContent = profile.service;
     document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Not provided' : `${profile.years} years`;
-    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.getElementById('work-gallery').closest('.panel').hidden=true;}
+    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Not provided';}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [
       `Hello ${profile.name},`,
@@ -200,6 +200,15 @@
       gallery.appendChild(image);
     };
     profile.work.slice(0, 10).forEach(addGalleryImage);
+    if(profile.imported && !profile.work.length){
+      const note=document.createElement('p');
+      note.textContent='No verified work photos have been supplied by this business.';
+      note.style.cssText='grid-column:1/-1;color:#667085;padding:14px 0';
+      gallery.appendChild(note);
+      const caption=gallery.closest('.panel').querySelector('p');
+      if(caption)caption.textContent='Work photos will appear here when verified images are available.';
+    }
+
     if (profile.profilePhoto) {
         document.getElementById('avatar-image').src = profile.profilePhoto;
         document.getElementById('avatar-image').style.display = 'block';
