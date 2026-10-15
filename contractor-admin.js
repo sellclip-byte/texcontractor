@@ -173,11 +173,46 @@
       input.style.cssText = 'width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;color:#111827;background:#fff';
       wrap.appendChild(input); panel.appendChild(wrap); inputs[key] = input;
     }
+    let profileFile, workFiles, photoAction, replaceIndex;
     if (!imported) {
-      const photoInfo = document.createElement('p');
-      photoInfo.textContent = 'Profile and work photos: use the existing photo controls in this technician card (up to 10 work photos).';
-      photoInfo.style.cssText = 'grid-column:1/-1';
-      panel.appendChild(photoInfo);
+      const photos = document.createElement('section');
+      photos.style.cssText = 'grid-column:1/-1;border-top:1px solid #ddd;padding-top:12px;display:grid;gap:10px';
+      const title = document.createElement('h3');
+      title.textContent = 'Profile & work photos / صور البروفايل والأعمال';
+      photos.appendChild(title);
+      const current = document.createElement('div');
+      current.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+      const paths = [row.profile_photo_path, ...(Array.isArray(row.work_photo_paths) ? row.work_photo_paths : [])].filter(Boolean);
+      paths.forEach((path,i) => {
+        const img = document.createElement('img');
+        img.src = TexAdminApi.publicUrl(path);
+        img.alt = i === 0 ? 'Current photo' : 'Work photo';
+        img.style.cssText = 'width:78px;height:78px;object-fit:cover;border-radius:8px';
+        current.appendChild(img);
+      });
+      photos.appendChild(current);
+      const profileLabel = document.createElement('label');
+      profileLabel.textContent = 'Replace profile photo / تغيير صورة البروفايل';
+      profileFile = document.createElement('input');
+      profileFile.type = 'file'; profileFile.accept = 'image/*';
+      profileLabel.appendChild(profileFile); photos.appendChild(profileLabel);
+      const workLabel = document.createElement('label');
+      workLabel.textContent = 'Work photos / صور الأعمال (maximum 10)';
+      workFiles = document.createElement('input');
+      workFiles.type = 'file'; workFiles.accept = 'image/*'; workFiles.multiple = true;
+      workLabel.appendChild(workFiles); photos.appendChild(workLabel);
+      photoAction = document.createElement('select');
+      for (const [value,label] of [['add','Add work photos / إضافة صور'],['replace','Replace one work photo / استبدال صورة']]) {
+        const option = document.createElement('option'); option.value=value; option.textContent=label; photoAction.appendChild(option);
+      }
+      photos.appendChild(photoAction);
+      replaceIndex = document.createElement('select');
+      (Array.isArray(row.work_photo_paths) ? row.work_photo_paths : []).forEach((path,i)=>{
+        const option=document.createElement('option');option.value=String(i);option.textContent='Work photo '+(i+1);replaceIndex.appendChild(option);
+      });
+      replaceIndex.hidden=true;photos.appendChild(replaceIndex);
+      photoAction.addEventListener('change',()=>{replaceIndex.hidden=photoAction.value!=='replace';workFiles.multiple=photoAction.value!=='replace';});
+      panel.appendChild(photos);
     }
     const actions = document.createElement('div');
     actions.style.cssText = 'grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px';
@@ -195,7 +230,8 @@
         const value = inputs[key].value.trim();
         if (value !== String(row[key] ?? '')) changes[key] = key === 'years' ? (value === '' ? null : Number(value)) : value;
       }
-      if (!Object.keys(changes).length) { overlay.remove(); return; }
+      const hasPhotos = !imported && (profileFile?.files?.length || workFiles?.files?.length);
+      if (!Object.keys(changes).length && !hasPhotos) { overlay.remove(); return; }
       save.disabled = true; save.textContent = 'Saving…';
       try {
         let updated;
@@ -215,7 +251,20 @@
           updated = await TexAdminApi.updateSubmission(row.id,changes,currentUser);
           if (!updated) throw new Error('Update was not confirmed');
         }
-        Object.assign(row,updated);overlay.remove();renderSubmissions();
+        Object.assign(row,updated);
+        if (!imported) {
+          if (profileFile.files.length) {
+            Object.assign(row,await TexAdminApi.uploadSubmissionPhotos(row,Array.from(profileFile.files),'profile',currentUser));
+          }
+          if (workFiles.files.length) {
+            const selected = Array.from(workFiles.files);
+            const existing = Array.isArray(row.work_photo_paths) ? row.work_photo_paths.length : 0;
+            if (photoAction.value === 'replace' && selected.length !== 1) throw new Error('Choose exactly one photo to replace.');
+            if (photoAction.value === 'add' && existing + selected.length > 10) throw new Error('Maximum 10 work photos.');
+            Object.assign(row,await TexAdminApi.uploadSubmissionPhotos(row,selected,'work',currentUser,photoAction.value === 'replace' ? Number(replaceIndex.value) : -1));
+          }
+        }
+        overlay.remove();renderSubmissions();
         showMessage('Technician profile changes saved.', 'ok');
       } catch(error) {
         showMessage('Could not save changes: ' + error.message,'error');
