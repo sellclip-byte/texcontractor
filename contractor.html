@@ -307,10 +307,60 @@
           return 1;
         };
         rows.sort((a, b) => locationScore(b) - locationScore(a));
-        if (!rows.length) return showEmpty('No contractor has published this service yet. Be the first to post your service.');
         providers.innerHTML = '';
         rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
-        if (!providers.children.length) showEmpty('You blocked the available contractor on this device.');
+        // Approved public business listings are not registered contractor accounts.
+        // Keep the original contractor profiles, reporting and SMS flow unchanged.
+        if (service === 'Mobile Auto Detailing' || service === 'Local service') {
+          try {
+            const importedQuery = new URLSearchParams({ select: 'id,business_name,service,city,state,website,about', service: 'eq.Mobile Auto Detailing', limit: '100' });
+            const importedResponse = await fetch(SUPABASE_URL + '/rest/v1/texcontractor_approved_imported_directory?' + importedQuery, { headers: { apikey: SUPABASE_KEY }, cache: 'no-store' });
+            if (!importedResponse.ok) throw new Error('Imported directory HTTP ' + importedResponse.status);
+            const importedRows = await importedResponse.json();
+            importedRows.sort((a,b) => locationScore(b)-locationScore(a));
+            for (const entry of importedRows) {
+              if (blockedProviders.has(String(entry.id))) continue;
+              const card = document.createElement('article');
+              card.className = 'contractor-card';
+              card.style.cssText = 'display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:20px;border:1px solid #d9e4dc;border-radius:16px;margin:12px 0;background:#fff';
+              const main = document.createElement('div');
+              main.style.cssText = 'flex:1;min-width:220px';
+              const name = document.createElement('h3');
+              name.textContent = entry.business_name;
+              const meta = document.createElement('p');
+              meta.textContent = entry.service + ' · ' + entry.city + ', ' + entry.state;
+              const description = document.createElement('p');
+              description.textContent = entry.about || 'Business listing';
+              const notice = document.createElement('small');
+              notice.textContent = 'Public business listing · Not a registered TexContractor account';
+              main.append(name,meta,description,notice);
+              const actions = document.createElement('div');
+              actions.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+              const site = document.createElement('a');
+              site.className = 'profile-button';
+              site.textContent = 'Business website';
+              try { const u = new URL(entry.website); if (u.protocol === 'https:' || u.protocol === 'http:') { site.href=u.href;site.target='_blank';site.rel='noopener noreferrer'; } } catch (_) {}
+              const sms = document.createElement('button');
+              sms.className = 'profile-button';
+              sms.textContent = 'Text this business';
+              sms.addEventListener('click', async () => {
+                try {
+                  const token = await TexAuth.getAccessToken();
+                  if (!token) { window.alert('Please sign in to contact this business.'); return; }
+                  const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/texcontractor_imported_phone', {method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
+                  if (!res.ok) throw new Error('Please sign in to contact this business.');
+                  const phone = await res.json();
+                  if (!phone) throw new Error('Phone number unavailable.');
+                  window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
+                } catch (e) { window.alert(e.message); }
+              });
+              actions.append(site,sms);
+              card.append(main,actions);
+              providers.appendChild(card);
+            }
+          } catch (importError) { console.warn('Approved imported directory unavailable', importError); }
+        }
+        if (!providers.children.length) showEmpty('No contractor has published this service yet. Be the first to post your service.');
       } catch (error) {
         showEmpty('Published profiles could not be loaded right now. Please try again.');
       }
