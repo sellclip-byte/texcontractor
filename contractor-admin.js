@@ -2,6 +2,7 @@
   let currentUser = null;
   let members = [];
   let submissions = [];
+  let importedBusinesses = [];
   let reports = [];
   let homepageBanner = null;
   const sideAds = { left: {}, right: {} };
@@ -147,9 +148,16 @@
   const renderSubmissions = () => {
     const filter = statusFilter.value;
     const rows = submissions.filter((row) => filter === 'all' || row.status === filter);
+    const imported = (filter === 'pending' || filter === 'all') ? importedBusinesses : [];
     submissionsList.innerHTML = '';
-    $('#submissions-count').textContent = `${rows.length} shown · ${submissions.length} total`;
-    submissionsEmpty.hidden = rows.length > 0;
+    $('#submissions-count').textContent = `${rows.length + imported.length} shown · ${submissions.length + importedBusinesses.length} total`;
+    submissionsEmpty.hidden = rows.length + imported.length > 0;
+    imported.forEach((entry) => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `<div class="card-head"><div class="card-title"><div class="avatar"><span>🚘</span></div><div><h2>${escapeHtml(entry.business_name)}</h2><p class="service">${escapeHtml(entry.service)}</p><p class="date">Imported public business · Awaiting admin review</p></div></div><span class="status pending">pending</span></div><div class="detail-grid"><div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(entry.phone || 'Not provided')}</span></div><div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(entry.city + ', ' + entry.state)}</span></div><div class="detail"><span class="detail-label">Website</span><span class="detail-value"><a href="${escapeHtml(entry.website)}" target="_blank" rel="noopener noreferrer">View source</a></span></div><div class="detail"><span class="detail-label">Account</span><span class="detail-value">Public listing · no registered owner</span></div></div><p class="about">${escapeHtml(entry.about || 'Public business listing pending review. No additional description supplied.')}</p><p class="date">Imported listing: publishing as a registered contractor is not available until account details are supplied.</p>`;
+      submissionsList.appendChild(card);
+    });
     rows.forEach((row) => {
       const card = document.createElement('article');
       card.className = 'card';
@@ -553,6 +561,12 @@
       const result = await Promise.all([TexAdminApi.listMembers(), TexAdminApi.listSubmissions('all'), TexAdminApi.listReports()]);
       members = result[0];
       submissions = result[1];
+      try {
+        const token = await TexAuth.getAccessToken();
+        const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=business_name,service,city,state,phone,website,about&order=business_name.asc&limit=200', { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+        if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
+        importedBusinesses = await importedResponse.json();
+      } catch (error) { importedBusinesses = []; showMessage('Imported applications could not load: ' + error.message, 'error'); }
       reports = result[2];
       updateSummary();
       renderMembers();
