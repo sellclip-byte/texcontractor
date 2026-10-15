@@ -304,6 +304,8 @@
           return 1;
         };
         rows.sort((a, b) => locationScore(b) - locationScore(a));
+        providers.innerHTML = '';
+        rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
         if (service === 'Mobile Auto Detailing' || service === 'Local service') {
           try {
@@ -343,10 +345,7 @@
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
-        if (!rows.length) return showEmpty('No contractor has published this service yet. Be the first to post your service.');
-        providers.innerHTML = '';
-        rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
-        if (!providers.children.length) showEmpty('You blocked the available contractor on this device.');
+        if (!providers.children.length) showEmpty('No matching service providers found.');
       } catch (error) {
         showEmpty('Published profiles could not be loaded right now. Please try again.');
       }
