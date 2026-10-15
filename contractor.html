@@ -48,12 +48,12 @@
     .provider-rating { margin:3px 0 0; color:#123DCC; font-size:.88rem; letter-spacing:.04em; }
     .provider-rating span { color:var(--muted); letter-spacing:0; }
     .provider-trade { margin:5px 0 0; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .provider-contact-icons { display:flex; gap:6px; margin-top:7px; }
-    .provider-contact-icon { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:6px; border:1px solid var(--line); border-radius:8px; background:#fff; color:#075c4b; cursor:pointer; }
+    .provider-identity { display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .provider-contact-icons { display:flex; gap:2px; margin:0; }
+    .provider-contact-icon { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; padding:3px; border:1px solid var(--line); border-radius:8px; background:#fff; color:#075c4b; cursor:pointer; }
     .provider-contact-icon svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .provider-contact-icon:hover { background:#effcf8; }
     .provider-contact-icon:focus-visible { outline:3px solid var(--gold-dark); outline-offset:2px; }
-    @media (pointer:coarse) { .provider-contact-icon { width:44px; height:44px; } }
     .provider-actions { display:flex; flex-direction:column; gap:8px; align-items:stretch; }
     .profile-button, .text-button { display:inline-flex; align-items:center; justify-content:center; min-width:150px; min-height:40px; padding:0 14px; border-radius:9px; font:700 .83rem inherit; text-decoration:none; transition:filter .2s ease, transform .2s ease; }
     .profile-button { color:#fff; background:var(--green); border:1px solid var(--green); }
@@ -307,7 +307,9 @@
       profileButton.textContent = 'View profile';
       const profileParams = new URLSearchParams({ contractor: provider.id, service: provider.service || service, city: provider.city || city, state: provider.state || state, zip });
       profileButton.href = `profile.html?${profileParams.toString()}`;
-      main.appendChild(contactIcons(provider.display_name, () => getContractorPhone(provider.id), textButton));
+      const identity = document.createElement('div');
+      identity.className = 'provider-identity';
+      identity.append(avatar, contactIcons(provider.display_name, () => getContractorPhone(provider.id), textButton));
       actions.append(profileButton, textButton);
       const reportButton = document.createElement('button');
       reportButton.className = 'report-button';
@@ -320,7 +322,7 @@
         reportReason.focus();
       });
       actions.appendChild(reportButton);
-      card.append(avatar, main, actions);
+      card.append(identity, main, actions);
       return card;
     };
     async function loadProviders() {
@@ -370,7 +372,8 @@
                   if(!phone)throw new Error('Phone unavailable');
                   return phone;
               };
-              main.appendChild(contactIcons(entry.business_name, loadImportedPhone, sms));
+              const identity=document.createElement('div');identity.className='provider-identity';
+              identity.append(avatar,contactIcons(entry.business_name, loadImportedPhone, sms));
               sms.addEventListener('click',async event=>{
                 event.preventDefault();
                 try {
@@ -391,7 +394,7 @@
                 const body='Business: '+entry.business_name+'\\nLocation: '+entry.city+', '+entry.state+'\\nListing ID: '+entry.id+'\\nReason: ';
                 window.location.href='mailto:texcontractor.help@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
               });
-              actions.append(profile,sms,report);card.append(avatar,main,actions);providers.appendChild(card);
+              actions.append(profile,sms,report);card.append(identity,main,actions);providers.appendChild(card);
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
