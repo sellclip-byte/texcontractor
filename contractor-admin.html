@@ -162,7 +162,7 @@
       </div>
       <nav class="tabs" aria-label="Admin sections">
         <button class="tab active" type="button" data-tab="members" aria-selected="true">Registered members</button>
-        <button class="tab" type="button" data-tab="submissions" aria-selected="false">Contractor applications</button>
+        <button class="tab" type="button" data-tab="submissions" aria-selected="false">All Technicians / جميع الفنيين</button>
         <button class="tab" type="button" data-tab="reports" aria-selected="false">Reports</button>
         <button class="tab" type="button" data-tab="homepage-banner" aria-selected="false">Homepage banner</button>
         <button class="tab" type="button" data-tab="contractor-notice" aria-selected="false">Contractor notice</button>
@@ -179,7 +179,7 @@
       </section>
       <section class="dashboard-panel" id="submissions-panel" data-panel="submissions" hidden>
         <div class="toolbar">
-          <label class="filter" for="status-filter">Show<select id="status-filter"><option value="pending" selected>Pending review</option><option value="all">All applications</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
+          <label class="filter" for="status-filter">Show<select id="status-filter"><option value="pending">Pending review</option><option value="all" selected>All technicians</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label>
           <span class="count" id="submissions-count">Loading…</span>
         </div>
         <div class="notice" id="submissions-loading">Loading applications…</div>
@@ -300,7 +300,7 @@
   </main>
   <script src="tex-auth.js"></script>
   <script src="tex-admin.js?v=20261014-multi-photos"></script>
-  <script src="contractor-admin.js?v=20261015-import-review-actions"></script>
+  <script src="contractor-admin.js?v=20261015-admin-edit-technicians"></script>
   <script src="contractor-notice-editor.js?v=20261012b"></script>
   <script src="tex-catalog-images-admin.js?v=2"></script>
 </body>
