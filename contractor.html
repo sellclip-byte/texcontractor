@@ -326,8 +326,6 @@
               const trade=document.createElement('p');trade.className='provider-trade';trade.textContent=entry.service;
               main.append(status,name,location,trade);
               const actions=document.createElement('div');actions.className='provider-actions';
-              const website=document.createElement('a');website.className='profile-button';website.textContent='Business website';
-              try{const u=new URL(entry.website);if(['https:','http:'].includes(u.protocol)){website.href=u.href;website.target='_blank';website.rel='noopener noreferrer';}}catch(e){website.href='#';}
               const sms=document.createElement('a');sms.className='text-button';sms.href='#';sms.textContent='Text this contractor';
               sms.addEventListener('click',async event=>{
                 event.preventDefault();
@@ -341,7 +339,7 @@
                   window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
                 }catch(e){alert(e.message);}
               });
-              actions.append(website,sms);card.append(avatar,main,actions);providers.appendChild(card);
+              actions.append(sms);card.append(avatar,main,actions);providers.appendChild(card);
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
