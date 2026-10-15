@@ -326,7 +326,7 @@
           button.disabled = true;
           try {
             const token = await TexAuth.getAccessToken();
-            const endpoint = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?service=eq.' + encodeURIComponent(entry.service) + '&website=eq.' + encodeURIComponent(entry.website);
+            const endpoint = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?id=eq.' + encodeURIComponent(entry.id);
             const response = await fetch(endpoint, {
               method: 'PATCH',
               headers: {
