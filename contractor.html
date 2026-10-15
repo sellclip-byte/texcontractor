@@ -309,7 +309,7 @@
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
         if (service === 'Mobile Auto Detailing' || service === 'Computer Repair' || service === 'Notarization' || service === 'Dog Grooming' || service === 'DJ Services' || service === 'Wedding and Event Makeup' || service === 'Dog Training' || service === 'Deck or Porch Remodel or Addition' || service === 'Swimming Pool Cleaning & Maintenance' || service === 'Home Foundation Repair' || service === 'Lighting Installation' || service === 'General Contracting' || service === 'Gutter Cleaning and Maintenance' || service === 'Door Installation' || service === 'Lawn Mower, Water Pump & Outdoor Equipment Repair' || service === 'Local service') {
           try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,website,about',service:'eq.'+(['Computer Repair','Notarization','Dog Grooming','DJ Services','Wedding and Event Makeup','Dog Training','Deck or Porch Remodel or Addition','Swimming Pool Cleaning & Maintenance','Home Foundation Repair','Lighting Installation','General Contracting','Gutter Cleaning and Maintenance'].includes(service) ? service : 'Mobile Auto Detailing'),limit:'100'});
+            const params = new URLSearchParams({select:'id,business_name,service,city,state,website,about',service:'eq.'+(service === 'Local service' ? 'Mobile Auto Detailing' : service),limit:'100'});
             const response = await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+params,{headers:{apikey:SUPABASE_KEY},cache:'no-store'});
             if (!response.ok) throw new Error('Approved listings unavailable');
             const imported = await response.json();
