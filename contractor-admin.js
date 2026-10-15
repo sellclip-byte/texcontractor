@@ -608,7 +608,7 @@
     bannerStyle.value = row?.style || 'card';
     bannerFontStyle.value = row?.font_style || 'bold';
     bannerAnimation.value = row?.animation || 'static';
-    bannerEnabled.value = String(row?.is_enabled !== false);
+    bannerEnabled.value = String(row?.is_enabled !== false);\n    document.getElementById('banner-image-enabled').value = String(row?.banner_image_enabled !== false);
     bannerTextColor.value = row?.text_color || '#075c4b';
     bannerBackgroundColor.value = row?.background_color || '#ecfff8';
     bannerAccentColor.value = row?.accent_color || '#a9e8d2';
@@ -890,7 +890,7 @@
         style: bannerStyle.value,
         font_style: bannerFontStyle.value,
         animation: bannerAnimation.value,
-        is_enabled: bannerEnabled.value === 'true',
+        is_enabled: bannerEnabled.value === 'true',\n        banner_image_enabled: document.getElementById('banner-image-enabled').value === 'true',
         text_color: bannerTextColor.value,
         background_color: bannerBackgroundColor.value,
         accent_color: bannerAccentColor.value
