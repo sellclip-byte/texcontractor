@@ -195,17 +195,22 @@
       <section class="dashboard-panel" id="homepage-banner-panel" data-panel="homepage-banner" hidden>
         <div class="card settings-card">
           <div class="card-head"><div><h2>Homepage banner</h2><p class="date">Control the text shown where the illustration was removed.</p></div></div>
-          <form id="banner-form">
-            <label class="settings-message" for="banner-message">Message shown to visitors<textarea id="banner-message" maxlength="300" required></textarea></label>
+          <form id="banner-form">\n            <p class="settings-hint">Manage the text banner and image banner independently. Each can be shown or hidden separately.</p>
+            <fieldset style="border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0"><legend><strong>Text Banner / البنر النصي</strong></legend>\n            <label class="settings-message" for="banner-message">Message shown to visitors<textarea id="banner-message" maxlength="300"></textarea></label>
             <div class="settings-grid">
               <label for="banner-style">Visual style<select id="banner-style"><option value="card">Card</option><option value="outline">Outline</option><option value="minimal">Minimal</option></select></label>
               <label for="banner-font-style">Text format<select id="banner-font-style"><option value="normal">Normal</option><option value="bold">Bold</option><option value="italic">Italic</option><option value="uppercase">Uppercase</option></select></label>
               <label for="banner-animation">Motion<select id="banner-animation"><option value="static">Static</option><option value="pulse">Gentle pulse</option><option value="scroll">Scrolling text</option></select></label>
-              <label for="banner-enabled">Visibility<select id="banner-enabled"><option value="true">Show banner</option><option value="false">Hide banner</option></select></label>
+              <label for="banner-enabled">Text visibility<select id="banner-enabled"><option value="true">Show text banner</option><option value="false">Hide text banner</option></select></label>
               <label>Text color<span class="color-input"><input id="banner-text-color" type="color" value="#075c4b"><span id="banner-text-color-value">#075c4b</span></span></label>
               <label>Background color<span class="color-input"><input id="banner-background-color" type="color" value="#ecfff8"><span id="banner-background-color-value">#ecfff8</span></span></label>
               <label>Border/accent color<span class="color-input"><input id="banner-accent-color" type="color" value="#a9e8d2"><span id="banner-accent-color-value">#a9e8d2</span></span></label>
             </div>
+            <p class="settings-preview-label">Text banner preview</p>
+            <div class="settings-preview"><div class="settings-preview-text" id="banner-preview-text"></div></div>
+            </fieldset>
+            <fieldset style="border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0"><legend><strong>Image Banner / بنر الصورة</strong></legend>
+            <label for="banner-image-enabled">Image visibility<select id="banner-image-enabled"><option value="true">Show image banner</option><option value="false">Hide image banner</option></select></label>
             <div style="margin:16px 0;display:grid;gap:8px">
               <label for="banner-image-file"><strong>Upload Banner Image / رفع صورة البنر</strong></label>
               <p class="settings-hint">Recommended image size: 1600 × 400 pixels (4:1). JPG, PNG or WebP; maximum 10 MB. Keep text inside the image and leave margins for mobile screens.</p>
@@ -213,8 +218,7 @@
               <div id="banner-image-preview" style="max-width:100%;min-height:60px"></div>
               <label><input type="checkbox" id="banner-remove-image"> Remove existing banner image / حذف صورة البنر الحالية</label>
             </div>
-            <p class="settings-preview-label">Preview</p>
-            <div class="settings-preview"><div class="settings-preview-text" id="banner-preview-text"></div></div>
+            </fieldset>
             <div class="settings-actions"><button class="save" id="save-banner" type="submit">Save banner</button><p class="settings-hint">Changes appear on the public homepage after saving.</p></div>
           </form>
         </div>
