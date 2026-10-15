@@ -855,6 +855,24 @@
     });
     input.addEventListener('change', renderBannerPreview);
   });
+  const bannerFileInput = document.getElementById('banner-image-file');
+  bannerFileInput.addEventListener('change', () => {
+    const file = bannerFileInput.files?.[0];
+    const preview = document.getElementById('banner-image-preview');
+    if (!file || !preview) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
+      showMessage('Use JPG, PNG or WebP, maximum 10 MB.', 'error');
+      bannerFileInput.value = '';
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Banner preview before saving';
+    img.style.cssText = 'display:block;width:100%;max-width:800px;aspect-ratio:4/1;object-fit:contain;border-radius:10px';
+    img.addEventListener('load', () => URL.revokeObjectURL(url), {once:true});
+    preview.replaceChildren(img);
+  });
   bannerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const button = $('#save-banner');
