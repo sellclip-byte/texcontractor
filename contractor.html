@@ -339,7 +339,26 @@
                   window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
                 }catch(e){alert(e.message);}
               });
-              actions.append(sms);card.append(avatar,main,actions);providers.appendChild(card);
+              const profile=document.createElement('button');profile.type='button';profile.className='profile-button';profile.textContent='View profile';
+              profile.addEventListener('click',()=>{
+                const overlay=document.createElement('div');overlay.className='report-modal show';
+                const dialog=document.createElement('div');dialog.className='report-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
+                const heading=document.createElement('h2');heading.textContent=entry.business_name;
+                const place=document.createElement('p');place.textContent=entry.city+', '+entry.state+' · '+entry.service;
+                const about=document.createElement('p');about.textContent=entry.about||'No additional business description available.';
+                const notice=document.createElement('p');notice.textContent='Public business listing — not a registered TexContractor profile.';
+                const close=document.createElement('button');close.type='button';close.textContent='Close';close.addEventListener('click',()=>overlay.remove());
+                dialog.append(heading,place,about,notice,close);overlay.append(dialog);
+                overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+                document.body.append(overlay);close.focus();
+              });
+              const report=document.createElement('button');report.type='button';report.className='report-button';report.textContent='Report this contractor';
+              report.addEventListener('click',()=>{
+                const subject='TexContractor business listing report: '+entry.business_name;
+                const body='Business: '+entry.business_name+'\\nLocation: '+entry.city+', '+entry.state+'\\nListing ID: '+entry.id+'\\nReason: ';
+                window.location.href='mailto:texcontractor.help@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+              });
+              actions.prepend(profile);actions.append(report);card.append(avatar,main,actions);providers.appendChild(card);
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
