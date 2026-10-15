@@ -321,27 +321,42 @@
             for (const entry of importedRows) {
               if (blockedProviders.has(String(entry.id))) continue;
               const card = document.createElement('article');
-              card.className = 'contractor-card';
-              card.style.cssText = 'display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:20px;border:1px solid #d9e4dc;border-radius:16px;margin:12px 0;background:#fff';
+              card.className = 'provider';
+              const avatar = document.createElement('div');
+              avatar.className = 'avatar';
+              const illustration = document.createElement('img');
+              illustration.src = serviceArtwork(entry.service);
+              illustration.alt = 'Illustration representing auto detailing';
+              avatar.appendChild(illustration);
               const main = document.createElement('div');
-              main.style.cssText = 'flex:1;min-width:220px';
+              main.className = 'provider-main';
+              const status = document.createElement('p');
+              status.className = 'provider-status';
+              status.textContent = 'Local business';
               const name = document.createElement('h3');
+              name.className = 'provider-name';
               name.textContent = entry.business_name;
               const meta = document.createElement('p');
-              meta.textContent = entry.service + ' · ' + entry.city + ', ' + entry.state;
-              const description = document.createElement('p');
-              description.textContent = entry.about || 'Business listing';
-              const notice = document.createElement('small');
-              notice.textContent = 'Public business listing · Not a registered TexContractor account';
-              main.append(name,meta,description,notice);
+              meta.className = 'provider-rating';
+              meta.textContent = entry.city + ', ' + entry.state;
+              const trade = document.createElement('p');
+              trade.className = 'provider-trade';
+              trade.textContent = entry.service;
+              main.append(status,name,meta,trade);
+              if (entry.about && entry.about.trim()) {
+                const description = document.createElement('p');
+                description.textContent = entry.about;
+                main.appendChild(description);
+              }
               const actions = document.createElement('div');
-              actions.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+              actions.className = 'provider-actions';
               const site = document.createElement('a');
               site.className = 'profile-button';
-              site.textContent = 'Business website';
+              site.textContent = 'Website';
+              site.href = '#';
               try { const u = new URL(entry.website); if (u.protocol === 'https:' || u.protocol === 'http:') { site.href=u.href;site.target='_blank';site.rel='noopener noreferrer'; } } catch (_) {}
               const sms = document.createElement('button');
-              sms.className = 'profile-button';
+              sms.className = 'text-button';
               sms.textContent = 'Text this business';
               sms.addEventListener('click', async () => {
                 try {
@@ -355,7 +370,7 @@
                 } catch (e) { window.alert(e.message); }
               });
               actions.append(site,sms);
-              card.append(main,actions);
+              card.append(avatar,main,actions);
               providers.appendChild(card);
             }
           } catch (importError) { console.warn('Approved imported directory unavailable', importError); }
