@@ -27,6 +27,14 @@ if (services.length !== 61) throw Error('Expected 61 verified catalog names in t
 if (!services.length) throw Error('No real service links found in index.html; no SEO pages generated. Check the homepage catalog markup first.');
 const esc = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const slug = s => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,85);
+const googleAdsTag = `  <!-- Google Ads tag: AW-18516159223 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18516159223"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18516159223');
+  </script>`;
 const dir = join(root,'services'); mkdirSync(dir,{recursive:true});
 // Keep generated landing pages noindex until substantive, unique content and live-domain verification are complete.
 // Reviewed, service-specific editorial copy. Other categories remain noindex until reviewed.
@@ -474,7 +482,7 @@ for (const service of services) {
   const title = service+' Contractors | TexContractor';
   const desc = 'Explore '+service+' contractors on TexContractor. Compare service profiles and contact contractors directly by text message.';
   const page = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head>${googleAdsTag}<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 <meta name="robots" content="index,follow"><link rel="canonical" href="${canonical}">
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:auto;max-width:800px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:35px 0}a.cta{display:inline-block;padding:12px 20px;background:#075c80;color:white;border-radius:8px;text-decoration:none}</style>
@@ -486,7 +494,7 @@ ${serviceCopy}
   urls.push(canonical);
 }
 const directoryLinks = services.map(service => '<li><a href="/services/'+slug(service)+'.html">'+esc(service)+'</a></li>').join('\n');
-const directoryPage = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="/">TexContractor home</a></p></main></body></html>';
+const directoryPage = '<!doctype html><html lang="en"><head>'+googleAdsTag+'<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Browse Services | TexContractor</title><meta name="description" content="Browse TexContractor service categories and find contractors you can contact by text."><link rel="canonical" href="https://texcontractor.com/services/"></head><body><main><h1>Browse Contractor Services</h1><p>Choose a service category to browse contractor listings and contact providers directly by text message.</p><ul>'+directoryLinks+'</ul><p><a href="/">TexContractor home</a></p></main></body></html>';
 writeFileSync(join(dir,'index.html'),directoryPage);
 const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
  ['https://texcontractor.com/','https://texcontractor.com/contractor.html','https://texcontractor.com/services/',...urls].map(u=>'  <url><loc>'+u.replaceAll('&','&amp;')+'</loc></url>').join('\n')+'\n</urlset>\n';
