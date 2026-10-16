@@ -331,6 +331,7 @@
         reportReason.focus();
       });
       actions.appendChild(reportButton);
+      card.dataset.sortCity = String(provider.city || '').trim();
       card.append(identity, main, actions);
       return card;
     };
@@ -418,7 +419,7 @@
                 const body='Business: '+entry.business_name+'\\nLocation: '+entry.city+', '+entry.state+'\\nListing ID: '+entry.id+'\\nReason: ';
                 window.location.href='mailto:texcontractor.help@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
               });
-              actions.append(profile,sms,report);card.append(identity,main,actions);providers.appendChild(card);
+              actions.append(profile,sms,report);card.append(identity,main,actions);card.dataset.sortCity=String(entry.city||'').trim();providers.appendChild(card);
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
@@ -427,12 +428,6 @@
         // a verified geographic distance dataset is available.
         const allCards = [...providers.children];
         const cityKey = value => String(value || '').trim().toLowerCase();
-        allCards.forEach(card => {
-          const location = card.querySelector('.provider-rating');
-          const label = location ? location.textContent || '' : '';
-          const cardCity = label.split(',')[0].trim();
-          card.dataset.sortCity = cardCity;
-        });
         allCards.sort((a,b) => {
           const aCity = cityKey(a.dataset.sortCity), bCity = cityKey(b.dataset.sortCity);
           const aLocal = aCity === cityKey(city), bLocal = bCity === cityKey(city);
