@@ -27,25 +27,52 @@ for (const [i, url] of urls.entries()) {
 }
 
 const faviconUrl = 'https://texcontractor.com/texcontractor-icon-192.png';
+let faviconDiagnostics = { url: faviconUrl };
 try {
-  const homeResponse = await fetch('https://texcontractor.com/', {redirect:'follow',signal:AbortSignal.timeout(15000)});
+  const homeResponse = await fetch('https://texcontractor.com/', {
+    redirect: 'follow', signal: AbortSignal.timeout(15000)
+  });
   if (!homeResponse.ok) throw new Error('Homepage HTTP ' + homeResponse.status);
   const home = await homeResponse.text();
-  const iconLinks = [...home.matchAll(/<link\\b[^>]*rel=["'][^"']*icon[^"']*["'][^>]*>/gi)].map(m=>m[0]);
+  const head = home.match(/<head\\b[^>]*>([\\s\\S]*?)<\\/head\\s*>/i)?.[1] ?? '';
+  const iconLinks = [...head.matchAll(/<link\\b[^>]*>/gi)]
+    .map(m => m[0])
+    .filter(tag => /\\brel\\s*=\\s*(?:"[^"]*icon[^"]*"|'[^']*icon[^']*'|[^\\s>]*icon[^\\s>]*)/i.test(tag));
   const declaresIcon = iconLinks.some(tag => /texcontractor-icon-192\\.png/i.test(tag));
-  if (!declaresIcon) throw new Error('Homepage does not declare texcontractor-icon-192.png; found: '+JSON.stringify(iconLinks));
-  const response = await fetch(faviconUrl,{redirect:'follow',signal:AbortSignal.timeout(15000),headers:{'user-agent':'Googlebot'}});
+  faviconDiagnostics.home = {
+    finalUrl: homeResponse.url,
+    status: homeResponse.status,
+    contentType: homeResponse.headers.get('content-type'),
+    htmlBytes: Buffer.byteLength(home),
+    headFound: Boolean(head),
+    iconLinks,
+    mentionsExpectedIcon: head.includes('texcontractor-icon-192.png')
+  };
+  if (!declaresIcon) failures.push({
+    url: 'https://texcontractor.com/',
+    error: 'Homepage favicon declaration missing or different',
+    diagnostics: faviconDiagnostics.home
+  });
+} catch (error) {
+  failures.push({url:'https://texcontractor.com/',error:'Homepage favicon check: '+String(error)});
+}
+try {
+  const response = await fetch(faviconUrl, {
+    redirect:'follow', signal:AbortSignal.timeout(15000),
+    headers:{'user-agent':'Googlebot'}
+  });
   if (!response.ok) throw new Error('Favicon HTTP '+response.status);
   const bytes = new Uint8Array(await response.arrayBuffer());
   const signature = [137,80,78,71,13,10,26,10];
   if (!signature.every((n,i)=>bytes[i]===n)) throw new Error('Favicon is not a PNG');
   const view = new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
-  const width=view.getUint32(16),height=view.getUint32(20);
+  const width=view.getUint32(16), height=view.getUint32(20);
   if (width!==height || width<48) throw new Error('Unexpected favicon dimensions '+width+'x'+height);
-  console.log(JSON.stringify({favicon:'PASS',url:faviconUrl,width,height,iconLinks},null,2));
+  faviconDiagnostics.image = {status:response.status,finalUrl:response.url,width,height,bytes:bytes.length};
 } catch(error) {
-  failures.push({url:faviconUrl,error:'Favicon check: '+String(error)});
+  failures.push({url:faviconUrl,error:'Favicon image check: '+String(error)});
 }
+console.log('FAVICON_DIAGNOSTICS '+JSON.stringify(faviconDiagnostics));
 
 console.log(JSON.stringify({ checked: urls.length, passed, failed: failures.length, failures }, null, 2));
 if (failures.length) process.exitCode = 1;
