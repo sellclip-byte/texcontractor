@@ -34,11 +34,11 @@ try {
   });
   if (!homeResponse.ok) throw new Error('Homepage HTTP ' + homeResponse.status);
   const home = await homeResponse.text();
-  const head = home.match(/<head\\b[^>]*>([\\s\\S]*?)<\\/head\\s*>/i)?.[1] ?? '';
-  const iconLinks = [...head.matchAll(/<link\\b[^>]*>/gi)]
+  const head = home.split(/<head[^>]*>/i)[1]?.split(/<\/head\s*>/i)[0] ?? '';
+  const iconLinks = [...head.matchAll(/<link[^>]*>/gi)]
     .map(m => m[0])
-    .filter(tag => /\\brel\\s*=\\s*(?:"[^"]*icon[^"]*"|'[^']*icon[^']*'|[^\\s>]*icon[^\\s>]*)/i.test(tag));
-  const declaresIcon = iconLinks.some(tag => /texcontractor-icon-192\\.png/i.test(tag));
+    .filter(tag => /\brel\s*=\s*(?:"[^"]*icon[^"]*"|'[^']*icon[^']*'|[^\s>]*icon[^\s>]*)/i.test(tag));
+  const declaresIcon = iconLinks.some(tag => /texcontractor-icon-192\.png/i.test(tag));
   faviconDiagnostics.home = {
     finalUrl: homeResponse.url,
     status: homeResponse.status,
