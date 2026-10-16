@@ -161,15 +161,12 @@
     if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [
-      `Hello ${profile.name},`,
-      '',
-      'ZIP code: __________',
-      'I need repair for: ____________________',
-      '',
-      'Please attach a photo or video of the problem.',
-      'Preferred contact: Call me / Text only',
-      '',
-      'Please send me your repair cost estimate.'
+      'Hello, I found your service on TexContractor:',
+      'https://texcontractor.com',
+      'I need an estimate.',
+      'My ZIP code: __________',
+      'Problem description: ____________________',
+      'If you would like photos or a video, I can send them. Thank you.'
     ].join('\n');
     textLink.href = '#';
     textLink.addEventListener('click', async (event) => {
