@@ -116,7 +116,7 @@
     <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
     <div id="contractor-notice-image-area" style="display:none;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:320px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"></div>
     <section aria-labelledby="contractors-heading">
-      <div class="results-heading"><div><h2 id="contractors-heading">Contractors near you</h2><p>Published profiles from professionals who offer this service.</p></div></div>
+      <div class="results-heading"><div><h2 id="contractors-heading">Contractors in your state</h2><p id="results-scope">Showing matching contractors in your state. Your city appears first; contact providers to confirm travel availability and fees.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
       <div class="providers" id="providers">
         <div class="empty-state" id="empty-state">
@@ -421,6 +421,25 @@
             }
           } catch(e) { console.warn('Business directory unavailable',e); }
         }
+        // Sort registered and imported contractors together, not in separate blocks.
+        // Same-city matches first; other in-state cities follow alphabetically until
+        // a verified geographic distance dataset is available.
+        const allCards = [...providers.children];
+        const cityKey = value => String(value || '').trim().toLowerCase();
+        allCards.forEach(card => {
+          const location = card.querySelector('.provider-rating');
+          const label = location ? location.textContent || '' : '';
+          const cardCity = label.split(',')[0].trim();
+          card.dataset.sortCity = cardCity;
+        });
+        allCards.sort((a,b) => {
+          const aCity = cityKey(a.dataset.sortCity), bCity = cityKey(b.dataset.sortCity);
+          const aLocal = aCity === cityKey(city), bLocal = bCity === cityKey(city);
+          return Number(bLocal) - Number(aLocal) || aCity.localeCompare(bCity);
+        });
+        providers.replaceChildren(...allCards);
+        const scope = document.getElementById('results-scope');
+        if (scope) scope.textContent = `Showing ${allCards.length} matching contractors in ${state}. ${city} listings appear first; other cities are shown as additional options. Confirm travel availability and fees directly.`;
         if (!providers.children.length) showEmpty('No matching service providers found.');
       } catch (error) {
         showEmpty('Published profiles could not be loaded right now. Please try again.');
