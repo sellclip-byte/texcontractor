@@ -430,23 +430,17 @@
         // Sort registered and imported contractors together, not in separate blocks.
         // Same-city matches first; other in-state cities follow alphabetically until
         // a verified geographic distance dataset is available.
-        // Census 2025 Gazetteer representative city coordinates (TX).
-        // Unknown cities remain visible; no road-distance or travel claim is made.
-        const censusCityCenters = {
-          TX: {
-            'arlington':[32.700708,-97.124691], 'dallas':[32.793333,-96.766513],
-            'fort worth':[32.781954,-97.348573], 'mansfield':[32.569188,-97.120532],
-            'grand prairie':[32.678930,-97.020743], 'irving':[32.857748,-96.970022],
-            'frisco':[33.155427,-96.822596], 'grapevine':[32.934969,-97.075912],
-            'austin':[30.298622,-97.754134], 'abilene':[32.454514,-99.738147],
-            'amarillo':[35.199903,-101.830194], 'benbrook':[32.678284,-97.463601],
-            'bedford':[32.845838,-97.135076], 'allen':[33.107224,-96.674676],
-            'aledo':[32.698282,-97.608341], 'azle':[32.895547,-97.539230]
-          }
-        };
+        // Load nationwide Census 2025 representative city centers.
+        // If the optional data file is unavailable, preserve same-city then
+        // alphabetical ranking rather than hiding any contractors.
+        let censusCityCenters = {};
+        try {
+          const geoResponse = await fetch('city-coordinates-2025.json', {cache:'force-cache'});
+          if (geoResponse.ok) censusCityCenters = await geoResponse.json();
+        } catch (geoError) { console.warn('City distance data unavailable',geoError); }
         const normalizeCity = value => String(value || '').trim().toLowerCase();
-        const cityCenters = censusCityCenters[String(state || '').toUpperCase()] || {};
-        const origin = cityCenters[normalizeCity(city)];
+        const origin = censusCityCenters[String(state || '').toUpperCase() + '|' + normalizeCity(city)];
+        const cityPoint = value => censusCityCenters[String(state || '').toUpperCase() + '|' + normalizeCity(value)];
         const distanceMiles = (a,b) => {
           const radians = deg => deg * Math.PI / 180;
           const dLat = radians(b[0]-a[0]), dLon = radians(b[1]-a[1]);
@@ -460,7 +454,7 @@
           const aLocal = aCity === cityKey(city), bLocal = bCity === cityKey(city);
           if (aLocal !== bLocal) return Number(bLocal) - Number(aLocal);
           if (origin) {
-            const aPoint = cityCenters[aCity], bPoint = cityCenters[bCity];
+            const aPoint = cityPoint(aCity), bPoint = cityPoint(bCity);
             if (aPoint && bPoint) {
               const difference = distanceMiles(origin,aPoint)-distanceMiles(origin,bPoint);
               if (Math.abs(difference) > 0.001) return difference;
