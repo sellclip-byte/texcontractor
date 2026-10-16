@@ -436,7 +436,10 @@
         providers.replaceChildren(...allCards);
         const scope = document.getElementById('results-scope');
         if (scope) scope.textContent = `Showing ${allCards.length} matching contractors in ${state}. ${city} listings appear first; other cities are shown as additional options. Confirm travel availability and fees directly.`;
-        if (!providers.children.length) showEmpty('No matching service providers found.');
+        if (!providers.children.length) {
+          if (scope) scope.textContent = `No matching ${service === 'Local service' ? 'service' : service} contractors are currently listed in ${state}. You do not need to search city by city.`;
+          showEmpty('No matching contractors are currently listed in this state for the selected service.');
+        }
       } catch (error) {
         showEmpty('Published profiles could not be loaded right now. Please try again.');
       }
