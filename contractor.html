@@ -334,13 +334,28 @@
       card.append(identity, main, actions);
       return card;
     };
+    async function fetchAllPages(endpoint, baseParams) {
+      const all = [];
+      const pageSize = 500;
+      for (let offset = 0; offset < 100000; offset += pageSize) {
+        const params = new URLSearchParams(baseParams);
+        params.set('limit', String(pageSize));
+        params.set('offset', String(offset));
+        const response = await fetch(endpoint + '?' + params.toString(), { headers: { apikey: SUPABASE_KEY }, cache: 'no-store' });
+        if (!response.ok) throw new Error('Could not load service providers.');
+        const page = await response.json();
+        if (!Array.isArray(page)) throw new Error('Unexpected service provider response.');
+        all.push(...page);
+        if (page.length < pageSize) return all;
+      }
+      throw new Error('Too many results to load safely.');
+    }
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc', limit: '100' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers: { apikey: SUPABASE_KEY } });
-        if (!response.ok) throw new Error('Could not load published profiles.');
-        const rows = await response.json();
+        if (state) query.set('state', `ilike.${state}`);
+        const rows = await fetchAllPages(`${SUPABASE_URL}/rest/v1/texcontractor_public_services`, query);
         const isDfw = value => ['dallas', 'fort worth', 'dallas–fort worth', 'dallas-fort worth'].includes(String(value || '').trim().toLowerCase());
         const locationScore = provider => {
           if (String(provider.state || '').toUpperCase() !== String(state || '').toUpperCase()) return 0;
@@ -348,17 +363,16 @@
           if (isDfw(city) && isDfw(provider.city)) return 2;
           return 1;
         };
-        rows.sort((a, b) => locationScore(b) - locationScore(a));
+        rows.sort((a, b) => locationScore(b) - locationScore(a) || String(a.city || '').localeCompare(String(b.city || '')));
         providers.innerHTML = '';
         rows.filter((provider) => !blockedProviders.has(String(provider.id))).forEach((provider, index) => providers.appendChild(renderProvider(provider, index)));
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
         if (service === 'Mobile Auto Detailing' || service === 'Computer Repair' || service === 'Notarization' || service === 'Dog Grooming' || service === 'DJ Services' || service === 'Wedding and Event Makeup' || service === 'Dog Training' || service === 'Deck or Porch Remodel or Addition' || service === 'Swimming Pool Cleaning & Maintenance' || service === 'Home Foundation Repair' || service === 'Lighting Installation' || service === 'General Contracting' || service === 'Gutter Cleaning and Maintenance' || service === 'Door Installation' || service === 'Lawn Mower, Water Pump & Outdoor Equipment Repair' || service === 'In-Home Nursing Care' || service === 'Private Taxi & Transportation Services' || service === 'Barber & Hair Styling Services' || service === 'Event Planning' || service === 'Fence and Gate Installation' || service === 'Local service') {
           try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,about',service:'eq.'+(service === 'Local service' ? 'Mobile Auto Detailing' : service),limit:'100'});
-            const response = await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+params,{headers:{apikey:SUPABASE_KEY},cache:'no-store'});
-            if (!response.ok) throw new Error('Approved listings unavailable');
-            const imported = await response.json();
-            imported.sort((a,b)=>locationScore(b)-locationScore(a));
+            const params = new URLSearchParams({select:'id,business_name,service,city,state,about',service:'eq.'+(service === 'Local service' ? 'Mobile Auto Detailing' : service)});
+            if (state) params.set('state', 'ilike.' + state);
+            const imported = await fetchAllPages(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory', params);
+            imported.sort((a,b)=>locationScore(b)-locationScore(a) || String(a.city || '').localeCompare(String(b.city || '')));
             for (const entry of imported) {
               if (blockedProviders.has(String(entry.id))) continue;
               const card=document.createElement('article');card.className='provider';
