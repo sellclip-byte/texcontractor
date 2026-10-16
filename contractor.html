@@ -357,7 +357,7 @@
     }
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
         const rows = await fetchAllPages(`${SUPABASE_URL}/rest/v1/texcontractor_public_services`, query);
@@ -374,7 +374,7 @@
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
         { // Check approved imported contractors for every service catalog.
           try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,about'});
+            const params = new URLSearchParams({select:'id,business_name,service,city,state,about',order:'id.asc'});
             if (service !== 'Local service') params.set('service', 'eq.' + service);
             if (state) params.set('state', 'ilike.' + state);
             const imported = await fetchAllPages(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory', params);
