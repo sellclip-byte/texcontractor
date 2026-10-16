@@ -369,7 +369,13 @@
         const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
-        const rows = await fetchAllPages(`${SUPABASE_URL}/rest/v1/texcontractor_public_services`, query);
+        // The public submissions endpoint must not prevent approved imports from loading.
+        let rows = [];
+        try {
+          rows = await fetchAllPages(`${SUPABASE_URL}/rest/v1/texcontractor_public_services`, query);
+        } catch (registeredError) {
+          console.warn('Registered technician directory unavailable; loading approved imported businesses independently.', registeredError);
+        }
         const isDfw = value => ['dallas', 'fort worth', 'dallas–fort worth', 'dallas-fort worth'].includes(String(value || '').trim().toLowerCase());
         const locationScore = provider => {
           if (String(provider.state || '').toUpperCase() !== String(state || '').toUpperCase()) return 0;
@@ -434,7 +440,7 @@
               });
               actions.append(profile,sms,report);card.append(identity,main,actions);card.dataset.sortCity=String(entry.city||'').trim();providers.appendChild(card);
             }
-          } catch(e) { console.warn('Business directory unavailable',e); }
+          } catch(e) { console.error('Approved imported business directory could not load',e); }
         }
         // Sort registered and imported contractors together, not in separate blocks.
         // Same-city matches first; other in-state cities follow alphabetically until
