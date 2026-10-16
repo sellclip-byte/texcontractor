@@ -304,7 +304,11 @@
         textButton.textContent = 'Preparing message…';
         try {
           const phone = await getContractorPhone(provider.id);
-          if (!phone) return;
+          if (!phone) {
+            textButton.textContent = 'Text this contractor';
+            return;
+          }
+          textButton.textContent = 'Text this contractor';
           window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name))}`;
         } catch (error) {
           textButton.textContent = 'Text this contractor';
