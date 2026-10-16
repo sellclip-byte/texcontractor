@@ -665,13 +665,13 @@
       image.src = TexAdminApi.sideAdPublicUrl(current.image_path);
       image.alt = current.image_alt || 'Current advertisement image';
       preview.appendChild(image);
-      if (note) note.textContent = 'Automatic display: maximum 160 px wide, proportional height, no page expansion.';
+      if (note) note.textContent = side === 'left' && document.getElementById('side-left-placement').value === 'homepage' ? 'Homepage: 200 px wide, full proportional height; no green frame. On narrower screens, shown in the page flow before the footer.' : 'Automatic display: maximum 160 px wide, proportional height, no page expansion.';
     } else {
       const empty = document.createElement('span');
       empty.className = 'side-ad-preview-empty';
       empty.textContent = 'No image selected';
       preview.appendChild(empty);
-      if (note) note.textContent = 'Automatic display: maximum 160 px wide, proportional height, no page expansion.';
+      if (note) note.textContent = side === 'left' && document.getElementById('side-left-placement').value === 'homepage' ? 'Homepage: 200 px wide, full proportional height; no green frame. On narrower screens, shown in the page flow before the footer.' : 'Automatic display: maximum 160 px wide, proportional height, no page expansion.';
     }
   };
 
@@ -706,7 +706,7 @@
       image.src = URL.createObjectURL(file);
       image.alt = sideAdValue(side, 'alt').value || 'Selected advertisement image';
       image.onload = () => {
-        if (note) note.textContent = `${image.naturalWidth} × ${image.naturalHeight} px · automatic display up to 160 px wide, proportional height.`;
+        if (note) note.textContent = `${image.naturalWidth} × ${image.naturalHeight} px · automatic display up to ${side === 'left' && document.getElementById('side-left-placement').value === 'homepage' ? 200 : 160} px wide, proportional height.`;
         URL.revokeObjectURL(image.src);
       };
       preview.appendChild(image);
