@@ -158,10 +158,10 @@
     const fail = message => {
       feedback.textContent = message;
       feedback.hidden = false;
-      locationBars.forEach(bar => { bar.textContent = '📍 ZIP code unavailable'; });
+      locationBars.forEach(bar => { bar.textContent = '📍 Not valid'; });
     };
     if (!validFormat) {
-      fail('This ZIP code is not available in the United States. Enter a valid U.S. ZIP code.');
+      fail('Not valid');
       return;
     }
     feedback.textContent = 'Checking ZIP code…'; feedback.hidden = false;
@@ -169,7 +169,7 @@
       const response = await fetch('https://api.zippopotam.us/us/' + encodeURIComponent(raw.slice(0,5)), {signal:AbortSignal.timeout(10000)});
       if (request !== latest) return;
       if (response.status === 404) {
-        fail('This ZIP code is not available in the United States. Enter a valid U.S. ZIP code.');
+        fail('Not valid');
         return;
       }
       if (!response.ok) throw new Error('ZIP lookup unavailable');
