@@ -1,6 +1,6 @@
 // Generate SEO landing pages from real service links in the existing homepage.
 // Run: node scripts/generate-service-seo.mjs
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 const root = process.cwd();
 const html = readFileSync(join(root, 'index.html'), 'utf8');
@@ -483,6 +483,8 @@ for (const service of services) {
   const target = 'https://texcontractor.com/contractor.html?service='+encodeURIComponent(service);
   const canonical = 'https://texcontractor.com/services/'+id+'.html';
   const editorial = reviewed[service.toLowerCase()];
+  // Preserve existing reviewed copy when this generator has no editorial entry.
+  if (!editorial && existsSync(join(dir,id+'.html'))) { urls.push(canonical); continue; }
   const serviceCopy = editorial
     ? '<p>'+esc(editorial.intro)+'</p><h2>'+esc(editorial.heading)+'</h2><p>'+esc(editorial.details)+'</p><h2>'+esc(editorial.safetyHeading)+'</h2><p>'+esc(editorial.safety)+'</p><p>Browse available TexContractor profiles below. Listings and availability vary by location; review each contractor’s information and contact them directly by text message.</p>'
     : '<p>Looking for '+esc(service)+' services? Browse available contractor profiles on TexContractor and send a text message directly to a contractor about your project.</p><p>Contractor availability depends on your location and current listings. Check each profile for service details and contact information.</p>';
