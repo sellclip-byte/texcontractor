@@ -8,10 +8,10 @@ const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
 const slugs = [...directory.matchAll(/href="\/services\/([^"]+\.html)"/g)].map(m => m[1]);
 const issues = [];
 const warnings = [];
-if (slugs.length !== 61) issues.push('Expected 61 directory links, found ' + slugs.length);
+if (slugs.length !== 62) issues.push('Expected 62 directory links, found ' + slugs.length);
 if (new Set(slugs).size !== slugs.length) issues.push('Duplicate directory links');
 if (new Set(urls).size !== urls.length) issues.push('Duplicate sitemap URLs');
-if (urls.length !== 64) issues.push('Expected 64 sitemap URLs (61 services plus 3 core pages), found ' + urls.length);
+if (urls.length !== 65) issues.push('Expected 65 sitemap URLs (62 services plus 3 core pages), found ' + urls.length);
 for (const url of urls) if (!url.startsWith('https://texcontractor.com/')) issues.push('Unexpected sitemap host: ' + url);
 for (const core of ['https://texcontractor.com/','https://texcontractor.com/contractor.html','https://texcontractor.com/services/']) if (!urls.includes(core)) issues.push('Missing core URL: ' + core);
 for (const slug of slugs) {

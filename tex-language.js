@@ -97,6 +97,7 @@
     'View site': 'Ver sitio',
     'Choose a conversation to read or send a message.': 'Elige una conversación para leer o enviar un mensaje.',
     'Loading conversations…': 'Cargando conversaciones…',
+    'Babysitting & Childcare Services': 'Servicios de niñera y cuidado infantil',
     'Tutoring & Education Services': 'Servicios de tutoría y educación',
     'Specialty Meal Preparation & Dietary Cooking': 'Preparación de comidas especiales y cocina dietética',
     'Dog Training & Horse Riding Lessons': 'Adiestramiento de perros y clases de equitación',
@@ -161,6 +162,7 @@
     'Private Taxi & Transportation Services': 'Taxi privado y transporte',
     'Lawn Mower, Water Pump & Outdoor Equipment Repair': 'Reparación de cortadoras, bombas de agua y equipos exteriores',
     ...Object.fromEntries([
+      ['Babysitting & Childcare Services', 'Servicios de niñera y cuidado infantil'],
       ['Tutoring & Education Services', 'Servicios de tutoría y educación'],
       ['Specialty Meal Preparation & Dietary Cooking', 'Preparación de comidas especiales y cocina dietética'],
       ['Dog Training & Horse Riding Lessons', 'Adiestramiento de perros y clases de equitación']

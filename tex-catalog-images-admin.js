@@ -14,6 +14,7 @@ async function load(){try{
  const names=new Set([...records.values()].map(x=>x.service_name));
  const services=await fetch(S+'/rest/v1/texcontractor_public_services?select=service&limit=1000',{headers:{apikey:KEY},cache:'no-store'});
  if(services.ok)(await services.json()).forEach(x=>{if(x.service)names.add(x.service)});
+ names.add('Babysitting & Childcare Services');
  const options=[...names].filter(Boolean).sort((a,b)=>a.localeCompare(b)).map(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;return o});
  service.replaceChildren(Object.assign(document.createElement('option'),{value:'',textContent:'Select a contractor catalog'}),...options);
  if(!options.length)status.textContent='No catalogs loaded. Please refresh the Admin page.';
