@@ -1,6 +1,11 @@
 (async function () {
   const box = document.querySelector('[data-join]');
   if (!box) return;
+  const isDialog = box.tagName === 'DIALOG';
+  if (isDialog) {
+    box.querySelector('.join-dismiss').addEventListener('click', () => box.close());
+    box.addEventListener('close', () => sessionStorage.setItem('texcontractor-join-dismissed', '1'));
+  }
   const params = new URLSearchParams(location.search);
   const onAuth = location.pathname.endsWith('/auth.html');
   let intent = params.get('intent') === 'customer' ? 'customer' : 'provider';
@@ -48,7 +53,10 @@
       else if (error) message(error, true);
     } catch (error) { message(error.message, true); }
   } else {
-    try { if (await TexAuth.getUser()) box.hidden = true; } catch (_) {}
+    try {
+      if (await TexAuth.getUser()) box.hidden = true;
+      else if (isDialog && sessionStorage.getItem('texcontractor-join-dismissed') !== '1') box.showModal();
+    } catch (_) {}
     finally { document.documentElement.classList.remove('tex-member-pending'); }
   }
 })();
