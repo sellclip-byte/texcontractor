@@ -361,8 +361,7 @@
         params.set('limit', String(pageSize));
         params.set('offset', String(offset));
         const token = await TexAuth.getAccessToken();
-        if (!token) throw new Error('Please sign in to view service providers.');
-        const response = await fetch(endpoint + '?' + params.toString(), { headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + token }, cache: 'no-store' });
+        const response = await fetch(endpoint + '?' + params.toString(), { headers: { apikey: SUPABASE_KEY, ...(token ? { Authorization: 'Bearer ' + token } : {}) }, cache: 'no-store' });
         if (!response.ok) throw new Error('Could not load service providers.');
         const page = await response.json();
         if (!Array.isArray(page)) throw new Error('Unexpected service provider response.');
@@ -373,7 +372,6 @@
     }
     async function loadProviders() {
       try {
-        if (!await TexAuth.requireUser('contractor.html' + window.location.search)) return;
         const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
@@ -417,7 +415,7 @@
               const sms=document.createElement('a');sms.className='text-button';sms.href='#';sms.textContent='Text this contractor';
               const loadImportedPhone = async () => {
                   const token=await TexAuth.getAccessToken();
-                  if(!token){alert('Please sign in to contact this business.');return '';}
+                  if(!token){await TexAuth.requireUser('contractor.html'+window.location.search);return '';}
                   const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/texcontractor_imported_phone',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
                   if(!res.ok)throw new Error('Contact unavailable');
                   const phone=await res.json();
@@ -430,7 +428,7 @@
                 event.preventDefault();
                 try {
                   const token=await TexAuth.getAccessToken();
-                  if(!token){alert('Please sign in to contact this business.');return;}
+                  if(!token){await TexAuth.requireUser('contractor.html'+window.location.search);return;}
                   const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/texcontractor_imported_phone',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
                   if(!res.ok)throw new Error('Contact unavailable');
                   const phone=await res.json();
