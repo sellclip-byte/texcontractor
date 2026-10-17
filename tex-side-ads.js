@@ -183,3 +183,38 @@
     }
   }, true);
 })();
+
+/* Show the chosen state's flag immediately below the homepage location result. */
+(function () {
+  const bars = [...document.querySelectorAll('.location-bar')];
+  const input = document.getElementById('service-search');
+  if (!input) return;
+  const names = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia"};
+  const renderFlag = () => {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('texcontractor-location') || '{}'); } catch (_) {}
+    const state = String(saved.state || '').toUpperCase();
+    const name = names[state];
+    document.getElementById('homepage-state-flag')?.remove();
+    if (!name) return;
+    const target = bars[0] || document.querySelector('#service-catalog');
+    if (!target) return;
+    const badge = document.createElement('div');
+    badge.id = 'homepage-state-flag';
+    badge.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0;font-size:14px;color:#475569';
+    const image = document.createElement('img');
+    image.src = 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent('Flag of ' + (state === 'DC' ? 'the District of Columbia' : name) + '.svg');
+    image.alt = name + ' flag'; image.width = 48; image.height = 32;
+    image.style.cssText = 'display:block!important;width:48px;height:32px;object-fit:contain';
+    const label = document.createElement('span'); label.textContent = name;
+    badge.append(image, label);
+    target.insertAdjacentElement(bars[0] ? 'afterend' : 'beforebegin', badge);
+  };
+  if (typeof renderLocation === 'function') {
+    const original = renderLocation;
+    renderLocation = function (...args) { original(...args); renderFlag(); };
+  }
+  const feedback = document.getElementById('zip-search-feedback');
+  if (feedback) new MutationObserver(() => { if (!feedback.hidden) document.getElementById('homepage-state-flag')?.remove(); }).observe(feedback, {attributes:true,childList:true,subtree:true});
+  renderFlag();
+})();
