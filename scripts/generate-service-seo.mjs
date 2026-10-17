@@ -39,6 +39,13 @@ const dir = join(root,'services'); mkdirSync(dir,{recursive:true});
 // Keep generated landing pages noindex until substantive, unique content and live-domain verification are complete.
 // Reviewed, service-specific editorial copy. Other categories remain noindex until reviewed.
 const reviewed = {
+  'babysitting & childcare services': {
+    intro: "Browse providers offering occasional babysitting, nanny placement, newborn care, after-school care or care in the provider's home or childcare center. Each profile describes the services that provider advertises.",
+    heading: "Discuss your family's care needs",
+    details: "Share your city, children's ages, schedule and whether care is needed in your home or at a childcare location. Ask about availability, fees and emergency arrangements before booking.",
+    safetyHeading: "Check care arrangements before booking",
+    safety: "Listings are not a TexContractor background-check or licensing endorsement. Confirm caregiver qualifications, references and any required licensing directly with the provider."
+  },
   'garage door repair': {
     intro: 'Find contractors for garage door problems such as a door that will not open or close, noisy operation, broken springs, damaged cables, misaligned tracks, or opener and remote-control issues.',
     heading: 'Describe your garage door problem',

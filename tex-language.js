@@ -25,6 +25,7 @@
     'Add work. Earn more.': 'Añade trabajo. Gana más.',
     'Add your services and receive direct customer requests.': 'Añade tus servicios y recibe solicitudes directas de clientes.',
     'Choose a city or ZIP code': 'Elige una ciudad o código postal',
+    'All Services (62 Categories)': 'Todos los servicios (62 categorías)',
     'All Services (59 Categories)': 'Todos los servicios (59 categorías)',
     'About TexContractor': 'Acerca de TexContractor',
     'About Us': 'Sobre nosotros',
