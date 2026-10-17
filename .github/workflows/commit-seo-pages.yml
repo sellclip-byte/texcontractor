@@ -21,16 +21,16 @@ jobs:
         with:
           node-version: '20'
       - run: node scripts/generate-service-seo.mjs
-      - name: Validate 56 known catalog pages
+      - name: Validate 62 known catalog pages
         run: |
-          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 57
-          test "$(grep -c '<url>' sitemap.xml)" -eq 59
+          test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 63
+          test "$(grep -c '<url>' sitemap.xml)" -eq 65
       - name: Commit generated pages only to review branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add services/ sitemap.xml
           if ! git diff --cached --quiet; then
-            git commit -m "Generate 56 catalog SEO pages from existing homepage"
+            git commit -m "Generate 62 catalog SEO pages from existing homepage"
             git push origin HEAD:seo-safe-review-20261011
           fi
