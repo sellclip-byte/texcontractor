@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TexContractor sitemap: static root file for Google Search Console -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://texcontractor.com/</loc></url>
   <url><loc>https://texcontractor.com/contractor.html</loc></url>
   <url><loc>https://texcontractor.com/services/</loc></url>
   <url><loc>https://texcontractor.com/services/appliance-repair-or-maintenance.html</loc></url>
   <url><loc>https://texcontractor.com/services/architectural-services.html</loc></url>
+  <url><loc>https://texcontractor.com/services/babysitting-and-childcare-services.html</loc></url>
+  <url><loc>https://texcontractor.com/services/barber-and-hair-styling-services.html</loc></url>
   <url><loc>https://texcontractor.com/services/bathroom-remodel.html</loc></url>
   <url><loc>https://texcontractor.com/services/carpet-cleaning.html</loc></url>
   <url><loc>https://texcontractor.com/services/central-air-conditioning-repair-or-maintenance.html</loc></url>
@@ -15,6 +16,7 @@
   <url><loc>https://texcontractor.com/services/dj-services.html</loc></url>
   <url><loc>https://texcontractor.com/services/dog-grooming.html</loc></url>
   <url><loc>https://texcontractor.com/services/dog-training.html</loc></url>
+  <url><loc>https://texcontractor.com/services/dog-training-and-horse-riding-lessons.html</loc></url>
   <url><loc>https://texcontractor.com/services/door-installation.html</loc></url>
   <url><loc>https://texcontractor.com/services/drywall-repair-and-texturing.html</loc></url>
   <url><loc>https://texcontractor.com/services/electrical-and-wiring-repair.html</loc></url>
@@ -24,6 +26,7 @@
   <url><loc>https://texcontractor.com/services/furniture-assembly.html</loc></url>
   <url><loc>https://texcontractor.com/services/furniture-moving-and-heavy-lifting.html</loc></url>
   <url><loc>https://texcontractor.com/services/garage-door-repair.html</loc></url>
+  <url><loc>https://texcontractor.com/services/general-automotive-services-towing-key-programming-window-tinting-and-tire-services.html</loc></url>
   <url><loc>https://texcontractor.com/services/general-contracting.html</loc></url>
   <url><loc>https://texcontractor.com/services/gutter-cleaning-and-maintenance.html</loc></url>
   <url><loc>https://texcontractor.com/services/handyman.html</loc></url>
@@ -51,8 +54,10 @@
   <url><loc>https://texcontractor.com/services/pressure-washing.html</loc></url>
   <url><loc>https://texcontractor.com/services/private-taxi-and-transportation-services.html</loc></url>
   <url><loc>https://texcontractor.com/services/roof-repair-or-maintenance.html</loc></url>
+  <url><loc>https://texcontractor.com/services/specialty-meal-preparation-and-dietary-cooking.html</loc></url>
   <url><loc>https://texcontractor.com/services/swimming-pool-cleaning-and-maintenance.html</loc></url>
   <url><loc>https://texcontractor.com/services/tree-trimming-and-removal.html</loc></url>
+  <url><loc>https://texcontractor.com/services/tutoring-and-education-services.html</loc></url>
   <url><loc>https://texcontractor.com/services/tv-mounting.html</loc></url>
   <url><loc>https://texcontractor.com/services/upholstery-and-furniture-cleaning.html</loc></url>
   <url><loc>https://texcontractor.com/services/wedding-and-event-makeup.html</loc></url>
@@ -60,10 +65,4 @@
   <url><loc>https://texcontractor.com/services/wedding-officiant.html</loc></url>
   <url><loc>https://texcontractor.com/services/window-repair.html</loc></url>
   <url><loc>https://texcontractor.com/services/window-tinting.html</loc></url>
-  <url><loc>https://texcontractor.com/services/tutoring-and-education-services.html</loc></url>
-  <url><loc>https://texcontractor.com/services/specialty-meal-preparation-and-dietary-cooking.html</loc></url>
-  <url><loc>https://texcontractor.com/services/dog-training-and-horse-riding-lessons.html</loc></url>
-  <url><loc>https://texcontractor.com/services/barber-and-hair-styling-services.html</loc></url>
-  <url><loc>https://texcontractor.com/services/general-automotive-services-towing-key-programming-window-tinting-and-tire-services.html</loc></url>
-  <url><loc>https://texcontractor.com/services/babysitting-and-childcare-services.html</loc></url>
 </urlset>
