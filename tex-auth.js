@@ -218,6 +218,12 @@
   const updateProfile = async (data) => {
     const token = await getAccessToken();
     if (!token) throw new Error('Please sign in again.');
+    if (Object.prototype.hasOwnProperty.call(data, 'contact_phone')) {
+      const available = await requestJson(`${SUPABASE_URL}/rest/v1/rpc/texcontractor_account_phone_available`, {
+        method: 'POST', headers: authHeaders(token), body: JSON.stringify({ p_phone: data.contact_phone })
+      });
+      if (!available) throw new Error('This phone number is already linked to another account. Sign in to that account to add more services.');
+    }
     const user = await requestJson(`${SUPABASE_URL}/auth/v1/user`, {
       method: 'PUT', headers: authHeaders(token), body: JSON.stringify({ data })
     });
