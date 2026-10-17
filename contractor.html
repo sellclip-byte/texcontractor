@@ -359,7 +359,9 @@
         const params = new URLSearchParams(baseParams);
         params.set('limit', String(pageSize));
         params.set('offset', String(offset));
-        const response = await fetch(endpoint + '?' + params.toString(), { headers: { apikey: SUPABASE_KEY }, cache: 'no-store' });
+        const token = await TexAuth.getAccessToken();
+        if (!token) throw new Error('Please sign in to view service providers.');
+        const response = await fetch(endpoint + '?' + params.toString(), { headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + token }, cache: 'no-store' });
         if (!response.ok) throw new Error('Could not load service providers.');
         const page = await response.json();
         if (!Array.isArray(page)) throw new Error('Unexpected service provider response.');
@@ -370,6 +372,7 @@
     }
     async function loadProviders() {
       try {
+        if (!await TexAuth.requireUser('contractor.html' + window.location.search)) return;
         const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
@@ -544,7 +547,7 @@
     }
     startLocationSearch();
   </script>
-  <script src="tex-auth.js"></script>
+  <script src="tex-auth.js?v=20261017-instant"></script>
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js?v=20261017-location-2"></script>
 <script>

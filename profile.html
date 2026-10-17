@@ -103,7 +103,7 @@
       </aside>
     </div>
   </main>
-  <script src="tex-auth.js"></script>
+  <script src="tex-auth.js?v=20261017-instant"></script>
   <script>
     const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -111,10 +111,11 @@
     const key = params.get('contractor') || '';
     const service = params.get('service') || 'Local service';
     const mediaUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/texcontractor-media/${String(path).split('/').map(encodeURIComponent).join('/')}` : '';
+    let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
       const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY } });
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, Authorization: `Bearer ${directoryToken}` } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
       return row ? {
@@ -133,12 +134,15 @@
     const importedId=params.get('imported');
     async function loadImportedProfile(){
       const q=new URLSearchParams({select:'id,business_name,service,city,state,about',id:'eq.'+importedId,limit:'1'});
-      const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY}});
+      const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY,Authorization: `Bearer ${directoryToken}`}});
       if(!r.ok)throw Error('Profile unavailable');
       const e=(await r.json())[0];if(!e)return null;
       return {id:e.id,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
     }
     const renderProfile = async () => {
+      if (!await TexAuth.requireUser('profile.html' + window.location.search)) return;
+      directoryToken = await TexAuth.getAccessToken();
+      if (!directoryToken) return;
       let profile = null;
       try { profile = importedId ? await loadImportedProfile() : await loadProfile(); } catch (error) { profile = null; }
     if (!profile && importedId) { document.getElementById('contractor-name').textContent='Profile temporarily unavailable'; document.getElementById('about-copy').textContent='Please return to the contractor list and try again.'; return; }

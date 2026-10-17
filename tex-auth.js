@@ -100,6 +100,7 @@
       return null;
     }
     localStorage.removeItem('texcontractor-access-blocked');
+    localStorage.setItem('texcontractor-account-created', '1');
     return user;
   };
 
@@ -186,6 +187,44 @@
     });
   };
 
+  const passwordRequest = async (email, password, intent, returnTo) => {
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const parts = cleanEmail.split('@');
+    const local = parts[0] || '', domain = parts[1] || '';
+    const validLocal = /^[a-z0-9_+.-]+$/i.test(local) && local.length <= 64 && !local.startsWith('.') && !local.endsWith('.') && !local.includes('..');
+    const validDomain = domain.length <= 253 && domain.split('.').length >= 2 && domain.split('.').every(label => /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(label)) && /^[a-z]{2,63}$/i.test(domain.split('.').pop());
+    if (parts.length !== 2 || !validLocal || !validDomain || cleanEmail.length > 254) throw new Error('Enter a valid email address, such as name@gmail.com.');
+    const typos = { 'gmial.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmail.con': 'gmail.com', 'hotmial.com': 'hotmail.com', 'hotmail.con': 'hotmail.com', 'outlok.com': 'outlook.com' };
+    if (typos[domain]) throw new Error('Check your email address. Did you mean ' + local + '@' + typos[domain] + '?');
+    if (intent && (password.length < 6 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password))) {
+      throw new Error('Use at least 6 characters, including a letter and a number.');
+    }
+    if (intent) {
+      const settings = await requestJson(`${SUPABASE_URL}/auth/v1/settings`, { headers: authHeaders() });
+      if (!settings.mailer_autoconfirm) throw new Error('Instant registration is being configured. Please use Google sign-in for now.');
+    }
+    const redirectTo = new URL(authHref(returnTo), window.location.href).href;
+    const result = await requestJson(`${SUPABASE_URL}/auth/v1/${intent ? 'signup?redirect_to=' + encodeURIComponent(redirectTo) : 'token?grant_type=password'}`, {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ email: cleanEmail, password, ...(intent ? { data: { account_intent: intent } } : {}) })
+    });
+    if (result.access_token) {
+      const user = await finalizeUser(result.user, result.access_token, result);
+      if (!user) throw new Error('Access to this account is blocked.');
+    }
+    return { signedIn: !!result.access_token };
+  };
+
+  const updateProfile = async (data) => {
+    const token = await getAccessToken();
+    if (!token) throw new Error('Please sign in again.');
+    const user = await requestJson(`${SUPABASE_URL}/auth/v1/user`, {
+      method: 'PUT', headers: authHeaders(token), body: JSON.stringify({ data })
+    });
+    await finalizeUser(user, token, readSession());
+    return user;
+  };
+
   const signInWithGoogle = (returnTo) => {
     const redirectOrigin = ['texcontractor.com', 'www.texcontractor.com'].includes(window.location.hostname)
       ? 'https://texcontractor.com/'
@@ -216,6 +255,8 @@
   };
 
   window.TexAuth = {
+    passwordRequest,
+    updateProfile,
     authHref,
     captureMagicLinkSession,
     getAccessToken,

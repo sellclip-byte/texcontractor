@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>My account · TexContractor</title><style>
+.join-box { box-sizing:border-box; width:min(850px,calc(100% - 32px)); margin:24px auto; padding:24px; border:1px solid #dbe5e2; border-radius:18px; background:#f5faf8; color:#142b25; font-family:Arial,sans-serif; }
+.join-box h1,.join-box h2 { margin:0 0 8px; font-size:clamp(1.5rem,4vw,2rem); line-height:1.2; }
+.join-box p { line-height:1.5; } .join-choices { display:flex; gap:10px; margin:18px 0; }
+.join-choices button { flex:1; min-height:50px; padding:10px; border-radius:10px; border:2px solid #075c4b; background:white; color:#075c4b; font:inherit; font-weight:bold; cursor:pointer; }
+.join-choices button[aria-pressed="true"] { background:#075c4b; color:white; }
+.join-fields { display:grid; grid-template-columns:1fr 1fr; gap:14px; } .join-box label { display:grid; gap:7px; font-weight:bold; }
+.join-box input { box-sizing:border-box; width:100%; min-height:48px; padding:12px; border:1px solid #a5b6b0; border-radius:9px; font:inherit; background:white; color:#142b25; }
+.join-box button:focus-visible,.join-box a:focus-visible,.join-box input:focus-visible { outline:3px solid #dfaa32; outline-offset:3px; }
+.join-submit { width:100%; margin-top:16px; min-height:50px; border:0; border-radius:10px; background:#dfaa32; color:#211a06; font:inherit; font-weight:bold; cursor:pointer; }
+.join-box button:disabled { opacity:.65; cursor:wait; } .join-note { font-size:.9rem; color:#485e57; } .join-box a { color:#075c4b; font-weight:bold; }
+.join-status { white-space:pre-line; } .join-status[data-error="true"] { color:#a12619; } .join-box [hidden] { display:none!important; }
+@media(max-width:540px) { .join-box { padding:18px; } .join-fields { grid-template-columns:1fr; } .join-choices { gap:8px; } }
+</style></head><body>
+<main class="join-box"><a href="index.html">TexContractor</a><h1>My account</h1><p>Save your details for your next visit.</p>
+<form id="account-form"><div class="join-fields"><label>Your name<input name="full_name" autocomplete="name"></label><label>Contact phone<input name="contact_phone" type="tel" autocomplete="tel" placeholder="US mobile number" required></label><label>City<input name="city" autocomplete="address-level2"></label><label>State<input name="state" autocomplete="address-level1"></label></div><button class="join-submit" type="submit">Save my details</button></form><p id="account-message" role="status"></p><section><h2>Email confirmation (optional)</h2><p id="email-proof-status">Your account is ready to use. Email confirmation is optional.</p><button class="join-submit" type="button" id="confirm-email">Send confirmation link</button></section><p><a href="index.html#service-catalog">Find a local service</a></p><p><a href="contractor-register.html">Add or complete my service profile</a></p><button class="join-submit" id="sign-out" type="button">Sign out</button></main>
+<script src="tex-auth.js?v=20261017-instant"></script><script src="tex-account.js"></script><script src="tex-language.js"></script></body></html>
