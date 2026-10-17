@@ -129,3 +129,57 @@
     try { window.localStorage.setItem(key, '1'); } catch (_) {}
   });
 })();
+
+/* Validate numeric location searches before the homepage resolves or saves them. */
+(function () {
+  const input = document.getElementById('service-search');
+  const form = input?.form;
+  if (!form || typeof renderLocation !== 'function') return;
+  let latest = 0;
+  const feedback = document.createElement('p');
+  feedback.id = 'zip-search-feedback';
+  feedback.setAttribute('role', 'status');
+  feedback.style.cssText = 'color:#991b1b;font-weight:700;margin:10px 0';
+  feedback.hidden = true;
+  form.insertAdjacentElement('afterend', feedback);
+  form.addEventListener('submit', async event => {
+    const raw = input.value.trim();
+    const request = ++latest;
+    feedback.hidden = true;
+    if (!/^[0-9][0-9\s-]*$/.test(raw)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const validFormat = /^\d{5}(?:-\d{4})?$/.test(raw);
+    // Keep this attempted ZIP in service links so an old city cannot be used.
+    localStorage.setItem('texcontractor-location', JSON.stringify({city:'', state:'', zip:raw}));
+    updateServiceLinks();
+    const fail = message => {
+      feedback.textContent = message;
+      feedback.hidden = false;
+      locationBars.forEach(bar => { bar.textContent = '📍 ZIP code unavailable'; });
+    };
+    if (!validFormat) {
+      fail('This ZIP code is not available in the United States. Enter a valid U.S. ZIP code.');
+      return;
+    }
+    feedback.textContent = 'Checking ZIP code…'; feedback.hidden = false;
+    try {
+      const response = await fetch('https://api.zippopotam.us/us/' + encodeURIComponent(raw.slice(0,5)), {signal:AbortSignal.timeout(10000)});
+      if (request !== latest) return;
+      if (response.status === 404) {
+        fail('This ZIP code is not available in the United States. Enter a valid U.S. ZIP code.');
+        return;
+      }
+      if (!response.ok) throw new Error('ZIP lookup unavailable');
+      const data = await response.json();
+      if (request !== latest) return;
+      const place = data.places?.[0];
+      if (!place) throw new Error('ZIP lookup unavailable');
+      renderLocation(place['place name'], place['state abbreviation'], raw.slice(0,5));
+      serviceCards.forEach(card => { card.style.display = ''; });
+      feedback.hidden = true;
+    } catch (_) {
+      if (request === latest) fail('We could not verify this ZIP code right now. Please try again or search by city and state.');
+    }
+  }, true);
+})();
