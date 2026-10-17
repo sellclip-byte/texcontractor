@@ -171,6 +171,17 @@
     ])
   };
 
+  // Keep catalog identifiers in English independently of the visible language.
+  const englishServices = new Map(Object.entries(serviceTranslations).map(([en, es]) => [es, en]));
+  const canonicalService = value => englishServices.get(value) || value;
+  const pageUrl = new URL(window.location.href);
+  const requestedService = pageUrl.searchParams.get('service');
+  if (requestedService && canonicalService(requestedService) !== requestedService) {
+    pageUrl.searchParams.set('service', canonicalService(requestedService));
+    window.location.replace(pageUrl.href);
+    return;
+  }
+
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
   let currentLanguage = localStorage.getItem('texcontractor-language') || 'en';
@@ -201,16 +212,21 @@
     applying = true;
     document.documentElement.lang = currentLanguage === 'es' ? 'es-US' : 'en-US';
     document.querySelectorAll('body *').forEach((el) => {
-      if (el.tagName === 'OPTION' && serviceTranslations[el.textContent.trim()]) {
-        const base = el.dataset.texOriginal || el.textContent.trim();
-        el.dataset.texOriginal = base;
-        const next = currentLanguage === 'es' ? serviceTranslations[base] : base;
-        if (el.textContent !== next) el.textContent = next;
+      if (el.tagName === 'OPTION') {
+        const base = canonicalService(el.dataset.texOriginal || el.textContent.trim());
+        if (serviceTranslations[base]) {
+          el.dataset.texOriginal = base;
+          // Without an explicit value, translating an option also changes its value.
+          if (!el.hasAttribute('value')) el.value = base;
+          const next = currentLanguage === 'es' ? serviceTranslations[base] : base;
+          if (el.textContent !== next) el.textContent = next;
+        }
       }
     });
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     let node;
     while ((node = walker.nextNode())) {
+      if (node.parentElement?.tagName === 'OPTION' && node.parentElement.dataset.texOriginal) continue;
       const base = originalText.get(node);
       if (base !== undefined) {
         const next = translateText(base);
@@ -225,6 +241,15 @@
           const next = currentLanguage === 'es' ? translateText(base[key]) : base[key];
           if (el.getAttribute(key) !== next) el.setAttribute(key, next);
         }
+      }
+    });
+    document.querySelectorAll('a[href]').forEach((link) => {
+      const url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      const service = url.searchParams.get('service');
+      if (service && canonicalService(service) !== service) {
+        url.searchParams.set('service', canonicalService(service));
+        link.href = url.href;
       }
     });
     const picker = document.getElementById('tex-language-picker');
@@ -253,6 +278,19 @@
   }
 
   function start() {
+    // The homepage rebuilds result links from translated card text. Normalize the
+    // destination at click time as well, after its search handler has run.
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest?.('a[href]');
+      if (!link) return;
+      const url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      const service = url.searchParams.get('service');
+      if (service && canonicalService(service) !== service) {
+        url.searchParams.set('service', canonicalService(service));
+        link.href = url.href;
+      }
+    }, true);
     mountPicker();
     remember(document.body);
     applyLanguage();
