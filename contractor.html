@@ -510,7 +510,7 @@
       image.addEventListener('error', () => image.remove(), {once:true});
       const label = document.createElement('span'); label.textContent = name;
       badge.append(image, label);
-      providers.insertAdjacentElement('afterend', badge);
+      document.getElementById('results-scope').insertAdjacentElement('afterend', badge);
     }
     async function startLocationSearch() {
       if (zip) {
@@ -546,7 +546,7 @@
   </script>
   <script src="tex-auth.js"></script>
   <script src="tex-language.js"></script>
-  <script src="tex-side-ads.js"></script>
+  <script src="tex-side-ads.js?v=20261017-location-2"></script>
 <script>
 (async function(){
  const base='https://rryehtaskbjnfbodymjj.supabase.co';
