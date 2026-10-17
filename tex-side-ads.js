@@ -139,9 +139,11 @@
   const feedback = document.createElement('p');
   feedback.id = 'zip-search-feedback';
   feedback.setAttribute('role', 'status');
-  feedback.style.cssText = 'color:#991b1b;font-weight:700;margin:10px 0';
+  feedback.style.cssText = 'box-sizing:border-box;width:calc(100% - 32px);max-width:580px;grid-column:1 / -1;justify-self:center;text-align:center;color:#991b1b;background:#fff1f2;font-weight:700;font-size:14px;line-height:1.5;white-space:normal;padding:10px 14px;border:1px solid #fecdd3;border-radius:10px;margin:10px auto';
   feedback.hidden = true;
-  form.insertAdjacentElement('afterend', feedback);
+  const resultArea = document.getElementById('location-result')?.closest('.message-bridge');
+  if (resultArea) resultArea.appendChild(feedback);
+  else form.closest('header').insertAdjacentElement('afterend', feedback);
   form.addEventListener('submit', async event => {
     const raw = input.value.trim();
     const request = ++latest;
