@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '20'
       - run: node scripts/check-static-site.mjs
-      - name: Audit 61 service pages and sitemap
+      - name: Audit 62 service pages and sitemap
         run: node scripts/audit-seo.mjs
       - name: Generate catalog SEO pages and sitemap
         run: node scripts/generate-service-seo.mjs
@@ -39,7 +39,7 @@ jobs:
           test -f sitemap.xml
           count="$(find services -maxdepth 1 -name '*.html' | wc -l)"
           echo "SEO service pages generated: $count"
-          test "$count" -eq 62
+          test "$count" -eq 63
       - name: Save generated SEO pages for review
         uses: actions/upload-artifact@v4
         with:
