@@ -49,5 +49,6 @@
     } catch (error) { message(error.message, true); }
   } else {
     try { if (await TexAuth.getUser()) box.hidden = true; } catch (_) {}
+    finally { document.documentElement.classList.remove('tex-member-pending'); }
   }
 })();

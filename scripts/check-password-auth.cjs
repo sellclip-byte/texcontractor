@@ -25,5 +25,7 @@ function harness(auto = true) {
  h=harness();assert.equal((await h.auth.passwordRequest('name@gmail.com','abc123',null,'account.html')).signedIn,true);
  assert.equal(h.calls.some(c=>c.url.endsWith('/settings')),false,'Existing login stays available');
  assert.equal(h.auth.safeReturnTo('https://other.example/'),'index.html');
+ const page = fs.readFileSync('contractor.html','utf8');
+ assert.ok(page.indexOf('src="tex-auth.js') < page.indexOf('async function loadProviders'), 'Auth must load before protected directory initialization');
  console.log('PASS: invalid email/password rejected; signup/login session saved; confirmation-required signup blocked; external redirect rejected.');
 })().catch(e=>{console.error(e);process.exit(1)});
