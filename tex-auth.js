@@ -114,7 +114,7 @@
     const path = target.split(/[?#]/)[0];
     if (access.isAdmin && ['index.html', 'account.html', 'auth.html', ''].includes(path)) return 'contractor-admin.html';
     if (path === 'auth.html') return DEFAULT_RETURN;
-    return newAccount && !returnTo ? 'account.html' : target;
+    return target;
   };
 
   const refreshSession = async (session) => {
@@ -244,6 +244,24 @@
     return user;
   };
 
+  const uploadAccountPhoto = async (file) => {
+    const types = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+    if (!file || !types[file.type] || file.size > 5 * 1024 * 1024) throw new Error('Choose a JPG, PNG or WebP image under 5 MB.');
+    const user = await getUser();
+    const session = readSession();
+    if (!user || !session?.access_token) throw new Error('Please sign in again.');
+    const path = user.id + '/account/' + crypto.randomUUID() + '.' + types[file.type];
+    const response = await fetch(SUPABASE_URL + '/storage/v1/object/texcontractor-media/' + path, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + session.access_token, 'Content-Type': file.type },
+      body: file
+    });
+    if (!response.ok) throw new Error('Your photo could not be uploaded. Please try again.');
+    const url = SUPABASE_URL + '/storage/v1/object/public/texcontractor-media/' + path;
+    await updateProfile({ avatar_url: url });
+    return url;
+  };
+
   const signInWithGoogle = (returnTo) => {
     const redirectOrigin = ['texcontractor.com', 'www.texcontractor.com'].includes(window.location.hostname)
       ? 'https://texcontractor.com/'
@@ -277,6 +295,7 @@
     passwordRequest,
     postLoginDestination,
     updateProfile,
+    uploadAccountPhoto,
     authHref,
     captureMagicLinkSession,
     getAccessToken,

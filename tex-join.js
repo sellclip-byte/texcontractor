@@ -60,7 +60,11 @@
     } catch (error) { message(error.message, true); }
   } else {
     try {
-      if (await TexAuth.getUser()) box.hidden = true;
+      if (await TexAuth.getUser()) {
+        box.hidden = true;
+        const profile = document.getElementById('account-login');
+        if (profile) { profile.href = 'account.html'; profile.textContent = 'My profile'; profile.hidden = false; }
+      }
       else if (isDialog && sessionStorage.getItem('texcontractor-join-dismissed') !== '1') box.showModal();
     } catch (_) {}
     finally { document.documentElement.classList.remove('tex-member-pending'); }

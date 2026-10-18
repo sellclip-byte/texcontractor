@@ -4,12 +4,22 @@
   try {
     const user = await TexAuth.requireUser('account.html');
     if (!user) return;
-    const proofStatus = document.getElementById('email-proof-status');
-    document.getElementById('confirm-email').addEventListener('click', async event => {
-      const button = event.currentTarget; button.disabled = true;
-      try { await TexAuth.sendMagicLink(user.email, 'account.html'); proofStatus.textContent = 'Check your email and open the confirmation link. You can keep using your account now.'; }
-      catch (error) { proofStatus.textContent = error.message; }
-      finally { button.disabled = false; }
+    const avatar = document.getElementById('account-avatar');
+    const showPhoto = url => {
+      try {
+        const parsed = new URL(url);
+        if (parsed.protocol !== 'https:') return;
+        avatar.src = parsed.href; avatar.hidden = false;
+      } catch (_) {}
+    };
+    showPhoto(user.user_metadata?.avatar_url);
+    const photo = document.getElementById('account-photo');
+    photo.addEventListener('change', async () => {
+      const file = photo.files?.[0]; if (!file) return;
+      photo.disabled = true; status.textContent = 'Saving your photo…';
+      try { showPhoto(await TexAuth.uploadAccountPhoto(file)); status.textContent = 'Your profile photo is saved.'; }
+      catch (error) { status.textContent = error.message; }
+      finally { photo.disabled = false; photo.value = ''; }
     });
     for (const key of ['full_name', 'contact_phone', 'city', 'state']) form.elements.namedItem(key).value = user.user_metadata?.[key] || '';
     form.addEventListener('submit', async event => {
