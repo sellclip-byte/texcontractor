@@ -103,6 +103,7 @@
       </aside>
     </div>
   </main>
+  <script src="tex-state-avatar.js?v=20261018-state-flags"></script>
   <script src="tex-auth.js?v=20261017-instant"></script>
   <script>
     const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
@@ -120,6 +121,7 @@
       const row = (await response.json())[0];
       return row ? {
         name:row.display_name,
+        state:row.state,
         initials:String(row.display_name || 'T').trim().split(/\s+/).slice(0,2).map((part) => part[0]).join('').toUpperCase(),
         rating:'Published profile',
         location:[row.city, row.state].filter(Boolean).join(', ') || 'Texas',
@@ -137,7 +139,7 @@
       const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY,...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {})}});
       if(!r.ok)throw Error('Profile unavailable');
       const e=(await r.json())[0];if(!e)return null;
-      return {id:e.id,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
+      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
     }
     const renderProfile = async () => {
       directoryToken = await TexAuth.getAccessToken();
@@ -154,7 +156,7 @@
     } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
-    document.getElementById('avatar-initials').textContent = profile.initials;
+    TexStateAvatar.apply(document.getElementById('avatar'), {name:profile.name, state:profile.state, photoUrl:profile.profilePhoto});
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = profile.service;
@@ -217,11 +219,6 @@
       if(caption)caption.textContent='Work photos will appear here when verified images are available.';
     }
 
-    if (profile.profilePhoto) {
-        document.getElementById('avatar-image').src = profile.profilePhoto;
-        document.getElementById('avatar-image').style.display = 'block';
-        document.getElementById('avatar-initials').style.display = 'none';
-    }
     document.getElementById('block-button').addEventListener('click', () => {
       const blocked = JSON.parse(localStorage.getItem('texcontractor-blocked') || '[]');
       if (!blocked.includes(key)) blocked.push(key);
@@ -238,3 +235,4 @@
   <script src="tex-side-ads.js"></script>
 </body>
 </html>
+
