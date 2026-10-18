@@ -104,6 +104,19 @@
     return user;
   };
 
+  // Resolve navigation from server-checked admin membership, never editable metadata.
+  const postLoginDestination = async (returnTo, newAccount = false) => {
+    const user = await getUser();
+    if (!user) return authHref(returnTo || DEFAULT_RETURN);
+    const session = readSession();
+    const access = await readTexContractorAccess(user, session.access_token);
+    const target = safeReturnTo(returnTo || DEFAULT_RETURN);
+    const path = target.split(/[?#]/)[0];
+    if (access.isAdmin && ['index.html', 'account.html', 'auth.html', ''].includes(path)) return 'contractor-admin.html';
+    if (path === 'auth.html') return DEFAULT_RETURN;
+    return newAccount && !returnTo ? 'account.html' : target;
+  };
+
   const refreshSession = async (session) => {
     if (!session?.refresh_token) return null;
     try {
@@ -262,6 +275,7 @@
 
   window.TexAuth = {
     passwordRequest,
+    postLoginDestination,
     updateProfile,
     authHref,
     captureMagicLinkSession,
