@@ -9,7 +9,7 @@
   const params = new URLSearchParams(location.search);
   const onAuth = location.pathname.endsWith('/auth.html');
   let intent = params.get('intent') === 'customer' ? 'customer' : 'provider';
-  let login = onAuth ? params.get('mode') !== 'signup' : localStorage.getItem('texcontractor-account-created') === '1';
+  let login = onAuth ? params.get('mode') !== 'signup' : false;
   const form = box.querySelector('form');
   const status = box.querySelector('.join-status');
   const submit = form.querySelector('[type=submit]');
@@ -29,6 +29,12 @@
     link.href = 'auth.html?mode=' + (login ? 'signup' : 'login') + '&intent=' + intent + '&return_to=' + encodeURIComponent(destination());
   }
   box.querySelectorAll('[data-intent]').forEach(button => button.addEventListener('click', () => { intent = button.dataset.intent; render(); }));
+  box.querySelector('[data-join-login]').addEventListener('click', event => {
+    event.preventDefault();
+    login = !login;
+    message('');
+    render();
+  });
   render();
   form.addEventListener('submit', async event => {
     event.preventDefault(); submit.disabled = true; message('Please wait…');
