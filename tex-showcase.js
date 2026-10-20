@@ -10,6 +10,7 @@
    let rows=[],offset=0;
    while(true){const r=await fetch(BASE+'/rest/v1/texcontractor_showcase?select=*&published=eq.true&order=sort_order.asc,created_at.asc,id.asc&limit=500&offset='+offset,{headers:{apikey:KEY,Authorization:'Bearer '+KEY}});if(!r.ok)throw Error('load');const page=await r.json();if(!Array.isArray(page))throw Error('load');rows.push(...page);if(page.length<500)break;offset+=page.length;}
    let count=0,rendered=0;
+   const ratings={client:[],professional:[]};
    for(const row of rows.filter(visible)){
     const group={story:'stories',video:'videos',image:'images',testimonial:'testimonials'}[row.kind];if(!group)continue;
     const url=safeURL(row.media_url);if(['video','image'].includes(row.kind)&&!url)continue;
@@ -17,10 +18,22 @@
     if(row.kind==='image'){const img=el('img');img.src=url;img.alt=row.title;img.loading='lazy';img.decoding='async';card.append(img);}
     if(row.kind==='video'){const video=el('video');video.controls=true;video.preload='metadata';video.playsInline=true;video.src=url;video.setAttribute('aria-label',row.title);video.append(el('p','Your browser cannot play this video.'));card.append(video);}
     const copy=el('div',null,row.kind==='story'?'story-copy':'card-copy');copy.append(el('h3',row.title));
-    if(row.kind==='testimonial'){copy.append(el('blockquote',row.body));copy.append(el('p',row.attribution,'attribution'));count++;}else if(row.body)copy.append(el('p',row.body));
+    if(row.kind==='testimonial'){
+     const role=row.feedback_role,bank=window.TexFeedback?.questions[role];
+     if(bank)copy.append(el('p',role==='client'?'Client experience':'Professional experience','feedback-role'));
+     if(Number.isInteger(row.rating)&&row.rating>=1&&row.rating<=5){
+      const stars=el('p','★'.repeat(row.rating)+'☆'.repeat(5-row.rating),'feedback-stars');stars.setAttribute('aria-label','Website rating: '+row.rating+' out of 5 stars');copy.append(stars);
+      if(bank)ratings[role].push(row.rating);
+     }
+     if(row.body)copy.append(el('blockquote',row.body));
+     const answers=window.TexFeedback?.validAnswers(role,row.feedback_answers)||[];
+     if(answers.length){const list=el('dl',null,'feedback-answers');for(const answer of answers)list.append(el('dt',bank[answer.key-1][0]),el('dd',answer.answer));copy.append(list);}
+     copy.append(el('p',row.attribution,'attribution'));count++;
+    }else if(row.body)copy.append(el('p',row.body));
     card.append(copy);document.getElementById(group).append(card);document.getElementById(group+'-section').hidden=false;rendered++;
    }
    if(count)document.getElementById('review-count').textContent=count.toLocaleString()+' published community '+(count===1?'experience':'experiences');
+   for(const role of ['client','professional'])if(ratings[role].length){const values=ratings[role],average=(values.reduce((a,b)=>a+b,0)/values.length).toFixed(1);const summary=el('p',(role==='client'?'Client':'Professional')+' website ratings: '+average+' / 5 from '+values.length+' published '+(values.length===1?'rating':'ratings')+'.','counter');document.getElementById('testimonials').before(summary);}
    status.textContent=rendered?'':'New videos and community updates will appear here as they are published.';
   }catch{status.textContent='Our latest updates could not be loaded. Please try again shortly.';status.classList.add('error');}
  }

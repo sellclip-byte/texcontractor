@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
-async function check(source) {
+async function check(source, kind = 'image') {
   class Element {
     constructor(tag = 'div') {
       this.tagName = tag.toUpperCase(); this.children = []; this.listeners = {};
@@ -24,7 +24,7 @@ async function check(source) {
   }
   const ids = [...readFileSync('showcase-admin.html', 'utf8').matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
   const nodes = Object.fromEntries(ids.map(id => [id, new Element()]));
-  const inputIds = ['kind','title','body','attribution','media-url','sort-order','published','verified','consent','media-file','save','reset'];
+  const inputIds = ['kind','title','body','attribution','media-url','sort-order','published','verified','consent','media-file','save','reset','feedback-role','feedback-rating'];
   class Form extends Element {
     reset() {
       for (const id of inputIds) { nodes[id].value = ''; nodes[id].checked = false; nodes[id].files = []; }
@@ -34,11 +34,12 @@ async function check(source) {
   const form = new Form(); nodes['content-form'] = form;
   form.elements = inputIds.map(id => nodes[id]);
   form.reset = nodes.reset; // Browser named-property collision that caused the reported bug.
-  const row = { id:'123', kind:'image', title:'Original photo', body:'Original description',
-    media_url:'https://example.com/photo.png', attribution:'', published:true,
-    verified:false, consent:false, sort_order:7 };
+  const row = { id:'123', kind, title:'Original photo', body:kind==='image'?'Original description':'',
+    media_url:kind==='image'?'https://example.com/photo.png':'', attribution:'Approved display name', published:true,
+    verified:true, consent:true, sort_order:7,
+    ...(kind==='testimonial'?{feedback_role:'client',feedback_answers:[{key:2,answer:'It was easy.'},{key:10,answer:'Please add more local choices.'}],rating:4}:{}) };
   const requests = [];
-  vm.runInNewContext(source, {
+  const context = {
     document: { getElementById:id => nodes[id], createElement:tag => new Element(tag) },
     HTMLFormElement:Form, URL, crypto:{}, location:{replace(){}}, confirm:() => true,
     TexAuth:{getUser:async() => ({id:'admin'}), getAccessToken:async() => 'mock-token'},
@@ -47,7 +48,10 @@ async function check(source) {
       requests.push({url,...options});
       return {ok:true, text:async() => JSON.stringify([row])};
     }
-  });
+  };
+  context.window = context;
+  vm.runInNewContext(readFileSync('tex-feedback.js','utf8'),context);
+  vm.runInNewContext(source,context);
   await new Promise(resolve => setImmediate(resolve));
   const edit = nodes['content-list'].querySelectorAll('button').find(b => b.textContent === 'Edit');
   assert(edit, 'Existing item has an Edit button');
@@ -57,6 +61,22 @@ async function check(source) {
   assert.equal(nodes['sort-order'].value, row.sort_order);
   assert.equal(nodes.published.checked, true);
   assert.equal(form.scrolled, true);
+  if(kind==='testimonial'){
+    const role=nodes['feedback-role'],list=nodes['feedback-questions'];
+    role.value='professional';role.listeners.change();
+    assert.equal(list.children.length,10,'Ten professional questions appear');
+    const check=list.querySelectorAll('input')[0];check.checked=true;check.listeners.change();
+    await form.listeners.submit({preventDefault(){}});
+    assert.equal(requests.filter(r=>r.method==='PATCH').length,0,'Selected unanswered question cannot be saved');
+    assert.match(nodes['admin-status'].textContent,/Enter an answer/);
+    list.querySelectorAll('textarea')[0].value='A received professional response';
+    role.value='client';role.listeners.change();
+    assert.equal(list.children.length,10,'Ten client questions appear');
+    assert.equal(list.querySelectorAll('textarea')[1].value,'It was easy.','Client answers are preserved when switching role');
+    role.value='professional';role.listeners.change();
+    assert.equal(list.querySelectorAll('textarea')[0].value,'A received professional response','Professional draft answers are preserved');
+    role.value='client';role.listeners.change();
+  }
   nodes.title.value = 'Updated photo';
   await form.listeners.submit({preventDefault(){}});
   const update = requests.find(r => r.method === 'PATCH');
@@ -64,6 +84,13 @@ async function check(source) {
   assert(update.url.endsWith('?id=eq.123'), 'Correct existing ID is preserved');
   assert.equal(JSON.parse(update.body).title, 'Updated photo');
   assert.equal(JSON.parse(update.body).media_url, row.media_url, 'Existing file is retained');
+  if(kind==='testimonial'){
+    const payload=JSON.parse(update.body);
+    assert.equal(payload.feedback_role,'client');
+    assert.deepEqual(payload.feedback_answers,row.feedback_answers,'Selected questions and received answers survive Edit and PATCH');
+    assert.equal(payload.rating,4,'The supplied rating is retained');
+    assert.equal(nodes['feedback-role'].value,'','Role clears after saving');
+  }
   assert(!requests.some(r => r.method === 'POST'), 'Editing does not create a duplicate');
   assert.equal(nodes.title.value, '', 'Form clears after a successful save');
   assert.equal(nodes['editor-title'].textContent, 'Add content');
@@ -74,4 +101,5 @@ const broken = current.replace('HTMLFormElement.prototype.reset.call(form)', 'fo
 assert.notEqual(broken, current, 'Regression fixture restores the browser named-property failure');
 await assert.rejects(check(broken), /form.reset is not a function/);
 await check(current);
+await check(current,'testimonial');
 console.log('PASS reproduced old Edit failure; fixed Edit, PATCH save, retained file and clear form in simulated DOM');
