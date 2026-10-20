@@ -9,6 +9,7 @@
     gtag('js', new Date());
     gtag('config', 'AW-18516159223');
   </script>
+  <script src="tex-contact-tracking.js?v=20261020"></script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -266,7 +267,10 @@
         call.disabled = true;
         try {
           const phone = String(await loadPhone() || '').replace(/[^\d+]/g, '');
-          if (phone) window.location.href = 'tel:' + phone;
+          if (phone) {
+            window.TexContactTracking?.record('call');
+            window.location.href = 'tel:' + phone;
+          }
         } catch (error) { window.alert(error.message); }
         finally { call.disabled = false; }
       });
@@ -317,6 +321,7 @@
             return;
           }
           textButton.textContent = 'Text this contractor';
+          window.TexContactTracking?.record('sms');
           window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name))}`;
         } catch (error) {
           textButton.textContent = 'Text this contractor';
@@ -427,6 +432,7 @@
                   if(!res.ok)throw new Error('Contact unavailable');
                   const phone=await res.json();
                   if(!phone)throw new Error('Phone unavailable');
+                  window.TexContactTracking?.record('sms');
                   window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
                 }catch(e){alert(e.message);}
               });

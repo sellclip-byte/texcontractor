@@ -9,6 +9,7 @@
     gtag('js', new Date());
     gtag('config', 'AW-18516159223');
   </script>
+  <script src="tex-contact-tracking.js?v=20261020"></script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -191,6 +192,7 @@
         const rows = await phoneResponse.json();
         const phone = String(profile.imported ? (typeof rows==='string'?rows:rows?.phone||'') : rows?.[0]?.phone||'').replace(/[^\d+]/g, '');
         if (!phone) throw new Error('The contractor phone number is not available yet.');
+        window.TexContactTracking?.record('sms');
         window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate)}`;
       } catch (error) {
         textLink.textContent = 'Text this contractor';
