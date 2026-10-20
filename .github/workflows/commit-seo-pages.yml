@@ -24,7 +24,7 @@ jobs:
       - name: Validate 62 known catalog pages
         run: |
           test "$(find services -maxdepth 1 -name '*.html' | wc -l)" -eq 63
-          test "$(grep -c '<url>' sitemap.xml)" -eq 65
+          test "$(grep -c '<url>' sitemap.xml)" -eq 66
       - name: Commit generated pages only to review branch
         run: |
           git config user.name "github-actions[bot]"

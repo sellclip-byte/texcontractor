@@ -60,6 +60,27 @@
 (function () {
   const footer = document.querySelector('.site-footer');
   if (!footer) return;
+  if (!footer.querySelector('a[href="about-texcontractor.html"]')) {
+    const media = document.createElement('a');
+    media.href = 'about-texcontractor.html';
+    media.textContent = 'About & Media';
+    footer.append(media);
+  }
+  if (!document.getElementById('tex-about-media-link')) {
+    const section = document.createElement('section');
+    section.id = 'tex-about-media-link';
+    section.setAttribute('aria-label', 'Discover TexContractor');
+    section.style.cssText = 'width:min(1240px,calc(100% - 32px));margin:32px auto;padding:24px;border:1px solid #a9e8d2;border-radius:12px;background:#ecfff8;color:#075c4b;';
+    const link = document.createElement('a');
+    link.href = 'about-texcontractor.html';
+    link.textContent = 'Discover TexContractor →';
+    link.style.cssText = 'color:#075c4b;font-size:1.35rem;font-weight:850;text-decoration:underline;';
+    const description = document.createElement('p');
+    description.textContent = 'Watch our videos, explore photos and updates, and discover how TexContractor works through community experiences.';
+    description.style.cssText = 'margin:8px 0 0;color:#475569;line-height:1.5;';
+    section.append(link, description);
+    footer.before(section);
+  }
   const existing = Array.from(footer.querySelectorAll('[data-footer-key]'));
   for (const link of existing) {
     link.href = 'site-guide.html#' + link.dataset.footerKey;
