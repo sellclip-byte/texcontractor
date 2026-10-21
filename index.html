@@ -595,10 +595,10 @@
 <button class="join-dismiss" type="button" aria-label="Close registration window">×</button>
 <div class="registration-banner"><img src="registration-banner.png" alt="Text Contractors — All in One — local service professionals"><p>Sign up to text technicians directly or receive customer requests</p></div>
 <div class="join-choices" aria-label="Choose how to get started">
-<button type="button" data-intent="provider" aria-pressed="true">Add my service</button>
-<button type="button" data-intent="customer" aria-pressed="false">Find a service</button>
+<button type="button" data-intent="provider" aria-pressed="false">Add my service</button>
+<button type="button" data-intent="customer" aria-pressed="true">Find a service</button>
 </div>
-<div class="mobile-required"><img src="registration-phone.png" alt="Mobile phone"><p data-join-copy>Sign up to receive customer requests by text message.</p></div>
+<div class="mobile-required"><img src="registration-phone.png" alt="Mobile phone"><p data-join-copy>Sign up to text technicians directly.</p></div>
 <form data-join-form>
 <div class="join-fields">
 <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
@@ -996,7 +996,7 @@
 
   <script src="tex-site-settings.js?v=20261015-separate-banners"></script>
   <script src="tex-auth.js?v=20261017-instant"></script>
-  <script src="tex-join.js?v=20261021-delayed-popup"></script>
+  <script src="tex-join.js?v=20261021-customer-default"></script>
   <script>
     const searchForm = document.getElementById('service-search-form');
     const searchInput = document.getElementById('service-search');

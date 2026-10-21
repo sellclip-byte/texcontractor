@@ -8,7 +8,9 @@
   }
   const params = new URLSearchParams(location.search);
   const onAuth = location.pathname.endsWith('/auth.html');
-  let intent = params.get('intent') === 'customer' ? 'customer' : 'provider';
+  const requestedIntent = params.get('intent');
+  // Homepage dialog defaults to customers (most visitors are looking for a service).
+  let intent = requestedIntent === 'customer' || requestedIntent === 'provider' ? requestedIntent : (isDialog ? 'customer' : 'provider');
   let login = onAuth ? params.get('mode') !== 'signup' : false;
   const form = box.querySelector('form');
   const status = box.querySelector('.join-status');
@@ -73,7 +75,13 @@
           shown = true;
           window.removeEventListener('scroll', onScroll);
           clearTimeout(timer);
-          if (sessionStorage.getItem('texcontractor-join-dismissed') !== '1') box.showModal();
+          if (sessionStorage.getItem('texcontractor-join-dismissed') !== '1') {
+            box.showModal();
+            // Focus the dialog itself so the close button doesn't show a focus ring until the visitor uses Tab.
+            box.setAttribute('tabindex', '-1');
+            box.style.outline = 'none';
+            box.focus({ preventScroll: true });
+          }
         };
         const onScroll = () => { if (window.scrollY > window.innerHeight * 1.5) open(); };
         const timer = setTimeout(open, 30000);
