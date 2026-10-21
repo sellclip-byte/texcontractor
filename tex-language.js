@@ -58,6 +58,7 @@
     'Location': 'Ubicación',
     'Rating': 'Calificación',
     'Quote': 'Presupuesto',
+    'List your service': 'Publica tu servicio',
     'Share this profile': 'Compartir este perfil',
     'Share my profile': 'Compartir mi perfil',
     'View my public profile': 'Ver mi perfil público',
