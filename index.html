@@ -154,34 +154,31 @@
     .welcome-benefit-number { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; color: #fff; background: var(--service-green); font-weight: 850; }
     .welcome-benefit strong { display: block; margin: 1px 0 4px; color: var(--service-green); font-size: 1rem; }
     .welcome-benefit span { display: block; color: #475569; font-size: .93rem; line-height: 1.45; }
-    .floating-post-service {
-      position: fixed;
-      right: 28px;
-      bottom: 24px;
-      z-index: 200;
+    .catalog-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 18px 0 20px; }
+    .catalog-head h2.section-title { margin: 0; }
+    .post-service-button {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      min-height: 54px;
-      padding: 0 22px;
-      border: 1px solid rgba(255,255,255,.35);
+      min-height: 46px;
+      padding: 0 20px;
       border-radius: 999px;
       color: #fff;
       background: var(--service-green);
-      box-shadow: 0 10px 25px rgba(15, 23, 42, .22);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, .14);
       text-decoration: none;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 800;
-      animation: post-service-pulse 3.6s ease-in-out infinite;
     }
-    .floating-post-service .plus {
+    .post-service-button:hover { background: #0f172a; }
+    .post-service-button .plus {
       display: grid;
-      width: 25px;
-      height: 25px;
+      width: 22px;
+      height: 22px;
       place-items: center;
       border: 2px solid currentColor;
       border-radius: 4px;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       line-height: 1;
     }
     @keyframes post-service-pulse {
@@ -392,7 +389,7 @@
       .message-bridge-copy h2 { font-size: 1.25rem; }
       .message-bridge-copy p { font-size: .95rem; }
       .container { padding-left: 16px; padding-right: 16px; }
-      .floating-post-service { right: 16px; bottom: 16px; min-height: 50px; padding: 0 17px; font-size: .95rem; }
+      .post-service-button { min-height: 44px; padding: 0 16px; font-size: .95rem; }
       .welcome { width: calc(100vw - 24px); max-height: calc(100vh - 24px); padding: 20px 14px 18px; }
       .welcome-close { top: 12px; right: 14px; }
       .welcome-logo { width: min(195px, 78vw); margin-bottom: 12px; }
@@ -624,7 +621,10 @@
 
   <div class="container">
     
-    <h2 class="section-title" id="service-catalog">All Services (62 Categories)</h2>
+    <div class="catalog-head">
+      <h2 class="section-title" id="service-catalog">All Services (62 Categories)</h2>
+      <a class="post-service-button" href="auth.html?return_to=contractor-register.html"><span class="plus" aria-hidden="true">+</span><span>Post a service</span></a>
+    </div>
     <div class="services-grid">
       
       <!-- 1 -->
@@ -989,10 +989,6 @@
     <div class="footer-bottom">© 2026 TexContractor. All rights reserved.</div>
   </footer>
 
-  <a class="floating-post-service" href="auth.html?return_to=contractor-register.html" aria-label="Post a service">
-    <span class="plus">+</span>
-    <span>Post a service</span>
-  </a>
 
   <script src="tex-site-settings.js?v=20261015-separate-banners"></script>
   <script src="tex-auth.js?v=20261017-instant"></script>
