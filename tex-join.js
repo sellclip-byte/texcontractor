@@ -17,7 +17,7 @@
   const destination = () => TexAuth.safeReturnTo(params.get('return_to') || 'index.html');
   function render() {
     
-    box.querySelector('[data-join-copy]').textContent = login ? 'Sign in to your saved account.' : 'A mobile phone is required to receive requests and communicate with others.';
+    box.querySelector('[data-join-copy]').textContent = login ? 'Sign in to your saved account.' : (intent === 'customer' ? 'Sign up to text technicians directly.' : 'Sign up to receive customer requests by text message.');
     box.querySelectorAll('[data-intent]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.intent === intent)));
     form.elements.namedItem('password').autocomplete = login ? 'current-password' : 'new-password';
     form.elements.namedItem('password').minLength = login ? 1 : 6;
@@ -65,7 +65,20 @@
         const profile = document.getElementById('account-login');
         if (profile) { profile.href = 'account.html'; profile.textContent = 'My profile'; profile.hidden = false; }
       }
-      else if (isDialog && sessionStorage.getItem('texcontractor-join-dismissed') !== '1') box.showModal();
+      else if (isDialog && sessionStorage.getItem('texcontractor-join-dismissed') !== '1') {
+        // Let visitors browse first: open after 30 seconds or after scrolling about 1.5 screens.
+        let shown = false;
+        const open = () => {
+          if (shown || box.open || document.querySelector('dialog[open]')) return;
+          shown = true;
+          window.removeEventListener('scroll', onScroll);
+          clearTimeout(timer);
+          if (sessionStorage.getItem('texcontractor-join-dismissed') !== '1') box.showModal();
+        };
+        const onScroll = () => { if (window.scrollY > window.innerHeight * 1.5) open(); };
+        const timer = setTimeout(open, 30000);
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
     } catch (_) {}
     finally { document.documentElement.classList.remove('tex-member-pending'); }
   }
