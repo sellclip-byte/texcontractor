@@ -405,7 +405,7 @@
               const avatar=document.createElement('div');avatar.className='avatar '+['a','b','c','d','e','f','g','h','i','j','k','l','m'][providers.children.length%13];
               TexStateAvatar.apply(avatar, {name:entry.business_name, state:entry.state});
               const main=document.createElement('div');main.className='provider-main';
-              const status=document.createElement('p');status.className='provider-status';status.textContent='Local business';
+              const status=document.createElement('p');status.className='provider-status';status.textContent='Local provider';
               const name=document.createElement('h3');name.className='provider-name';name.textContent=entry.business_name;
               const location=document.createElement('p');location.className='provider-rating';location.textContent=entry.city+', '+entry.state;
               const trade=document.createElement('p');trade.className='provider-trade';trade.textContent=entry.service;

@@ -141,7 +141,7 @@
       const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY,...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {})}});
       if(!r.ok)throw Error('Profile unavailable');
       const e=(await r.json())[0];if(!e)return null;
-      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),ratingLabel:'Rating',rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
+      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),ratingLabel:'Profile',rating:'Local provider',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
     }
     const renderProfile = async () => {
       directoryToken = await TexAuth.getAccessToken();
@@ -165,7 +165,7 @@
     document.getElementById('service-label').textContent = profile.service;
     document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
     if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Will be added soon' : `${profile.years} years`;
-    if(profile.imported){document.querySelector('.verified').textContent='Local business';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
+    if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [
       'Hello, I found your service on TexContractor:',

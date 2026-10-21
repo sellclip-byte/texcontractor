@@ -58,6 +58,8 @@
     'Location': 'Ubicación',
     'Rating': 'Calificación',
     'Quote': 'Presupuesto',
+    'Local provider': 'Proveedor local',
+    'Profile': 'Perfil',
     'Text directly — no middleman': 'Envía un mensaje directo, sin intermediarios',
     'Text for a quote': 'Envía un mensaje para presupuesto',
     'Work photos': 'Fotos del trabajo',
