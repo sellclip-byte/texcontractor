@@ -207,7 +207,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
-      select: 'id,side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled',
+      select: 'id,side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled,media_type,video_path,video_poster_path',
       order: 'side.asc'
     });
     return request(`/rest/v1/texcontractor_side_ads?${params.toString()}`, { method: 'GET' }, token) || [];
@@ -230,6 +230,37 @@
     return path;
   };
 
+  // Real limit of the texcontractor-side-ads storage bucket (50 MB).
+  const SIDE_AD_VIDEO_MAX_BYTES = 50 * 1024 * 1024;
+  const uploadSideAdVideo = (file, side, user, onProgress) => new Promise(async (resolve, reject) => {
+    try {
+      const token = await TexAuth.getAccessToken();
+      if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
+      const isMp4 = file && (file.type === 'video/mp4' || /\.mp4$/i.test(file.name || ''));
+      if (!isMp4) throw new Error('Please choose an MP4 video file.');
+      if (file.size > SIDE_AD_VIDEO_MAX_BYTES) throw new Error(`The video is ${(file.size / 1048576).toFixed(1)} MB. The maximum is 50 MB.`);
+      const path = `admin/${side}-video-${crypto.randomUUID()}.mp4`;
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/${SIDE_AD_BUCKET}/${encodeObjectPath(path)}`);
+      xhr.setRequestHeader('apikey', SUPABASE_KEY);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      xhr.setRequestHeader('Content-Type', 'video/mp4');
+      xhr.setRequestHeader('x-upsert', 'false');
+      xhr.setRequestHeader('cache-control', '31536000');
+      xhr.upload.onprogress = (event) => { if (event.lengthComputable && onProgress) onProgress(event.loaded / event.total); };
+      xhr.onerror = () => reject(new Error('Network error while uploading the video.'));
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(path);
+        let message = 'Video upload failed (HTTP ' + xhr.status + ').';
+        try { const body = JSON.parse(xhr.responseText); message = body.message || body.error || message; } catch (_) {}
+        reject(new Error(message));
+      };
+      xhr.send(file);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
   const removeSideAdImage = async (path, user) => {
     if (!path || !user?.id) return;
     const token = await TexAuth.getAccessToken();
@@ -245,7 +276,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token || !user?.id) throw new Error('Your sign-in session expired. Please sign in again.');
     const body = { ...patch, updated_by: user.id, updated_at: new Date().toISOString() };
-    const select = 'id,side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled';
+    const select = 'id,side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled,media_type,video_path,video_poster_path';
     const endpoint = row?.id
       ? `/rest/v1/texcontractor_side_ads?id=eq.${encodeURIComponent(row.id)}&select=${select}`
       : '/rest/v1/texcontractor_side_ads';
@@ -384,5 +415,5 @@
     return latest;
   };
 
-  window.TexAdminApi = { uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, uploadSideAdVideo, SIDE_AD_VIDEO_MAX_BYTES, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();

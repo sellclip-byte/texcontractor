@@ -635,7 +635,7 @@
     fillBannerForm(row);
   };
 
-  const emptySideAd = (side, placement) => ({ side, placement, is_enabled: false, style: 'card', font_style: 'bold', animation: 'static', text_color: '#075c4b', background_color: '#ecfff8', accent_color: '#a9e8d2', message_text: '', image_alt: '', image_path: null });
+  const emptySideAd = (side, placement) => ({ side, placement, is_enabled: false, style: 'card', font_style: 'bold', animation: 'static', text_color: '#075c4b', background_color: '#ecfff8', accent_color: '#a9e8d2', message_text: '', image_alt: '', image_path: null, media_type: 'image', video_path: null, video_poster_path: null });
   const cacheSideAd = (row) => {
     if (row?.side && row?.placement) sideAds[row.side][row.placement] = row;
   };
@@ -673,6 +673,121 @@
       preview.appendChild(empty);
       if (note) note.textContent = side === 'left' && document.getElementById('side-left-placement').value === 'homepage' ? 'Homepage: 200 px wide, full proportional height; no green frame. On narrower screens, shown in the page flow before the footer.' : 'Automatic display: maximum 160 px wide, proportional height, no page expansion.';
     }
+    if (side === 'right') fillSideVideo(current);
+  };
+
+  // Right-slot intro video (optional). The image fields above are never changed by these controls.
+  const sideVideoEl = (name) => document.getElementById(`side-right-${name}`);
+  const setVideoStatus = (text, kind = '') => {
+    const status = sideVideoEl('video-status');
+    if (!status) return;
+    status.textContent = text;
+    status.className = `side-ad-video-status ${kind}`.trim();
+  };
+  const fillSideVideo = (row) => {
+    const type = sideVideoEl('media-type');
+    if (!type) return;
+    type.value = row?.media_type === 'video' && row?.video_path ? 'video' : 'image';
+    const preview = sideVideoEl('video-preview');
+    preview.replaceChildren();
+    if (row?.video_path) {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.preload = 'metadata';
+      video.playsInline = true;
+      video.src = TexAdminApi.sideAdPublicUrl(row.video_path);
+      const posterPath = row.video_poster_path || row.image_path;
+      if (posterPath) video.poster = TexAdminApi.sideAdPublicUrl(posterPath);
+      preview.appendChild(video);
+    } else {
+      const empty = document.createElement('span');
+      empty.className = 'side-ad-preview-empty';
+      empty.textContent = 'No video uploaded';
+      preview.appendChild(empty);
+    }
+    sideVideoEl('video-remove').disabled = !row?.video_path;
+  };
+  const bindSideVideo = () => {
+    const uploadButton = sideVideoEl('video-upload');
+    if (!uploadButton) return;
+    const videoInput = sideVideoEl('video');
+    const posterInput = sideVideoEl('poster');
+    const progress = sideVideoEl('video-progress');
+    const removeButton = sideVideoEl('video-remove');
+    const currentRow = () => sideAds.right[sideAdValue('right', 'placement').value] || null;
+    videoInput.addEventListener('change', () => {
+      const file = videoInput.files?.[0];
+      if (!file) return setVideoStatus('');
+      const mb = file.size / 1048576;
+      if (file.size > TexAdminApi.SIDE_AD_VIDEO_MAX_BYTES) setVideoStatus(`Selected: ${file.name} (${mb.toFixed(1)} MB). Too large: the maximum is 50 MB.`, 'error');
+      else setVideoStatus(`Selected: ${file.name} (${mb.toFixed(1)} MB). Press "Upload video".`);
+    });
+    uploadButton.addEventListener('click', async () => {
+      const row = currentRow();
+      const file = videoInput.files?.[0];
+      const poster = posterInput.files?.[0];
+      if (!row?.id) return setVideoStatus('Save this right ad slot first, then upload the video.', 'error');
+      if (!file && !poster) return setVideoStatus('Choose an MP4 video (and optionally a cover image) first.', 'error');
+      if (!file && !row.video_path) return setVideoStatus('Choose an MP4 video first.', 'error');
+      uploadButton.disabled = true;
+      removeButton.disabled = true;
+      let newVideo = null;
+      let newPoster = null;
+      try {
+        if (file) {
+          progress.hidden = false;
+          progress.value = 0;
+          newVideo = await TexAdminApi.uploadSideAdVideo(file, 'right', currentUser, (ratio) => {
+            progress.value = Math.round(ratio * 100);
+            setVideoStatus(`Uploading video… ${Math.round(ratio * 100)}%`);
+          });
+          progress.value = 100;
+        }
+        if (poster) {
+          setVideoStatus('Uploading cover image…');
+          newPoster = await TexAdminApi.uploadSideAdImage(poster, 'right-poster', currentUser);
+        }
+        const patch = { side: 'right', placement: row.placement };
+        if (newVideo) patch.video_path = newVideo;
+        if (newPoster) patch.video_poster_path = newPoster;
+        const updated = await TexAdminApi.upsertSideAd(row, patch, currentUser);
+        if (!updated?.id) throw new Error('The video was uploaded but the ad settings were not saved.');
+        if (newVideo && row.video_path && row.video_path !== newVideo) await TexAdminApi.removeSideAdImage(row.video_path, currentUser);
+        if (newPoster && row.video_poster_path && row.video_poster_path !== newPoster) await TexAdminApi.removeSideAdImage(row.video_poster_path, currentUser);
+        videoInput.value = '';
+        posterInput.value = '';
+        cacheSideAd(updated);
+        fillSideAdForm('right', updated);
+        setVideoStatus(updated.media_type === 'video'
+          ? 'Upload complete and saved. The new video is now live in the right frame.'
+          : 'Upload complete and saved. To show it, set Content type to "Video", Visibility to "Show ad", then press "Save right ad".', 'ok');
+      } catch (error) {
+        if (newVideo) await TexAdminApi.removeSideAdImage(newVideo, currentUser);
+        if (newPoster) await TexAdminApi.removeSideAdImage(newPoster, currentUser);
+        setVideoStatus(`Upload failed: ${error.message} Nothing was changed on the site.`, 'error');
+      } finally {
+        progress.hidden = true;
+        uploadButton.disabled = false;
+        removeButton.disabled = !currentRow()?.video_path;
+      }
+    });
+    removeButton.addEventListener('click', async () => {
+      const row = currentRow();
+      if (!row?.video_path) return;
+      removeButton.disabled = true;
+      try {
+        const updated = await TexAdminApi.upsertSideAd(row, { side: 'right', placement: row.placement, media_type: 'image', video_path: null, video_poster_path: null }, currentUser);
+        if (!updated?.id) throw new Error('The ad settings were not saved.');
+        await TexAdminApi.removeSideAdImage(row.video_path, currentUser);
+        if (row.video_poster_path) await TexAdminApi.removeSideAdImage(row.video_poster_path, currentUser);
+        cacheSideAd(updated);
+        fillSideAdForm('right', updated);
+        setVideoStatus('Video removed. The current image is shown again.', 'ok');
+      } catch (error) {
+        setVideoStatus(`Could not remove the video: ${error.message}`, 'error');
+        removeButton.disabled = false;
+      }
+    });
   };
 
   const loadSideAds = async () => {
@@ -743,6 +858,13 @@
       try {
         let imagePath = oldRow?.image_path || null;
         const file = imageInput.files?.[0];
+        const mediaPatch = {};
+        if (side === 'right' && sideVideoEl('media-type')) {
+          const wantsVideo = sideVideoEl('media-type').value === 'video';
+          if (wantsVideo && !oldRow?.video_path) throw new Error('upload an MP4 video first (Upload video), or keep Content type on "Current image".');
+          if (wantsVideo && !(file || imagePath)) throw new Error('the video uses the current image frame, so this slot needs its image.');
+          mediaPatch.media_type = wantsVideo ? 'video' : 'image';
+        }
         if (file) imagePath = await TexAdminApi.uploadSideAdImage(file, side, currentUser);
         const updated = await TexAdminApi.upsertSideAd(oldRow, {
           side,
@@ -756,7 +878,8 @@
           accent_color: sideAdValue(side, 'accent-color').value,
           image_path: imagePath,
           image_alt: sideAdValue(side, 'alt').value.trim(),
-          is_enabled: sideAdValue(side, 'enabled').value === 'true'
+          is_enabled: sideAdValue(side, 'enabled').value === 'true',
+          ...mediaPatch
         }, currentUser);
         if (file && oldRow?.image_path && oldRow.image_path !== imagePath) await TexAdminApi.removeSideAdImage(oldRow.image_path, currentUser);
         imageInput.value = '';
@@ -846,6 +969,7 @@
   statusFilter.addEventListener('change', renderSubmissions);
   bindSideAd('left');
   bindSideAd('right');
+  bindSideVideo();
   [bannerMessage, bannerStyle, bannerFontStyle, bannerAnimation, bannerEnabled, bannerTextColor, bannerBackgroundColor, bannerAccentColor].forEach((input) => {
     input.addEventListener('input', () => {
       if (input.type === 'color') {

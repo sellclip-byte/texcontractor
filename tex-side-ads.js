@@ -22,15 +22,17 @@
   };
   const encodePath = (path) => path.split('/').map((part) => encodeURIComponent(part)).join('/');
   const imageUrl = (path) => path ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${encodePath(path)}` : '';
-  const getAds = async () => {
-    const params = new URLSearchParams({
-      select: 'side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled',
-      is_enabled: 'eq.true',
-      order: 'side.asc'
-    });
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_side_ads?${params.toString()}`, {
+  const BASE_SELECT = 'side,placement,message_text,style,font_style,text_color,background_color,accent_color,animation,image_path,image_alt,is_enabled';
+  const fetchAds = (select) => {
+    const params = new URLSearchParams({ select, is_enabled: 'eq.true', order: 'side.asc' });
+    return fetch(`${SUPABASE_URL}/rest/v1/texcontractor_side_ads?${params.toString()}`, {
       headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
     });
+  };
+  const getAds = async () => {
+    let response = await fetchAds(`${BASE_SELECT},media_type,video_path,video_poster_path`);
+    // If the optional video columns are unavailable, keep showing the image ads exactly as before.
+    if (!response.ok) response = await fetchAds(BASE_SELECT);
     if (!response.ok) return [];
     const rows = await response.json();
     const current = pageKey();
@@ -39,6 +41,58 @@
       const sideRows = candidates.filter((row) => row.side === side);
       return sideRows.find((row) => row.placement === current) || sideRows.find((row) => row.placement === 'all');
     }).filter(Boolean);
+  };
+  // Optional right-slot video: the existing image stays in place (hidden) so the frame keeps
+  // exactly the same size and position. Nothing is downloaded until the visitor presses play.
+  const addVideo = (imageWrap, image, ad) => {
+    const video = document.createElement('video');
+    video.className = 'tc-side-ad-video';
+    video.controls = true;
+    video.preload = 'none';
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.poster = imageUrl(ad.video_poster_path || ad.image_path);
+    video.setAttribute('aria-label', ad.image_alt || 'TexContractor intro video');
+    const source = document.createElement('source');
+    source.src = imageUrl(ad.video_path);
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    const tools = document.createElement('div');
+    tools.className = 'tc-side-ad-video-tools';
+    const icon = (d) => `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="${d}"/></svg>`;
+    const SOUND_ON = 'M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.47 4.47 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z';
+    const SOUND_OFF = 'M16.5 12A4.5 4.5 0 0 0 14 8v2.2l2.45 2.45c.03-.2.05-.42.05-.65zM19 12c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12a9 9 0 0 0-7-8.8v2.1A7 7 0 0 1 19 12zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25A7 7 0 0 1 14 18.7v2.1a9 9 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z';
+    const soundButton = document.createElement('button');
+    soundButton.type = 'button';
+    const syncSound = () => {
+      const muted = video.muted || video.volume === 0;
+      soundButton.innerHTML = icon(muted ? SOUND_OFF : SOUND_ON);
+      soundButton.setAttribute('aria-label', muted ? 'Turn sound on' : 'Turn sound off');
+      soundButton.title = muted ? 'Sound on' : 'Sound off';
+    };
+    soundButton.addEventListener('click', () => { video.muted = !video.muted; if (!video.muted && video.volume === 0) video.volume = 1; syncSound(); });
+    video.addEventListener('volumechange', syncSound);
+    syncSound();
+    const fullButton = document.createElement('button');
+    fullButton.type = 'button';
+    fullButton.innerHTML = icon('M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z');
+    fullButton.setAttribute('aria-label', 'Full screen');
+    fullButton.title = 'Full screen';
+    fullButton.addEventListener('click', () => {
+      if (document.fullscreenElement) return document.exitFullscreen().catch(() => {});
+      if (video.requestFullscreen) return video.requestFullscreen().catch(() => {});
+      if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    });
+    tools.append(soundButton, fullButton);
+    const fallback = () => {
+      video.remove();
+      tools.remove();
+      imageWrap.classList.remove('has-video');
+    };
+    source.addEventListener('error', fallback, { once: true });
+    video.addEventListener('error', fallback, { once: true });
+    imageWrap.classList.add('has-video');
+    imageWrap.append(video, tools);
   };
   const render = (ad) => {
     const aside = document.createElement('aside');
@@ -59,6 +113,7 @@
       image.loading = 'lazy';
       imageWrap.appendChild(image);
       body.appendChild(imageWrap);
+      if (ad.side === 'right' && ad.media_type === 'video' && ad.video_path) addVideo(imageWrap, image, ad);
     }
     if (ad.message_text) {
       const copy = document.createElement('div');
@@ -83,6 +138,12 @@
       .tc-side-ad-body.ad-minimal { padding: 4px 0; background: transparent; border: 0; border-bottom: 2px solid var(--side-ad-accent); border-radius: 0; box-shadow: none; }
       .tc-side-ad-image-wrap { display: flex; align-items: center; justify-content: center; width: 100%; max-height: calc(100vh - 250px); min-height: 0; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,.72); }
       .tc-side-ad-image-wrap img { display: block; width: 100%; max-width: 100%; height: auto; max-height: calc(100vh - 250px); object-fit: contain; }
+      .tc-side-ad-image-wrap.has-video { position: relative; background: #000; }
+      .tc-side-ad-image-wrap.has-video img { visibility: hidden; }
+      .tc-side-ad-video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; background: #000; pointer-events: auto; }
+      .tc-side-ad-video-tools { position: absolute; top: 6px; right: 6px; display: flex; gap: 6px; pointer-events: auto; }
+      .tc-side-ad-video-tools button { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; color: #fff; background: rgba(0,0,0,.62); cursor: pointer; }
+      .tc-side-ad-video-tools button:hover, .tc-side-ad-video-tools button:focus-visible { background: rgba(0,0,0,.85); outline: 2px solid #fff; outline-offset: 1px; }
       .tc-side-ad-copy { padding: 8px 3px 2px; font-size: .88rem; line-height: 1.35; overflow-wrap: anywhere; }
       .tc-side-ad-body.font-normal .tc-side-ad-copy { font-weight: 500; }
       .tc-side-ad-body.font-bold .tc-side-ad-copy { font-weight: 900; }

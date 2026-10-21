@@ -121,6 +121,13 @@
     .side-ad-file { padding:10px; border:1px dashed #cbd5e1; border-radius:10px; background:#f8fafc; }
     .side-ad-remove { min-height:38px; padding:8px 12px; border:1px solid #fecaca; border-radius:9px; color:#991b1b; background:#fff; font:inherit; font-weight:800; cursor:pointer; }
     .side-ad-remove:disabled { opacity:.55; cursor:wait; }
+    .side-ad-video-box { margin:18px 0 0; padding:14px; border:1px solid #e2e8f0; border-radius:14px; min-width:0; }
+    .side-ad-video-box legend { padding:0 6px; font-weight:850; }
+    .side-ad-video-box progress { display:block; width:100%; height:12px; margin-top:12px; }
+    .side-ad-video-status { margin:8px 0 0; font-size:.86rem; font-weight:750; overflow-wrap:anywhere; }
+    .side-ad-video-status.ok { color:#166534; }
+    .side-ad-video-status.error { color:#991b1b; }
+    .side-ad-preview video { display:block; width:100%; max-width:320px; max-height:320px; object-fit:contain; background:#000; border-radius:10px; }
     @media (max-width:980px) { .side-ads-grid { grid-template-columns:1fr; } }
     @media (max-width:760px) { .settings-grid { grid-template-columns:1fr; } }
     body.auth-check { visibility:hidden; }
@@ -306,6 +313,17 @@
                 <label class="settings-message" for="side-right-image">Image (JPG, PNG, GIF, WebP, AVIF)<input class="side-ad-file" id="side-right-image" type="file" accept="image/*"></label>
                 <div class="side-ad-preview" id="side-right-preview"><span class="side-ad-preview-empty">No image selected</span></div>
                 <p class="side-ad-preview-note" id="side-right-preview-note">Automatic display: maximum 160 px wide, proportional height, no page expansion.</p>
+                <fieldset class="side-ad-video-box" id="side-right-video-box">
+                  <legend>Intro video (optional)</legend>
+                  <label>Content type<select id="side-right-media-type"><option value="image">Current image</option><option value="video">Video</option></select></label>
+                  <p class="side-ad-preview-note">The video plays inside the same frame as the current image (same size and position), shown whole without cropping. It loads only when a visitor presses play. The current image is kept, so you can switch back to it at any time. MP4 only, maximum 50 MB (storage limit).</p>
+                  <label class="settings-message" for="side-right-video">MP4 video<input class="side-ad-file" id="side-right-video" type="file" accept="video/mp4,.mp4"></label>
+                  <label class="settings-message" for="side-right-poster">Cover image (optional; otherwise the current image is used)<input class="side-ad-file" id="side-right-poster" type="file" accept="image/*"></label>
+                  <div class="settings-actions"><button class="save" type="button" id="side-right-video-upload">Upload video</button><button class="side-ad-remove" type="button" id="side-right-video-remove">Remove video</button></div>
+                  <progress id="side-right-video-progress" max="100" value="0" hidden></progress>
+                  <p class="side-ad-video-status" id="side-right-video-status" role="status" aria-live="polite"></p>
+                  <div class="side-ad-preview" id="side-right-video-preview"><span class="side-ad-preview-empty">No video uploaded</span></div>
+                </fieldset>
                 <div class="settings-actions"><button class="save" type="submit">Save right ad</button><button class="side-ad-remove" type="button" data-side-ad-remove="right">Remove image</button></div>
               </form>
             </article>
@@ -315,8 +333,8 @@
     </section>
   </main>
   <script src="tex-auth.js"></script>
-  <script src="tex-admin.js?v=20261015-complete-counts"></script>
-  <script src="contractor-admin.js?v=20261015-separate-banners"></script>
+  <script src="tex-admin.js?v=20261019-side-video"></script>
+  <script src="contractor-admin.js?v=20261019-side-video"></script>
   <script src="contractor-notice-editor.js?v=20261012b"></script>
   <script src="tex-catalog-images-admin.js?v=2"></script>
 </body>
