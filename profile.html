@@ -93,7 +93,7 @@
       <aside class="panel">
         <h2>Profile details</h2>
         <dl class="facts">
-          <div class="fact"><dt>Rating</dt><dd id="rating">Not available</dd></div>
+          <div class="fact"><dt id="rating-label">Quote</dt><dd id="rating">Text directly — no middleman</dd></div>
           <div class="fact"><dt>Location</dt><dd id="location">Not available</dd></div>
           <div class="fact"><dt>Experience</dt><dd>Not available</dd></div>
         </dl>
@@ -124,7 +124,8 @@
         name:row.display_name,
         state:row.state,
         initials:String(row.display_name || 'T').trim().split(/\s+/).slice(0,2).map((part) => part[0]).join('').toUpperCase(),
-        rating:'Published profile',
+        ratingLabel:'Quote',
+        rating:'Text directly — no middleman',
         location:[row.city, row.state].filter(Boolean).join(', ') || 'Texas',
         id:row.id,
         about:row.about || 'This contractor has added a service profile and is ready to receive direct messages.',
@@ -140,7 +141,7 @@
       const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY,...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {})}});
       if(!r.ok)throw Error('Profile unavailable');
       const e=(await r.json())[0];if(!e)return null;
-      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
+      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),ratingLabel:'Rating',rating:'Local business',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
     }
     const renderProfile = async () => {
       directoryToken = await TexAuth.getAccessToken();
@@ -158,6 +159,7 @@
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
     TexStateAvatar.apply(document.getElementById('avatar'), {name:profile.name, state:profile.state, photoUrl:profile.profilePhoto});
+    document.getElementById('rating-label').textContent = profile.ratingLabel || 'Rating';
     document.getElementById('rating').textContent = profile.rating;
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = profile.service;
