@@ -151,10 +151,13 @@
     const params = new URLSearchParams(window.location.search);
     const service = params.get('service') || 'Local service';
     const stored = JSON.parse(localStorage.getItem('texcontractor-location') || '{}');
-    let city = params.get('city') || stored.city || 'Arlington';
-    let state = params.get('state') || stored.state || 'TX';
-    const zip = params.has('zip') ? params.get('zip').trim() : (params.has('city') || params.has('state') ? '' : stored.zip || '');
-    const locationText = `${city}, ${state} · ZIP ${zip}`;
+    const hasLocationParams = params.has('city') || params.has('state') || params.has('zip');
+    // A state-only search ("Texas") arrives with no city: list the whole state instead of
+    // pretending the visitor is in Arlington.
+    let city = params.get('city') || (hasLocationParams ? '' : stored.city || (stored.state ? '' : 'Arlington'));
+    let state = params.get('state') || (hasLocationParams ? '' : stored.state) || 'TX';
+    const zip = params.has('zip') ? params.get('zip').trim() : (hasLocationParams ? '' : stored.zip || '');
+    const locationText = [[city, state].filter(Boolean).join(', '), zip ? `ZIP ${zip}` : ''].filter(Boolean).join(' · ');
     document.title = `${service} · TexContractor`;
     document.getElementById('service-label').textContent = service;
     document.getElementById('location-label').textContent = locationText;
@@ -485,7 +488,9 @@
         });
         providers.replaceChildren(...allCards);
         const scope = document.getElementById('results-scope');
-        if (scope) scope.textContent = `Showing ${allCards.length} matching contractors in ${state}. ${city} listings appear first; other cities are ordered by available Census 2025 straight-line city distances (otherwise alphabetically). Confirm travel availability and fees directly.`;
+        if (scope) scope.textContent = city
+          ? `Showing ${allCards.length} matching contractors in ${state}. ${city} listings appear first; other cities are ordered by available Census 2025 straight-line city distances (otherwise alphabetically). Confirm travel availability and fees directly.`
+          : `Showing ${allCards.length} matching contractors in ${state}, ordered by city. Confirm travel availability and fees directly.`;
         if (!providers.children.length) {
           if (scope) scope.textContent = `No matching ${service === 'Local service' ? 'service' : service} contractors are currently listed in ${state}. You do not need to search city by city.`;
           showEmpty('No matching contractors are currently listed in this state for the selected service.');
