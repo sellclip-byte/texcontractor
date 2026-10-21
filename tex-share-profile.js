@@ -43,12 +43,21 @@
   if (publicButton) {
     const params = new URLSearchParams(location.search);
     const id = params.get('contractor');
-    if (id) {
+    const importedId = params.get('imported');
+    if (id || importedId) {
+      // Local-provider (imported) listings use ?imported=<id>; registered technicians use ?contractor=<id>.
+      const shareUrl = () => {
+        if (id) return profileUrl(id, params.get('service'));
+        const url = new URL('profile.html', SITE);
+        url.searchParams.set('imported', importedId);
+        if (params.get('service')) url.searchParams.set('service', params.get('service'));
+        return url.href;
+      };
       publicButton.hidden = false;
       publicButton.addEventListener('click', async () => {
         const name = (document.getElementById('contractor-name')?.textContent || 'this technician').trim();
         const result = await share({
-          url: profileUrl(id, params.get('service')),
+          url: shareUrl(),
           title: `${name} · TexContractor`,
           text: `${name} on TexContractor — text them directly for a quote:`
         });
