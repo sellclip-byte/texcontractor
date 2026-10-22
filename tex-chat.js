@@ -54,7 +54,8 @@
   if (!document.getElementById('tex-chat-style')) {
     const s = document.createElement('style');
     s.id = 'tex-chat-style';
-    s.textContent = `.provider-contact-chat{background:#fff!important;color:#0f5132!important;border:1.5px solid #0f5132!important}
+    s.textContent = `.provider-contact-chat[hidden],.chat-action[hidden]{display:none!important}
+.provider-contact-chat{background:#fff!important;color:#0f5132!important;border:1.5px solid #0f5132!important}
 .provider-contact-chat:hover{background:#eef7f2!important}.provider-contact-chat svg{fill:none;stroke:currentColor}
 .tex-chat-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#d92d20;color:#fff;font:700 11px/1 system-ui,sans-serif;vertical-align:middle}
 .tex-chat-float{position:fixed;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;background:#fff;color:#0f5132;border:1.5px solid #0f5132;font:700 14px/1 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.15)}`;
