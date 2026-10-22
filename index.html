@@ -36,6 +36,19 @@
       padding: 0;
       line-height: 1.5;
     }
+    .req-tool { background:#b45309 !important; border-color:#b45309 !important; color:#fff !important; text-decoration:none; gap:6px !important; width:auto !important; padding:0 10px !important; }
+    .req-tool:hover { background:#92400e !important; }
+    .req-tool-n { background:#fff; color:#b45309; border-radius:999px; padding:0 7px; font-size:.72rem; font-weight:800; }
+    .req-strip { background:#fff7ed; border-bottom:1px solid #fed7aa; }
+    .req-strip-in { max-width:1240px; margin:0 auto; padding:12px 32px; display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
+    .req-strip-tag { background:#b45309; color:#fff; font-weight:800; font-size:.76rem; padding:4px 10px; border-radius:999px; }
+    .req-strip-text { font-weight:800; color:#7c2d12; flex:1 1 320px; }
+    .req-strip-count { font-weight:400; color:#9a3412; font-size:.9rem; margin-left:6px; }
+    .req-strip-btns { display:flex; gap:8px; }
+    .req-strip-btns a { white-space:nowrap; font-weight:800; text-decoration:none; border-radius:9px; padding:8px 14px; }
+    .req-strip-post { background:#075c4b; color:#fff; }
+    .req-strip-see { color:#b45309; border:1.5px solid #b45309; background:#fff; padding:6.5px 12px !important; }
+    @media (max-width:700px) { .req-tool-label { display:none; } .req-tool { padding:0 8px !important; gap:4px !important; } .req-strip-in { padding:12px 16px; } }
     header {
       background: #fbfcfd;
       border-bottom: 1px solid #dbe5e2;
@@ -563,6 +576,7 @@
           <button class="search-button" type="submit">Search</button>
         </form>
         <div class="header-tools">
+          <a class="header-tool req-tool" href="requests.html" title="Customer requests"><span class="header-tool-icon" aria-hidden="true">📋</span><span class="req-tool-label">Requests</span><span class="req-tool-n" id="req-open-count" hidden></span></a>
           <button class="header-tool" id="account-toggle" type="button" title="Sign in or sign out"><span class="header-tool-icon">♙</span><span class="header-tool-label" id="account-label">Sign in</span></button>
           <button class="header-tool" id="share-site" type="button" title="Share TexContractor"><span class="header-tool-icon">↗</span><span class="header-tool-label">Share</span></button>
           <button class="header-tool" id="media-toggle" type="button" title="Share on media"><span class="header-tool-icon">◉</span><span class="header-tool-label">Media</span></button>
@@ -588,6 +602,11 @@
       </div>
     </div>
   </header>
+  <div class="req-strip"><div class="req-strip-in">
+    <span class="req-strip-tag">📋 NEW</span>
+    <span class="req-strip-text">Need a job done? Post a request with photos and get offers from local technicians.<span class="req-strip-count" id="req-strip-count" hidden></span></span>
+    <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
+  </div></div>
 
 <dialog class="join-box" data-join aria-label="Create your TexContractor account">
 <button class="join-dismiss" type="button" aria-label="Close registration window">×</button>
@@ -1339,5 +1358,11 @@
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js?v=20261017-location-3"></script>
 <script src="tex-chat.js?v=20261022"></script>
+<script>
+(function(){
+  function show(n){ if(!n) return; var a=document.getElementById('req-open-count'), b=document.getElementById('req-strip-count'); if(a){a.textContent=n;a.hidden=false;} if(b){b.textContent='· '+n+' open request'+(n===1?'':'s');b.hidden=false;} }
+  window.addEventListener('load', function(){ if(window.TexChat) TexChat.rpc('texcontractor_requests_open_count', {}, false).then(function(n){ show(Number(n)||0); }).catch(function(){}); });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18516159223"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-18516159223');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Customer Requests · Post a job and get offers from local technicians | TexContractor</title>
+  <meta name="description" content="Post a job with photos and get offers from local technicians on TexContractor. Choose how they contact you: chat, text, or call.">
+  <link rel="canonical" href="https://texcontractor.com/requests.html">
+  <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
+  <style>
+    :root { --green:#075c4b; --green2:#064c3f; --ink:#0f172a; --muted:#64748b; --line:#dbe5e2; --req:#b45309; --req-dark:#7c2d12; --req-soft:#fff7ed; --req-line:#fed7aa; }
+    * { box-sizing:border-box; }
+    [hidden] { display:none !important; }
+    body { margin:0; font-family:"Trebuchet MS","Segoe UI",Arial,Helvetica,sans-serif; background:#fbfcfd; color:var(--ink); line-height:1.5; }
+    a { color:inherit; }
+    header { background:#fbfcfd; border-bottom:1px solid var(--line); padding:0 32px; position:sticky; top:0; z-index:50; box-shadow:0 4px 16px rgba(15,23,42,.05); }
+    .hi { max-width:1240px; min-height:76px; margin:0 auto; display:flex; align-items:center; gap:16px; }
+    .hi .logo img { height:56px; width:auto; display:block; }
+    nav { display:flex; gap:8px; margin-left:auto; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    nav a { display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 11px; border:1px solid var(--line); border-radius:8px; color:#334155; background:#fff; font-weight:800; font-size:.86rem; text-decoration:none; white-space:nowrap; }
+    nav a:hover { color:var(--green); border-color:#9dd8c6; background:#f3fffa; }
+    nav a.req { background:var(--req); border-color:var(--req); color:#fff; }
+    nav .n { background:#fff; color:var(--req); border-radius:999px; padding:0 7px; font-size:.72rem; }
+    .band { background:linear-gradient(180deg,var(--req-soft),#fbfcfd); border-bottom:1px solid var(--req-line); }
+    .band .in { max-width:1240px; margin:0 auto; padding:26px 32px 20px; }
+    .tag { display:inline-flex; align-items:center; gap:6px; background:var(--req); color:#fff; font-weight:800; font-size:.76rem; padding:4px 10px; border-radius:999px; letter-spacing:.3px; }
+    h1 { margin:10px 0 4px; font-size:2rem; line-height:1.2; }
+    .band p { margin:0; color:#475569; max-width:760px; }
+    .steps { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+    .steps span { background:#fff; border:1px solid var(--req-line); border-radius:10px; padding:5px 10px; font-size:.84rem; font-weight:700; color:var(--req-dark); }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; background:var(--green); color:#fff; border:0; border-radius:9px; padding:10px 18px; font:inherit; font-weight:800; cursor:pointer; text-decoration:none; }
+    .btn:hover { background:var(--green2); }
+    .btn:disabled { opacity:.6; cursor:default; }
+    .btn.ghost { background:#fff; color:var(--green); border:1.5px solid var(--green); }
+    .btn.full { width:100%; }
+    .post-row { margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .filters { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .filters select, .filters input { height:40px; min-width:190px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; padding:0 10px; font:inherit; font-size:.92rem; color:#334155; }
+    main { max-width:1240px; margin:0 auto; padding:22px 32px 48px; }
+    .mine-box { background:#fff; border:1px solid var(--line); border-top:4px solid var(--req); border-radius:12px; padding:14px 16px; margin-bottom:20px; }
+    .mine-box h2 { margin:0 0 6px; font-size:1.1rem; }
+    .mine-row { display:flex; align-items:center; gap:12px; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; margin-top:8px; flex-wrap:wrap; }
+    .mine-row.closed { opacity:.55; }
+    .mine-row b { display:block; }
+    .mine-row small { color:var(--muted); }
+    .mine-row .acts { margin-left:auto; display:flex; gap:8px; }
+    .close-btn { background:#fff; color:#b42318; border:1.5px solid #b42318; border-radius:8px; padding:6px 10px; font:inherit; font-weight:800; font-size:.82rem; cursor:pointer; }
+    .msgs-link { border:1.5px solid var(--green); color:var(--green); border-radius:8px; padding:6px 10px; font-weight:800; font-size:.82rem; text-decoration:none; }
+    .new { background:#d92d20; color:#fff; border-radius:999px; font-size:.72rem; font-weight:800; padding:1px 7px; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .card { background:#fff; border:1px solid var(--line); border-left:5px solid var(--req); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; box-shadow:0 2px 10px rgba(15,23,42,.04); min-width:0; }
+    .top { display:flex; gap:6px 8px; align-items:center; flex-wrap:wrap; font-size:.82rem; color:var(--muted); }
+    .svc { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; font-weight:800; padding:2px 9px; border-radius:999px; }
+    .match { background:var(--req-soft); color:var(--req-dark); border:1px solid var(--req-line); font-weight:800; padding:2px 8px; border-radius:999px; }
+    .open { margin-left:auto; font-weight:800; color:var(--req); }
+    .card h3 { margin:8px 0 4px; font-size:1.08rem; line-height:1.3; overflow-wrap:anywhere; }
+    .card p { margin:0 0 10px; color:#334155; white-space:pre-wrap; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+    .card p.expanded { display:block; }
+    .more { border:0; background:none; color:var(--green); font:inherit; font-weight:800; font-size:.84rem; padding:0; margin:-6px 0 10px; cursor:pointer; align-self:flex-start; }
+    .ph { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
+    .ph a { display:block; aspect-ratio:1; border-radius:9px; overflow:hidden; border:1px solid #e2e8f0; background:#fff; }
+    .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+    .foot { margin-top:auto; border-top:1px dashed #e2e8f0; padding-top:10px; display:grid; gap:10px; }
+    .ways { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+    .ways span, .ways a { font-size:.78rem; font-weight:800; border-radius:8px; padding:3px 8px; border:1px solid var(--green); color:var(--green); background:#f0fdf8; text-decoration:none; }
+    .ways a { background:var(--green); color:#fff; }
+    .offers { font-size:.82rem; font-weight:800; color:#334155; margin-left:auto; white-space:nowrap; }
+    .bar { display:inline-block; width:56px; height:6px; border-radius:9px; background:#e2e8f0; vertical-align:middle; margin-left:6px; overflow:hidden; }
+    .bar i { display:block; height:100%; background:var(--req); }
+    .status-note { font-size:.84rem; font-weight:800; color:var(--green); text-align:center; padding:9px; border-radius:9px; background:#f0fdf8; }
+    .empty { grid-column:1/-1; text-align:center; color:var(--muted); background:#fff; border:1px dashed #cbd5e1; border-radius:12px; padding:36px 16px; }
+    .empty b { display:block; color:var(--ink); font-size:1.1rem; margin-bottom:6px; }
+    .load { display:flex; justify-content:center; margin-top:20px; }
+    .error { color:#b42318; font-weight:700; }
+    dialog { border:0; border-radius:14px; padding:0; width:min(560px,calc(100vw - 24px)); max-height:calc(100vh - 24px); box-shadow:0 24px 60px rgba(15,23,42,.3); }
+    dialog::backdrop { background:rgba(15,23,42,.5); }
+    .dlg { padding:18px 20px 20px; border-top:5px solid var(--req); }
+    .dlg-head { display:flex; align-items:flex-start; gap:10px; }
+    .dlg h2 { margin:0; font-size:1.25rem; }
+    .dlg .sub { margin:2px 0 6px; color:var(--muted); font-size:.88rem; }
+    .x { margin-left:auto; border:0; background:#f1f5f9; width:34px; height:34px; border-radius:50%; font-size:1.2rem; cursor:pointer; }
+    label.f { display:block; font-size:.84rem; font-weight:800; color:#334155; margin:10px 0 4px; }
+    .dlg input[type=text], .dlg input[type=tel], .dlg select, .dlg textarea { width:100%; border:1px solid #cbd5e1; border-radius:8px; padding:9px 10px; font:inherit; font-size:.95rem; background:#fff; color:var(--ink); }
+    .dlg textarea { min-height:96px; resize:vertical; }
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .slots { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .slot { aspect-ratio:1; border:1.5px dashed #cbd5e1; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:1.6rem; background:#fff; position:relative; overflow:hidden; cursor:pointer; padding:0; font-family:inherit; }
+    .slot img { width:100%; height:100%; object-fit:cover; }
+    .slot .rm { position:absolute; top:3px; right:3px; width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,.65); color:#fff; font-size:13px; display:flex; align-items:center; justify-content:center; }
+    .hint { font-size:.78rem; color:var(--muted); margin-top:4px; }
+    .opt { display:flex; align-items:center; gap:8px; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-top:6px; font-size:.9rem; cursor:pointer; }
+    .opt input { width:18px; height:18px; accent-color:var(--green); margin:0; }
+    .opt small { color:var(--muted); margin-left:auto; font-size:.76rem; }
+    .fine { margin:6px 2px 0; font-size:.7rem; line-height:1.35; color:#64748b; }
+    .safe { margin-top:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:9px 12px; font-size:.84rem; color:#334155; }
+    .msg-line { min-height:1.3em; margin:10px 0 0; font-size:.88rem; }
+    .offer-for { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; font-size:.88rem; margin:8px 0 0; }
+    footer { border-top:1px solid var(--line); padding:18px 32px; text-align:center; color:var(--muted); font-size:.84rem; }
+    footer a { color:var(--green); font-weight:700; }
+    @media (max-width:1000px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:700px) {
+      header { padding:0 14px; }
+      .hi { min-height:64px; gap:8px; }
+      .hi .logo img { height:42px; }
+      nav a { padding:0 8px; font-size:.8rem; }
+      nav a .lbl { display:none; }
+      .band .in, main { padding-left:16px; padding-right:16px; }
+      h1 { font-size:1.5rem; }
+      .filters select, .filters input { min-width:0; flex:1 1 140px; }
+      .grid { grid-template-columns:1fr; }
+      dialog { width:100vw; max-width:100vw; max-height:100dvh; height:100dvh; border-radius:0; margin:0; }
+      .row2 { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hi">
+      <a class="logo" href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor" width="132" height="56"></a>
+      <nav>
+        <a href="index.html" title="Find a technician">⌕ <span class="lbl">Find a technician</span></a>
+        <a class="req" href="requests.html" aria-current="page">📋 <span class="lbl">Requests</span> <span class="n" id="open-count" hidden></span></a>
+        <a href="chat.html" title="Messages">💬 <span class="lbl">Messages</span></a>
+        <a href="auth.html?return_to=requests.html" id="account-link">♙ <span class="lbl" id="account-label">Sign in</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="band">
+    <div class="in">
+      <span class="tag">📋 CUSTOMER REQUESTS</span>
+      <h1>Tell local technicians what you need</h1>
+      <p>Post your job with up to 4 photos. Technicians in your area send you offers on TexContractor. You choose how they contact you: chat, text, or call.</p>
+      <div class="steps"><span>1 · Post your request</span><span>2 · Get up to 5 offers</span><span>3 · Reply to the one you like</span><span>4 · Close the request</span></div>
+      <div class="post-row"><button class="btn" type="button" id="open-post">＋ Post your request</button></div>
+      <div class="filters">
+        <select id="f-service" aria-label="Service"><option value="">All services</option></select>
+        <select id="f-state" aria-label="State"><option value="">All states</option></select>
+        <input id="f-city" list="f-city-list" placeholder="All cities" aria-label="City">
+        <datalist id="f-city-list"></datalist>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="mine-box" id="mine" hidden>
+      <h2>My requests</h2>
+      <div id="mine-list"></div>
+    </section>
+    <section class="grid" id="grid" aria-live="polite"></section>
+    <div class="load"><button class="btn ghost" type="button" id="load-more" hidden>Load more</button></div>
+  </main>
+
+  <footer>TexContractor · <a href="index.html">Find a technician</a> · <a href="contractor-register.html">List your service</a> · texcontractor.help@gmail.com</footer>
+
+  <dialog id="post-dlg" aria-labelledby="post-title">
+    <form class="dlg" id="post-form" method="dialog" novalidate>
+      <div class="dlg-head"><div><h2 id="post-title">Post your request</h2><p class="sub">Takes about one minute.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <label class="f" for="p-service">Service</label>
+      <select id="p-service" required><option value="">Choose a service</option></select>
+      <div class="row2">
+        <div><label class="f" for="p-state">State</label><select id="p-state" required><option value="">Choose a state</option></select></div>
+        <div><label class="f" for="p-city">City</label><input type="text" id="p-city" list="p-city-list" placeholder="Type your city" autocomplete="address-level2" required maxlength="80"><datalist id="p-city-list"></datalist></div>
+      </div>
+      <label class="f" for="p-title">Title</label>
+      <input type="text" id="p-title" placeholder="e.g. Leak under the kitchen sink" required maxlength="120">
+      <label class="f" for="p-body">What do you need?</label>
+      <textarea id="p-body" placeholder="Describe the job, size, and when you need it…" required maxlength="2000"></textarea>
+      <label class="f">Photos (up to 4)</label>
+      <div class="slots" id="slots"></div>
+      <input type="file" id="p-photos" accept="image/*" multiple hidden>
+      <div class="hint">Photos help technicians give you an accurate offer.</div>
+      <label class="f">How can technicians contact you?</label>
+      <label class="opt"><input type="checkbox" id="c-chat" checked> 💬 Chat on TexContractor<small>phone stays private</small></label>
+      <label class="opt"><input type="checkbox" id="c-text"> ✉ Text message<small>shows your number</small></label>
+      <label class="opt"><input type="checkbox" id="c-call"> 📞 Phone call<small>shows your number</small></label>
+      <div id="phone-field" hidden><label class="f" for="p-phone">Your mobile number</label><input type="tel" id="p-phone" placeholder="(214) 555-0123" autocomplete="tel" maxlength="20"></div>
+      <p class="fine">🔒 With Chat, your number stays private. If you choose Text or Call, your number is shown only to signed-in technicians, never to visitors or search engines, and it is hidden as soon as you close your request. Your title, description, city and photos are public.</p>
+      <div class="safe">💬 Offers arrive in your Messages.<br>✓ Close your request when you find the right technician.</div>
+      <p class="msg-line" id="post-msg" role="status"></p>
+      <button class="btn full" type="submit" id="post-submit">Post request</button>
+    </form>
+  </dialog>
+
+  <dialog id="offer-dlg" aria-labelledby="offer-title">
+    <form class="dlg" id="offer-form" method="dialog" novalidate>
+      <div class="dlg-head"><div><h2 id="offer-title">Send an offer</h2><p class="sub">Your offer arrives in the customer's Messages.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <div class="offer-for" id="offer-for"></div>
+      <label class="f" for="o-msg">Your offer</label>
+      <textarea id="o-msg" placeholder="When you can do it, an estimated price, and anything you need to know…" maxlength="1500" required></textarea>
+      <p class="msg-line" id="offer-msg" role="status"></p>
+      <button class="btn full" type="submit" id="offer-submit">Send offer</button>
+    </form>
+  </dialog>
+
+  <script src="tex-auth.js?v=20261021-signup"></script>
+  <script src="tex-chat.js?v=20261022"></script>
+  <script>
+  (() => {
+    const SERVICES = ["Appliance Repair or Maintenance", "Architectural Services", "Babysitting & Childcare Services", "Barber & Hair Styling Services", "Bathroom Remodel", "Carpet Cleaning", "Central Air Conditioning Repair or Maintenance", "Computer Repair", "Concrete Installation", "DJ Services", "Deck or Porch Remodel or Addition", "Dog Grooming", "Dog Training", "Dog Training & Horse Riding Lessons", "Door Installation", "Drywall Repair and Texturing", "Electrical and Wiring Repair", "Event Planning", "Fence and Gate Installation", "Floor Installation or Replacement", "Furniture Assembly", "Furniture Moving and Heavy Lifting", "Garage Door Repair", "General Contracting", "Gutter Cleaning and Maintenance", "Handyman", "Heating System Repair or Maintenance", "Home Foundation Repair", "Home Inspection Consulting", "House Cleaning", "In-Home Nursing Care", "Interior Design", "Interior Painting", "Junk Removal", "Lawn Mower, Water Pump & Outdoor Equipment Repair", "Lighting Installation", "Local Moving (under 50 miles)", "Lock Installation and Repair", "Metalwork", "Mobile Auto Detailing", "Mobile Auto Mechanic", "Notarization", "Outdoor Landscaping and Design", "Personal Training", "Pest Control Services", "Plumbing Drain Repair", "Plumbing Pipe Repair", "Pressure Washing", "Private Taxi & Transportation Services", "Roof Repair or Maintenance", "Specialty Meal Preparation & Dietary Cooking", "Swimming Pool Cleaning & Maintenance", "TV Mounting", "Tree Trimming and Removal", "Tutoring & Education Services", "Upholstery and Furniture Cleaning", "Wedding Officiant", "Wedding and Event Makeup", "Wedding and Event Photography", "Window Repair", "Window Tinting"];
+    const STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming", "DC": "Washington, D.C."};
+    const C = window.TexChat;
+    const BUCKET = 'texcontractor-requests';
+    const PAGE = 24;
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+    const photoUrl = (p) => C.SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + p.split('/').map(encodeURIComponent).join('/');
+    const ago = (iso) => {
+      const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
+      if (m < 60) return m <= 1 ? 'just now' : m + ' minutes ago';
+      const h = Math.round(m / 60); if (h < 24) return h === 1 ? '1 hour ago' : h + ' hours ago';
+      const d = Math.round(h / 24); return d === 1 ? 'Yesterday' : d + ' days ago';
+    };
+    const fmtPhone = (p) => { const d = String(p || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''); return d.length === 10 ? `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}` : p; };
+    let user = null, offset = 0, current = [], offerTarget = null, picked = [];
+
+    // Selects
+    const fill = (sel, items) => { for (const [v, t] of items) sel.append(new Option(t, v)); };
+    fill($('f-service'), SERVICES.map((s) => [s, s])); fill($('p-service'), SERVICES.map((s) => [s, s]));
+    const stateItems = Object.entries(STATES).sort((a, b) => a[1].localeCompare(b[1]));
+    fill($('f-state'), stateItems.map(([k, v]) => [k, v])); fill($('p-state'), stateItems.map(([k, v]) => [k, v]));
+    $('p-state').value = 'TX';
+
+    let citiesPromise = null;
+    const cities = () => citiesPromise || (citiesPromise = fetch('city-coordinates-2025.json', { cache: 'force-cache' }).then((r) => r.json()).then((d) => {
+      const by = {}; for (const k of Object.keys(d)) { const [st, c] = k.split('|'); (by[st] ||= []).push(c.replace(/\b\w/g, (x) => x.toUpperCase())); } return by;
+    }).catch(() => ({})));
+    const fillCities = async (stateSel, list) => { list.replaceChildren(); const st = stateSel.value; if (!st) return; const by = await cities(); if (stateSel.value !== st) return; for (const c of by[st] || []) list.append(new Option(c)); };
+    $('p-state').addEventListener('change', () => { $('p-city').value = ''; fillCities($('p-state'), $('p-city-list')); });
+    $('f-state').addEventListener('change', () => { $('f-city').value = ''; fillCities($('f-state'), $('f-city-list')); load(true); });
+    $('f-service').addEventListener('change', () => load(true));
+    $('f-city').addEventListener('change', () => load(true));
+
+    // Board
+    function card(r) {
+      const el = document.createElement('article');
+      el.className = 'card';
+      const photos = (r.photo_paths || []).slice(0, 4);
+      const ways = [];
+      if (r.contact_chat) ways.push('<span>💬 Chat</span>');
+      if (r.contact_text) ways.push(r.phone ? `<a href="sms:${esc(r.phone)}">✉ Text ${esc(fmtPhone(r.phone))}</a>` : '<span>✉ Text</span>');
+      if (r.contact_call) ways.push(r.phone ? `<a href="tel:${esc(r.phone)}">📞 Call</a>` : '<span>📞 Call</span>');
+      let action;
+      if (r.mine) action = '<div class="status-note">This is your request</div>';
+      else if (r.offered) action = '<div class="status-note">✓ You sent an offer</div>';
+      else action = '<button class="btn full" type="button" data-offer>Send an offer</button>';
+      el.innerHTML = `
+        <div class="top"><span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.matches ? '<span class="match">Matches your service</span>' : ''}</div>
+        <div class="top" style="margin-top:4px"><span>${esc(ago(r.created_at))}</span><span class="open">● Open</span></div>
+        <h3>${esc(r.title)}</h3>
+        <p>${esc(r.body)}</p>
+        ${photos.length ? `<div class="ph">${photos.map((p) => `<a href="${photoUrl(p)}" target="_blank" rel="noopener"><img src="${photoUrl(p)}" alt="Request photo" loading="lazy"></a>`).join('')}</div>` : ''}
+        <div class="foot">
+          <div class="ways">${ways.join('')}<span class="offers" style="border:0;background:none;color:#334155;padding:0">${r.offers_count} of 5 offers<span class="bar"><i style="width:${Math.min(100, r.offers_count * 20)}%"></i></span></span></div>
+          ${action}
+        </div>`;
+      const p = el.querySelector('p');
+      requestAnimationFrame(() => { if (p.scrollHeight > p.clientHeight + 2) { const b = document.createElement('button'); b.className = 'more'; b.type = 'button'; b.textContent = 'Read more'; b.onclick = () => { p.classList.toggle('expanded'); b.textContent = p.classList.contains('expanded') ? 'Show less' : 'Read more'; }; p.after(b); } });
+      el.querySelector('[data-offer]')?.addEventListener('click', () => openOffer(r));
+      return el;
+    }
+
+    async function load(reset) {
+      if (reset) { offset = 0; current = []; $('grid').replaceChildren(); }
+      $('load-more').hidden = true;
+      try {
+        const rows = await C.rpc('texcontractor_requests_list', { p_service: $('f-service').value || null, p_state: $('f-state').value || null, p_city: $('f-city').value.trim() || null, p_limit: PAGE, p_offset: offset }, false) || [];
+        current.push(...rows); offset += rows.length;
+        for (const r of rows) $('grid').append(card(r));
+        if (!current.length) {
+          const filtered = $('f-service').value || $('f-state').value || $('f-city').value.trim();
+          $('grid').innerHTML = `<div class="empty"><b>${filtered ? 'No open requests match these filters yet.' : 'No open requests yet.'}</b>Be the first: post what you need and get offers from local technicians.<br><br><button class="btn" type="button" id="empty-post">＋ Post your request</button></div>`;
+          $('empty-post').onclick = openPost;
+        }
+        $('load-more').hidden = rows.length < PAGE;
+      } catch (e) {
+        $('grid').innerHTML = '<div class="empty"><b>Requests are not available right now.</b>Please try again in a moment.</div>';
+      }
+    }
+    $('load-more').addEventListener('click', () => load(false));
+
+    async function loadCount() {
+      try { const n = Number(await C.rpc('texcontractor_requests_open_count', {}, false)) || 0; if (n) { $('open-count').textContent = n; $('open-count').hidden = false; } } catch (_) {}
+    }
+
+    async function loadMine() {
+      if (!user) { $('mine').hidden = true; return; }
+      try {
+        const rows = await C.rpc('texcontractor_my_requests', {}, true) || [];
+        $('mine').hidden = !rows.length;
+        $('mine-list').replaceChildren(...rows.map((r) => {
+          const d = document.createElement('div');
+          const open = r.status === 'open';
+          const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
+          d.className = 'mine-row' + (open ? '' : ' closed');
+          d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? `closes in ${days} day${days === 1 ? '' : 's'}` : 'closed'}</small></div>
+            <div class="acts">${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : ''}</div>`;
+          d.querySelector('.close-btn')?.addEventListener('click', async (ev) => {
+            if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return;
+            ev.target.disabled = true;
+            try { await C.rpc('texcontractor_request_close', { p_request_id: r.id }, true); await Promise.all([loadMine(), load(true), loadCount()]); }
+            catch (e) { alert(e.message); ev.target.disabled = false; }
+          });
+          return d;
+        }));
+      } catch (_) { $('mine').hidden = true; }
+    }
+
+    // Post dialog
+    const signInFor = (what) => { location.href = 'auth.html?mode=signup&intent=customer&return_to=' + encodeURIComponent('requests.html?' + what); };
+    function renderSlots() {
+      const wrap = $('slots'); wrap.replaceChildren();
+      for (let i = 0; i < 4; i++) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'slot';
+        if (picked[i]) {
+          b.innerHTML = `<img src="${picked[i].url}" alt="Selected photo ${i + 1}"><span class="rm" aria-hidden="true">×</span>`;
+          b.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+          b.onclick = () => { URL.revokeObjectURL(picked[i].url); picked.splice(i, 1); renderSlots(); };
+        } else { b.textContent = '＋'; b.setAttribute('aria-label', 'Add photos'); b.onclick = () => $('p-photos').click(); }
+        wrap.append(b);
+      }
+    }
+    $('p-photos').addEventListener('change', (e) => {
+      for (const f of e.target.files) { if (picked.length >= 4) break; if (/^image\//.test(f.type)) picked.push({ file: f, url: URL.createObjectURL(f) }); }
+      e.target.value = ''; renderSlots();
+    });
+    const syncPhone = () => { $('phone-field').hidden = !($('c-text').checked || $('c-call').checked); };
+    $('c-text').addEventListener('change', syncPhone); $('c-call').addEventListener('change', syncPhone);
+
+    async function openPost() {
+      if (!user) { signInFor('post=1'); return; }
+      $('post-msg').textContent = '';
+      if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
+      fillCities($('p-state'), $('p-city-list'));
+      renderSlots(); syncPhone();
+      $('post-dlg').showModal();
+    }
+    $('open-post').addEventListener('click', openPost);
+    renderSlots();
+
+    function shrink(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image(); const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const max = 1600, s = Math.min(1, max / Math.max(img.width, img.height));
+          const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+          const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url); c.toBlob((b) => b ? resolve(b) : reject(new Error('Photo could not be read.')), 'image/jpeg', 0.85);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('One photo could not be read. Try a JPG or PNG.')); };
+        img.src = url;
+      });
+    }
+    async function upload(blob) {
+      const t = await C.token();
+      const path = user.id + '/' + crypto.randomUUID() + '.jpg';
+      const r = await fetch(C.SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, { method: 'POST', headers: { apikey: C.headers(t).apikey, Authorization: 'Bearer ' + t, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' }, body: blob });
+      if (!r.ok) throw new Error('A photo could not be uploaded. Please try again.');
+      return path;
+    }
+
+    $('post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = $('post-msg'); msg.className = 'msg-line error';
+      const v = { service: $('p-service').value, state: $('p-state').value, city: $('p-city').value.trim(), title: $('p-title').value.trim(), body: $('p-body').value.trim() };
+      const chat = $('c-chat').checked, text = $('c-text').checked, call = $('c-call').checked;
+      const phone = $('p-phone').value.replace(/[^\d+]/g, '');
+      if (!v.service) return (msg.textContent = 'Choose a service.');
+      if (!v.state || v.city.length < 2) return (msg.textContent = 'Choose your state and city.');
+      if (v.title.length < 3) return (msg.textContent = 'Add a short title.');
+      if (v.body.length < 10) return (msg.textContent = 'Describe the job in a few words (at least 10 characters).');
+      if (!chat && !text && !call) return (msg.textContent = 'Choose at least one way technicians can contact you.');
+      if ((text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
+      const btn = $('post-submit'); btn.disabled = true; msg.className = 'msg-line';
+      try {
+        const paths = [];
+        for (let i = 0; i < picked.length; i++) { msg.textContent = `Uploading photo ${i + 1} of ${picked.length}…`; paths.push(await upload(await shrink(picked[i].file))); }
+        msg.textContent = 'Posting…';
+        await C.rpc('texcontractor_request_create', { p_service: v.service, p_state: v.state, p_city: v.city, p_title: v.title, p_body: v.body, p_photo_paths: paths, p_contact_chat: chat, p_contact_text: text, p_contact_call: call, p_phone: (text || call) ? phone : null }, true);
+        picked.forEach((p) => URL.revokeObjectURL(p.url)); picked = [];
+        $('p-title').value = ''; $('p-body').value = '';
+        $('post-dlg').close();
+        if (typeof gtag === 'function') gtag('event', 'request_posted', { service: v.service, state: v.state });
+        $('f-service').value = ''; $('f-state').value = ''; $('f-city').value = '';
+        await Promise.all([load(true), loadMine(), loadCount()]);
+        $('mine').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) { msg.className = 'msg-line error'; msg.textContent = err.message; }
+      finally { btn.disabled = false; }
+    });
+
+    // Offer dialog
+    async function openOffer(r) {
+      if (!user) { signInFor('offer=' + r.id); return; }
+      let state = 'ok';
+      try { state = await C.rpc('texcontractor_request_offer_check', { p_request_id: r.id }, true); } catch (_) {}
+      offerTarget = r;
+      $('offer-for').innerHTML = `<b>${esc(r.title)}</b><br>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)}`;
+      $('offer-msg').className = 'msg-line'; $('offer-msg').textContent = '';
+      $('o-msg').hidden = false; $('offer-submit').hidden = false; $('o-msg').previousElementSibling.hidden = false;
+      const block = (html) => { $('o-msg').hidden = true; $('o-msg').previousElementSibling.hidden = true; $('offer-submit').hidden = true; $('offer-msg').innerHTML = html; };
+      if (state === 'no_listing') block(`Only technicians with an approved <b>${esc(r.service)}</b> listing in <b>${esc(STATES[r.state] || r.state)}</b> can send offers for this request.<br><br><a class="btn" href="contractor-register.html">List your service</a>`);
+      else if (state === 'sent') block('✓ You already sent an offer for this request. Continue the conversation in <a href="chat.html">Messages</a>.');
+      else if (state === 'own') block('This is your own request.');
+      else if (state === 'closed') block('This request is closed or already has 5 offers.');
+      $('offer-dlg').showModal();
+    }
+    $('offer-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = $('o-msg').value.trim(); const msg = $('offer-msg');
+      if (text.length < 5) { msg.className = 'msg-line error'; msg.textContent = 'Write a short offer.'; return; }
+      const btn = $('offer-submit'); btn.disabled = true; msg.className = 'msg-line'; msg.textContent = 'Sending…';
+      try {
+        const chatId = await C.rpc('texcontractor_request_offer', { p_request_id: offerTarget.id, p_message: text }, true);
+        if (typeof gtag === 'function') gtag('event', 'request_offer_sent', { service: offerTarget.service });
+        location.href = 'chat.html?c=' + encodeURIComponent(chatId);
+      } catch (err) { msg.className = 'msg-line error'; msg.textContent = err.message; btn.disabled = false; }
+    });
+
+    document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+
+    (async () => {
+      user = window.TexAuth ? await TexAuth.getUser().catch(() => null) : null;
+      if (user) {
+        const name = user.user_metadata?.display_name || user.user_metadata?.full_name || (user.email || '').split('@')[0] || 'Account';
+        $('account-label').textContent = name; $('account-link').href = 'account.html';
+      }
+      await Promise.all([load(true), loadCount(), loadMine()]);
+      const q = new URLSearchParams(location.search);
+      if (q.get('post') && user) openPost();
+      const oid = q.get('offer');
+      if (oid && user) { const r = current.find((x) => x.id === oid); if (r) openOffer(r); }
+    })();
+  })();
+  </script>
+</body>
+</html>
