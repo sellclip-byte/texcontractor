@@ -43,4 +43,19 @@ jobs:
             git commit -m "Refresh city service pages from live directory"
             git pull --rebase origin seo-safe-review-20261011
             git push origin HEAD:seo-safe-review-20261011
+            echo "changed=1" >> "$GITHUB_ENV"
           fi
+      - name: Tell Bing and other IndexNow engines about the pages
+        if: env.changed == '1' || github.event_name == 'push'
+        run: |
+          sleep 150   # let GitHub Pages publish the new files first
+          python3 - <<'PY'
+          import json, re, urllib.request
+          key = '1fcf50d9e46b4178a64e2d1ade1e6a5e'
+          urls = re.findall(r'<loc>([^<]+)</loc>', open('sitemap-local.xml').read())[:10000]
+          body = json.dumps({'host': 'texcontractor.com', 'key': key, 'keyLocation': f'https://texcontractor.com/{key}.txt', 'urlList': urls}).encode()
+          req = urllib.request.Request('https://api.indexnow.org/indexnow', data=body, headers={'Content-Type': 'application/json; charset=utf-8'})
+          try:
+              with urllib.request.urlopen(req, timeout=60) as r: print('IndexNow status', r.status, 'for', len(urls), 'URLs')
+          except Exception as e: print('IndexNow not accepted:', e)
+          PY
