@@ -435,8 +435,12 @@
 
     // View one request
     async function getRequest(id) {
-      const rows = await C.rpc('texcontractor_request_get', { p_request_id: id }, false);
-      return Array.isArray(rows) ? rows[0] : rows;
+      try {
+        const rows = await C.rpc('texcontractor_request_get', { p_request_id: id }, false);
+        const r = Array.isArray(rows) ? rows[0] : rows;
+        if (r) return r;
+      } catch (_) {}
+      return current.find((x) => x.id === id) || null;
     }
     async function closeRequest(id, btn) {
       if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return false;
