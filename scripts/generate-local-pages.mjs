@@ -35,7 +35,8 @@ const cleanAbout = (s) => {
     .replace(/https?:\/\/\S+|www\.\S+/gi, '')
     .replace(/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, '')
     .replace(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g, '')
-    .replace(/[*]{2,}/g, ' ').replace(/\s+/g, ' ').trim();
+    .replace(/[*]{2,}/g, ' ').replace(/\s+/g, ' ').trim()
+    .replace(/\b(call|text|call or text|call\/text)( me| us)?( at| now| today)?\s*[:.!]*$/i, '').trim();
   if (text.length > 240) text = text.slice(0, 240).replace(/\s+\S*$/, '') + '…';
   return text;
 };
