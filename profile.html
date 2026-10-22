@@ -49,6 +49,8 @@
     .text-action { color:#1d1708; background:var(--gold); }
     .share-action { width:100%; border:2px solid #075c4b; background:#fff; color:#075c4b; font:inherit; font-weight:850; cursor:pointer; }
     .share-action[hidden] { display:none; }
+    .chat-action { width:100%; border:2px solid #0f5132; background:#fff; color:#0f5132; font:inherit; font-weight:850; cursor:pointer; }
+    .chat-action[hidden] { display:none; }
     .share-status { margin:8px 0 0; font-size:.88rem; color:#075c4b; }
     .share-status:empty { display:none; }
     .block-action { color:#fff; background:var(--red); border:0; font:inherit; cursor:pointer; }
@@ -83,7 +85,7 @@
       <section class="panel">
         <h2>About this contractor</h2>
         <p id="about-copy">This profile is available after a real contractor submits a service and the administrator approves it.</p>
-        <div class="action-row"><a class="action text-action" id="text-link" href="contractor.html">Text this contractor</a><button class="action share-action" id="share-profile-button" type="button" hidden>Share this profile</button></div><p class="share-status" id="share-profile-status" role="status" aria-live="polite"></p>
+        <div class="action-row"><a class="action text-action" id="text-link" href="contractor.html">Text this contractor</a><button class="action chat-action" id="chat-profile-button" type="button" hidden>Chat on TexContractor</button><button class="action share-action" id="share-profile-button" type="button" hidden>Share this profile</button></div><p class="share-status" id="share-profile-status" role="status" aria-live="polite"></p>
       </section>
       <section class="panel" style="grid-column:1 / -1">
         <h2>Work photos</h2>
@@ -240,6 +242,8 @@
     renderProfile();
   </script>
   <script src="tex-share-profile.js?v=20261021b"></script>
+  <script src="tex-chat.js?v=20261021"></script>
+  <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id);});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js"></script>
 </body>
