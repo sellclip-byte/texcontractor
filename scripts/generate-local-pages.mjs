@@ -1,3 +1,4 @@
+// Rebuilt on demand by pushing a change to this file; otherwise weekly.
 // Generate city + service landing pages ("Plumbing Drain Repair in Houston, TX") from the
 // live provider directory, so Google can send people searching for a service in their city.
 //
