@@ -304,7 +304,7 @@
       name.textContent = provider.display_name;
       const rating = document.createElement('p');
       rating.className = 'provider-rating';
-      rating.textContent = `${provider.city}, ${provider.state} · ${provider.years} years`;
+      const yrs = String(provider.years ?? '').trim(); rating.textContent = `${provider.city}, ${provider.state}` + (/^\d+\+?$/.test(yrs) ? ` · ${yrs} ${yrs === '1' ? 'year' : 'years'}` : '');
       const trade = document.createElement('p');
       trade.className = 'provider-trade';
       trade.textContent = provider.service;
