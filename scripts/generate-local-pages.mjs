@@ -22,11 +22,24 @@ const STATES = { AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'Califor
 const esc = (s) => String(s ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 85);
 const titleCase = (s) => String(s || '').trim().replace(/\s+/g, ' ').toLowerCase().replace(/(^|[\s\-'.])\S/g, (m) => m.toUpperCase());
-const cleanAbout = (s) => String(s || '')
-  .replace(/https?:\/\/\S+|www\.\S+/gi, '')
-  .replace(/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, '')
-  .replace(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g, '')
-  .replace(/\s+/g, ' ').trim();
+// Craigslist page chrome ("CL dallas > services > ... reply favorite flag") that slipped into some
+// imported descriptions, decorative unicode fonts and emoji are removed before anything is shown.
+const JUNK_LINE = /^(cl|post|account|reply|favorite|favorites|hide|flag|share|⚐|◀.*|.*▶|\d+ favorites?|posted .*|updated .*|©.*|.*map data.*|.*>\s*)$/i;
+const plain = (s) => String(s || '').normalize('NFKC').replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, '');
+const cleanAbout = (s) => {
+  let lines = String(s || '').normalize('NFKC').split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  // A pasted Craigslist page starts with "CL" and its navigation; the real text follows "Posted …".
+  if (/^cl$/i.test(lines[0] || '')) { const at = lines.findIndex((l) => /^posted\b/i.test(l)); lines = at >= 0 ? lines.slice(at + 1) : []; }
+  lines = lines.filter((l) => !JUNK_LINE.test(l) && !/prev.*next/i.test(l)).map(plain).map((l) => l.trim()).filter(Boolean);
+  let text = lines.join(' ')
+    .replace(/https?:\/\/\S+|www\.\S+/gi, '')
+    .replace(/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, '')
+    .replace(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g, '')
+    .replace(/[*]{2,}/g, ' ').replace(/\s+/g, ' ').trim();
+  if (text.length > 240) text = text.slice(0, 240).replace(/\s+\S*$/, '') + '…';
+  return text;
+};
+const cleanName = (s) => plain(s).replace(/[*()\[\]"“”]+/g, ' ').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}.!)]+$/gu, '').replace(/\s+/g, ' ').trim();
 
 async function fetchAll(table, select, extra = {}) {
   const rows = [];
@@ -100,7 +113,7 @@ async function main() {
   const raw = await loadRows();
   const servicePages = new Set(existsSync(join(root, 'services')) ? readdirSync(join(root, 'services')) : []);
   const rows = raw
-    .map((r) => ({ ...r, state: String(r.state || '').trim().toUpperCase(), city: titleCase(r.city), service: String(r.service || '').trim(), name: String(r.name || '').trim(), about: cleanAbout(r.about) }))
+    .map((r) => ({ ...r, state: String(r.state || '').trim().toUpperCase(), city: titleCase(r.city), service: String(r.service || '').trim(), name: cleanName(r.name), about: cleanAbout(r.about) }))
     .filter((r) => STATES[r.state] && r.city && r.service && r.name && r.id);
 
   // Group by state → city → service.
@@ -133,7 +146,7 @@ async function main() {
     const serviceSlug = slug(p.service) + '.html';
     const cards = p.list.map((r) => {
       const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
-      return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}${r.kind === 'contractor' ? ' · <span class="badge">Registered on TexContractor</span>' : ''}</div>${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
+      return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} providers based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
