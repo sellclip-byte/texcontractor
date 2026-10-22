@@ -49,8 +49,26 @@ begin
   where id = r.id;
 end $$;
 
+-- Owner sees who sent offers on his request.
+create or replace function public.texcontractor_request_offers_list(p_request_id uuid)
+returns table (chat_id uuid, service_id uuid, technician_name text, service text, city text, state text,
+  sent_at timestamptz, unread int, last_message text)
+language sql stable security definer set search_path = public as $$
+  select o.chat_id, o.service_id, coalesce(nullif(s.display_name, ''), 'Technician'), s.service, s.city, s.state, o.created_at,
+    (select count(*)::int from texcontractor_chat_messages m where m.chat_id = o.chat_id and m.sender_id <> auth.uid() and m.read_at is null),
+    c.last_message
+  from texcontractor_request_offers o
+  join texcontractor_requests r on r.id = o.request_id and r.customer_id = auth.uid()
+  join texcontractor_submissions s on s.id = o.service_id
+  join texcontractor_chats c on c.id = o.chat_id
+  where o.request_id = p_request_id
+  order by o.created_at;
+$$;
+
 revoke all on function public.texcontractor_request_update(uuid,text,text,text,text,text,jsonb,boolean,boolean,boolean,text) from public, anon;
 grant execute on function public.texcontractor_request_get(uuid) to anon, authenticated;
+revoke all on function public.texcontractor_request_offers_list(uuid) from public, anon;
+grant execute on function public.texcontractor_request_offers_list(uuid) to authenticated;
 grant execute on function public.texcontractor_request_update(uuid,text,text,text,text,text,jsonb,boolean,boolean,boolean,text) to authenticated;
 
 select 'Request view and edit are ready' as result;
