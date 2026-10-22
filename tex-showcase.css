@@ -6,6 +6,7 @@
 .showcase-public #videos,.showcase-public #images{grid-template-columns:repeat(auto-fill,minmax(180px,210px));gap:16px;align-items:start}
 .showcase-public #videos .card,.showcase-public #images .card{width:100%;max-width:210px}
 .showcase-public #videos video,.showcase-public #images img{width:100%;height:auto;max-height:none;aspect-ratio:4/5;object-fit:cover;background:#f3f7f5}
+.showcase-public #images img{object-position:center top}
 .showcase-public #videos .card-copy,.showcase-public #images .card-copy{padding:16px}
 .showcase-public #videos h3,.showcase-public #images h3{margin:0;font-size:1.05rem;line-height:1.35;overflow-wrap:anywhere}
 .showcase-public #videos .card-copy p,.showcase-public #images .card-copy p{margin:8px 0 0;font-size:.94rem;line-height:1.5}
