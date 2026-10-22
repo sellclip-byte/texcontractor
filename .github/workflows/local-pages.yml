@@ -1,0 +1,46 @@
+name: Build city service pages
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - 'scripts/generate-local-pages.mjs'
+      - '.github/workflows/local-pages.yml'
+  schedule:
+    - cron: '23 9 * * 1'   # every Monday: refresh pages from the live directory
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: local-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: seo-safe-review-20261011
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate pages from the live directory
+        run: node scripts/generate-local-pages.mjs
+      - name: Sanity checks
+        run: |
+          test -s local/index.html
+          test -s sitemap-local.xml
+          count="$(find local -name '*.html' | wc -l)"
+          echo "Local pages: $count"
+          test "$count" -gt 20
+          if grep -rEl '\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}' local/ ; then echo 'Phone number leaked into a page'; exit 1; fi
+      - name: Commit generated pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add local sitemap-local.xml
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh city service pages from live directory"
+            git pull --rebase origin seo-safe-review-20261011
+            git push origin HEAD:seo-safe-review-20261011
+          fi

@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://texcontractor.com/sitemap.xml
+Sitemap: https://texcontractor.com/sitemap-local.xml
