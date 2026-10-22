@@ -40,6 +40,16 @@
     .compose textarea { flex:1; min-width:0; resize:none; height:46px; max-height:140px; padding:11px 12px; border:1px solid var(--line); border-radius:12px; font:inherit; }
     .compose button { border:0; border-radius:12px; padding:0 18px; background:var(--green2); color:#fff; font:inherit; font-weight:800; cursor:pointer; }
     .compose button:disabled { opacity:.6; }
+    .compose .attach { background:#fff; color:var(--green); border:1.5px solid var(--green); padding:0 12px; font-size:20px; }
+    .compose .attach[hidden] { display:none; }
+    .picked { display:flex; gap:8px; flex-wrap:wrap; padding:8px 12px 0; background:#fff; }
+    .picked[hidden] { display:none; }
+    .picked figure { position:relative; margin:0; width:64px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--line); }
+    .picked img { width:100%; height:100%; object-fit:cover; display:block; }
+    .picked button { position:absolute; top:2px; right:2px; width:22px; height:22px; border-radius:50%; border:0; background:rgba(0,0,0,.65); color:#fff; font-size:14px; line-height:22px; padding:0; cursor:pointer; }
+    .photos { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:4px; margin-bottom:4px; min-width:min(240px,60vw); }
+    .photos a { display:block; border-radius:10px; overflow:hidden; background:rgba(0,0,0,.08); aspect-ratio:1; }
+    .photos img { width:100%; height:100%; object-fit:cover; display:block; }
     .empty { margin:auto; text-align:center; color:var(--muted); padding:24px; max-width:420px; }
     .note { font-size:12px; color:var(--muted); padding:0 16px 8px; }
     .error { color:#b42318; }
@@ -59,7 +69,8 @@
       <div class="thread-head"><button class="back-list" id="back-list" type="button">← Chats</button><div><b id="thread-name">Select a chat</b><div class="svc" id="thread-service"></div></div><span class="live" id="live" hidden>● Live</span></div>
       <div class="msgs" id="msgs" aria-live="polite"><p class="empty">Choose a conversation to read and reply.</p></div>
       <p class="note">Keep your conversation here. Never share passwords or payment card numbers in chat.</p>
-      <form class="compose" id="compose" hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…" required></textarea><button type="submit" id="send">Send</button></form>
+      <div class="picked" id="picked" hidden></div>
+      <form class="compose" id="compose" hidden><button class="attach" id="attach" type="button" title="Add photos" aria-label="Add photos" hidden>📷</button><input id="photo-input" type="file" accept="image/*" multiple hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…"></textarea><button type="submit" id="send">Send</button></form>
     </section>
   </main>
   <script src="tex-auth.js?v=20261021-signup"></script>
@@ -110,7 +121,9 @@
       rows.forEach((m) => {
         const div = document.createElement('div');
         div.className = 'msg ' + (m.sender_id === user.id ? 'mine' : 'theirs');
-        div.innerHTML = esc(m.body) + '<time>' + esc(when(m.created_at)) + '</time>';
+        const photos = Array.isArray(m.photo_paths) ? m.photo_paths : [];
+        div.innerHTML = (photos.length ? '<div class="photos">' + photos.map((p) => `<a href="#" data-photo="${esc(p)}" target="_blank" rel="noopener"><img alt="Photo" data-photo="${esc(p)}"></a>`).join('') + '</div>' : '') + esc(m.body) + '<time>' + esc(when(m.created_at)) + '</time>';
+        if (photos.length) signPhotos(div);
         msgsEl.appendChild(div); lastId = Math.max(lastId, m.id);
       });
       if (!append || atBottom) msgsEl.scrollTop = msgsEl.scrollHeight;
@@ -134,17 +147,75 @@
         if (rows.length) { render(rows, true); if (rows.some((r) => r.sender_id !== user.id)) C.rpc('texcontractor_chat_mark_read', { p_chat_id: current }, true).catch(() => {}); }
       } catch (_) {}
     }
+    // ---- Photos: private bucket, signed links that expire after an hour ----
+    const BUCKET = 'texcontractor-chat', signed = {};
+    async function signPhotos(scope) {
+      const els = [...scope.querySelectorAll('[data-photo]')];
+      const need = [...new Set(els.map((e) => e.dataset.photo))].filter((p) => !signed[p]);
+      if (need.length) {
+        try {
+          const t = await C.token();
+          const r = await fetch(C.SUPABASE_URL + '/storage/v1/object/sign/' + BUCKET, { method: 'POST', headers: C.headers(t), body: JSON.stringify({ expiresIn: 3600, paths: need }) });
+          const rows = await r.json();
+          (Array.isArray(rows) ? rows : []).forEach((x) => { if (x.signedURL) signed[x.path] = C.SUPABASE_URL + '/storage/v1' + x.signedURL; });
+        } catch (_) {}
+      }
+      els.forEach((e) => { const u = signed[e.dataset.photo]; if (!u) return; if (e.tagName === 'IMG') e.src = u; else e.href = u; });
+    }
+    async function shrink(file) {
+      try {
+        const bmp = await createImageBitmap(file);
+        const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+        const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+        cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+        const blob = await new Promise((res) => cv.toBlob(res, 'image/jpeg', 0.85));
+        if (blob) return { blob, ext: 'jpg', type: 'image/jpeg' };
+      } catch (_) {}
+      const ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+      return { blob: file, ext, type: file.type || 'image/jpeg' };
+    }
+    async function uploadPhoto(file) {
+      const { blob, ext, type } = await shrink(file);
+      const path = current + '/' + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2)) + '.' + ext;
+      const t = await C.token();
+      const r = await fetch(C.SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, { method: 'POST', headers: { apikey: C.headers(t).apikey, Authorization: 'Bearer ' + t, 'Content-Type': type, 'x-upsert': 'false' }, body: blob });
+      if (!r.ok) throw new Error('A photo could not be uploaded. Try a smaller photo.');
+      return path;
+    }
+    let picked = [];
+    const pickedEl = document.getElementById('picked'), attachBtn = document.getElementById('attach'), photoInput = document.getElementById('photo-input');
+    function showPicked() {
+      pickedEl.hidden = !picked.length;
+      pickedEl.innerHTML = picked.map((f, i) => `<figure><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-rm="${i}" aria-label="Remove photo">×</button></figure>`).join('');
+    }
+    attachBtn.addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', () => {
+      const add = [...photoInput.files].filter((f) => /^image\//.test(f.type) || /\.(heic|heif)$/i.test(f.name));
+      picked = picked.concat(add).slice(0, 6);
+      if (add.length && picked.length === 6) alert('You can send up to 6 photos in one message.');
+      photoInput.value = ''; showPicked();
+    });
+    pickedEl.addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (b) { picked.splice(+b.dataset.rm, 1); showPicked(); } });
+    // Show the camera button only once the photo feature is installed in the database.
+    api('texcontractor_chat_messages?select=photo_paths&limit=0').then(() => { attachBtn.hidden = false; }).catch(() => {});
+
     listEl.addEventListener('click', (e) => { const b = e.target.closest('.chat-item'); if (b) openChat(b.dataset.id); });
     document.getElementById('back-list').addEventListener('click', () => { app.classList.remove('open'); loadList(); });
     bodyEl.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !matchMedia('(pointer:coarse)').matches) { e.preventDefault(); compose.requestSubmit(); } });
     compose.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const text = bodyEl.value.trim(); if (!text || !current) return;
-      const btn = document.getElementById('send'); btn.disabled = true;
+      const text = bodyEl.value.trim(); if ((!text && !picked.length) || !current) return;
+      const btn = document.getElementById('send'); btn.disabled = true; attachBtn.disabled = true;
       try {
-        await api('texcontractor_chat_messages', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ chat_id: current, body: text }) });
-        bodyEl.value = ''; await poll(); loadList();
-      } catch (err) { alert(err.message); } finally { btn.disabled = false; bodyEl.focus(); }
+        const payload = { chat_id: current, body: text };
+        if (picked.length) {
+          btn.textContent = 'Sending photos…';
+          payload.photo_paths = [];
+          for (const f of picked) payload.photo_paths.push(await uploadPhoto(f));
+        }
+        await api('texcontractor_chat_messages', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(payload) });
+        bodyEl.value = ''; picked = []; showPicked(); await poll(); loadList();
+      } catch (err) { alert(err.message); } finally { btn.disabled = false; attachBtn.disabled = false; btn.textContent = 'Send'; bodyEl.focus(); }
     });
     await loadList();
     if (current) openChat(current).catch(() => {});
