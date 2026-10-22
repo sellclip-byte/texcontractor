@@ -24,6 +24,36 @@
 
   const clearSession = () => localStorage.removeItem(SESSION_KEY);
 
+  // --- Where new members come from (first visit only) and the Google Ads "Sign-up" conversion. ---
+  const FIRST_TOUCH_KEY = 'texcontractor-first-touch';
+  const SIGNUP_CONVERSION = 'AW-18516159223/6QEpCLq_pqUdEPfVmP1E';
+  try {
+    const q = new URLSearchParams(window.location.search);
+    if (!localStorage.getItem(FIRST_TOUCH_KEY)) {
+      let ref = '';
+      try { ref = document.referrer && new URL(document.referrer).hostname !== window.location.hostname ? new URL(document.referrer).hostname : ''; } catch (_) {}
+      const source = q.get('utm_source') || (q.get('gclid') ? 'google-ads' : q.get('fbclid') ? 'facebook' : '') || ref || 'direct';
+      localStorage.setItem(FIRST_TOUCH_KEY, JSON.stringify({
+        source: source.slice(0, 60), medium: (q.get('utm_medium') || (q.get('gclid') ? 'cpc' : '')).slice(0, 40),
+        campaign: (q.get('utm_campaign') || '').slice(0, 80), landing: window.location.pathname.slice(0, 120), at: new Date().toISOString()
+      }));
+    }
+  } catch (_) { /* tracking must never break the page */ }
+  const readFirstTouch = () => { try { return JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || 'null'); } catch (_) { return null; } };
+  const recordNewSignup = async (user, accessToken) => {
+    try {
+      if (!user?.id || !user.created_at || Date.now() - Date.parse(user.created_at) > 30 * 60 * 1000) return;
+      const doneKey = 'texcontractor-signup-tracked-' + user.id;
+      if (localStorage.getItem(doneKey)) return;
+      localStorage.setItem(doneKey, '1');
+      if (typeof window.gtag === 'function') window.gtag('event', 'conversion', { send_to: SIGNUP_CONVERSION, value: 1.0, currency: 'USD', transport_type: 'beacon' });
+      const touch = readFirstTouch();
+      if (touch && !user.user_metadata?.signup_source) {
+        await fetch(`${SUPABASE_URL}/auth/v1/user`, { method: 'PUT', headers: authHeaders(accessToken), body: JSON.stringify({ data: { signup_source: touch } }) });
+      }
+    } catch (_) { /* never block sign-in */ }
+  };
+
   const safeReturnTo = (value) => {
     if (!value) return DEFAULT_RETURN;
     try {
@@ -101,6 +131,7 @@
     }
     localStorage.removeItem('texcontractor-access-blocked');
     localStorage.setItem('texcontractor-account-created', '1');
+    await recordNewSignup(user, accessToken);
     return user;
   };
 
