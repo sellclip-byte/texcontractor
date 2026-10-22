@@ -97,6 +97,21 @@
     .safe { margin-top:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:9px 12px; font-size:.84rem; color:#334155; }
     .msg-line { min-height:1.3em; margin:10px 0 0; font-size:.88rem; }
     .offer-for { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; font-size:.88rem; margin:8px 0 0; }
+    .card h3 a { text-decoration:none; color:inherit; }
+    .card h3 a:hover { color:var(--green); text-decoration:underline; }
+    .view-link { font-size:.84rem; font-weight:800; color:var(--green); text-decoration:none; align-self:flex-start; margin:-4px 0 10px; }
+    .view-link:hover { text-decoration:underline; }
+    .gal-main { display:block; border-radius:12px; overflow:hidden; border:1px solid #e2e8f0; background:#fff; margin-top:10px; }
+    .gal-main img { width:100%; max-height:min(60vh,520px); object-fit:contain; display:block; background:#fff; }
+    .gal-thumbs { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .gal-thumbs button { width:64px; height:64px; padding:0; border-radius:9px; overflow:hidden; border:2px solid #e2e8f0; background:#fff; cursor:pointer; }
+    .gal-thumbs button[aria-current="true"] { border-color:var(--req); }
+    .gal-thumbs img { width:100%; height:100%; object-fit:cover; display:block; }
+    .view-body { white-space:pre-wrap; overflow-wrap:anywhere; margin:8px 0 0; color:#334155; }
+    .view-acts { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .view-acts .btn, .view-acts .close-btn { flex:1 1 140px; }
+    .edit-btn { background:#fff; color:var(--green); border:1.5px solid var(--green); border-radius:8px; padding:6px 10px; font:inherit; font-weight:800; font-size:.82rem; cursor:pointer; }
+    .closed-tag { font-weight:800; color:var(--muted); margin-left:auto; }
     footer { border-top:1px solid var(--line); padding:18px 32px; text-align:center; color:var(--muted); font-size:.84rem; }
     footer a { color:var(--green); font-weight:700; }
     @media (max-width:1000px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
@@ -195,6 +210,18 @@
     </form>
   </dialog>
 
+  <dialog id="view-dlg" aria-labelledby="view-title">
+    <div class="dlg">
+      <div class="dlg-head"><div class="top" id="view-top" style="flex:1"></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <h2 id="view-title" style="margin-top:8px"></h2>
+      <div id="view-gallery"></div>
+      <p class="view-body" id="view-body"></p>
+      <div class="ways" id="view-ways" style="margin-top:12px"></div>
+      <div class="view-acts" id="view-acts"></div>
+      <p class="msg-line" id="view-msg" role="status"></p>
+    </div>
+  </dialog>
+
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-chat.js?v=20261022"></script>
   <script>
@@ -249,9 +276,10 @@
       el.innerHTML = `
         <div class="top"><span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.matches ? '<span class="match">Matches your service</span>' : ''}</div>
         <div class="top" style="margin-top:4px"><span>${esc(ago(r.created_at))}</span><span class="open">● Open</span></div>
-        <h3>${esc(r.title)}</h3>
+        <h3><a href="requests.html?r=${esc(r.id)}" data-view>${esc(r.title)}</a></h3>
         <p>${esc(r.body)}</p>
-        ${photos.length ? `<div class="ph">${photos.map((p) => `<a href="${photoUrl(p)}" target="_blank" rel="noopener"><img src="${photoUrl(p)}" alt="Request photo" loading="lazy"></a>`).join('')}</div>` : ''}
+        ${photos.length ? `<div class="ph">${photos.map((p) => `<a href="requests.html?r=${esc(r.id)}" data-view><img src="${photoUrl(p)}" alt="Request photo" loading="lazy"></a>`).join('')}</div>` : ''}
+        <a class="view-link" href="requests.html?r=${esc(r.id)}" data-view>View details${photos.length ? ' and photos' : ''} →</a>
         <div class="foot">
           <div class="ways">${ways.join('')}<span class="offers" style="border:0;background:none;color:#334155;padding:0">${r.offers_count} of 5 offers<span class="bar"><i style="width:${Math.min(100, r.offers_count * 20)}%"></i></span></span></div>
           ${action}
@@ -259,6 +287,7 @@
       const p = el.querySelector('p');
       requestAnimationFrame(() => { if (p.scrollHeight > p.clientHeight + 2) { const b = document.createElement('button'); b.className = 'more'; b.type = 'button'; b.textContent = 'Read more'; b.onclick = () => { p.classList.toggle('expanded'); b.textContent = p.classList.contains('expanded') ? 'Show less' : 'Read more'; }; p.after(b); } });
       el.querySelector('[data-offer]')?.addEventListener('click', () => openOffer(r));
+      el.querySelectorAll('[data-view]').forEach((a) => a.addEventListener('click', (ev) => { ev.preventDefault(); openView(r.id); }));
       return el;
     }
 
@@ -296,13 +325,10 @@
           const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
           d.className = 'mine-row' + (open ? '' : ' closed');
           d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? `closes in ${days} day${days === 1 ? '' : 's'}` : 'closed'}</small></div>
-            <div class="acts">${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : ''}</div>`;
-          d.querySelector('.close-btn')?.addEventListener('click', async (ev) => {
-            if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return;
-            ev.target.disabled = true;
-            try { await C.rpc('texcontractor_request_close', { p_request_id: r.id }, true); await Promise.all([loadMine(), load(true), loadCount()]); }
-            catch (e) { alert(e.message); ev.target.disabled = false; }
-          });
+            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : ''}</div>`;
+          d.querySelector('[data-v]').addEventListener('click', () => openView(r.id));
+          d.querySelector('[data-e]')?.addEventListener('click', () => openEdit(r.id));
+          d.querySelector('.close-btn')?.addEventListener('click', (ev) => closeRequest(r.id, ev.target));
           return d;
         }));
       } catch (_) { $('mine').hidden = true; }
@@ -317,7 +343,7 @@
         if (picked[i]) {
           b.innerHTML = `<img src="${picked[i].url}" alt="Selected photo ${i + 1}"><span class="rm" aria-hidden="true">×</span>`;
           b.setAttribute('aria-label', 'Remove photo ' + (i + 1));
-          b.onclick = () => { URL.revokeObjectURL(picked[i].url); picked.splice(i, 1); renderSlots(); };
+          b.onclick = () => { if (picked[i].file) URL.revokeObjectURL(picked[i].url); picked.splice(i, 1); renderSlots(); };
         } else { b.textContent = '＋'; b.setAttribute('aria-label', 'Add photos'); b.onclick = () => $('p-photos').click(); }
         wrap.append(b);
       }
@@ -329,8 +355,19 @@
     const syncPhone = () => { $('phone-field').hidden = !($('c-text').checked || $('c-call').checked); };
     $('c-text').addEventListener('change', syncPhone); $('c-call').addEventListener('change', syncPhone);
 
+    let editing = null;
+    function setMode(row) {
+      editing = row;
+      $('post-title').textContent = row ? 'Edit your request' : 'Post your request';
+      $('post-submit').textContent = row ? 'Save changes' : 'Post request';
+      const locked = !!(row && row.offers_count > 0);
+      $('p-service').disabled = locked; $('p-state').disabled = locked;
+      $('post-dlg').querySelector('.sub').textContent = locked ? 'Service and state stay the same after technicians send offers.' : row ? 'Change anything and save.' : 'Takes about one minute.';
+    }
     async function openPost() {
       if (!user) { signInFor('post=1'); return; }
+      if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-text','c-call'].forEach((k) => ($(k).checked = false)); $('c-chat').checked = true; }
+      setMode(null);
       $('post-msg').textContent = '';
       if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
       fillCities($('p-state'), $('p-city-list'));
@@ -376,19 +413,96 @@
       const btn = $('post-submit'); btn.disabled = true; msg.className = 'msg-line';
       try {
         const paths = [];
-        for (let i = 0; i < picked.length; i++) { msg.textContent = `Uploading photo ${i + 1} of ${picked.length}…`; paths.push(await upload(await shrink(picked[i].file))); }
-        msg.textContent = 'Posting…';
-        await C.rpc('texcontractor_request_create', { p_service: v.service, p_state: v.state, p_city: v.city, p_title: v.title, p_body: v.body, p_photo_paths: paths, p_contact_chat: chat, p_contact_text: text, p_contact_call: call, p_phone: (text || call) ? phone : null }, true);
-        picked.forEach((p) => URL.revokeObjectURL(p.url)); picked = [];
+        for (let i = 0; i < picked.length; i++) {
+          if (picked[i].path) { paths.push(picked[i].path); continue; }
+          msg.textContent = `Uploading photo ${i + 1} of ${picked.length}…`; paths.push(await upload(await shrink(picked[i].file)));
+        }
+        const args = { p_service: v.service, p_state: v.state, p_city: v.city, p_title: v.title, p_body: v.body, p_photo_paths: paths, p_contact_chat: chat, p_contact_text: text, p_contact_call: call, p_phone: (text || call) ? phone : null };
+        const wasEditing = editing;
+        if (wasEditing) { msg.textContent = 'Saving…'; await C.rpc('texcontractor_request_update', { p_request_id: wasEditing.id, ...args }, true); }
+        else { msg.textContent = 'Posting…'; await C.rpc('texcontractor_request_create', args, true); }
+        picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = [];
         $('p-title').value = ''; $('p-body').value = '';
         $('post-dlg').close();
-        if (typeof gtag === 'function') gtag('event', 'request_posted', { service: v.service, state: v.state });
+        if (!wasEditing && typeof gtag === 'function') gtag('event', 'request_posted', { service: v.service, state: v.state });
+        setMode(null);
         $('f-service').value = ''; $('f-state').value = ''; $('f-city').value = '';
         await Promise.all([load(true), loadMine(), loadCount()]);
         $('mine').scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch (err) { msg.className = 'msg-line error'; msg.textContent = err.message; }
       finally { btn.disabled = false; }
     });
+
+    // View one request
+    async function getRequest(id) {
+      const rows = await C.rpc('texcontractor_request_get', { p_request_id: id }, false);
+      return Array.isArray(rows) ? rows[0] : rows;
+    }
+    async function closeRequest(id, btn) {
+      if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return false;
+      if (btn) btn.disabled = true;
+      try { await C.rpc('texcontractor_request_close', { p_request_id: id }, true); await Promise.all([loadMine(), load(true), loadCount()]); return true; }
+      catch (e) { alert(e.message); if (btn) btn.disabled = false; return false; }
+    }
+    async function openView(id) {
+      let r;
+      try { r = await getRequest(id); } catch (_) {}
+      if (!r) { alert('This request is closed or no longer available.'); return; }
+      const photos = (r.photo_paths || []).slice(0, 4);
+      const open = (r.status || 'open') === 'open';
+      $('view-top').innerHTML = `<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span><span>· ${esc(ago(r.created_at))}</span>${open ? '<span class="open">● Open</span>' : '<span class="closed-tag">Closed</span>'}`;
+      $('view-title').textContent = r.title;
+      $('view-body').textContent = r.body;
+      const gal = $('view-gallery'); gal.replaceChildren();
+      if (photos.length) {
+        const main = document.createElement('a'); main.className = 'gal-main'; main.target = '_blank'; main.rel = 'noopener';
+        const img = document.createElement('img'); img.alt = 'Request photo'; main.append(img);
+        const thumbs = document.createElement('div'); thumbs.className = 'gal-thumbs';
+        const show = (i) => { img.src = photoUrl(photos[i]); main.href = photoUrl(photos[i]); thumbs.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', String(i === j))); };
+        photos.forEach((p, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Photo ' + (i + 1)); b.innerHTML = `<img src="${photoUrl(p)}" alt="">`; b.onclick = () => show(i); thumbs.append(b); });
+        gal.append(main); if (photos.length > 1) gal.append(thumbs); show(0);
+      }
+      const ways = [];
+      if (r.contact_chat) ways.push('<span>💬 Chat</span>');
+      if (r.contact_text) ways.push(r.phone && !r.mine ? `<a href="sms:${esc(r.phone)}">✉ Text ${esc(fmtPhone(r.phone))}</a>` : '<span>✉ Text</span>');
+      if (r.contact_call) ways.push(r.phone && !r.mine ? `<a href="tel:${esc(r.phone)}">📞 Call ${esc(fmtPhone(r.phone))}</a>` : '<span>📞 Call</span>');
+      ways.push(`<span class="offers" style="border:0;background:none;color:#334155;padding:0">${r.offers_count} of 5 offers<span class="bar"><i style="width:${Math.min(100, r.offers_count * 20)}%"></i></span></span>`);
+      $('view-ways').innerHTML = ways.join('');
+      const acts = $('view-acts'); acts.replaceChildren(); $('view-msg').textContent = '';
+      if (r.mine) {
+        if (open) {
+          const e = document.createElement('button'); e.className = 'btn'; e.type = 'button'; e.textContent = 'Edit request'; e.onclick = () => { $('view-dlg').close(); openEdit(r.id); };
+          const c = document.createElement('button'); c.className = 'close-btn'; c.type = 'button'; c.textContent = 'Close request'; c.onclick = async () => { if (await closeRequest(r.id, c)) $('view-dlg').close(); };
+          acts.append(e, c);
+        }
+        if (r.offers_count) { const m = document.createElement('a'); m.className = 'btn ghost'; m.href = 'chat.html'; m.textContent = 'See offers in Messages'; acts.append(m); }
+      } else if (r.offered) {
+        acts.innerHTML = '<div class="status-note" style="flex:1">✓ You sent an offer. <a href="chat.html">Open Messages</a></div>';
+      } else if (open) {
+        const o = document.createElement('button'); o.className = 'btn full'; o.type = 'button'; o.textContent = 'Send an offer'; o.onclick = () => { $('view-dlg').close(); openOffer(r); };
+        acts.append(o);
+      }
+      if (!$('view-dlg').open) $('view-dlg').showModal();
+      history.replaceState(null, '', 'requests.html?r=' + encodeURIComponent(r.id));
+    }
+    $('view-dlg').addEventListener('close', () => { if (/[?&]r=/.test(location.search)) history.replaceState(null, '', 'requests.html'); });
+
+    async function openEdit(id) {
+      if (!user) { signInFor('r=' + id); return; }
+      let r; try { r = await getRequest(id); } catch (_) {}
+      if (!r || !r.mine || (r.status || 'open') !== 'open') { alert('This request can no longer be edited.'); return; }
+      picked.forEach((p) => p.file && URL.revokeObjectURL(p.url));
+      picked = (r.photo_paths || []).slice(0, 4).map((path) => ({ path, url: photoUrl(path) }));
+      $('p-service').value = r.service; $('p-state').value = r.state; $('p-city').value = r.city;
+      $('p-title').value = r.title; $('p-body').value = r.body;
+      $('c-chat').checked = !!r.contact_chat; $('c-text').checked = !!r.contact_text; $('c-call').checked = !!r.contact_call;
+      $('p-phone').value = r.phone ? fmtPhone(r.phone) : fmtPhone(user.user_metadata?.contact_phone || '') || '';
+      setMode(r);
+      $('post-msg').textContent = '';
+      fillCities($('p-state'), $('p-city-list'));
+      renderSlots(); syncPhone();
+      $('post-dlg').showModal();
+    }
 
     // Offer dialog
     async function openOffer(r) {
@@ -429,6 +543,7 @@
       await Promise.all([load(true), loadCount(), loadMine()]);
       const q = new URLSearchParams(location.search);
       if (q.get('post') && user) openPost();
+      if (q.get('r')) openView(q.get('r'));
       const oid = q.get('offer');
       if (oid && user) { const r = current.find((x) => x.id === oid); if (r) openOffer(r); }
     })();
