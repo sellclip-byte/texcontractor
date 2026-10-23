@@ -64,7 +64,7 @@
     .auth-status a { color:var(--green); }
     @media (max-width:680px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .fields { grid-template-columns:1fr; } label.full { grid-column:auto; } .photo-preview { grid-template-columns:repeat(2,1fr); } }
   
-    #register-form [hidden]{display:none!important}
+    #register-form [hidden],#register-form[hidden],#my-services[hidden]{display:none!important}
 </style>
 </head>
 <body class="auth-check">
@@ -75,6 +75,13 @@
   <main class="page">
     <h1>Post your service</h1>
     <p class="intro">Sign in with your email first, then add your service so customers can find your profile and text you about the work they need.</p>
+    <section id="my-services" hidden style="margin:0 0 18px;padding:18px 20px;border:1px solid #dbe5e2;border-radius:16px;background:#fff">
+      <h2 style="margin:0 0 4px;font-size:1.15rem">Your services <span id="my-services-count" style="color:#64748b;font-weight:700"></span></h2>
+      <p class="hint" style="margin:0 0 12px">Each technician can list up to 2 services. You can change or delete a service at any time.</p>
+      <div id="my-services-list" style="display:grid;gap:10px"></div>
+      <p id="my-services-status" role="status" style="margin:10px 0 0;font-weight:700"></p>
+    </section>
+    <p id="limit-note" hidden style="margin:0 0 18px;padding:14px 16px;border:1px solid #fcd34d;border-radius:12px;background:#fffbeb;color:#78350f;font-weight:700">You already have 2 services — the maximum. To offer something else, change or delete one of your services above.</p>
     <form id="register-form" autocomplete="off">
       <p id="prefill-note" hidden style="margin:0 0 14px;padding:12px 14px;border:1px solid #a7f3d0;border-radius:12px;background:#ecfdf3;color:#14532d;font-weight:700">Adding another service? Your name, phone and city are filled in from your first listing. Just choose the new service below and publish.</p>
       <section class="panel">
@@ -130,7 +137,7 @@
     </form>
   </main>
   <script src="tex-auth.js?v=20261021-signup"></script>
-  <script src="tex-admin.js?v=20261023-del"></script>
+  <script src="tex-admin.js?v=20261023-mysvc"></script>
   <script>
     let signedInUser = null;
     let adminPosting = false;
@@ -483,9 +490,60 @@
     serviceSearch.addEventListener('input', filterServices);
     serviceSearch.addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
     const resetServiceSearch = () => { serviceSearch.value = ''; filterServices(); };
+    // "Your services" box: shows the technician's listings with Change / Delete, and enforces the 2-service limit.
+    const MAX_SERVICES = 2;
+    const myBox = document.getElementById('my-services');
+    const myList = document.getElementById('my-services-list');
+    const myStatus = document.getElementById('my-services-status');
+    const limitNote = document.getElementById('limit-note');
+    const loadMyServices = async () => {
+      if (adminPosting || !signedInUser) { myBox.hidden = true; return; }
+      let rows = [];
+      try { rows = await TexAdminApi.myServices() || []; } catch (_) { return; }
+      myBox.hidden = rows.length === 0;
+      document.getElementById('my-services-count').textContent = `(${rows.length} of ${MAX_SERVICES})`;
+      const full = rows.length >= MAX_SERVICES;
+      limitNote.hidden = !full;
+      registerForm.hidden = full;
+      const note = document.getElementById('prefill-note'); if (note && full) note.hidden = true;
+      myList.replaceChildren(...rows.map((row) => {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 14px;border:1px solid #e4ebe8;border-radius:12px;background:#f8fbfa';
+        const info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:200px';
+        const title = document.createElement('strong'); title.textContent = row.service;
+        const where = document.createElement('div'); where.className = 'hint'; where.textContent = `${row.display_name} · ${row.city}, ${row.state}`;
+        info.append(title, where);
+        const btn = (text, css) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.style.cssText = 'min-height:38px;padding:7px 12px;border-radius:9px;font:inherit;font-weight:800;cursor:pointer;' + css; return b; };
+        const view = document.createElement('a'); view.textContent = 'View'; view.href = `profile.html?contractor=${encodeURIComponent(row.id)}&service=${encodeURIComponent(row.service)}`; view.style.cssText = 'font-weight:800;color:#075c4b';
+        const change = btn('Change service', 'border:1px solid #075c4b;background:#fff;color:#075c4b');
+        const del = btn('Delete', 'border:1px solid #fecdd3;background:#fff1f2;color:#991b1b');
+        const editor = document.createElement('div'); editor.style.cssText = 'flex-basis:100%;display:none;flex-wrap:wrap;gap:8px';
+        const pick = document.createElement('select'); pick.style.cssText = 'flex:1;min-width:220px';
+        pick.append(new Option('Choose the new service', ''), ...allServices.filter(v => v !== row.service).map(v => new Option(v, v)));
+        const save = btn('Save', 'border:0;background:#075c4b;color:#fff');
+        const cancel = btn('Cancel', 'border:1px solid #cbd5e1;background:#fff;color:#334155');
+        editor.append(pick, save, cancel);
+        change.addEventListener('click', () => { editor.style.display = editor.style.display === 'none' ? 'flex' : 'none'; });
+        cancel.addEventListener('click', () => { editor.style.display = 'none'; });
+        save.addEventListener('click', async () => {
+          if (!pick.value) { myStatus.textContent = 'Choose the new service first.'; return; }
+          save.disabled = true;
+          try { await TexAdminApi.changeMyService(row.id, pick.value); myStatus.style.color = '#14532d'; myStatus.textContent = `Changed to ${pick.value}.`; await loadMyServices(); }
+          catch (error) { myStatus.style.color = '#991b1b'; myStatus.textContent = error.message; save.disabled = false; }
+        });
+        del.addEventListener('click', async () => {
+          if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'Tap again to delete'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'Delete'; }, 4000); return; }
+          del.disabled = true;
+          try { await TexAdminApi.deleteMyService(row.id); myStatus.style.color = '#14532d'; myStatus.textContent = `${row.service} was deleted.`; await loadMyServices(); }
+          catch (error) { myStatus.style.color = '#991b1b'; myStatus.textContent = error.message; del.disabled = false; }
+        });
+        item.append(info, view, change, del, editor);
+        return item;
+      }));
+    };
     clearPostingForm();
     resetServiceSearch();
-    restoreDraft().then(() => TexAuth.getUser()).then(user => { if (user) prefillFromProfile(user); }).catch(() => {});
+    restoreDraft().then(() => TexAuth.getUser()).then(async user => { if (!user) return; signedInUser = signedInUser || user; await prefillFromProfile(user); if (!(await TexAdminApi.getAdminRecord(user).catch(() => null))) loadMyServices(); }).catch(() => {});
     registerForm.addEventListener('input', saveDraft);
     registerForm.addEventListener('change', saveDraft);
     const submitButton = registerForm.querySelector('.submit');
@@ -553,6 +611,7 @@
         clearDraft();
         clearPostingForm(); resetServiceSearch();
         prefillFromProfile(signedInUser);
+        loadMyServices();
         submitButton.disabled = false;
         submitButton.textContent = 'Submit another service';
       } catch (error) {

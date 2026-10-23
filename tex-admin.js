@@ -389,5 +389,15 @@
     return result;
   };
 
-  window.TexAdminApi = { deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  // A technician's own services (max 2): list, change the service, delete.
+  const myServices = () => rpc('texcontractor_my_services', {});
+  const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
+  const deleteMyService = async (id) => {
+    const result = await rpc('texcontractor_my_service_delete', { p_id: id });
+    const token = await TexAuth.getAccessToken();
+    await removeObjects(token, result?.paths || []);
+    return result;
+  };
+
+  window.TexAdminApi = { myServices, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
