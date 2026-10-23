@@ -49,6 +49,53 @@
     return [row.profile_photo_path, ...(Array.isArray(work) ? work : [])].filter(Boolean);
   };
 
+  // Confirmation window for permanent deletes (English + Arabic).
+  const confirmDelete = (title, details) => new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(15,23,42,.55)';
+    overlay.innerHTML = `<div role="dialog" aria-modal="true" style="width:min(460px,100%);padding:22px;border-radius:16px;background:#fff;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+      <h2 style="margin:0 0 8px;color:#991b1b">${escapeHtml(title)}</h2>
+      <p style="margin:0 0 10px;color:#334155">${escapeHtml(details)}</p>
+      <p style="margin:0 0 16px;color:#991b1b;font-weight:800" dir="auto">This cannot be undone. / لا يمكن التراجع عن الحذف.</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button type="button" data-no class="member-action" style="min-height:42px;padding:8px 14px">Cancel / إلغاء</button>
+        <button type="button" data-yes class="member-action block" style="min-height:42px;padding:8px 14px">Delete permanently / حذف نهائي</button>
+      </div></div>`;
+    const done = (value) => { overlay.remove(); resolve(value); };
+    overlay.querySelector('[data-no]').addEventListener('click', () => done(false));
+    overlay.querySelector('[data-yes]').addEventListener('click', () => done(true));
+    overlay.addEventListener('click', (event) => { if (event.target === overlay) done(false); });
+    document.body.appendChild(overlay);
+    overlay.querySelector('[data-no]').focus();
+  });
+
+  const deleteButton = (onClick) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'member-action block';
+    button.textContent = 'Delete / حذف';
+    button.addEventListener('click', () => onClick(button));
+    return button;
+  };
+
+  const deleteListingFlow = async (button, id, name, isImported) => {
+    const ok = await confirmDelete('Delete this technician? / حذف هذا الفني؟',
+      `"${name || 'Technician'}" will be removed from the site with its photos, chats and offers. / سيُحذف من الموقع مع صوره ومحادثاته وعروضه.`);
+    if (!ok) return;
+    button.disabled = true; button.textContent = 'Deleting… / جارٍ الحذف';
+    try {
+      await TexAdminApi.deleteListing(id);
+      if (isImported) importedBusinesses = importedBusinesses.filter((row) => row.id !== id);
+      else submissions = submissions.filter((row) => row.id !== id);
+      updateSummary();
+      renderSubmissions();
+      showMessage(`Deleted "${name || 'technician'}". / تم الحذف.`, 'ok');
+    } catch (error) {
+      showMessage(`Could not delete: ${error.message}`, 'error');
+      button.disabled = false; button.textContent = 'Delete / حذف';
+    }
+  };
+
   const updateSummary = () => {
     $('#member-total').textContent = members.length;
     $('#submission-total').textContent = submissions.length + importedBusinesses.length;
@@ -101,6 +148,25 @@
         email.textContent = 'Email';
         email.title = 'Open a new email to this member';
         actions.prepend(email);
+      }
+      if (!isCurrentAdmin) {
+        actions.appendChild(deleteButton(async (button) => {
+          const owned = submissions.filter((item) => item.owner_id === row.user_id).length;
+          const ok = await confirmDelete('Delete this member? / حذف هذا العضو؟',
+            `${row.email || name}: account, ${owned} technician listing(s), chats and job requests will be deleted. / سيُحذف الحساب و${owned} إعلان فني والمحادثات والطلبات.`);
+          if (!ok) return;
+          button.disabled = true; button.textContent = 'Deleting… / جارٍ الحذف';
+          try {
+            const result = await TexAdminApi.deleteMember(row.user_id);
+            showMessage(result?.account_removed
+              ? `Member ${row.email || ''} deleted with ${result.listings || 0} listing(s). / تم حذف العضو.`
+              : `TexContractor data for ${row.email || ''} deleted. The login is kept because it is used by another app. / تم حذف بياناته من الموقع.`, 'ok');
+            await loadDashboard();
+          } catch (error) {
+            showMessage(`Could not delete this member: ${error.message}`, 'error');
+            button.disabled = false; button.textContent = 'Delete / حذف';
+          }
+        }));
       }
       const memberAction = card.querySelector('[data-member-action]');
       if (memberAction) {
@@ -354,6 +420,7 @@
       edit.type = 'button'; edit.textContent = 'Edit / تعديل';
       edit.addEventListener('click', () => editTechnician(entry,true));
       actions.appendChild(edit);
+      actions.appendChild(deleteButton((button) => deleteListingFlow(button, entry.id, entry.business_name, true)));
       card.appendChild(actions);
       submissionsList.appendChild(card);
     });
@@ -446,6 +513,7 @@
         editPending.type = 'button'; editPending.textContent = 'Edit / تعديل';
         editPending.addEventListener('click', () => editTechnician(row,false));
         review.prepend(editPending);
+        review.appendChild(deleteButton((button) => deleteListingFlow(button, row.id, row.display_name, false)));
         submissionsList.appendChild(card);
         return;
       }
@@ -466,6 +534,7 @@
       const statusSelect = card.querySelector('[data-status]');
       const notes = card.querySelector('[data-notes]');
       const save = card.querySelector('.review > button.save:last-of-type');
+      card.querySelector('.review').appendChild(deleteButton((button) => deleteListingFlow(button, row.id, row.display_name, false)));
       const photoInput = card.querySelector('[data-photo-file]');
       const photoPreview = card.querySelector('[data-photo-preview]');
       const photoSave = card.querySelector('[data-photo-save]');

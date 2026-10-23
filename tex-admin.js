@@ -368,5 +368,26 @@
     return latest;
   };
 
-  window.TexAdminApi = { uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  const rpc = async (name, args) => {
+    const token = await TexAuth.getAccessToken();
+    if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
+    return request(`/rest/v1/rpc/${name}`, { method: 'POST', body: JSON.stringify(args) }, token);
+  };
+
+  // Permanent deletes (admin only, checked again in the database). Photo files are removed best-effort.
+  const deleteListing = async (id) => {
+    const result = await rpc('texcontractor_admin_delete_listing', { p_id: id });
+    const token = await TexAuth.getAccessToken();
+    await removeObjects(token, result?.paths || []);
+    return result;
+  };
+
+  const deleteMember = async (userId) => {
+    const result = await rpc('texcontractor_admin_delete_member', { p_user: userId });
+    const token = await TexAuth.getAccessToken();
+    await removeObjects(token, result?.paths || []);
+    return result;
+  };
+
+  window.TexAdminApi = { deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
