@@ -22,31 +22,55 @@
       finally { photo.disabled = false; photo.value = ''; }
     });
     for (const key of ['full_name', 'contact_phone']) form.elements.namedItem(key).value = user.user_metadata?.[key] || '';
-    // State dropdown + searchable city box: typing shows matching cities of the chosen state; any city can be typed.
+    // State dropdown + city combo box: arrow opens the state's cities, typing filters them, any city can be typed.
     const stateSel = form.elements.namedItem('state'), cityInput = form.elements.namedItem('city');
-    const cityList = document.getElementById('account-city-list');
-    let cityData = null;
+    const cityList = document.getElementById('account-city-list'), cityArrow = document.getElementById('account-city-arrow');
+    let cityData = null, cities = [];
     const loadCityData = () => cityData || (cityData = fetch('city-coordinates-2025.json', { cache: 'force-cache' }).then(r => r.json()).then(d => {
       const by = {}; for (const k of Object.keys(d)) { const [st, c] = k.split('|'); (by[st] ||= []).push(c.replace(/\b\w/g, x => x.toUpperCase())); }
       for (const st in by) by[st].sort(); return by;
     }).catch(() => ({})));
+    const closeList = () => { cityList.hidden = true; cityInput.setAttribute('aria-expanded', 'false'); };
+    const openList = () => {
+      if (cityInput.disabled) return;
+      const q = cityInput.value.trim().toLowerCase();
+      const starts = cities.filter(c => c.toLowerCase().startsWith(q));
+      const contains = q ? cities.filter(c => !c.toLowerCase().startsWith(q) && c.toLowerCase().includes(q)) : [];
+      const shown = [...starts, ...contains].slice(0, 80);
+      cityList.replaceChildren();
+      if (!cities.length) { const n = document.createElement('div'); n.className = 'city-note'; n.textContent = 'Loading cities…'; cityList.append(n); }
+      for (const c of shown) {
+        const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'option'); b.textContent = c;
+        b.addEventListener('mousedown', e => e.preventDefault());
+        b.addEventListener('click', () => { cityInput.value = c; closeList(); });
+        cityList.append(b);
+      }
+      if (cities.length && !shown.length) { const n = document.createElement('div'); n.className = 'city-note'; n.textContent = 'Not in the list? Keep typing your city name — it will be saved as you type it.'; cityList.append(n); }
+      else if (cities.length && starts.length + contains.length > shown.length) { const n = document.createElement('div'); n.className = 'city-note'; n.textContent = 'Type more letters to narrow the list.'; cityList.append(n); }
+      cityList.hidden = false; cityInput.setAttribute('aria-expanded', 'true');
+    };
     const fillCities = async () => {
       const st = stateSel.value;
-      cityInput.disabled = !st;
-      cityInput.placeholder = st ? 'Start typing your city' : 'Choose a state first';
-      cityList.replaceChildren();
+      cityInput.disabled = cityArrow.disabled = !st;
+      cities = []; closeList();
       if (!st) return;
       const list = (await loadCityData())[st] || [];
       if (stateSel.value !== st) return;
-      cityList.replaceChildren(...list.map(c => new Option(c)));
+      cities = list;
+      if (!cityList.hidden) openList();
     };
+    cityInput.addEventListener('focus', openList);
+    cityInput.addEventListener('input', openList);
+    cityInput.addEventListener('blur', () => setTimeout(closeList, 150));
+    cityInput.addEventListener('keydown', e => { if (e.key === 'Escape') closeList(); });
+    cityArrow.addEventListener('click', () => { if (cityList.hidden) { cityInput.focus(); openList(); } else closeList(); });
     stateSel.addEventListener('change', () => { cityInput.value = ''; fillCities(); });
     const savedState = String(user.user_metadata?.state || '').trim();
     stateSel.value = [...stateSel.options].find(o => o.value && (o.value.toLowerCase() === savedState.toLowerCase() || o.text.toLowerCase() === savedState.toLowerCase()))?.value || '';
     cityInput.value = String(user.user_metadata?.city || '').trim().replace(/\b\w/g, x => x.toUpperCase());
     fillCities();
     form.addEventListener('submit', async event => {
-      event.preventDefault(); const button = form.querySelector('button'); button.disabled = true;
+      event.preventDefault(); const button = form.querySelector('button[type=submit]'); button.disabled = true;
       try {
         const data = {};
         for (const key of ['full_name', 'contact_phone', 'state']) data[key] = form.elements.namedItem(key).value.trim();
