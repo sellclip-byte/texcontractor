@@ -76,6 +76,7 @@
     <h1>Post your service</h1>
     <p class="intro">Sign in with your email first, then add your service so customers can find your profile and text you about the work they need.</p>
     <form id="register-form" autocomplete="off">
+      <p id="prefill-note" hidden style="margin:0 0 14px;padding:12px 14px;border:1px solid #a7f3d0;border-radius:12px;background:#ecfdf3;color:#14532d;font-weight:700">Adding another service? Your name, phone and city are filled in from your first listing. Just choose the new service below and publish.</p>
       <section class="panel">
         <h2>Contact details</h2>
         <div class="fields">
@@ -411,23 +412,46 @@
       if (event.persisted) { clearPostingForm(); resetServiceSearch(); restoreDraft(); }
     });
     // Fill name, phone, state and city from the saved profile so nothing is typed twice.
+    // Fill the form from the technician's previous listing (or his saved profile) so a second service
+    // only needs the new service chosen. Not used when the admin posts listings for others.
     const prefillFromProfile = async (user) => {
-      const meta = user?.user_metadata || {};
-      const setIfEmpty = (name, value) => { const f = registerForm.elements.namedItem(name); if (f && value && !f.value.trim() && !f.closest('label')?.hidden) f.value = value; };
-      setIfEmpty('displayName', String(meta.full_name || meta.name || '').trim());
-      setIfEmpty('phone', String(meta.contact_phone || '').trim());
-      const st = String(meta.state || '').trim().toUpperCase();
+      if (!user) return;
+      if (await TexAdminApi.getAdminRecord(user).catch(() => null)) return;
+      const meta = user.user_metadata || {};
+      let last = null;
+      try {
+        const token = await TexAuth.getAccessToken();
+        const res = await fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_submissions?owner_id=eq.${encodeURIComponent(user.id)}&select=display_name,phone,state,city,years&order=created_at.desc&limit=1`, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
+        if (res.ok) last = (await res.json())[0] || null;
+      } catch (_) {}
+      const src = {
+        name: last?.display_name || meta.full_name || meta.name || '',
+        phone: last?.phone || meta.contact_phone || '',
+        state: last?.state || meta.state || '',
+        city: last?.city || meta.city || '',
+        years: last?.years || ''
+      };
+      const setIfEmpty = (name, value) => { const f = registerForm.elements.namedItem(name); if (f && value && !f.value.trim()) f.value = String(value).trim(); };
+      setIfEmpty('displayName', src.name);
+      setIfEmpty('phone', src.phone);
+      setIfEmpty('years', src.years);
+      const st = String(src.state).trim().toUpperCase();
       if (st && !stateInput.value && [...stateInput.options].some(o => o.value === st)) {
         stateInput.value = st;
         stateInput.dispatchEvent(new Event('change'));
         for (let i = 0; i < 60 && cityInput.disabled; i++) await new Promise(r => setTimeout(r, 250));
-        const city = String(meta.city || '').trim().toLowerCase();
+        const city = String(src.city).trim().toLowerCase();
         const match = [...cityInput.options].find(o => o.value && o.value.toLowerCase() === city);
         if (match) { cityInput.value = match.value; cityInput.dispatchEvent(new Event('change')); }
         else if (city && [...cityInput.options].some(o => o.value === '__other__')) {
           cityInput.value = '__other__'; cityInput.dispatchEvent(new Event('change'));
-          otherCityInput.value = String(meta.city).trim();
+          otherCityInput.value = String(src.city).trim();
         }
+      }
+      if (last) {
+        const note = document.getElementById('prefill-note');
+        if (note) note.hidden = false;
+        if (!serviceSelect.value) serviceSearch.focus({ preventScroll: true });
       }
     };
     // After publishing, keep the profile page in sync with what was entered here.
@@ -528,6 +552,7 @@
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
         clearDraft();
         clearPostingForm(); resetServiceSearch();
+        prefillFromProfile(signedInUser);
         submitButton.disabled = false;
         submitButton.textContent = 'Submit another service';
       } catch (error) {
