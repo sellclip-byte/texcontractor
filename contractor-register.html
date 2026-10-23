@@ -77,7 +77,8 @@
       <section class="panel">
         <h2>Contact details</h2>
         <div class="fields">
-          <label>Real name <span class="hint">Kept private from the public listing.</span><input name="realName" autocomplete="name" required></label>
+          <label>Your name or nickname <span class="hint">Shown on your listing. Use your real name, a nickname or your company name.</span><input name="displayName" autocomplete="name" placeholder="e.g. Mike or Mike's Plumbing" maxlength="60" required></label>
+          <input type="hidden" name="realName">
           <label>Mobile number for SMS <span class="sms-phone-notice" role="note">IMPORTANT: Enter a mobile number that can receive and reply to TEXT MESSAGES (SMS). Do not enter a landline or voice-only number. Phone numbers belong only in the phone field; external website links are not allowed in your profile.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" required></label>
         </div>
@@ -85,7 +86,6 @@
       <section class="panel">
         <h2>Public profile</h2>
         <div class="fields">
-          <label>Display name or company<input name="displayName" placeholder="Nickname or company name" required></label>
           <label>Years in business<select name="years" required><option value="">Choose years</option><script>for(let i=1;i<=20;i++)document.write(`<option value="${i}">${i} year${i===1?'':'s'}</option>`);</script></select></label>
           <label>State<select name="state" id="register-state" autocomplete="address-level1" required>
             <option value="">Choose a state</option>
@@ -106,7 +106,7 @@
         <h2>Profile photo</h2>
         <p class="hint">Upload one clear photo of yourself. This is the photo customers see beside your name; it is separate from your work photos.</p>
         <fieldset class="avatar-picker"><legend>Choose your profile picture</legend><div class="avatar-options">
-          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials" checked> Colored initials (first two letters of display name)</label>
+          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials" checked> Colored initials (first two letters of your name)</label>
           <label class="avatar-option"><input type="radio" name="avatarChoice" value="upload"> Upload from my device or phone</label>
           <label class="avatar-option"><input type="radio" name="avatarChoice" value="library"> Choose from saved TexContractor images</label>
         </div></fieldset>
@@ -120,7 +120,7 @@
         <p class="hint" id="work-photo-count" role="status" aria-live="polite">0 of 10 work photos selected</p>
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
-      <div class="privacy">Your real name is not shown in the public listing. Signed-in customers can access your phone number through the contact tools. Your display name, city, state, service, description and profile images are public.</div>
+      <div class="privacy">Your name, city, state, service, description and photos are shown on your public listing. Your phone number is not printed on the page — signed-in customers reach you through the contact buttons.</div>
       <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="smsPhoneConfirmed" value="yes" required style="width:20px;height:20px;flex:none"> <span>I control this SMS-capable mobile number and can receive and reply to customer texts. It is not a landline, fax or voice-only number.</span></label>
       <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       <button class="submit" type="submit">Submit service for review</button>
@@ -384,7 +384,7 @@
     };
     // Keep a draft of the typed details (not photos) so a refresh does not wipe the form.
     const DRAFT_KEY = 'texcontractor-register-draft';
-    const DRAFT_FIELDS = ['realName','email','phone','displayName','years','service','about','state','city','otherCity'];
+    const DRAFT_FIELDS = ['email','phone','displayName','years','service','about','state','city','otherCity'];
     const saveDraft = () => {
       try {
         const d = {};
@@ -397,7 +397,7 @@
       let d = null;
       try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (_) {}
       if (!d) return;
-      for (const k of ['realName','email','phone','displayName','years','service','about']) {
+      for (const k of ['email','phone','displayName','years','service','about']) {
         const f = registerForm.elements.namedItem(k);
         if (f && d[k] && !f.closest('label')?.hidden) f.value = d[k];
       }
@@ -419,7 +419,7 @@
     const prefillFromProfile = async (user) => {
       const meta = user?.user_metadata || {};
       const setIfEmpty = (name, value) => { const f = registerForm.elements.namedItem(name); if (f && value && !f.value.trim() && !f.closest('label')?.hidden) f.value = value; };
-      setIfEmpty('realName', String(meta.full_name || meta.name || '').trim());
+      setIfEmpty('displayName', String(meta.full_name || meta.name || '').trim());
       setIfEmpty('phone', String(meta.contact_phone || '').trim());
       const st = String(meta.state || '').trim().toUpperCase();
       if (st && !stateInput.value && [...stateInput.options].some(o => o.value === st)) {
@@ -437,9 +437,10 @@
     };
     // After publishing, keep the profile page in sync with what was entered here.
     const saveToProfile = async (data) => {
+      if (registerForm.elements.namedItem('email')?.closest('label')?.hidden) return; // admin posting for others
       const meta = signedInUser?.user_metadata || {};
       const patch = {};
-      if (data.realName && !meta.full_name) patch.full_name = data.realName.trim();
+      if (data.displayName && !meta.full_name) patch.full_name = data.displayName.trim();
       if (data.state && !meta.state) patch.state = data.state.trim().toUpperCase();
       if (data.city && !meta.city) patch.city = data.city.trim();
       if (data.phone && !meta.contact_phone) patch.contact_phone = data.phone.trim();
@@ -477,6 +478,9 @@
         return;
       }
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      // One name field: it is both the public name and the private contact name.
+      data.displayName = String(data.displayName || '').trim();
+      if (!String(data.realName || '').trim()) data.realName = data.displayName;
       if (data.smsPhoneConfirmed !== 'yes' || data.rulesAccepted !== 'yes') {
         submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.textContent='Confirm the SMS mobile number requirement and accept the terms before submitting.';return;
       }
