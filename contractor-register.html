@@ -415,8 +415,40 @@
     window.addEventListener('pageshow', (event) => {
       if (event.persisted) { clearPostingForm(); restoreDraft(); }
     });
+    // Fill name, phone, state and city from the saved profile so nothing is typed twice.
+    const prefillFromProfile = async (user) => {
+      const meta = user?.user_metadata || {};
+      const setIfEmpty = (name, value) => { const f = registerForm.elements.namedItem(name); if (f && value && !f.value.trim() && !f.closest('label')?.hidden) f.value = value; };
+      setIfEmpty('realName', String(meta.full_name || meta.name || '').trim());
+      setIfEmpty('phone', String(meta.contact_phone || '').trim());
+      const st = String(meta.state || '').trim().toUpperCase();
+      if (st && !stateInput.value && [...stateInput.options].some(o => o.value === st)) {
+        stateInput.value = st;
+        stateInput.dispatchEvent(new Event('change'));
+        for (let i = 0; i < 60 && cityInput.disabled; i++) await new Promise(r => setTimeout(r, 250));
+        const city = String(meta.city || '').trim().toLowerCase();
+        const match = [...cityInput.options].find(o => o.value && o.value.toLowerCase() === city);
+        if (match) { cityInput.value = match.value; cityInput.dispatchEvent(new Event('change')); }
+        else if (city && [...cityInput.options].some(o => o.value === '__other__')) {
+          cityInput.value = '__other__'; cityInput.dispatchEvent(new Event('change'));
+          otherCityInput.value = String(meta.city).trim();
+        }
+      }
+    };
+    // After publishing, keep the profile page in sync with what was entered here.
+    const saveToProfile = async (data) => {
+      const meta = signedInUser?.user_metadata || {};
+      const patch = {};
+      if (data.realName && !meta.full_name) patch.full_name = data.realName.trim();
+      if (data.state && !meta.state) patch.state = data.state.trim().toUpperCase();
+      if (data.city && !meta.city) patch.city = data.city.trim();
+      if (data.phone && !meta.contact_phone) patch.contact_phone = data.phone.trim();
+      if (!Object.keys(patch).length) return;
+      try { await TexAuth.updateProfile(patch); }
+      catch (_) { delete patch.contact_phone; if (Object.keys(patch).length) await TexAuth.updateProfile(patch).catch(() => {}); }
+    };
     clearPostingForm();
-    restoreDraft();
+    restoreDraft().then(() => TexAuth.getUser()).then(user => { if (user) prefillFromProfile(user); }).catch(() => {});
     registerForm.addEventListener('input', saveDraft);
     registerForm.addEventListener('change', saveDraft);
     const submitButton = registerForm.querySelector('.submit');
@@ -472,6 +504,7 @@
       submitButton.textContent = 'Sending securely…';
       try {
         await TexAdminApi.createSubmission({ user: signedInUser, data, media });
+        saveToProfile(data);
         success.classList.add('show');
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
         clearDraft();

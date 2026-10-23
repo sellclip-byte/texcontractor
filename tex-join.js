@@ -47,9 +47,12 @@
   form.addEventListener('submit', async event => {
     event.preventDefault(); submit.disabled = true; message('Please wait…');
     try {
-      const result = await TexAuth.passwordRequest(form.elements.namedItem('email').value, form.elements.namedItem('password').value, login ? null : intent, login ? destination() : 'account.html');
+      const result = await TexAuth.passwordRequest(form.elements.namedItem('email').value, form.elements.namedItem('password').value, login ? null : intent, login ? destination() : (intent === 'provider' ? 'contractor-register.html' : destination()));
       form.elements.namedItem('password').value = '';
-      if (result.signedIn) location.assign(await TexAuth.postLoginDestination(login ? destination() : null, !login));
+      // New technicians go straight to the one form that takes all their details and photos.
+      // New customers go back to where they were (or the homepage).
+      const afterSignup = intent === 'provider' ? 'contractor-register.html' : destination();
+      if (result.signedIn) location.assign(await TexAuth.postLoginDestination(login ? destination() : afterSignup, !login));
       else message('Instant sign-in is unavailable. Please try signing in with your email and password.', true);
     } catch (error) { message(error.message, true); }
     finally { submit.disabled = false; }
