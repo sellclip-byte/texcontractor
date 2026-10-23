@@ -48,7 +48,16 @@
     } catch (error) { message(error.message, true); }
     finally { submit.disabled = false; }
   });
-  document.getElementById('google-submit')?.addEventListener('click', () => TexAuth.signInWithGoogle(destination()));
+  // Google blocks sign-in inside app browsers (Facebook, Instagram, TikTok...). Explain instead of failing.
+  const inAppBrowser = /FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|musical_ly|Snapchat|Twitter|LinkedInApp/i.test(navigator.userAgent || '');
+  const googleButton = document.getElementById('google-submit');
+  if (googleButton && inAppBrowser) {
+    const note = document.createElement('p');
+    note.className = 'join-note';
+    note.textContent = 'Google sign-in does not work inside the Facebook or Instagram app. Use your email and a password above, or open this page in Safari or Chrome to use Google.';
+    googleButton.replaceWith(note);
+  }
+  googleButton?.addEventListener('click', () => TexAuth.signInWithGoogle(destination()));
   document.getElementById('magic-submit')?.addEventListener('click', async () => {
     try { await TexAuth.sendMagicLink(form.elements.namedItem('email').value, destination()); message('Check your email for your sign-in link.'); }
     catch (error) { message(error.message, true); }
