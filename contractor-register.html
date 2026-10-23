@@ -382,10 +382,43 @@
       const realName = registerForm.elements.namedItem('realName');
       if (realName && email?.closest('label')?.hidden) realName.value = 'texcontractor user';
     };
+    // Keep a draft of the typed details (not photos) so a refresh does not wipe the form.
+    const DRAFT_KEY = 'texcontractor-register-draft';
+    const DRAFT_FIELDS = ['realName','email','phone','displayName','years','service','about','state','city','otherCity'];
+    const saveDraft = () => {
+      try {
+        const d = {};
+        for (const k of DRAFT_FIELDS) { const f = registerForm.elements.namedItem(k); if (f && !f.closest('label')?.hidden) d[k] = f.value; }
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+      } catch (_) {}
+    };
+    const clearDraft = () => { try { localStorage.removeItem(DRAFT_KEY); } catch (_) {} };
+    const restoreDraft = async () => {
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (_) {}
+      if (!d) return;
+      for (const k of ['realName','email','phone','displayName','years','service','about']) {
+        const f = registerForm.elements.namedItem(k);
+        if (f && d[k] && !f.closest('label')?.hidden) f.value = d[k];
+      }
+      if (d.state) {
+        stateInput.value = d.state;
+        stateInput.dispatchEvent(new Event('change'));
+        for (let i = 0; i < 60 && cityInput.disabled; i++) await new Promise(r => setTimeout(r, 250));
+        if (d.city && [...cityInput.options].some(o => o.value === d.city)) {
+          cityInput.value = d.city;
+          cityInput.dispatchEvent(new Event('change'));
+          if (d.city === '__other__' && d.otherCity) otherCityInput.value = d.otherCity;
+        }
+      }
+    };
     window.addEventListener('pageshow', (event) => {
-      if (event.persisted) clearPostingForm();
+      if (event.persisted) { clearPostingForm(); restoreDraft(); }
     });
     clearPostingForm();
+    restoreDraft();
+    registerForm.addEventListener('input', saveDraft);
+    registerForm.addEventListener('change', saveDraft);
     const submitButton = registerForm.querySelector('.submit');
     const success = document.getElementById('success');
     registerForm.addEventListener('invalid', () => {
@@ -441,6 +474,7 @@
         await TexAdminApi.createSubmission({ user: signedInUser, data, media });
         success.classList.add('show');
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
+        clearDraft();
         clearPostingForm();
         submitButton.disabled = false;
         submitButton.textContent = 'Submit another service';
