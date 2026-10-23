@@ -129,23 +129,7 @@
         headers: { Prefer: 'return=representation' },
         body: JSON.stringify(record)
       }, token);
-      await request(`/rest/v1/${PUBLIC_TABLE}`, {
-        method: 'POST',
-        headers: { Prefer: 'return=minimal' },
-        body: JSON.stringify({
-          id,
-          owner_id: user.id,
-          display_name: data.displayName.trim(),
-          years: data.years,
-          city: data.city.trim(),
-          state: data.state.trim().toUpperCase(),
-          service: data.service,
-          about: data.about.trim(),
-          profile_photo_path: profilePath,
-          work_photo_paths: workPaths,
-          is_published: true
-        })
-      }, token);
+      // The public listing is created by the database trigger texcontractor_submission_public_sync.
       return rows?.[0] || record;
     } catch (error) {
       await removeObjects(token, uploaded);
