@@ -170,7 +170,9 @@
     document.getElementById('location').textContent = profile.location;
     document.getElementById('service-label').textContent = profile.service;
     document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
-    if (profile.years) document.querySelector('.fact:nth-child(3) dd').textContent = profile.years === '—' ? 'Will be added soon' : `${profile.years} years`;
+    // Years is optional: hide the Experience box when it was not given.
+    if (profile.years && profile.years !== '—') document.querySelector('.fact:nth-child(3) dd').textContent = `${profile.years} year${profile.years === '1' ? '' : 's'}`;
+    else document.querySelector('.fact:nth-child(3)').hidden = true;
     if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
     const textLink = document.getElementById('text-link');
     const messageTemplate = [

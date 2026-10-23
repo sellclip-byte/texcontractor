@@ -78,7 +78,9 @@
         if (!data.state) throw new Error('Choose your state.');
         if (!data.city) throw new Error('Choose your city.');
         const digits = data.contact_phone.replace(/\D/g, '');
-        if (!/^(1)?[2-9][0-9]{2}[2-9][0-9]{6}$/.test(digits)) throw new Error('Enter a valid US mobile phone number.');
+        // Phone is optional for customers; check it only when one is entered.
+        if (!digits) delete data.contact_phone;
+        else if (!/^(1)?[2-9][0-9]{2}[2-9][0-9]{6}$/.test(digits)) throw new Error('Enter a valid US mobile phone number, or leave it empty.');
         await TexAuth.updateProfile(data); status.textContent = 'Your details are saved.';
       } catch (error) { status.textContent = error.message; }
       finally { button.disabled = false; }

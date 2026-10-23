@@ -63,7 +63,9 @@
     .auth-status { max-width:720px; margin:0 auto 24px; padding:16px 18px; border:1px solid #f3c969; border-radius:13px; color:#704f00; background:#fff8df; font-weight:700; }
     .auth-status a { color:var(--green); }
     @media (max-width:680px) { header { padding:5px 18px; } .brand-logo { width:172px; height:58px; } .fields { grid-template-columns:1fr; } label.full { grid-column:auto; } .photo-preview { grid-template-columns:repeat(2,1fr); } }
-  </style>
+  
+    #register-form [hidden]{display:none!important}
+</style>
 </head>
 <body class="auth-check">
   <header>
@@ -79,21 +81,21 @@
         <div class="fields">
           <label>Your name or nickname <span class="hint">Shown on your listing. Use your real name or a nickname. Individual technicians only.</span><input name="displayName" autocomplete="name" placeholder="e.g. Mike Johnson or Mike J." maxlength="60" required></label>
           <input type="hidden" name="realName">
-          <label>Mobile number for SMS <span class="sms-phone-notice" role="note">IMPORTANT: Enter a mobile number that can receive and reply to TEXT MESSAGES (SMS). Do not enter a landline or voice-only number. Phone numbers belong only in the phone field; external website links are not allowed in your profile.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
-          <label>Email address<input name="email" type="email" autocomplete="email" required></label>
+          <label>Mobile number <span class="hint">A mobile number that can receive texts — not a landline.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
+          <input type="hidden" name="email">
         </div>
       </section>
       <section class="panel">
         <h2>Public profile</h2>
         <div class="fields">
-          <label>Years in business<select name="years" required><option value="">Choose years</option><script>for(let i=1;i<=20;i++)document.write(`<option value="${i}">${i} year${i===1?'':'s'}</option>`);</script></select></label>
+          <label>Years of experience <span class="hint">Optional</span><select name="years"><option value="">Choose years (optional)</option><script>for(let i=1;i<=20;i++)document.write(`<option value="${i}">${i} year${i===1?'':'s'}</option>`);</script></select></label>
           <label>State<select name="state" id="register-state" autocomplete="address-level1" required>
             <option value="">Choose a state</option>
             <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option><option value="DC">Washington, D.C.</option>
           </select></label>
           <label>City <span class="hint">Choose a city after selecting the state.</span><select name="city" id="register-city" autocomplete="address-level2" required><option value="">Choose a state first</option></select></label>
           <label id="other-city-field" hidden>Other city <span class="hint">Type your city if it is not listed.</span><input name="otherCity" id="other-city" placeholder="City name" autocomplete="address-level2"></label>
-          <label class="full">Service catalog<select name="service" required>
+          <label class="full">Your service <span class="hint">Type a word to narrow the list, then choose.</span><input id="service-search" type="search" placeholder="e.g. plumb, AC, clean, lock" autocomplete="off" style="margin-bottom:8px"><select name="service" required>
             <option value="">Choose a service</option>
             <option>Babysitting &amp; Childcare Services</option><option>Tutoring &amp; Education Services</option><option>Specialty Meal Preparation &amp; Dietary Cooking</option><option>Dog Training &amp; Horse Riding Lessons</option>
             <option>Barber &amp; Hair Styling Services</option>
@@ -121,9 +123,8 @@
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
       <div class="privacy">Your name, city, state, service, description and photos are shown on your public listing. Your phone number is not printed on the page — signed-in customers reach you through the contact buttons.</div>
-      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="smsPhoneConfirmed" value="yes" required style="width:20px;height:20px;flex:none"> <span>I control this SMS-capable mobile number and can receive and reply to customer texts. It is not a landline, fax or voice-only number.</span></label>
-      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
-      <button class="submit" type="submit">Submit service for review</button>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>This is my mobile number and I can reply to customer texts. I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+      <button class="submit" type="submit">Publish my service</button>
       <div class="success" id="success" role="status"></div>
     </form>
   </main>
@@ -131,6 +132,7 @@
   <script src="tex-admin.js?v=20261023-del"></script>
   <script>
     let signedInUser = null;
+    let adminPosting = false;
     const returnTo = `contractor-register.html${window.location.search}`;
     const authStatus = document.createElement('div');
     authStatus.className = 'auth-status';
@@ -158,14 +160,9 @@
     const configureAdminPosting = async (user) => {
       const admin = await TexAdminApi.getAdminRecord(user).catch(() => null);
       if (!admin) return;
+      adminPosting = true;
       const realName = document.querySelector('[name="realName"]');
-      const email = document.querySelector('[name="email"]');
       if (realName && !realName.value.trim()) realName.value = 'texcontractor user';
-      if (email) {
-        email.value = user?.email || '';
-        email.required = false;
-        email.closest('label').hidden = true;
-      }
     };
     TexAuth.requireUser(returnTo).then(user => { if (user) configureAdminPosting(user); }).catch(() => {});
     const profileInput = document.getElementById('profile-photo');
@@ -377,14 +374,12 @@
       profilePreview.replaceChildren();
       selectedWorkPhotos = [];
       renderWorkPhotos();
-      const email = registerForm.elements.namedItem('email');
-      if (email?.closest('label')?.hidden) email.value = signedInUser?.email || '';
       const realName = registerForm.elements.namedItem('realName');
-      if (realName && email?.closest('label')?.hidden) realName.value = 'texcontractor user';
+      if (realName && adminPosting) realName.value = 'texcontractor user';
     };
     // Keep a draft of the typed details (not photos) so a refresh does not wipe the form.
     const DRAFT_KEY = 'texcontractor-register-draft';
-    const DRAFT_FIELDS = ['email','phone','displayName','years','service','about','state','city','otherCity'];
+    const DRAFT_FIELDS = ['phone','displayName','years','service','about','state','city','otherCity'];
     const saveDraft = () => {
       try {
         const d = {};
@@ -397,7 +392,7 @@
       let d = null;
       try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (_) {}
       if (!d) return;
-      for (const k of ['email','phone','displayName','years','service','about']) {
+      for (const k of ['phone','displayName','years','service','about']) {
         const f = registerForm.elements.namedItem(k);
         if (f && d[k] && !f.closest('label')?.hidden) f.value = d[k];
       }
@@ -413,7 +408,7 @@
       }
     };
     window.addEventListener('pageshow', (event) => {
-      if (event.persisted) { clearPostingForm(); restoreDraft(); }
+      if (event.persisted) { clearPostingForm(); resetServiceSearch(); restoreDraft(); }
     });
     // Fill name, phone, state and city from the saved profile so nothing is typed twice.
     const prefillFromProfile = async (user) => {
@@ -437,7 +432,7 @@
     };
     // After publishing, keep the profile page in sync with what was entered here.
     const saveToProfile = async (data) => {
-      if (registerForm.elements.namedItem('email')?.closest('label')?.hidden) return; // admin posting for others
+      if (adminPosting) return; // admin posting for others
       const meta = signedInUser?.user_metadata || {};
       const patch = {};
       if (data.displayName && !meta.full_name) patch.full_name = data.displayName.trim();
@@ -448,7 +443,24 @@
       try { await TexAuth.updateProfile(patch); }
       catch (_) { delete patch.contact_phone; if (Object.keys(patch).length) await TexAuth.updateProfile(patch).catch(() => {}); }
     };
+    // Type-to-filter for the long service list (rebuilds the options so it works on iPhone too).
+    const serviceSelect = registerForm.elements.namedItem('service');
+    const serviceSearch = document.getElementById('service-search');
+    const allServices = [...serviceSelect.options].filter(o => o.value).map(o => o.value);
+    const filterServices = () => {
+      const q = serviceSearch.value.trim().toLowerCase();
+      const words = q.split(/\s+/).filter(Boolean);
+      const keep = serviceSelect.value;
+      const shown = allServices.filter(v => !words.length || words.every(w => v.toLowerCase().includes(w)));
+      serviceSelect.replaceChildren(new Option(shown.length ? (words.length ? `Choose a service (${shown.length} found)` : 'Choose a service') : 'No match — try another word', ''), ...shown.map(v => new Option(v, v)));
+      serviceSelect.value = keep && shown.includes(keep) ? keep : (words.length && shown.length === 1 ? shown[0] : '');
+      if (serviceSelect.value !== keep) serviceSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    serviceSearch.addEventListener('input', filterServices);
+    serviceSearch.addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+    const resetServiceSearch = () => { serviceSearch.value = ''; filterServices(); };
     clearPostingForm();
+    resetServiceSearch();
     restoreDraft().then(() => TexAuth.getUser()).then(user => { if (user) prefillFromProfile(user); }).catch(() => {});
     registerForm.addEventListener('input', saveDraft);
     registerForm.addEventListener('change', saveDraft);
@@ -470,7 +482,7 @@
         if (!signedInUser) return;
       } catch (error) {
         submitButton.disabled = false;
-        submitButton.textContent = 'Submit service for review';
+        submitButton.textContent = 'Publish my service';
         success.classList.add('show');
         success.style.color = '#991b1b';
         success.style.background = '#fff1f2';
@@ -481,17 +493,18 @@
       // One name field: it is both the public name and the private contact name.
       data.displayName = String(data.displayName || '').trim();
       if (!String(data.realName || '').trim()) data.realName = data.displayName;
-      if (data.smsPhoneConfirmed !== 'yes' || data.rulesAccepted !== 'yes') {
-        submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.textContent='Confirm the SMS mobile number requirement and accept the terms before submitting.';return;
+      // The contact email is the signed-in account's email (no need to type it again).
+      data.email = String(signedInUser?.email || data.email || '').trim();
+      if (data.rulesAccepted !== 'yes') {
+        submitButton.disabled=false;submitButton.textContent='Publish my service';success.classList.add('show');success.textContent='Please tick the box to confirm your mobile number and accept the terms.';return;
       }
-      delete data.smsPhoneConfirmed;
       delete data.rulesAccepted;
       const forbiddenLink=/(?:https?:\/\/|www\.|[a-z0-9-]+\.(?:com|net|org|io|co|us|biz|info|me|app|site|link|ly)\b)/i;
       const phoneLike=/(?:\+?1[\s.()-]*)?(?:\(?[2-9]\d{2}\)?[\s.()-]*)[2-9]\d{2}[\s.()-]*\d{4}\b/;
       const phone=String(data.phone||'').trim();
       const invalidPhone=!/^[+0-9() .-]{10,22}$/.test(phone)||phone.replace(/\D/g,'').length<10||phone.replace(/\D/g,'').length>15;
       const publicText=Object.entries(data).filter(([field,value])=>!['phone','email','profilePhoto','workPhotos','avatarChoice'].includes(field)&&typeof value==='string');
-      const reject=(message)=>{submitButton.disabled=false;submitButton.textContent='Submit service for review';success.classList.add('show');success.style.color='#991b1b';success.textContent=message;};
+      const reject=(message)=>{submitButton.disabled=false;submitButton.textContent='Publish my service';success.classList.add('show');success.style.color='#991b1b';success.textContent=message;};
       if(invalidPhone){reject('Enter a valid phone number in the phone field only.');return;}
       if(publicText.some(([,value])=>forbiddenLink.test(value))){reject('External links are not allowed in service profiles.');return;}
       if(publicText.some(([,value])=>phoneLike.test(value))){reject('Phone numbers are allowed only in the phone number field.');return;}
@@ -514,12 +527,12 @@
         success.classList.add('show');
         success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
         clearDraft();
-        clearPostingForm();
+        clearPostingForm(); resetServiceSearch();
         submitButton.disabled = false;
         submitButton.textContent = 'Submit another service';
       } catch (error) {
         submitButton.disabled = false;
-        submitButton.textContent = 'Submit service for review';
+        submitButton.textContent = 'Publish my service';
         success.classList.add('show');
         success.style.color = '#991b1b';
         success.style.background = '#fff1f2';
