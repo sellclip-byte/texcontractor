@@ -22,43 +22,35 @@
       finally { photo.disabled = false; photo.value = ''; }
     });
     for (const key of ['full_name', 'contact_phone']) form.elements.namedItem(key).value = user.user_metadata?.[key] || '';
-    // State and city dropdowns (cities come from the site's city list; "Other city" lets people type their own).
-    const stateSel = form.elements.namedItem('state'), citySel = form.elements.namedItem('city');
-    const otherWrap = document.getElementById('account-other-city'), otherInput = form.elements.namedItem('city_other');
+    // State dropdown + searchable city box: typing shows matching cities of the chosen state; any city can be typed.
+    const stateSel = form.elements.namedItem('state'), cityInput = form.elements.namedItem('city');
+    const cityList = document.getElementById('account-city-list');
     let cityData = null;
     const loadCityData = () => cityData || (cityData = fetch('city-coordinates-2025.json', { cache: 'force-cache' }).then(r => r.json()).then(d => {
       const by = {}; for (const k of Object.keys(d)) { const [st, c] = k.split('|'); (by[st] ||= []).push(c.replace(/\b\w/g, x => x.toUpperCase())); }
       for (const st in by) by[st].sort(); return by;
     }).catch(() => ({})));
-    const syncOther = () => { otherWrap.hidden = citySel.value !== '__other'; if (otherWrap.hidden) otherInput.value = ''; };
-    const fillCities = async (selected) => {
+    const fillCities = async () => {
       const st = stateSel.value;
-      citySel.replaceChildren(new Option(st ? 'Loading cities…' : 'Choose a state first', ''));
-      citySel.disabled = true;
-      if (!st) { syncOther(); return; }
+      cityInput.disabled = !st;
+      cityInput.placeholder = st ? 'Start typing your city' : 'Choose a state first';
+      cityList.replaceChildren();
+      if (!st) return;
       const list = (await loadCityData())[st] || [];
       if (stateSel.value !== st) return;
-      citySel.replaceChildren(new Option('Choose a city', ''), ...list.map(c => new Option(c, c)), new Option('Other city…', '__other'));
-      citySel.disabled = false;
-      if (selected) {
-        const match = list.find(c => c.toLowerCase() === selected.toLowerCase());
-        if (match) citySel.value = match; else { citySel.value = '__other'; otherInput.value = selected; }
-      }
-      syncOther();
+      cityList.replaceChildren(...list.map(c => new Option(c)));
     };
-    stateSel.addEventListener('change', () => fillCities(''));
-    citySel.addEventListener('change', syncOther);
+    stateSel.addEventListener('change', () => { cityInput.value = ''; fillCities(); });
     const savedState = String(user.user_metadata?.state || '').trim();
-    const stateCode = [...stateSel.options].find(o => o.value && (o.value.toLowerCase() === savedState.toLowerCase() || o.text.toLowerCase() === savedState.toLowerCase()))?.value || '';
-    stateSel.value = stateCode;
-    fillCities(String(user.user_metadata?.city || '').trim());
+    stateSel.value = [...stateSel.options].find(o => o.value && (o.value.toLowerCase() === savedState.toLowerCase() || o.text.toLowerCase() === savedState.toLowerCase()))?.value || '';
+    cityInput.value = String(user.user_metadata?.city || '').trim().replace(/\b\w/g, x => x.toUpperCase());
+    fillCities();
     form.addEventListener('submit', async event => {
       event.preventDefault(); const button = form.querySelector('button'); button.disabled = true;
       try {
         const data = {};
         for (const key of ['full_name', 'contact_phone', 'state']) data[key] = form.elements.namedItem(key).value.trim();
-        const cityChoice = form.elements.namedItem('city').value;
-        data.city = (cityChoice === '__other' ? form.elements.namedItem('city_other').value : cityChoice).trim();
+        data.city = form.elements.namedItem('city').value.trim();
         if (!data.state) throw new Error('Choose your state.');
         if (!data.city) throw new Error('Choose your city.');
         const digits = data.contact_phone.replace(/\D/g, '');
