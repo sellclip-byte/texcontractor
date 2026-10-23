@@ -54,7 +54,13 @@
       const afterSignup = intent === 'provider' ? 'contractor-register.html' : destination();
       if (result.signedIn) location.assign(await TexAuth.postLoginDestination(login ? destination() : afterSignup, !login));
       else message('Instant sign-in is unavailable. Please try signing in with your email and password.', true);
-    } catch (error) { message(error.message, true); }
+    } catch (error) {
+      // Email already has an account: switch to Sign in so the visitor just presses the green button.
+      if (!login && /already registered|already exists/i.test(error.message || '')) {
+        login = true; render();
+        message('This email already has an account. Press Sign in to continue.', true);
+      } else message(error.message, true);
+    }
     finally { submit.disabled = false; }
   });
   // Google blocks sign-in inside app browsers (Facebook, Instagram, TikTok...). Explain instead of failing.
