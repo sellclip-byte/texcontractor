@@ -145,6 +145,7 @@
   <footer>TexContractor · Local help by text</footer>
   <script src="tex-state-avatar.js?v=20261018-state-flags"></script>
   <script src="tex-auth.js?v=20261021-signup"></script>
+  <script src="tex-quick-signup.js?v=20261022"></script>
   <script>
     const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -171,11 +172,12 @@
       'Problem description: ____________________',
       'If you would like photos or a video, I can send them. Thank you.'
     ].join('\n');
-    const getContractorPhone = async (serviceId) => {
-      const token = await TexAuth.getAccessToken();
+    const getContractorPhone = async (serviceId, displayName) => {
+      let token = await TexAuth.getAccessToken();
       if (!token) {
-        await TexAuth.requireUser(`contractor.html${window.location.search}`);
-        return '';
+        if (!(await TexQuickSignup.require({ name: displayName }))) return '';
+        token = await TexAuth.getAccessToken();
+        if (!token) return '';
       }
       const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_contractor_phone`, {
         method: 'POST',
@@ -319,7 +321,7 @@
         event.preventDefault();
         textButton.textContent = 'Preparing message…';
         try {
-          const phone = await getContractorPhone(provider.id);
+          const phone = await getContractorPhone(provider.id, provider.display_name);
           if (!phone) {
             textButton.textContent = 'Text this contractor';
             return;
@@ -339,7 +341,7 @@
       profileButton.href = `profile.html?${profileParams.toString()}`;
       const identity = document.createElement('div');
       identity.className = 'provider-identity';
-      identity.append(avatar, contactIcons(provider.display_name, () => getContractorPhone(provider.id), textButton, provider.id));
+      identity.append(avatar, contactIcons(provider.display_name, () => getContractorPhone(provider.id, provider.display_name), textButton, provider.id));
       actions.append(profileButton, textButton);
       const reportButton = document.createElement('button');
       reportButton.className = 'report-button';
@@ -417,8 +419,8 @@
               const actions=document.createElement('div');actions.className='provider-actions';
               const sms=document.createElement('a');sms.className='text-button';sms.href='#';sms.textContent='Text this contractor';
               const loadImportedPhone = async () => {
-                  const token=await TexAuth.getAccessToken();
-                  if(!token){await TexAuth.requireUser('contractor.html'+window.location.search);return '';}
+                  let token=await TexAuth.getAccessToken();
+                  if(!token){if(!(await TexQuickSignup.require({name:entry.business_name})))return '';token=await TexAuth.getAccessToken();if(!token)return '';}
                   const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/texcontractor_imported_phone',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
                   if(!res.ok)throw new Error('Contact unavailable');
                   const phone=await res.json();
@@ -430,8 +432,8 @@
               sms.addEventListener('click',async event=>{
                 event.preventDefault();
                 try {
-                  const token=await TexAuth.getAccessToken();
-                  if(!token){await TexAuth.requireUser('contractor.html'+window.location.search);return;}
+                  let token=await TexAuth.getAccessToken();
+                  if(!token){if(!(await TexQuickSignup.require({name:entry.business_name})))return;token=await TexAuth.getAccessToken();if(!token)return;}
                   const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/texcontractor_imported_phone',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({p_id:entry.id})});
                   if(!res.ok)throw new Error('Contact unavailable');
                   const phone=await res.json();
@@ -552,7 +554,7 @@
     }
     startLocationSearch();
   </script>
-  <script src="tex-chat.js?v=20261022"></script>
+  <script src="tex-chat.js?v=20261022b"></script>
   <script src="tex-language.js"></script>
   <script src="tex-side-ads.js?v=20261017-location-2"></script>
 <script>

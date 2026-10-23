@@ -24,7 +24,8 @@
   }
 
   async function start(serviceId) {
-    const t = await token();
+    let t = await token();
+    if (!t && window.TexQuickSignup) { if (await TexQuickSignup.require({ source: 'chat' })) t = await token(); else return; }
     if (!t) {
       window.location.href = 'auth.html?mode=signup&intent=customer&return_to=' + encodeURIComponent('chat.html?service=' + serviceId);
       return;
