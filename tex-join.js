@@ -21,13 +21,18 @@
     
     box.querySelector('[data-join-copy]').textContent = login ? 'Sign in to your saved account.' : (intent === 'customer' ? 'Sign up to text technicians directly.' : 'Sign up to receive customer requests by text message.');
     box.querySelectorAll('[data-intent]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.intent === intent)));
+    box.classList.toggle('is-login', login);
+    box.querySelectorAll('[data-join-mode]').forEach(tab => tab.setAttribute('aria-selected', String((tab.dataset.joinMode === 'login') === login)));
     form.elements.namedItem('password').autocomplete = login ? 'current-password' : 'new-password';
     form.elements.namedItem('password').minLength = login ? 1 : 6;
     box.querySelector('#join-password-help').hidden = login;
     submit.textContent = login ? 'Sign in' : 'Create account & continue';
     const link = box.querySelector('[data-join-login]');
     link.textContent = login ? 'Create an account' : 'Sign in';
-    link.parentElement.firstChild.textContent = login ? 'New here? ' : 'Already have an account? ';
+    // Replace the text node (not edit it) so the language script keeps the new wording.
+    const prefix = box.querySelector('[data-join-prefix]');
+    if (prefix) prefix.textContent = login ? 'New here? ' : 'Already have an account? ';
+    else link.parentElement.firstChild.textContent = login ? 'New here? ' : 'Already have an account? ';
     link.href = 'auth.html?mode=' + (login ? 'signup' : 'login') + '&intent=' + intent + '&return_to=' + encodeURIComponent(destination());
   }
   box.querySelectorAll('[data-intent]').forEach(button => button.addEventListener('click', () => { intent = button.dataset.intent; render(); }));
@@ -37,6 +42,7 @@
     message('');
     render();
   });
+  box.querySelectorAll('[data-join-mode]').forEach(tab => tab.addEventListener('click', () => { login = tab.dataset.joinMode === 'login'; message(''); render(); }));
   render();
   form.addEventListener('submit', async event => {
     event.preventDefault(); submit.disabled = true; message('Please wait…');
