@@ -99,7 +99,7 @@
             <option>Barber &amp; Hair Styling Services</option>
             <option>Central Air Conditioning Repair or Maintenance</option><option>Electrical and Wiring Repair</option><option>TV Mounting</option><option>Tree Trimming and Removal</option><option>Furniture Assembly</option><option>Furniture Moving and Heavy Lifting</option><option>Mobile Auto Mechanic</option><option>Handyman</option><option>Outdoor Landscaping and Design</option><option>Interior Painting</option><option>Junk Removal</option><option>Roof Repair or Maintenance</option><option>Appliance Repair or Maintenance</option><option>Floor Installation or Replacement</option><option>Lock Installation and Repair</option><option>Garage Door Repair</option><option>Concrete Installation</option><option>Bathroom Remodel</option><option>Metalwork</option><option>Window Repair</option><option>Plumbing Drain Repair</option><option>Plumbing Pipe Repair</option><option>Heating System Repair or Maintenance</option><option>House Cleaning</option><option>Carpet Cleaning</option><option>Pressure Washing</option><option>Upholstery and Furniture Cleaning</option><option>Mobile Auto Detailing</option><option>Local Moving (under 50 miles)</option><option>Computer Repair</option><option>Notarization</option><option>Dog Grooming</option><option>DJ Services</option><option>Wedding and Event Makeup</option><option>Dog Training</option><option>Personal Training</option><option>Wedding and Event Photography</option><option>Pest Control Services</option><option>Fence and Gate Installation</option><option>Drywall Repair and Texturing</option><option>Deck or Porch Remodel or Addition</option><option>Swimming Pool Cleaning &amp; Maintenance</option><option>Lighting Installation</option><option>General Contracting</option><option>Gutter Cleaning and Maintenance</option><option>Door Installation</option><option>Window Tinting</option><option>Wedding Officiant</option><option>Event Planning</option><option>Interior Design</option><option>Architectural Services</option><option>Home Inspection Consulting</option><option>Home Foundation Repair</option><option>In-Home Nursing Care</option><option>Private Taxi &amp; Transportation Services</option><option>Lawn Mower, Water Pump &amp; Outdoor Equipment Repair</option>
           </select></label>
-          <label class="full">About you and your work<textarea name="about" placeholder="Describe your experience and the work you provide." required></textarea></label>
+          <label class="full">About you and your work <span class="hint">Optional. If you leave it empty, your listing will say: "Contact [your name] directly for [service] in [city]. Send a text to get a quote."</span><textarea name="about" placeholder="Optional — e.g. 10 years of experience, licensed and insured, free estimates."></textarea></label>
         </div>
       </section>
       <section class="panel">
@@ -497,6 +497,8 @@
       if(publicText.some(([,value])=>phoneLike.test(value))){reject('Phone numbers are allowed only in the phone number field.');return;}
       if (data.city === '__other__') data.city = String(data.otherCity || '').trim();
       delete data.otherCity;
+      // About is optional: give the listing a short invitation to contact the technician.
+      if (!String(data.about || '').trim()) data.about = `Contact ${data.displayName} directly for ${data.service} in ${data.city}, ${data.state}. Send a text to get a quote.`;
       delete data.profilePhoto;
       delete data.avatarChoice;
       delete data.workPhotos;
