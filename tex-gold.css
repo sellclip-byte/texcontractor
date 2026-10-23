@@ -1,0 +1,22 @@
+/* TexContractor gold buttons — deep bronze gold taken from the logo (option B). One place for every page. */
+:root { --tex-gold-bg: linear-gradient(180deg,#c69a3a 0%,#9c6c18 55%,#845400 100%); }
+.join-submit,
+.join-modes [data-join-mode=signup][aria-selected=true],
+.text-action,
+.text-button,
+#register-form .submit,
+#share-button,
+.new-message, .send,
+.save,
+.step-number {
+  background: var(--tex-gold-bg) !important;
+  border: 1px solid #6e4600 !important;
+  color: #fff8e1 !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
+  box-shadow: inset 0 1px 0 rgba(255,236,170,.6), 0 3px 8px rgba(110,70,0,.28) !important;
+}
+.join-submit:hover, .text-action:hover, .text-button:hover, #register-form .submit:hover, #share-button:hover, .new-message:hover, .send:hover, .save:hover {
+  filter: brightness(1.08);
+}
+/* Sign-in mode keeps the green button. */
+.join-box.is-login .join-submit { background: #075c4b !important; border-color: #064c3f !important; text-shadow: none; box-shadow: 0 5px 13px rgba(7,92,75,.2) !important; }
