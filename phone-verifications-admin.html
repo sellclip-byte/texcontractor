@@ -14,7 +14,7 @@ code{font-size:1.1rem;font-weight:800;letter-spacing:2px}#msg{font-weight:700;co
 </style></head><body><main>
 <p><a href="contractor-admin.html">← Admin dashboard</a></p>
 <h1>Phone verifications</h1>
-<p>New technicians stay hidden until they confirm their mobile number. Open this page on your iPhone, tap <b>Text code</b>, press send in Messages, then tap <b>Mark sent</b>. When they type the code on the site, the listing is published automatically.<br><span dir="rtl" lang="ar">الفنيون الجدد لا يُنشرون حتى يؤكدوا رقمهم. افتح هذه الصفحة على الآيفون، اضغط «Text code» ثم إرسال في الرسائل، ثم «Mark sent». عندما يكتب الفني الكود يُنشر إعلانه تلقائياً.</span></p>
+<p>New technicians stay hidden until they confirm their mobile number. Open this page on your iPhone, tap <b>Text code</b> and press send in Messages — or, to keep your number private, tap <b>Copy number</b> and <b>Copy message</b> and send from Google Voice — then tap <b>Mark sent</b>. When they type the code on the site, the listing is published automatically.<br><span dir="rtl" lang="ar">الفنيون الجدد لا يُنشرون حتى يؤكدوا رقمهم. افتح هذه الصفحة على الآيفون، اضغط «Text code» ثم إرسال في الرسائل، أو لإخفاء رقمك انسخ الرقم والرسالة بـ «Copy number» و«Copy message» وأرسلها من Google Voice، ثم «Mark sent». عندما يكتب الفني الكود يُنشر إعلانه تلقائياً.</span></p>
 <p><label><input type="checkbox" id="showdone"> Show verified too</label></p>
 <p id="msg" role="status"></p><div id="list">Loading…</div>
 </main>
@@ -41,7 +41,8 @@ async function load(){
   const st=x.status==='verified'?'verified':(x.sent_at?'sent':'waiting');
   c.innerHTML=`<div><strong>${fmt(x.phone_digits)}</strong> <span class="tag ${st}">${st}</span> · ${new Date(x.created_at).toLocaleString()}</div>
   <div>${esc(x.display_name)} · ${esc(x.service)} · ${esc(x.city)}, ${esc(x.state)}</div><div style="color:#64748b">${esc(x.owner_email)}</div>
-  ${x.status!=='verified'?`<div class="row">Code: <code>${esc(x.code)}</code><a class="btn sms" href="sms:+1${x.phone_digits}&body=${encodeURIComponent(smsText(x.code))}">Text code</a><button class="btn mk" data-a="sent">Mark sent</button><button class="btn ap" data-a="approve">Approve without code</button></div>`:''}`;
+  ${x.status!=='verified'?`<div class="row">Code: <code>${esc(x.code)}</code><a class="btn sms" href="sms:+1${x.phone_digits}&body=${encodeURIComponent(smsText(x.code))}">Text code</a><button class="btn mk" data-copy="num">Copy number</button><button class="btn mk" data-copy="msg">Copy message</button><button class="btn mk" data-a="sent">Mark sent</button><button class="btn ap" data-a="approve">Approve without code</button></div>`:''}`;
+  c.querySelectorAll('button[data-copy]').forEach(b=>b.onclick=async()=>{const v=b.dataset.copy==='num'?x.phone_digits:smsText(x.code);try{await navigator.clipboard.writeText(v);const o=b.textContent;b.textContent='Copied ✓';setTimeout(()=>b.textContent=o,1500)}catch(e){prompt('Copy:',v)}});
   c.querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{if(b.dataset.a==='approve'&&!confirm('Publish this listing without the code?'))return;if(await act(x.id,b.dataset.a))load()});
   list.appendChild(c)});
 }
