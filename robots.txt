@@ -3,3 +3,4 @@ Allow: /
 
 Sitemap: https://texcontractor.com/sitemap.xml
 Sitemap: https://texcontractor.com/sitemap-local.xml
+Sitemap: https://texcontractor.com/sitemap-videos.xml

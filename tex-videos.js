@@ -30,7 +30,7 @@
     const h = document.createElement('h2');
     h.textContent = t.title;
     const more = document.createElement('a');
-    more.href = 'about-texcontractor.html#videos-section';
+    more.href = 'videos/';
     more.textContent = t.more + ' →';
     head.append(h, more);
     const row = document.createElement('div');
@@ -48,7 +48,10 @@
       const badge = document.createElement('span');
       badge.className = 'tex-videos-lang';
       badge.textContent = tag;
-      cap.append(badge, document.createTextNode(label));
+      const link = document.createElement('a');
+      link.href = 'videos/' + file + '.html';
+      link.textContent = label;
+      cap.append(badge, link);
       fig.append(v, cap);
       row.append(fig);
     });
