@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Phone verifications · TexContractor admin</title>
+<style>
+body{margin:0;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;color:#0f172a;background:#f8fafc;line-height:1.5}
+main{max-width:900px;margin:auto;padding:18px}a{color:#075c4b}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.btn{border:0;border-radius:8px;padding:11px 14px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+.sms{background:#075c4b;color:#fff}.ap{background:#fff;color:#0f172a;border:1px solid #cbd5e1}.mk{background:#e0f2fe;color:#075985}
+.tag{font-size:.75rem;font-weight:800;padding:2px 8px;border-radius:99px;background:#fef3c7;color:#92400e}.tag.sent{background:#e0f2fe;color:#075985}.tag.verified{background:#dcfce7;color:#14532d}
+code{font-size:1.1rem;font-weight:800;letter-spacing:2px}#msg{font-weight:700;color:#991b1b}
+</style></head><body><main>
+<p><a href="contractor-admin.html">← Admin dashboard</a></p>
+<h1>Phone verifications</h1>
+<p>New technicians stay hidden until they confirm their mobile number. Open this page on your iPhone, tap <b>Text code</b>, press send in Messages, then tap <b>Mark sent</b>. When they type the code on the site, the listing is published automatically.<br><span dir="rtl" lang="ar">الفنيون الجدد لا يُنشرون حتى يؤكدوا رقمهم. افتح هذه الصفحة على الآيفون، اضغط «Text code» ثم إرسال في الرسائل، ثم «Mark sent». عندما يكتب الفني الكود يُنشر إعلانه تلقائياً.</span></p>
+<p><label><input type="checkbox" id="showdone"> Show verified too</label></p>
+<p id="msg" role="status"></p><div id="list">Loading…</div>
+</main>
+<script src="tex-auth.js?v=20261021-signup"></script>
+<script>
+(async function(){
+const API='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const msg=document.getElementById('msg'),list=document.getElementById('list'),showdone=document.getElementById('showdone');
+let headers;
+try{const user=await TexAuth.getUser();if(!user)throw Error('Please sign in first.');const token=await TexAuth.getAccessToken();headers={apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'};
+const a=await fetch(API+'texcontractor_admins?select=user_id&user_id=eq.'+encodeURIComponent(user.id),{headers});if(!a.ok||!(await a.json()).length)throw Error('Administrator access required.');}
+catch(e){list.textContent='';msg.textContent=e.message;return}
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6);
+const smsText=c=>`TexContractor: your code is ${c}. Enter it at texcontractor.com/account.html to publish your listing. / Tu código es ${c}. Escríbelo en texcontractor.com/account.html para publicar tu anuncio.`;
+async function act(id,action){const r=await fetch(API+'rpc/texcontractor_admin_phone_verification_action',{method:'POST',headers,body:JSON.stringify({p_id:id,p_action:action})});if(!r.ok){msg.textContent=(await r.json().catch(()=>({}))).message||'Failed';return false}return true}
+async function load(){
+ msg.textContent='';
+ const r=await fetch(API+'rpc/texcontractor_admin_phone_verifications',{method:'POST',headers,body:'{}'});
+ let rows=await r.json();if(!r.ok){msg.textContent=rows.message||'Failed';return}
+ if(!showdone.checked)rows=rows.filter(x=>x.status!=='verified');
+ list.replaceChildren();if(!rows.length){list.textContent='Nothing waiting. ✓';return}
+ rows.forEach(x=>{const c=document.createElement('div');c.className='card';
+  const st=x.status==='verified'?'verified':(x.sent_at?'sent':'waiting');
+  c.innerHTML=`<div><strong>${fmt(x.phone_digits)}</strong> <span class="tag ${st}">${st}</span> · ${new Date(x.created_at).toLocaleString()}</div>
+  <div>${esc(x.display_name)} · ${esc(x.service)} · ${esc(x.city)}, ${esc(x.state)}</div><div style="color:#64748b">${esc(x.owner_email)}</div>
+  ${x.status!=='verified'?`<div class="row">Code: <code>${esc(x.code)}</code><a class="btn sms" href="sms:+1${x.phone_digits}&body=${encodeURIComponent(smsText(x.code))}">Text code</a><button class="btn mk" data-a="sent">Mark sent</button><button class="btn ap" data-a="approve">Approve without code</button></div>`:''}`;
+  c.querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{if(b.dataset.a==='approve'&&!confirm('Publish this listing without the code?'))return;if(await act(x.id,b.dataset.a))load()});
+  list.appendChild(c)});
+}
+showdone.onchange=load;load();setInterval(load,60000);
+})();
+</script></body></html>

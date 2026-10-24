@@ -136,9 +136,11 @@
       <button class="submit" type="submit">Publish my service</button>
       <div class="success" id="success" role="status"></div>
     </form>
+    <div id="phone-verify-box" hidden></div>
   </main>
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-admin.js?v=20261023-mysvc"></script>
+  <script src="tex-phone-verify.js?v=20261024"></script>
   <script>
     let signedInUser = null;
     let adminPosting = false;
@@ -544,7 +546,7 @@
     };
     clearPostingForm();
     resetServiceSearch();
-    restoreDraft().then(() => TexAuth.getUser()).then(async user => { if (!user) return; signedInUser = signedInUser || user; await prefillFromProfile(user); if (!(await TexAdminApi.getAdminRecord(user).catch(() => null))) loadMyServices(); }).catch(() => {});
+    restoreDraft().then(() => TexAuth.getUser()).then(async user => { if (!user) return; signedInUser = signedInUser || user; await prefillFromProfile(user); if (!(await TexAdminApi.getAdminRecord(user).catch(() => null))) { loadMyServices(); TexPhoneVerify.render('phone-verify-box'); } }).catch(() => {});
     registerForm.addEventListener('input', saveDraft);
     registerForm.addEventListener('change', saveDraft);
     const submitButton = registerForm.querySelector('.submit');
@@ -605,10 +607,14 @@
       };
       submitButton.textContent = 'Sending securely…';
       try {
-        await TexAdminApi.createSubmission({ user: signedInUser, data, media });
+        const saved = await TexAdminApi.createSubmission({ user: signedInUser, data, media });
         saveToProfile(data);
         success.classList.add('show');
-        success.textContent = `Your ${data.service} profile is now published on TexContractor.`;
+        const waiting = await TexPhoneVerify.render('phone-verify-box').catch(() => false);
+        success.textContent = (waiting || saved?.status === 'pending')
+          ? `Your ${data.service} profile is saved. It will be published as soon as you confirm your mobile number with the 6-digit code we text you (see below).`
+          : `Your ${data.service} profile is now published on TexContractor.`;
+        if (waiting) document.getElementById('phone-verify-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
         clearDraft();
         clearPostingForm(); resetServiceSearch();
         prefillFromProfile(signedInUser);
