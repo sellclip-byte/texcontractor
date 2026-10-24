@@ -29,7 +29,7 @@ const a=await fetch(API+'texcontractor_admins?select=user_id&user_id=eq.'+encode
 catch(e){list.textContent='';msg.textContent=e.message;return}
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=d=>'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6);
-const smsText=c=>`TexContractor: your code is ${c}. Enter it at texcontractor.com/account.html to publish your listing. / Tu código es ${c}. Escríbelo en texcontractor.com/account.html para publicar tu anuncio.`;
+const smsText=c=>`TexContractor: your code is ${c}. Enter it at texcontractor.com/account.html to publish your listing. / Tu código es ${c}. Escríbelo en texcontractor.com/account.html para publicar tu anuncio. Reply STOP to opt out.`;
 async function act(id,action){const r=await fetch(API+'rpc/texcontractor_admin_phone_verification_action',{method:'POST',headers,body:JSON.stringify({p_id:id,p_action:action})});if(!r.ok){msg.textContent=(await r.json().catch(()=>({}))).message||'Failed';return false}return true}
 async function load(){
  msg.textContent='';

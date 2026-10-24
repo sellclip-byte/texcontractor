@@ -98,4 +98,8 @@
   const features = addLink(about, 'features', 'Website Features');
   addLink(features || about, 'share', 'Share TexContractor');
   addLink(footer.querySelector('a[href="site-guide.html#help"]'), 'install', 'Add to Your Phone');
+  addLink(footer.querySelector('a[href="site-guide.html#safety"]'), 'care', 'Childcare & In-Home Safety');
+  const cookies = footer.querySelector('a[href="site-guide.html#cookies"]');
+  const copyright = addLink(cookies, 'copyright', 'Copyright Complaints');
+  addLink(copyright || cookies, 'accessibility', 'Accessibility');
 })();
