@@ -6,6 +6,8 @@
     ['babysitter-es', 'Español', '¿Necesitas niñera hoy?'],
     ['ac-en', 'English', 'AC quit in the Texas heat?'],
     ['ac-es', 'Español', '¿Se descompuso el aire?'],
+    ['tech-leads-en', 'English', 'Tired of paying for leads?'],
+    ['tech-leads-es', 'Español', '¿Cansado de pagar por clientes?'],
     ['home-en', 'English', 'No app needed: add it to your Home Screen'],
     ['home-es', 'Español', 'Sin descargar apps: agrégalo a tu pantalla de inicio'],
     ['tech-en', 'English', 'Technicians: build customer trust'],
