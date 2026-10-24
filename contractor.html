@@ -195,10 +195,10 @@
     const emptyState = document.getElementById('empty-state');
     const blockedKey = 'texcontractor-blocked-providers';
     const blockedProviders = new Set(JSON.parse(localStorage.getItem(blockedKey) || '[]').map(String));
-    const reportReasons = ['Fake or not a real professional', 'Does not reply to messages', 'Misleading profile or photos', 'Unsafe, abusive, or inappropriate behavior', 'Offers services unrelated to this site', 'Other'];
+    const reportReasons = ['Fake or not a real professional', 'Does not reply to messages', 'Misleading profile or photos', 'Unsafe, abusive, or inappropriate behavior', 'Offers services unrelated to this site', 'This is my phone number – I never signed up', 'Other'];
     const reportModal = document.createElement('div');
     reportModal.className = 'report-modal';
-    reportModal.innerHTML = `<div class="report-dialog" role="dialog" aria-modal="true" aria-labelledby="report-title"><h2 id="report-title">Report this contractor</h2><p id="report-subtitle"></p><label>Reason<select id="report-reason"><option value="">Choose a reason</option>${reportReasons.map((reason) => `<option>${reason}</option>`).join('')}</select></label><label>Additional details (optional)<textarea id="report-details" maxlength="1000" placeholder="Tell us what happened."></textarea></label><label class="report-check"><input id="report-block" type="checkbox"> Block this contractor on this device</label><p class="report-feedback" id="report-feedback"></p><div class="report-actions"><button class="report-cancel" type="button">Cancel</button><button class="report-send" type="button">Send report</button></div></div>`;
+    reportModal.innerHTML = `<div class="report-dialog" role="dialog" aria-modal="true" aria-labelledby="report-title"><h2 id="report-title">Report this contractor</h2><p id="report-subtitle"></p><label>Reason<select id="report-reason"><option value="">Choose a reason</option>${reportReasons.map((reason) => `<option>${reason}</option>`).join('')}</select></label><label>Additional details (optional)<textarea id="report-details" maxlength="1000" placeholder="Tell us what happened."></textarea></label><label class="report-check"><input id="report-block" type="checkbox"> Block this contractor on this device</label><p id="report-mynumber" hidden style="margin:6px 0 0;font-size:.9rem">To remove your number from every listing right away, use <a href="remove-number.html">Remove my phone number</a>.</p><p class="report-feedback" id="report-feedback"></p><div class="report-actions"><button class="report-cancel" type="button">Cancel</button><button class="report-send" type="button">Send report</button></div></div>`;
     document.body.appendChild(reportModal);
     const reportReason = reportModal.querySelector('#report-reason');
     const reportDetails = reportModal.querySelector('#report-details');
@@ -208,6 +208,7 @@
     reportModal.querySelector('.report-cancel').addEventListener('click', closeReport);
     reportModal.addEventListener('click', (event) => { if (event.target === reportModal) closeReport(); });
     let activeReport = null;
+    reportModal.querySelector('#report-reason').addEventListener('change', (e) => { reportModal.querySelector('#report-mynumber').hidden = !/my phone number/.test(e.target.value); });
     reportModal.querySelector('.report-send').addEventListener('click', async () => {
       if (!activeReport || !reportReason.value) { reportFeedback.textContent = 'Choose a reason first.'; return; }
       const button = reportModal.querySelector('.report-send');

@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Remove my phone number · TexContractor</title>
+<meta name="description" content="Someone used your phone number on TexContractor without your permission? Hide it right away and have it removed.">
+<link rel="canonical" href="https://texcontractor.com/remove-number.html">
+<link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
+<style>
+body{margin:0;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;color:#0f172a;line-height:1.6;background:#fbfcfd}
+header,main,footer{max-width:640px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e8f0}header img{width:170px}
+a{color:#075c4b}h1{line-height:1.2;font-size:1.6rem}
+.lang{display:flex;gap:6px}.lang button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}.lang button[aria-pressed=true]{background:#075c4b;color:#fff;border-color:#075c4b}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;margin:16px 0}
+label{display:grid;gap:6px;margin:12px 0;font-weight:700}
+input,textarea{font:inherit;padding:10px;border:1px solid #cbd5e1;border-radius:9px}textarea{min-height:80px}
+button.main{background:#075c4b;color:#fff;border:0;border-radius:9px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer}
+.msg{font-weight:700;margin-top:10px}.ok{color:#14532d}.err{color:#991b1b}
+footer{color:#64748b;font-size:.9rem}[hidden]{display:none!important}
+</style></head><body>
+<header><a href="/"><img src="texcontractor-logo.png" alt="TexContractor home"></a>
+<div class="lang"><button type="button" data-l="en" aria-pressed="true">English</button><button type="button" data-l="es" aria-pressed="false">Español</button></div></header>
+<main>
+<h1 data-t="h1">Remove my phone number</h1>
+<p data-t="intro">If your phone number appears on a TexContractor listing that you did not create, tell us here. Every listing with your number is hidden right away.</p>
+
+<form class="card" id="req">
+<h2 data-t="s1" style="margin-top:0;font-size:1.15rem">Step 1 · Hide my number</h2>
+<label><span data-t="phone">Your phone number</span><input name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="(555) 555-5555"></label>
+<label><span data-t="contact">Your name or email (optional)</span><input name="contact" maxlength="200" autocomplete="email"></label>
+<label><span data-t="details">What happened? (optional)</span><textarea name="details" maxlength="1000"></textarea></label>
+<button class="main" type="submit" data-t="send">Hide my number</button>
+<p class="msg" id="req-msg" role="status"></p>
+</form>
+
+<form class="card" id="conf">
+<h2 data-t="s2" style="margin-top:0;font-size:1.15rem">Step 2 · Confirm it is your phone</h2>
+<p data-t="s2p">We will text a 6-digit code to that number. Enter it here to remove the number for good and stop it from being used again.</p>
+<label><span data-t="phone">Your phone number</span><input name="phone" type="tel" inputmode="tel" required autocomplete="tel"></label>
+<label><span data-t="code">6-digit code</span><input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autocomplete="one-time-code"></label>
+<button class="main" type="submit" data-t="confirm">Remove my number</button>
+<p class="msg" id="conf-msg" role="status"></p>
+</form>
+<p data-t="help">Questions? Email <a href="mailto:texcontractor.help@gmail.com">texcontractor.help@gmail.com</a>.</p>
+</main>
+<footer>TexContractor · <a href="/">Home</a> · <a href="site-guide.html">Help &amp; policies</a></footer>
+<script>
+(function(){
+const URL='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const T={es:{h1:'Eliminar mi número de teléfono',intro:'Si tu número aparece en un anuncio de TexContractor que tú no creaste, avísanos aquí. Todos los anuncios con tu número se ocultan de inmediato.',s1:'Paso 1 · Ocultar mi número',phone:'Tu número de teléfono',contact:'Tu nombre o correo (opcional)',details:'¿Qué pasó? (opcional)',send:'Ocultar mi número',s2:'Paso 2 · Confirma que es tu teléfono',s2p:'Te enviaremos un código de 6 dígitos por mensaje de texto a ese número. Escríbelo aquí para eliminar el número para siempre y evitar que se vuelva a usar.',code:'Código de 6 dígitos',confirm:'Eliminar mi número',help:'¿Preguntas? Escribe a <a href="mailto:texcontractor.help@gmail.com">texcontractor.help@gmail.com</a>.',
+ okReq:'Listo. Tu número ya está oculto. Te enviaremos un código por mensaje de texto pronto.',okConf:'Listo. Tu número fue eliminado y no se puede volver a usar en TexContractor.',fail:'Algo salió mal. Inténtalo de nuevo.'},
+ en:{okReq:'Done. Your number is now hidden. We will text you a code soon.',okConf:'Done. Your number has been removed and cannot be used on TexContractor again.',fail:'Something went wrong. Please try again.'}};
+const base={};document.querySelectorAll('[data-t]').forEach(e=>base[e.dataset.t]=e.innerHTML);
+let lang='en';try{if(localStorage.getItem('texcontractor-language')==='es')lang='es'}catch(e){}
+function t(k){return (T[lang]&&T[lang][k])||T.en[k]||base[k]}
+function apply(l){lang=l;document.documentElement.lang=l;document.querySelectorAll('[data-t]').forEach(e=>{e.innerHTML=l==='es'&&T.es[e.dataset.t]?T.es[e.dataset.t]:base[e.dataset.t]});document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));try{localStorage.setItem('texcontractor-language',l)}catch(e){}}
+document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>apply(b.dataset.l));apply(lang);
+async function rpc(fn,body){const r=await fetch(URL+fn,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.message||t('fail'));return j}
+function wire(id,msgId,fn,mk,okKey){const f=document.getElementById(id),m=document.getElementById(msgId);f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button');b.disabled=true;m.className='msg';m.textContent='…';try{await rpc(fn,mk(new FormData(f)));m.className='msg ok';m.textContent=t(okKey);if(id==='req'){document.querySelector('#conf [name=phone]').value=f.phone.value}}catch(err){m.className='msg err';m.textContent=err.message}finally{b.disabled=false}}}
+wire('req','req-msg','texcontractor_request_number_removal',d=>({p_phone:d.get('phone'),p_contact:d.get('contact')||null,p_details:d.get('details')||null,p_lang:lang}),'okReq');
+wire('conf','conf-msg','texcontractor_confirm_number_removal',d=>({p_phone:d.get('phone'),p_code:d.get('code')}),'okConf');
+})();
+</script></body></html>

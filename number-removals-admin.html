@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Number removal requests · TexContractor admin</title>
+<style>
+body{margin:0;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;color:#0f172a;background:#f8fafc;line-height:1.5}
+main{max-width:900px;margin:auto;padding:18px}a{color:#075c4b}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.btn{border:0;border-radius:8px;padding:9px 12px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+.sms{background:#075c4b;color:#fff}.rm{background:#991b1b;color:#fff}.rs{background:#fff;color:#0f172a;border:1px solid #cbd5e1}
+.tag{font-size:.75rem;font-weight:800;padding:2px 8px;border-radius:99px;background:#fef3c7;color:#92400e}.tag.verified{background:#dcfce7;color:#14532d}.tag.restored{background:#e2e8f0;color:#334155}
+code{font-size:1.1rem;font-weight:800;letter-spacing:2px}#msg{font-weight:700;color:#991b1b}
+</style></head><body><main>
+<p><a href="contractor-admin.html">← Admin dashboard</a></p>
+<h1>Phone number removal requests</h1>
+<p>When someone asks to remove their number, every listing with it is hidden at once. Text them the code from your phone; when they enter it on the site, the number is removed and blocked. You can also restore a false request or remove the number yourself.<br><span dir="rtl" lang="ar">عند الطلب تختفي الإعلانات فوراً. أرسل الكود من جوالك، وعندما يكتبه صاحب الرقم يُحذف الرقم ويُمنع نهائياً. أو أعد الإعلان إن كان الطلب كاذباً.</span></p>
+<p id="msg" role="status"></p><div id="list">Loading…</div>
+</main>
+<script src="tex-auth.js?v=20261021-signup"></script>
+<script>
+(async function(){
+const API='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const msg=document.getElementById('msg'),list=document.getElementById('list');
+let headers;
+try{const user=await TexAuth.getUser();if(!user)throw Error('Please sign in first.');const token=await TexAuth.getAccessToken();headers={apikey:KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'};
+const a=await fetch(API+'texcontractor_admins?select=user_id&user_id=eq.'+encodeURIComponent(user.id),{headers});if(!a.ok||!(await a.json()).length)throw Error('Administrator access required.');}
+catch(e){list.textContent='';msg.textContent=e.message;return}
+const fmt=d=>'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6);
+const smsText=r=>r.lang==='es'?`TexContractor: tu código es ${r.code}. Escríbelo en texcontractor.com/remove-number.html para eliminar tu número.`:`TexContractor: your code is ${r.code}. Enter it at texcontractor.com/remove-number.html to remove your number.`;
+async function load(){
+ const r=await fetch(API+'texcontractor_number_removals?select=*&order=created_at.desc&limit=200',{headers});const rows=await r.json();
+ list.replaceChildren();if(!rows.length){list.textContent='No requests yet.';return}
+ rows.forEach(x=>{const c=document.createElement('div');c.className='card';
+  const found=(x.hidden_submission_ids||[]).length+(x.hidden_import_ids||[]).length;
+  c.innerHTML=`<div><strong>${fmt(x.phone_digits)}</strong> <span class="tag ${x.status}">${x.status}</span> · ${new Date(x.created_at).toLocaleString()} · ${found} listing(s) hidden · ${x.lang==='es'?'Español':'English'}</div>
+  <div>${x.contact?('From: '+x.contact.replace(/</g,'&lt;')):''}</div><div>${x.details?x.details.replace(/</g,'&lt;'):''}</div>
+  ${x.status==='hidden'?`<div class="row">Code: <code>${x.code}</code><a class="btn sms" href="sms:+1${x.phone_digits}?&body=${encodeURIComponent(smsText(x))}">Text code from my phone</a><button class="btn rm" data-a="remove">Remove &amp; block now</button><button class="btn rs" data-a="restore">Restore (false request)</button></div>`:''}`;
+  c.querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{if(!confirm(b.dataset.a==='remove'?'Remove and block this number?':'Restore the hidden listings?'))return;
+   const res=await fetch(API+'rpc/texcontractor_admin_resolve_removal',{method:'POST',headers,body:JSON.stringify({p_id:x.id,p_action:b.dataset.a})});
+   if(!res.ok){msg.textContent=(await res.json().catch(()=>({}))).message||'Failed';return}load()});
+  list.appendChild(c)});
+}
+load();
+})();
+</script></body></html>
