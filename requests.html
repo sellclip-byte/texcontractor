@@ -333,10 +333,11 @@
           const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
           d.className = 'mine-row' + (open ? '' : ' closed');
           d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? `closes in ${days} day${days === 1 ? '' : 's'}` : 'closed'}</small></div>
-            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : ''}</div>`;
+            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
           d.querySelector('[data-v]').addEventListener('click', () => openView(r.id));
           d.querySelector('[data-e]')?.addEventListener('click', () => openEdit(r.id));
-          d.querySelector('.close-btn')?.addEventListener('click', (ev) => closeRequest(r.id, ev.target));
+          d.querySelector('.close-btn:not([data-h])')?.addEventListener('click', (ev) => closeRequest(r.id, ev.target));
+          d.querySelector('[data-h]')?.addEventListener('click', (ev) => hideRequest(r.id, ev.target));
           return d;
         }));
       } catch (_) { $('mine').hidden = true; }
@@ -454,6 +455,12 @@
       if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return false;
       if (btn) btn.disabled = true;
       try { await C.rpc('texcontractor_request_close', { p_request_id: id }, true); await Promise.all([loadMine(), load(true), loadCount()]); return true; }
+      catch (e) { alert(e.message); if (btn) btn.disabled = false; return false; }
+    }
+    async function hideRequest(id, btn) {
+      if (!confirm('Remove this closed request from your list?')) return false;
+      if (btn) btn.disabled = true;
+      try { await C.rpc('texcontractor_request_hide', { p_request_id: id }, true); await loadMine(); return true; }
       catch (e) { alert(e.message); if (btn) btn.disabled = false; return false; }
     }
     async function openView(id) {
