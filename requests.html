@@ -308,7 +308,7 @@
         for (const r of rows) $('grid').append(card(r));
         if (!current.length) {
           const filtered = $('f-service').value || $('f-state').value || $('f-city').value.trim();
-          $('grid').innerHTML = `<div class="empty"><b>${filtered ? 'No open requests match these filters yet.' : 'No open requests yet.'}</b>Be the first: post what you need and get offers from local technicians.<br><br><button class="btn" type="button" id="empty-post">＋ Post your request</button></div>`;
+          $('grid').innerHTML = `<div class="empty"><b>${filtered ? 'No open requests match these filters right now.' : 'Need something done?'}</b>Describe the job, add photos, and get up to 5 offers from local technicians.<br><br><button class="btn" type="button" id="empty-post">＋ Post your request</button></div>`;
           $('empty-post').onclick = openPost;
         }
         $('load-more').hidden = rows.length < PAGE;
@@ -584,5 +584,6 @@
     })();
   })();
   </script>
+  <script src="tex-language.js?v=20261025es"></script>
 </body>
 </html>
