@@ -2,6 +2,8 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['local-jobs-en', 'English', 'Get more local jobs'],
+    ['jefe-es', 'Español', 'Aquí tú eres el jefe'],
     ['babysitter-en', 'English', 'Need a babysitter tonight?'],
     ['babysitter-es', 'Español', '¿Necesitas niñera hoy?'],
     ['ac-en', 'English', 'AC quit in the Texas heat?'],
