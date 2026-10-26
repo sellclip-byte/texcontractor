@@ -2,6 +2,7 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['barking-dog-en', 'English', 'Dog barking all night?'],
     ['local-jobs-en', 'English', 'Get more local jobs'],
     ['jefe-es', 'Español', 'Aquí tú eres el jefe'],
     ['babysitter-en', 'English', 'Need a babysitter tonight?'],
