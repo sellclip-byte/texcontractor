@@ -873,10 +873,7 @@
     membersLoading.hidden = false;
     submissionsLoading.hidden = false;
     reportsLoading.hidden = false;
-    try {
-      const result = await Promise.all([TexAdminApi.listMembers(), TexAdminApi.listSubmissions('all'), TexAdminApi.listReports()]);
-      members = result[0];
-      submissions = result[1];
+    const importsPromise = (async () => {
       try {
         const token = await TexAuth.getAccessToken();
         importedBusinesses = [];
@@ -897,6 +894,12 @@
         pages.push(...rest);
         pages.forEach((page) => importedBusinesses.push(...page));
       } catch (error) { importedBusinesses = []; showMessage('Imported applications could not load: ' + error.message, 'error'); }
+    })();
+    try {
+      const result = await Promise.all([TexAdminApi.listMembers(), TexAdminApi.listSubmissions('all'), TexAdminApi.listReports()]);
+      members = result[0];
+      submissions = result[1];
+      await importsPromise;
       reports = result[2];
       updateSummary();
       renderMembers();
