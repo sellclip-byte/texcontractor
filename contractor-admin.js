@@ -905,11 +905,10 @@
       renderMembers();
       renderSubmissions();
       renderReports();
-      await loadHomepageBanner();
-      await loadSideAds();
       membersLoading.hidden = true;
       submissionsLoading.hidden = true;
       reportsLoading.hidden = true;
+      await Promise.all([loadHomepageBanner(), loadSideAds()]);
     } catch (error) {
       membersLoading.hidden = true;
       submissionsLoading.hidden = true;
