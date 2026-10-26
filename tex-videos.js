@@ -2,6 +2,16 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['kitchen-drain-plumber-en', 'English', "Sink backed up before dinner?"],
+    ['techo-goteando-es', 'Español', "¿Se gotea el techo?"],
+    ['math-tutor-en', 'English', "Need a math tutor?"],
+    ['limpieza-casas-es', 'Español', "¿Limpias casas? Regístrate"],
+    ['pest-control-en', 'English', "Roaches? Text an exterminator"],
+    ['detallado-autos-es', 'Español', "¿Detallado a domicilio?"],
+    ['movers-couple-en', 'English', "Moving? Text local movers"],
+    ['home-nurse-en', 'English', "In-home care for a parent"],
+    ['computer-repair-tech-en', 'English', "Computer techs: get local customers"],
+    ['tree-crew-en', 'English', "Tree crews: let neighbors text you"],
     ['barking-dog-en', 'English', 'Dog barking all night?'],
     ['local-jobs-en', 'English', 'Get more local jobs'],
     ['jefe-es', 'Español', 'Aquí tú eres el jefe'],
