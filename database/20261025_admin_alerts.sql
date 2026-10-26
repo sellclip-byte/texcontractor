@@ -38,3 +38,6 @@ end $$;
 revoke all on function public.texcontractor_admin_report_hide(uuid) from public, anon;
 grant execute on function public.texcontractor_admin_report_hide(uuid) to authenticated;
 -- texcontractor_admin_alerts() also counts only reports with hidden_at is null.
+
+-- Phone lookup for the admin header search box: see migration admin_phone_lookup
+-- (texcontractor_admin_phone_lookup(p_phone text) returns technicians, imported, accounts, requests, removals, blocked).
