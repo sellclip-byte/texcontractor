@@ -3,6 +3,8 @@
   let members = [];
   let submissions = [];
   let importedBusinesses = [];
+  const PAGE = 60;
+  let shownLimit = PAGE;
   let reports = [];
   let homepageBanner = null;
   const sideAds = { left: {}, right: {} };
@@ -372,11 +374,16 @@
 
   const renderSubmissions = () => {
     const filter = statusFilter.value;
-    const rows = submissions.filter((row) => filter === 'all' || row.status === filter);
-    const imported = importedBusinesses.filter((entry) => filter === 'all' || entry.review_status === filter);
+    const q = ($('#submission-search')?.value || '').trim().toLowerCase();
+    const hit = (...values) => !q || values.join(' ').toLowerCase().includes(q);
+    const allRows = submissions.filter((row) => (filter === 'all' || row.status === filter) && hit(row.display_name, row.real_name, row.phone, row.email, row.service, row.city));
+    const allImported = importedBusinesses.filter((entry) => (filter === 'all' || entry.review_status === filter) && hit(entry.business_name, entry.phone, entry.service, entry.city));
+    const rows = allRows.slice(0, shownLimit);
+    const imported = allImported.slice(0, Math.max(0, shownLimit - rows.length));
+    const matching = allRows.length + allImported.length;
     submissionsList.innerHTML = '';
-    $('#submissions-count').textContent = `${rows.length + imported.length} shown · ${submissions.length + importedBusinesses.length} total`;
-    submissionsEmpty.hidden = rows.length + imported.length > 0;
+    $('#submissions-count').textContent = `${rows.length + imported.length} shown of ${matching} · ${submissions.length + importedBusinesses.length} total`;
+    submissionsEmpty.hidden = matching > 0;
     imported.forEach((entry) => {
       const card = document.createElement('article');
       card.className = 'card';
@@ -634,6 +641,13 @@
       });
       submissionsList.appendChild(card);
     });
+    if (matching > rows.length + imported.length) {
+      const more = document.createElement('button');
+      more.type = 'button'; more.className = 'export'; more.style.cssText = 'justify-self:center;padding:10px 18px;cursor:pointer';
+      more.textContent = `Show more · عرض المزيد (${matching - rows.length - imported.length} left)`;
+      more.addEventListener('click', () => { shownLimit += PAGE; renderSubmissions(); });
+      submissionsList.appendChild(more);
+    }
   };
 
   const renderReports = () => {
@@ -645,6 +659,20 @@
       const card = document.createElement('article');
       card.className = 'report-row';
       card.innerHTML = `<h3>${escapeHtml(provider?.display_name || 'Unknown contractor')} · ${escapeHtml(provider?.service || 'Service unavailable')}</h3><p><strong>Reason:</strong> ${escapeHtml(report.reason)}</p>${report.details ? `<p><strong>Details:</strong> ${escapeHtml(report.details)}</p>` : ''}<p><strong>Reported:</strong> ${escapeHtml(displayDate(report.created_at))}</p>`;
+      const hide = document.createElement('button');
+      hide.type = 'button'; hide.textContent = 'Remove from list · إزالة من القائمة';
+      hide.style.cssText = 'margin-top:10px;padding:8px 14px;border:1px solid #d0d5dd;border-radius:10px;background:#fff;font:inherit;font-weight:700;cursor:pointer';
+      hide.addEventListener('click', async () => {
+        hide.disabled = true;
+        try {
+          const token = await TexAuth.getAccessToken();
+          const r = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/texcontractor_admin_report_hide', { method: 'POST', headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: report.id }) });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          reports = reports.filter((item) => item.id !== report.id);
+          renderReports();
+        } catch (error) { hide.disabled = false; showMessage('Could not remove the report: ' + error.message, 'error'); }
+      });
+      card.appendChild(hide);
       reportsList.appendChild(card);
     });
   };
@@ -852,14 +880,22 @@
       try {
         const token = await TexAuth.getAccessToken();
         importedBusinesses = [];
-        const pageSize = 500;
-        for (let offset = 0; ; offset += pageSize) {
-          const importedResponse = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,about,review_status,profile_photo_path,work_photo_paths&order=business_name.asc&limit=' + pageSize + '&offset=' + offset, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token } });
-          if (!importedResponse.ok) throw new Error('HTTP ' + importedResponse.status);
-          const page = await importedResponse.json();
-          importedBusinesses.push(...page);
-          if (page.length < pageSize) break;
-        }
+        const pageSize = 1000;
+        const base = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_business_imports?select=id,business_name,service,city,state,phone,about,review_status,profile_photo_path,work_photo_paths&order=business_name.asc,id.asc';
+        const headers = { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + token };
+        const first = await fetch(base + '&limit=' + pageSize + '&offset=0', { headers: { ...headers, Prefer: 'count=exact' } });
+        if (!first.ok) throw new Error('HTTP ' + first.status);
+        const total = Number((first.headers.get('content-range') || '').split('/')[1]) || 0;
+        const pages = [await first.json()];
+        const offsets = [];
+        for (let offset = pageSize; offset < total; offset += pageSize) offsets.push(offset);
+        const rest = await Promise.all(offsets.map(async (offset) => {
+          const response = await fetch(base + '&limit=' + pageSize + '&offset=' + offset, { headers });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.json();
+        }));
+        pages.push(...rest);
+        pages.forEach((page) => importedBusinesses.push(...page));
       } catch (error) { importedBusinesses = []; showMessage('Imported applications could not load: ' + error.message, 'error'); }
       reports = result[2];
       updateSummary();
@@ -912,7 +948,9 @@
   try { savedTab = sessionStorage.getItem(ADMIN_TAB_KEY) || ''; } catch (error) {}
   selectAdminTab(requestedTab || savedTab || 'submissions');
   memberSearch.addEventListener('input', renderMembers);
-  statusFilter.addEventListener('change', renderSubmissions);
+  statusFilter.addEventListener('change', () => { shownLimit = PAGE; renderSubmissions(); });
+  let searchTimer;
+  $('#submission-search')?.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { shownLimit = PAGE; renderSubmissions(); }, 250); });
   bindSideAd('left');
   bindSideAd('right');
   [bannerMessage, bannerStyle, bannerFontStyle, bannerAnimation, bannerEnabled, bannerTextColor, bannerBackgroundColor, bannerAccentColor].forEach((input) => {

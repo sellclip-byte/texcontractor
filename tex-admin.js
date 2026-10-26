@@ -295,7 +295,7 @@
   const listReports = async () => {
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
-    return request(`/rest/v1/texcontractor_reports?select=id,technician_id,reason,details,created_at&order=created_at.desc`, { method: 'GET' }, token) || [];
+    return request(`/rest/v1/texcontractor_reports?select=id,technician_id,reason,details,created_at&hidden_at=is.null&order=created_at.desc`, { method: 'GET' }, token) || [];
   };
 
   const updateSubmission = async (id, patch, user) => {
