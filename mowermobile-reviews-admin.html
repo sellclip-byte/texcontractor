@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>MowerMobile reviews · Admin</title>
+<style>
+body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f6f8fb;color:#101828}
+main{max-width:860px;margin:auto;padding:24px 16px}h1{margin:0 0 6px}a{color:#1d4ed8}
+.r{background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:16px;margin:12px 0}
+.r.pending{border-color:#fdb022;background:#fffcf5}.s{color:#e2ad00;font-size:20px}.meta{color:#667085;font-size:.9rem}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.8rem;font-weight:800;background:#f2f4f7;margin-left:6px}
+.pending .tag{background:#fef0c7;color:#93370d}.hidden .tag{background:#fee4e2;color:#b42318}
+button{border:1px solid #d0d5dd;background:#fff;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;margin:10px 8px 0 0}
+.ok{border-color:#75e0a7;background:#ecfdf3;color:#067647}.no{border-color:#fda29b;background:#fef3f2;color:#b42318}
+</style></head><body><main>
+<p><a href="contractor-admin.html">← Admin dashboard</a></p>
+<h1>MowerMobile.com reviews · تقييمات موقع الجزازات</h1>
+<p class="meta">Reviews sent from mowermobile.com/leave-review appear here. Approve to show them on the site, or hide them. · وافق ليظهر التقييم في الموقع، أو أخفِه.</p>
+<div id="list">Loading…</div>
+</main>
+<script src="tex-auth.js?v=20261021-signup"></script>
+<script>
+(function(){
+const URL='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const call=async(n,a)=>{const t=await TexAuth.getAccessToken();if(!t){location.href='auth.html?return_to=mowermobile-reviews-admin.html';return null}const r=await fetch(URL+n,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(a||{})});const x=await r.text();if(!r.ok)throw new Error((JSON.parse(x||'{}').message)||'Request failed');return x?JSON.parse(x):null};
+const list=document.getElementById('list');
+const load=async()=>{try{const rows=await call('mowermobile_reviews_admin');if(!rows)return;if(!rows.length){list.textContent='No reviews yet.';return}
+list.innerHTML=rows.map(r=>`<div class="r ${r.status}"><span class="s">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span><span class="tag">${esc(r.status)}</span><div><b>${esc(r.name||'(no name)')}</b> <span class="meta">· ${new Date(r.created_at).toLocaleDateString('en-US')}</span></div><p>${esc(r.review)}</p>${r.status!=='approved'?`<button class="ok" data-id="${r.id}" data-s="approved">Approve · موافقة</button>`:''}${r.status!=='hidden'?`<button class="no" data-id="${r.id}" data-s="hidden">Hide · إخفاء</button>`:''}</div>`).join('')}catch(e){list.textContent=e.message}};
+list.addEventListener('click',async e=>{const b=e.target.closest('button[data-id]');if(!b)return;b.disabled=true;try{await call('mowermobile_review_set_status',{p_id:b.dataset.id,p_status:b.dataset.s});load()}catch(x){alert(x.message);b.disabled=false}});
+load();})();
+</script></body></html>

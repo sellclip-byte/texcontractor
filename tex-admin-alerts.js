@@ -48,7 +48,8 @@
     { key: 'reports', label: 'Customer reports · بلاغات العملاء', action: () => openTab('reports') },
     { key: 'removals', label: 'Number removal requests · طلبات حذف أرقام', href: 'number-removals-admin.html' },
     { key: 'verifications', label: 'Phone verifications · تأكيد أرقام', href: 'phone-verifications-admin.html' },
-    { key: 'pending', label: 'Listings to review · إعلانات للمراجعة', action: () => openTab('submissions') }
+    { key: 'pending', label: 'Listings to review · إعلانات للمراجعة', action: () => openTab('submissions') },
+    { key: 'mower_reviews', label: 'MowerMobile reviews · تقييمات موقع الجزازات', href: 'mowermobile-reviews-admin.html' }
   ];
 
   let btn, menu, data = {};
