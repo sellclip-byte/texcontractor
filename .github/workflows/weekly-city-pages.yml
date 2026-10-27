@@ -1,0 +1,17 @@
+name: Weekly city pages trigger
+# Scheduled workflows only run from the default branch (main), but the live site and its
+# city-page generator live on seo-safe-review-20261011. This starts that build every week.
+on:
+  schedule:
+    - cron: '23 9 * * 1'   # every Monday 09:23 UTC (4:23 AM Central)
+  workflow_dispatch:
+permissions:
+  actions: write
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start "Build city service pages" on the live branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run local-pages.yml --repo "${{ github.repository }}" --ref seo-safe-review-20261011
