@@ -589,6 +589,16 @@
 .cl-side-links a{color:#0f172a;text-decoration:none}
 .cl-side-links a:hover,.cl-side-cal-title:hover{text-decoration:underline}
 .service-card.cl-side-hide{display:none!important}
+@media(max-width:1099px){.container>.cr-side{order:100;display:block;margin:12px auto 0;width:min(340px,100%);padding:14px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;color:#0f172a}}
+@media(min-width:1100px){.container{grid-template-columns:184px minmax(0,1fr) 168px;max-width:1640px}
+.container>.cr-side{grid-column:3;grid-row:1 / span 20;display:block;position:sticky;top:104px;max-height:calc(100vh - 116px);overflow:auto;align-self:start;margin-top:18px;padding:12px 8px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;font-size:.92rem;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.06)}}
+.cr-side select{width:100%;margin:0 0 12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font:inherit;font-weight:600;cursor:pointer}
+.cr-side h3{margin:8px 0 6px;padding:5px 0;background:#f1f5f9;border-radius:8px;font-size:.92rem;font-weight:800;color:#0f172a}
+.cr-side h3 a{color:inherit;text-decoration:none}
+.cr-list{display:flex;flex-direction:column;gap:7px;margin:0 0 10px}
+.cr-list a{color:#0f172a;text-decoration:none}
+.cr-list a:hover,.cr-side h3 a:hover{text-decoration:underline}
+
 </style>
 <script>
 (function(){
@@ -600,6 +610,22 @@
   function run(){var v=q.value.trim().toLowerCase();document.querySelectorAll('.services-grid .service-card').forEach(function(c){var tx=(c.textContent||'').toLowerCase();c.classList.toggle('cl-side-hide',!!v&&tx.indexOf(v)<0);});}
   q.addEventListener('input',run);f.addEventListener('submit',function(e){e.preventDefault();run();var g=document.getElementById('service-catalog');if(g)g.scrollIntoView({behavior:'smooth'});});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){cal();search();});else{cal();search();}
+})();
+</script>
+<script>
+(function(){
+ var C=[["ca/bakersfield","Bakersfield",35.35,-119.04],["ca/chico","Chico",39.76,-121.82],["ca/concord","Concord",37.97,-122.0],["ca/corona","Corona",33.86,-117.57],["ca/fresno","Fresno",36.78,-119.79],["ca/hollister","Hollister",36.86,-121.4],["ca/irvine","Irvine",33.68,-117.77],["ca/los-angeles","Los Angeles",34.02,-118.41],["ca/oakland","Oakland",37.77,-122.23],["ca/riverside","Riverside",33.94,-117.39],["ca/roseville","Roseville",38.77,-121.32],["ca/sacramento","Sacramento",38.57,-121.47],["ca/san-diego","San Diego",32.83,-117.12],["ca/san-francisco","San Francisco",37.73,-123.03],["ca/san-jose","San Jose",37.3,-121.81],["ca/santa-barbara","Santa Barbara",34.4,-119.71],["ca/santa-rosa","Santa Rosa",38.45,-122.71],["fl/jacksonville","Jacksonville",30.34,-81.66],["fl/miami","Miami",25.78,-80.21],["la/baton-rouge","Baton Rouge",30.44,-91.13],["la/lafayette","Lafayette",30.21,-92.03],["la/lake-charles","Lake Charles",30.2,-93.21],["la/mandeville","Mandeville",30.38,-90.1],["la/metairie","Metairie",30.0,-90.18],["la/monroe","Monroe",32.52,-92.08],["la/new-orleans","New Orleans",30.05,-89.93],["la/shreveport","Shreveport",32.47,-93.79],["la/slidell","Slidell",30.29,-89.78],["ny/new-york","New York",40.66,-73.94],["ny/rochester","Rochester",43.17,-77.62],["ok/broken-arrow","Broken Arrow",36.04,-95.78],["ok/edmond","Edmond",35.67,-97.41],["ok/oklahoma-city","Oklahoma City",35.47,-97.51],["ok/owasso","Owasso",36.29,-95.84],["ok/sapulpa","Sapulpa",36.0,-96.12],["ok/tulsa","Tulsa",36.13,-95.9],["ok/yukon","Yukon",35.52,-97.77],["tx/amarillo","Amarillo",35.2,-101.83],["tx/arlington","Arlington",32.7,-97.12],["tx/austin","Austin",30.3,-97.75],["tx/cedar-park","Cedar Park",30.51,-97.82],["tx/college-station","College Station",30.59,-96.3],["tx/conroe","Conroe",30.33,-95.48],["tx/corpus-christi","Corpus Christi",27.75,-97.17],["tx/dallas","Dallas",32.79,-96.77],["tx/el-paso","El Paso",31.85,-106.43],["tx/fort-worth","Fort Worth",32.78,-97.35],["tx/frisco","Frisco",33.16,-96.82],["tx/garland","Garland",32.91,-96.63],["tx/georgetown","Georgetown",30.67,-97.7],["tx/houston","Houston",29.79,-95.39],["tx/katy","Katy",29.79,-95.84],["tx/killeen","Killeen",31.08,-97.73],["tx/longview","Longview",32.52,-94.76],["tx/lubbock","Lubbock",33.56,-101.89],["tx/mansfield","Mansfield",32.57,-97.12],["tx/mckinney","McKinney",33.2,-96.66],["tx/midland","Midland",32.02,-102.11],["tx/new-braunfels","New Braunfels",29.7,-98.12],["tx/pearland","Pearland",29.56,-95.32],["tx/plano","Plano",33.05,-96.75],["tx/round-rock","Round Rock",30.53,-97.66],["tx/san-antonio","San Antonio",29.46,-98.52],["tx/spring","Spring",30.06,-95.38],["tx/tyler","Tyler",32.32,-95.31],["tx/waco","Waco",31.56,-97.19],["tx/cypress","Cypress",29.97,-95.69],["ny/brooklyn","Brooklyn",40.68,-73.94]],ST={tx:'Texas',ok:'Oklahoma',la:'Louisiana',ca:'California',fl:'Florida',ny:'New York'};
+ function d(a,b,c,e){var r=Math.PI/180,x=(e-b)*r*Math.cos((a+c)/2*r),y=(c-a)*r;return x*x+y*y;}
+ function near(){var box=document.getElementById('cr-near');if(!box)return;var lat=32.78,lng=-96.8,cur='';
+  try{var L=JSON.parse(localStorage.getItem('texcontractor-location')||'{}');if(L.city){var m=C.filter(function(c){return c[1].toLowerCase()===String(L.city).toLowerCase()&&c[0].slice(0,2)===String(L.state||'').toLowerCase()})[0]||C.filter(function(c){return c[1].toLowerCase()===String(L.city).toLowerCase()})[0];if(m){lat=m[2];lng=m[3];cur=m[0];}}}catch(e){}
+  box.innerHTML=C.filter(function(c){return c[0]!==cur}).sort(function(a,b){return d(lat,lng,a[2],a[3])-d(lat,lng,b[2],b[3])}).slice(0,16).map(function(c){return '<a href="local/'+c[0]+'/">'+c[1]+'</a>'}).join('');}
+ function lang(){var s=document.getElementById('cr-lang');if(!s)return;var h=document.getElementById('tex-language-picker');
+  try{s.value=localStorage.getItem('texcontractor-language')||'en'}catch(e){}
+  s.addEventListener('change',function(){var h=document.getElementById('tex-language-picker');if(h){h.value=s.value;h.dispatchEvent(new Event('change'));}else{try{localStorage.setItem('texcontractor-language',s.value)}catch(e){}location.reload();}});
+  document.addEventListener('change',function(e){if(e.target&&e.target.id==='tex-language-picker')s.value=e.target.value;});}
+ function go(){near();lang();var w=document.getElementById('cr-states');if(w)w.innerHTML=Object.keys(ST).map(function(k){return '<a href="local/'+k+'/">'+ST[k]+'</a>'}).join('');}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+ window.addEventListener('storage',near);window.crNear=near;
 })();
 </script>
 </head>
@@ -703,6 +729,14 @@
         <a href="remove-number.html">Remove my number</a>
         <a href="site-guide.html#terms">Terms of use</a>
       </nav>
+    </aside>
+    <aside class="cr-side" aria-label="Cities">
+      <select id="cr-lang" aria-label="Language"><option value="en">English</option><option value="es">Español</option></select>
+      <h3>Nearby cities</h3>
+      <div class="cr-list" id="cr-near"></div>
+      <h3><a href="local/">All cities</a></h3>
+      <h3>Cities by state</h3>
+      <div class="cr-list" id="cr-states"></div>
     </aside>
     <div class="catalog-head">
       <h2 class="section-title" id="service-catalog">All Services (62 Categories)</h2>
@@ -1190,7 +1224,7 @@
       const cityState = cityText ? [cityText, stateText].filter(Boolean).join(', ') : titleCase(stateName || stateText);
       const label = cityState ? `${cityState}${zipText ? ` · ZIP ${zipText}` : ''}` : (zipText ? `ZIP ${zipText}` : 'Choose a city or ZIP code');
       locationBars.forEach((bar) => { bar.textContent = `📍 ${label}`; });
-      localStorage.setItem('texcontractor-location', JSON.stringify({ city: cityText, state: stateText, zip: zipText }));
+      localStorage.setItem('texcontractor-location', JSON.stringify({ city: cityText, state: stateText, zip: zipText })); if (window.crNear) window.crNear();
       updateServiceLinks();
     }
 
