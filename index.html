@@ -623,7 +623,9 @@
   try{s.value=localStorage.getItem('texcontractor-language')||'en'}catch(e){}
   s.addEventListener('change',function(){var h=document.getElementById('tex-language-picker');if(h){h.value=s.value;h.dispatchEvent(new Event('change'));}else{try{localStorage.setItem('texcontractor-language',s.value)}catch(e){}location.reload();}});
   document.addEventListener('change',function(e){if(e.target&&e.target.id==='tex-language-picker')s.value=e.target.value;});}
- function go(){near();lang();var w=document.getElementById('cr-states');if(w)w.innerHTML=Object.keys(ST).map(function(k){return '<a href="local/'+k+'/">'+ST[k]+'</a>'}).join('');}
+ function states(){var w=document.getElementById('cr-states');if(w)w.innerHTML=Object.keys(ST).sort(function(a,b){return ST[a].localeCompare(ST[b])}).map(function(k){return '<a href="local/'+k+'/">'+ST[k]+'</a>'}).join('');}
+ function go(){near();lang();states();
+  fetch('local/cities.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.cities||!j.cities.length)return;C=j.cities;ST={};j.states.forEach(function(x){ST[x[0]]=x[1]});near();states();}).catch(function(){});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
  window.addEventListener('storage',near);window.crNear=near;
 })();

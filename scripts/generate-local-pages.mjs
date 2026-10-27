@@ -210,6 +210,12 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <h2>Popular cities</h2><ul class="links">${topCities.map(({ k, count }) => { const [st, c] = k.split('|'); return `<li><a href="/local/${st.toLowerCase()}/${slug(c)}/">${esc(c)}, ${st} <span>(${count})</span></a></li>`; }).join('')}</ul>`,
   }));
 
+  // Small city list for the home page sidebar ("Nearby cities", "Cities by state").
+  let coords = {};
+  try { coords = JSON.parse(readFileSync(join(root, 'city-coordinates-2025.json'), 'utf8')); } catch (_) {}
+  const sideCities = [...cityMap.keys()].map((k) => { const [st, c] = k.split('|'); const ll = coords[`${st}|${c.toLowerCase()}`]; return ll ? [`${st.toLowerCase()}/${slug(c)}`, c, Math.round(ll[0] * 100) / 100, Math.round(ll[1] * 100) / 100] : null; }).filter(Boolean);
+  writeFileSync(join(OUT, 'cities.json'), JSON.stringify({ states: states.map((st) => [st.toLowerCase(), STATES[st]]), cities: sideCities }));
+
   // Separate sitemap so the existing 66-URL sitemap and its checks stay untouched.
   const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.map((p) => p.path)];
   const today = new Date().toISOString().slice(0, 10);
