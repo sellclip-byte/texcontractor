@@ -23,31 +23,31 @@
   <style>
     :root{--ink:#101828;--navy:#0b1f3a;--gold:#f2ce78;--gold2:#e5b33f;--blue:#2563eb;--blue2:#1d4ed8;--green:#075c4b}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;color:var(--ink);background:#eef2f6;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    body{margin:0;min-height:100vh;color:var(--ink);background:#fff;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
     .join-top{display:flex;justify-content:center;padding:16px 16px 4px}
-    .join-top img{display:block;width:190px;height:auto}
+    .join-top img{display:block;width:160px;height:auto}
 
-    .auth-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(1180px,calc(100% - 32px));margin:10px auto 36px}
+    .auth-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(980px,calc(100% - 32px));margin:6px auto 30px}
     .auth-panel picture{display:contents}
-    .auth-panel{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;padding-top:220px;min-height:min(900px,calc(100vh - 100px));border-radius:24px;overflow:hidden;box-shadow:0 22px 50px rgba(11,31,58,.22)}
+    .auth-panel{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;padding-top:170px;min-height:min(700px,calc(100vh - 90px));border-radius:24px;overflow:hidden}
     .auth-bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center top}
-    .auth-panel::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,16,34,0) 0%,rgba(6,16,34,0) 24%,rgba(6,16,34,.66) 44%,rgba(6,16,34,.9) 100%)}
+    .auth-panel::before{display:none;content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,16,34,0) 0%,rgba(6,16,34,0) 24%,rgba(6,16,34,.66) 44%,rgba(6,16,34,.9) 100%)}
     .auth-head{padding:0 28px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.35)}
-    .auth-tag{display:inline-block;margin:0 0 10px;padding:6px 12px;border-radius:999px;font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
+    .auth-tag{display:inline-block;margin:0 0 8px;padding:5px 10px;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
     .pro .auth-tag{background:var(--gold);color:var(--navy)}
     .cust .auth-tag{background:#dbeafe;color:var(--blue2)}
-    .auth-head h2{margin:0;font-size:clamp(1.7rem,3.2vw,2.5rem);line-height:1.08;letter-spacing:-.03em}
-    .auth-head p{margin:10px 0 0;max-width:30ch;font-size:1.05rem;line-height:1.45;color:#f1f5f9}
+    .auth-head h2{margin:0;font-size:clamp(1.4rem,2.3vw,1.9rem);line-height:1.08;letter-spacing:-.03em}
+    .auth-head p{margin:8px 0 0;max-width:34ch;font-size:.95rem;line-height:1.45;color:#f1f5f9}
     .auth-slot{display:flex;justify-content:center;padding:16px 18px 20px}
 
-    .auth-cta{width:min(380px,100%);min-height:58px;padding:0 22px;border-radius:14px;font:inherit;font-size:1.08rem;font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+    .auth-cta{width:min(340px,100%);min-height:50px;padding:0 22px;border-radius:14px;font:inherit;font-size:1.08rem;font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.28)}
     .pro .auth-cta{border:1px solid #c18a13;background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106}
     .cust .auth-cta{border:0;background:linear-gradient(135deg,#3b82f6,var(--blue2));color:#fff}
     .auth-cta:hover{filter:brightness(1.06)}
     .auth-panel.active .auth-cta{display:none}
 
     /* The one sign-in card moves into whichever panel is active */
-    .join-main{width:min(440px,100%);padding:16px 18px;border-radius:18px;background:transparent;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+    .join-main{width:min(400px,100%);padding:16px 18px;border-radius:18px;background:transparent;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45)}
     .join-modes{display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;padding:4px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
     .join-modes button{min-height:38px;border:0;border-radius:9px;background:transparent;color:#fff;font:inherit;font-weight:850;font-size:.96rem;cursor:pointer;text-shadow:none}
     .join-modes [data-join-mode=signup][aria-selected=true]{background:linear-gradient(110deg,var(--gold2),var(--gold));color:#211a06}
@@ -85,6 +85,11 @@
       .auth-slot{padding:12px}
       .join-main{padding:16px}
     }
+      .auth-head{text-shadow:0 1px 3px rgba(0,0,0,.9),0 2px 14px rgba(0,0,0,.75)}
+    .join-main{text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 12px rgba(0,0,0,.8)}
+    .join-alt{background:rgba(255,255,255,.9)!important;color:#0b1f3a!important;border-color:#fff!important;text-shadow:none!important}
+    .join-modes{background:rgba(11,31,58,.55)!important}
+    .join-note,.join-divider{font-weight:700;color:#fff!important}
   </style>
   <link rel="stylesheet" href="tex-gold.css?v=1">
 </head>
