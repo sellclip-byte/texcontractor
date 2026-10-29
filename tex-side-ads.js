@@ -92,6 +92,14 @@
       .tc-side-ad-body.motion-scroll .tc-side-ad-copy { white-space: nowrap; animation: tc-side-ad-scroll 15s linear infinite; }
       @keyframes tc-side-ad-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: .84; } }
       @keyframes tc-side-ad-scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 18px 8px; min-height: 360px; max-height: calc(100vh - 170px); background: linear-gradient(180deg, #fffdf5, #f1fbf6); border: 2px solid transparent; background-clip: padding-box; box-shadow: 0 0 0 2px rgba(201,162,39,.55), 0 10px 26px rgba(15,23,42,.10); }
+      .tc-side-ad-body.ad-vertical .tc-side-ad-copy { writing-mode: vertical-rl; text-orientation: mixed; padding: 0; font-size: 1.35rem; line-height: 1.2; letter-spacing: .04em; font-weight: 900; text-transform: none; overflow-wrap: normal; white-space: normal; max-height: calc(100vh - 210px); }
+      .tc-side-ad-left .tc-side-ad-body.ad-vertical .tc-side-ad-copy { transform: rotate(180deg); }
+      .tc-side-ad-body.motion-shimmer .tc-side-ad-copy { background: linear-gradient(90deg, #b8860b 0%, #f2c94c 25%, #0f7a4f 50%, #f2c94c 75%, #b8860b 100%); background-size: 100% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: tc-side-ad-shimmer 7s ease-in-out infinite; }
+      .tc-side-ad-body.motion-shimmer { animation: tc-side-ad-glow 7s ease-in-out infinite; }
+      @keyframes tc-side-ad-shimmer { 0%,100% { background-position: 0 0%; } 50% { background-position: 0 100%; } }
+      @keyframes tc-side-ad-glow { 0%,100% { box-shadow: 0 0 0 2px rgba(201,162,39,.55), 0 10px 26px rgba(15,23,42,.10); } 50% { box-shadow: 0 0 0 2px rgba(15,122,79,.55), 0 0 18px rgba(15,122,79,.25); } }
+      @media (prefers-reduced-motion: reduce) { .tc-side-ad-body.motion-shimmer, .tc-side-ad-body.motion-shimmer .tc-side-ad-copy { animation: none; } }
       @media (max-width: 1120px) { .tc-side-ad { display: none; } }
       .tc-side-ad.tc-home-left-ad { display: block; position: static; width: min(200px, calc(100% - 28px)); max-height: none; margin: 20px 14px; }
       .tc-home-left-ad .tc-side-ad-body { max-height: none; overflow: visible; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
