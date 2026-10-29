@@ -17,111 +17,148 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
-  <meta name="description" content="Sign in to TexContractor with your email and password.">
+  <meta name="description" content="Sign in to TexContractor: find a local pro near you, or add your service and get customers by text.">
   <title>Sign in · TexContractor</title>
+  <link rel="preload" as="image" href="auth-pro.jpg" media="(min-width:821px)">
   <style>
-    :root { --ink:#101828; --muted:#667085; --line:#dbe5e2; --green:#075c4b; --gold:#f5b94c; }
-    * { box-sizing:border-box; }
-    body { min-height:100vh; margin:0; display:grid; place-items:center; padding:24px; color:var(--ink); background:#fbfcfd; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
-    .card { width:min(480px,100%); padding:28px; border:1px solid var(--line); border-radius:20px; background:#fff; box-shadow:0 18px 48px rgba(16,24,40,.10); }
-    .brand { display:block; width:190px; margin:0 auto 20px; }
-    .brand img { display:block; width:100%; height:auto; }
-    h1 { margin:0; text-align:center; font-size:clamp(1.8rem,5vw,2.5rem); letter-spacing:-.05em; }
-    .lead { margin:10px auto 24px; color:var(--muted); text-align:center; line-height:1.55; }
-    label { display:grid; gap:8px; font-weight:800; }
-    input { width:100%; height:48px; padding:0 14px; border:1px solid #cbd5e1; border-radius:10px; font:inherit; }
-    input:focus { outline:3px solid rgba(7,92,75,.15); border-color:var(--green); }
-    button, .back { width:100%; min-height:48px; border-radius:10px; font:inherit; font-weight:850; cursor:pointer; }
-    .primary { margin-top:14px; border:0; color:#fff; background:var(--green); }
-    .primary:hover { background:#064c3f; }
-    .google { margin-top:10px; border:1px solid #cbd5e1; color:#475569; background:#f8fafc; }
-    .google:disabled { cursor:wait; opacity:.7; }
-    .divider { display:flex; align-items:center; gap:10px; margin:20px 0 14px; color:#98a2b3; font-size:.85rem; }
-    .divider::before, .divider::after { content:""; height:1px; flex:1; background:var(--line); }
-    .message { display:none; margin-top:14px; padding:12px 14px; border-radius:10px; color:#14532d; background:#ecfdf3; font-weight:700; line-height:1.45; }
-    .message.error { color:#8a1c13; background:#fff1f0; }
-    .message.show { display:block; }
-    .back { display:flex; align-items:center; justify-content:center; margin-top:18px; color:var(--green); text-decoration:none; }
-    .small { margin:16px 0 0; color:var(--muted); font-size:.86rem; line-height:1.45; text-align:center; }
-    .small a { color:var(--green); font-weight:800; }
-  .mobile-required{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 14px;padding:8px 10px;border:1px solid #e8cc7b;border-radius:10px;background:#fffcf2}.mobile-required img{display:block;width:34px;height:54px;object-fit:contain;flex:none}.mobile-required p{font-size:.88rem;line-height:1.4;margin:0!important;max-width:340px;color:#243c32}.join-submit{background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 20%,#fff2aa 43%,#ffdc58 53%,#d99b14 76%,#f8d56a 100%);border:1px solid #c18a13;box-shadow:inset 0 2px 1px rgba(255,255,255,.9),inset 0 -2px 2px rgba(142,86,0,.18),0 4px 10px rgba(166,113,9,.2);color:#2d2106}.join-submit:hover{filter:brightness(1.06)}</style>
-<style>
-body{display:block;min-height:100vh;padding:0;background:linear-gradient(180deg,#f3f8f6 0%,#fff 60%)}
-.join-top{display:flex;justify-content:center;padding:22px 16px 6px}
-.join-top img{display:block;width:200px;height:auto}
-.join-box{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0;width:min(1040px,calc(100% - 32px));margin:14px auto 40px;border:1px solid #dbe5e2;border-radius:20px;background:#fff;box-shadow:0 18px 48px rgba(16,24,40,.10);overflow:hidden;color:#142b25;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-.join-side{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px;background:#072448;color:#fff}
-.join-side img{display:block;width:100%;height:auto;border-radius:12px}
-.join-side h1{margin:0;font-size:1.45rem;line-height:1.3;letter-spacing:-.02em;text-align:center}
-.join-side ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:.95rem}
-.join-side li{display:flex;gap:9px;align-items:flex-start;line-height:1.4}
-.join-side li::before{content:"✓";flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#f2ce78;color:#072448;font-weight:900;font-size:.8rem}
-.join-main{display:flex;flex-direction:column;justify-content:center;padding:32px 36px}
-.join-choices{display:flex;gap:10px;margin:0 0 14px}
-.join-choices button{flex:1;min-height:46px;padding:8px;border-radius:10px;border:2px solid #075c4b;background:#fff;color:#075c4b;font:inherit;font-weight:800;cursor:pointer}
-.join-choices button[aria-pressed="true"]{background:#075c4b;color:#fff}
-.mobile-required{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:10px 12px;border:1px solid #e8cc7b;border-radius:10px;background:#fffcf2}
-.mobile-required img{display:block;width:30px;height:48px;object-fit:contain;flex:none}
-.mobile-required p{margin:0;font-size:.92rem;line-height:1.4;color:#243c32}
-.join-fields{display:grid;gap:12px}
-.join-box label{display:grid;gap:6px;font-weight:800;font-size:.92rem}
-.join-box input{box-sizing:border-box;width:100%;height:46px;padding:0 12px;border:1px solid #a5b6b0;border-radius:9px;font:inherit;background:#fff;color:#142b25}
-.join-box input:focus{outline:3px solid rgba(7,92,75,.15);border-color:#075c4b}
-.join-box button:focus-visible,.join-box a:focus-visible{outline:3px solid #dfaa32;outline-offset:3px}
-.join-note{margin:8px 0 0;font-size:.84rem;color:#485e57;line-height:1.45}
-.join-submit{width:100%;min-height:48px;margin-top:14px;border:0;border-radius:10px;background:linear-gradient(110deg,#e5b33f,#f2ce78);box-shadow:0 5px 13px rgba(159,108,13,.15);color:#211a06;font:inherit;font-weight:850;font-size:1rem;cursor:pointer}
-.join-submit:hover{filter:brightness(1.05)}
-.join-alt{width:100%;min-height:46px;margin-top:10px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#1f2937;font:inherit;font-weight:800;cursor:pointer}
-.join-alt:hover{background:#f8fafc}
-.join-box button:disabled{opacity:.65;cursor:wait}
-.join-box a{color:#075c4b;font-weight:800}
-.join-status{margin:10px 0 0;white-space:pre-line}.join-status:empty{display:none}.join-status[data-error="true"]{color:#a12619;font-weight:700}
-.join-divider{display:flex;align-items:center;gap:10px;margin:18px 0 4px;color:#98a2b3;font-size:.82rem}
-.join-divider::before,.join-divider::after{content:"";height:1px;flex:1;background:#e4ebe8}
-.join-box [hidden]{display:none!important}
-.join-modes{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0 0 18px;padding:4px;border-radius:12px;background:#eef3f1}
-.join-modes button{min-height:44px;border:0;border-radius:9px;background:transparent;color:#5b6b66;font:inherit;font-weight:850;font-size:.98rem;cursor:pointer}
-.join-modes [data-join-mode=signup][aria-selected=true]{background:linear-gradient(110deg,#e5b33f,#f2ce78);color:#211a06;box-shadow:0 3px 9px rgba(159,108,13,.18)}
-.join-modes [data-join-mode=login][aria-selected=true]{background:#075c4b;color:#fff;box-shadow:0 3px 9px rgba(7,92,75,.25)}
-.join-box.is-login .join-submit{background:#075c4b;color:#fff;box-shadow:0 5px 13px rgba(7,92,75,.2)}
-.join-box.is-login .join-choices{display:none}
-.join-box.is-login .mobile-required{border-color:#b9dccf;background:#f1faf6}
-@media(max-width:820px){.join-box{grid-template-columns:1fr;width:calc(100% - 24px);margin:10px auto 28px}.join-side{padding:18px}.join-side ul{display:none}.join-side h1{font-size:1.1rem}.join-main{padding:20px 18px 24px}.join-top{padding:14px 12px 2px}.join-top{justify-content:flex-start}.join-top img{width:150px}}
-</style><link rel="stylesheet" href="tex-gold.css?v=1">
+    :root{--ink:#101828;--navy:#0b1f3a;--gold:#f2ce78;--gold2:#e5b33f;--blue:#2563eb;--blue2:#1d4ed8;--green:#075c4b}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;color:var(--ink);background:#eef2f6;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    .join-top{display:flex;justify-content:center;padding:16px 16px 4px}
+    .join-top img{display:block;width:190px;height:auto}
+
+    .auth-split{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(1180px,calc(100% - 32px));margin:10px auto 36px}
+    .auth-panel picture{display:contents}
+    .auth-panel{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;padding-top:220px;min-height:min(900px,calc(100vh - 100px));border-radius:24px;overflow:hidden;box-shadow:0 22px 50px rgba(11,31,58,.22)}
+    .auth-bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center top}
+    .auth-panel::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,16,34,0) 0%,rgba(6,16,34,0) 24%,rgba(6,16,34,.66) 44%,rgba(6,16,34,.9) 100%)}
+    .auth-head{padding:0 28px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+    .auth-tag{display:inline-block;margin:0 0 10px;padding:6px 12px;border-radius:999px;font-size:.78rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
+    .pro .auth-tag{background:var(--gold);color:var(--navy)}
+    .cust .auth-tag{background:#dbeafe;color:var(--blue2)}
+    .auth-head h2{margin:0;font-size:clamp(1.7rem,3.2vw,2.5rem);line-height:1.08;letter-spacing:-.03em}
+    .auth-head p{margin:10px 0 0;max-width:30ch;font-size:1.05rem;line-height:1.45;color:#f1f5f9}
+    .auth-slot{display:flex;justify-content:center;padding:16px 18px 20px}
+
+    .auth-cta{width:min(380px,100%);min-height:58px;padding:0 22px;border-radius:14px;font:inherit;font-size:1.08rem;font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+    .pro .auth-cta{border:1px solid #c18a13;background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106}
+    .cust .auth-cta{border:0;background:linear-gradient(135deg,#3b82f6,var(--blue2));color:#fff}
+    .auth-cta:hover{filter:brightness(1.06)}
+    .auth-panel.active .auth-cta{display:none}
+
+    /* The one sign-in card moves into whichever panel is active */
+    .join-main{width:min(440px,100%);padding:16px 18px;border-radius:18px;background:transparent;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+    .join-modes{display:grid;grid-template-columns:1fr 1fr;margin:0 0 10px;padding:4px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+    .join-modes button{min-height:38px;border:0;border-radius:9px;background:transparent;color:#fff;font:inherit;font-weight:850;font-size:.96rem;cursor:pointer;text-shadow:none}
+    .join-modes [data-join-mode=signup][aria-selected=true]{background:linear-gradient(110deg,var(--gold2),var(--gold));color:#211a06}
+    .join-modes [data-join-mode=login][aria-selected=true]{background:var(--green);color:#fff}
+    .cust .join-modes [data-join-mode=signup][aria-selected=true]{background:var(--blue)!important;color:#fff!important;border-color:var(--blue)!important}
+    .mobile-required{margin:0 0 8px;padding:0;background:none;border:0}
+    .cust .mobile-required{background:none}
+    .mobile-required p{margin:0;font-size:.95rem;line-height:1.4;color:#f8fafc;font-weight:700}
+    .join-fields{display:grid;gap:8px}
+    .join-main label{display:grid;gap:5px;font-weight:800;font-size:.9rem;color:#fff}
+    .join-main input{width:100%;height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.55);border-radius:10px;font:inherit;background:rgba(255,255,255,.92);color:#142b25;text-shadow:none}
+    .join-main input:focus{outline:3px solid rgba(7,92,75,.15);border-color:var(--green)}
+    .join-main button:focus-visible,.join-main a:focus-visible,.auth-cta:focus-visible{outline:3px solid #dfaa32;outline-offset:3px}
+    .join-note{margin:7px 0 0;font-size:.82rem;color:#e2e8f0;line-height:1.45}
+    .join-submit{width:100%;min-height:46px;margin-top:10px;border:0;border-radius:10px;background:linear-gradient(110deg,var(--gold2),var(--gold));color:#211a06;font:inherit;font-weight:850;font-size:1rem;cursor:pointer}
+    .cust .join-submit{background:linear-gradient(135deg,#3b82f6,var(--blue2))!important;border-color:var(--blue2)!important;color:#fff!important;text-shadow:none!important}
+    .is-login .join-submit{background:var(--green)!important;color:#fff!important}
+    .join-alt{width:100%;min-height:40px;margin-top:7px;border:1px solid rgba(255,255,255,.6);border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-weight:800;cursor:pointer;text-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+    .join-alt:hover{background:rgba(255,255,255,.24)}
+    .join-main button:disabled{opacity:.65;cursor:wait}
+    .join-main a{color:var(--gold);font-weight:800}.cust .join-main a{color:#bfdbfe}
+    .join-status{margin:10px 0 0;white-space:pre-line}.join-status:empty{display:none}.join-status[data-error="true"]{color:#fecaca;font-weight:800}
+    .join-divider{display:flex;align-items:center;gap:10px;margin:10px 0 0;color:#cbd5e1;font-size:.8rem}
+    .join-divider::before,.join-divider::after{content:"";height:1px;flex:1;background:rgba(255,255,255,.35)}
+    [hidden]{display:none!important}
+
+    @media(max-width:820px){
+      .join-top{justify-content:flex-start;padding:12px 14px 2px}
+      .join-top img{width:150px}
+      .auth-split{grid-template-columns:1fr;gap:14px;width:calc(100% - 20px);margin:6px auto 24px}
+      .auth-panel{min-height:78vh;min-height:78svh;padding-top:40vh;border-radius:20px}
+      .auth-panel.active{order:-1;min-height:0;padding-top:36vh}
+      .auth-head{padding:0 18px}
+      .auth-head p{font-size:.98rem}
+      .auth-slot{padding:12px}
+      .join-main{padding:16px}
+    }
+  </style>
+  <link rel="stylesheet" href="tex-gold.css?v=1">
 </head>
 <body>
 <a class="join-top" href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor"></a>
-<section class="join-box" data-join aria-label="Create your TexContractor account">
-<div class="join-side">
-<img src="registration-banner.png" alt="Text Contractors — All in One — local service professionals">
-<h1>Sign up to text technicians directly or receive customer requests</h1>
-<ul><li>Free account — no fees, no middleman</li><li>Text or call local technicians directly</li><li>Technicians: get customer requests by text message</li></ul>
-</div>
-<div class="join-main">
-<div class="join-modes" role="tablist" aria-label="Create account or sign in">
-<button type="button" role="tab" data-join-mode="signup" aria-selected="true">Create account</button>
-<button type="button" role="tab" data-join-mode="login" aria-selected="false">Sign in</button>
-</div>
-<div class="join-choices" aria-label="Choose how to get started">
-<button type="button" data-intent="provider" aria-pressed="true">Add my service</button>
-<button type="button" data-intent="customer" aria-pressed="false">Find a service</button>
-</div>
-<div class="mobile-required"><img src="registration-phone.png" alt="Mobile phone"><p data-join-copy>Sign up to receive customer requests by text message.</p></div>
-<form data-join-form>
-<div class="join-fields">
-<label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
-<label>Password<input name="password" type="password" autocomplete="new-password" minlength="6" required aria-describedby="join-password-help"></label>
-</div>
-<p class="join-note" id="join-password-help">At least 6 characters, including a letter and a number.</p>
-<button class="join-submit" type="submit">Create account &amp; continue</button>
-</form>
-<p class="join-status" role="status" aria-live="polite"></p>
-<p class="join-note"><span data-join-prefix>Already have an account? </span><a data-join-login href="auth.html">Sign in</a> · <a href="index.html#service-catalog">Browse services</a></p>
-<div class="join-divider">or</div>
-<button class="join-alt" type="button" id="google-submit">Continue with Google</button>
-<button class="join-alt" type="button" id="magic-submit">Email me a sign-in link</button>
-<p class="join-note">For an existing account without a password, use Google or a sign-in link.</p>
-</div>
+
+<section class="auth-split join-box" data-join aria-label="Sign in or create your TexContractor account">
+  <article class="auth-panel pro" data-panel="provider">
+    <picture>
+      <source media="(max-width:820px)" srcset="auth-pro-640.jpg">
+      <img class="auth-bg" src="auth-pro.jpg" alt="A local technician with his tool bag reading a customer's text message next to his truck" width="1024" height="1536">
+    </picture>
+    <div class="auth-head">
+      <span class="auth-tag">For technicians</span>
+      <h2>Get local customers by text</h2>
+      <p>Add your service and customers in your area text you directly. No fees per lead.</p>
+    </div>
+    <div class="auth-slot"><button class="auth-cta" type="button" data-intent="provider">Add my service →</button></div>
+  </article>
+
+  <article class="auth-panel cust" data-panel="customer">
+    <picture>
+      <source media="(max-width:820px)" srcset="auth-customer-640.jpg">
+      <img class="auth-bg" src="auth-customer.jpg" alt="A smiling couple on their couch finding a local pro on their phone" width="1024" height="1536">
+    </picture>
+    <div class="auth-head">
+      <span class="auth-tag">For customers</span>
+      <h2>Find a local pro near you</h2>
+      <p>Search by service and city, then text the technician directly.</p>
+    </div>
+    <div class="auth-slot"><button class="auth-cta" type="button" data-intent="customer">Find a service →</button></div>
+  </article>
+
+  <div class="join-main" id="join-card">
+    <div class="join-modes" role="tablist" aria-label="Create account or sign in">
+      <button type="button" role="tab" data-join-mode="signup" aria-selected="true">Create account</button>
+      <button type="button" role="tab" data-join-mode="login" aria-selected="false">Sign in</button>
+    </div>
+    <div class="mobile-required"><p data-join-copy>Sign up to receive customer requests by text message.</p></div>
+    <form data-join-form>
+      <div class="join-fields">
+        <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" minlength="6" required aria-describedby="join-password-help"></label>
+      </div>
+      <p class="join-note" id="join-password-help">At least 6 characters, including a letter and a number.</p>
+      <button class="join-submit" type="submit">Create account &amp; continue</button>
+    </form>
+    <p class="join-status" role="status" aria-live="polite"></p>
+    <p class="join-note"><span data-join-prefix>Already have an account? </span><a data-join-login href="auth.html">Sign in</a> · <a href="index.html#service-catalog">Browse services</a></p>
+    <div class="join-divider">or</div>
+    <button class="join-alt" type="button" id="google-submit">Continue with Google</button>
+    <button class="join-alt" type="button" id="magic-submit">Email me a sign-in link</button>
+  </div>
 </section>
+
+<script>
+(function () {
+  // Put the single sign-in card inside the panel the visitor chose (technician or customer).
+  var card = document.getElementById('join-card');
+  var panels = document.querySelectorAll('.auth-panel');
+  function activate(intent, scroll) {
+    panels.forEach(function (p) {
+      var on = p.dataset.panel === intent;
+      p.classList.toggle('active', on);
+      if (on) p.querySelector('.auth-slot').appendChild(card);
+    });
+    if (scroll) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  var q = new URLSearchParams(location.search).get('intent');
+  activate(q === 'customer' ? 'customer' : 'provider', false);
+  document.querySelectorAll('.auth-cta[data-intent]').forEach(function (b) {
+    b.addEventListener('click', function () { activate(b.dataset.intent, true); });
+  });
+})();
+</script>
 <script src="tex-auth.js?v=20261021-signup"></script><script src="tex-join.js?v=20261023-exists"></script>
-<script src="tex-language.js?v=20261025es"></script></body></html>
+<script src="tex-language.js?v=20261028auth"></script></body></html>
