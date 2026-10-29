@@ -150,6 +150,9 @@
       if (!ads.length) return;
       injectStyles();
       ads.forEach(render);
+      // Give both vertical text boxes the same height so the sides look balanced.
+      const boxes = [...document.querySelectorAll('.tc-side-ad-body.ad-vertical')];
+      if (boxes.length > 1) { const tallest = Math.max(...boxes.map((b) => b.offsetHeight)); boxes.forEach((b) => { b.style.minHeight = tallest + 'px'; }); }
     } catch (error) {
       // Side advertising is optional and must never interrupt the main site.
     }
