@@ -676,9 +676,38 @@
     <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
   </div></div>
 
-<dialog class="join-box" data-join aria-label="Create your TexContractor account">
+<style>
+dialog.join-box.join-pop{display:block;width:min(820px,calc(100% - 32px))!important;max-height:calc(100dvh - 32px)!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;grid-template-columns:none!important}
+dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
+.join-pop .join-dismiss{position:absolute;right:-10px;top:-14px;z-index:3;width:38px;height:38px;border-radius:50%;background:#fff;color:#0b1f3a;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.pop-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.join-pop .pop-panel,.join-pop .pop-text,.join-pop .pop-text strong,.join-pop .pop-sub{color:#fff!important;text-decoration:none!important}
+.pop-panel{position:relative;display:block;height:min(560px,calc(100dvh - 60px));border-radius:20px;overflow:hidden;text-decoration:none;color:#fff}
+.pop-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+.pop-text{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:6px;padding:18px;text-shadow:0 1px 3px rgba(0,0,0,.9),0 2px 14px rgba(0,0,0,.75)}
+.pop-tag{align-self:flex-start;padding:4px 10px;border-radius:999px;font-size:.68rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
+.pro .pop-tag{background:#f2ce78;color:#0b1f3a}.cust .pop-tag{background:#dbeafe;color:#1d4ed8}
+.pop-text strong{font-size:clamp(1.15rem,2.4vw,1.6rem);line-height:1.12;letter-spacing:-.02em}
+.pop-sub{font-size:.9rem;line-height:1.4}
+.pop-cta{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:6px;border-radius:12px;font-weight:900;font-size:1rem;text-shadow:none;box-shadow:0 8px 20px rgba(0,0,0,.28)}
+.pro .pop-cta{background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106;border:1px solid #c18a13}
+.cust .pop-cta{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff}
+.pop-panel:hover .pop-cta{filter:brightness(1.06)}
+@media(max-width:650px){.pop-split{gap:8px}.pop-panel{height:min(470px,calc(100dvh - 60px));border-radius:16px}.pop-text{padding:10px;gap:5px}.pop-sub{display:none}.pop-text strong{font-size:1rem}.pop-cta{min-height:40px;font-size:.86rem;border-radius:10px}.join-pop .join-dismiss{right:-6px;top:-12px}}
+</style>
+<dialog class="join-box join-pop" data-join aria-label="Create your TexContractor account">
 <button class="join-dismiss" type="button" aria-label="Close registration window">×</button>
-<div class="registration-banner"><img src="registration-banner.png" alt="Text Contractors — All in One — local service professionals"><p>Sign up to text technicians directly or receive customer requests</p></div>
+<div class="pop-split">
+<a class="pop-panel pro" href="auth.html?mode=signup&amp;intent=provider&amp;return_to=contractor-register.html">
+<img src="auth-pro-640.jpg" alt="A local technician with his tool bag reading a customer's text message" loading="lazy" width="640" height="960">
+<span class="pop-text"><span class="pop-tag">For technicians</span><strong>Get local customers by text</strong><span class="pop-sub">Add your service and customers in your area text you directly. No fees per lead.</span><span class="pop-cta">Add my service →</span></span>
+</a>
+<a class="pop-panel cust" href="auth.html?mode=signup&amp;intent=customer&amp;return_to=index.html">
+<img src="auth-customer-640.jpg" alt="A smiling couple finding a local pro on their phone" loading="lazy" width="640" height="960">
+<span class="pop-text"><span class="pop-tag">For customers</span><strong>Find a local pro near you</strong><span class="pop-sub">Search by service and city, then text the technician directly.</span><span class="pop-cta">Find a service →</span></span>
+</a>
+</div>
+<div class="pop-hidden" hidden>
 <div class="join-choices" aria-label="Choose how to get started">
 <button type="button" data-intent="provider" aria-pressed="false">Add my service</button>
 <button type="button" data-intent="customer" aria-pressed="true">Find a service</button>
@@ -694,6 +723,7 @@
 </form>
 <p class="join-status" role="status" aria-live="polite"></p>
 <p class="join-note"><span data-join-prefix>Already have an account? </span><a data-join-login href="auth.html">Sign in</a> · <a href="index.html#service-catalog">Browse services</a></p>
+</div>
 </dialog>
 
   <div class="top-message">Find a local service, view the work, and text a contractor directly for a quote.</div>
