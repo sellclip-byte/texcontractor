@@ -64,12 +64,35 @@
       const copy = document.createElement('div');
       copy.className = 'tc-side-ad-copy';
       if (ad.style === 'vertical') {
-        ad.message_text.split(/\s+/).filter(Boolean).forEach((word) => {
-          const line = document.createElement('span');
-          line.className = 'tc-side-ad-word';
-          line.textContent = word;
-          copy.appendChild(line);
+        // Lines are separated by "|"; a line wrapped in *stars* is emphasized. Typed out like a typewriter.
+        const lines = ad.message_text.split('|').map((part) => part.trim()).filter(Boolean).map((part) => {
+          const big = /^\*.*\*$/.test(part);
+          const el = document.createElement('span');
+          el.className = big ? 'tc-side-ad-word tc-side-ad-big' : 'tc-side-ad-word tc-side-ad-small';
+          el.dataset.text = big ? part.slice(1, -1) : part;
+          el.textContent = el.dataset.text;
+          copy.appendChild(el);
+          return el;
         });
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce && lines.length) {
+          const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+          const type = async () => {
+            for (;;) {
+              lines.forEach((el) => { el.textContent = '\u00a0'; el.classList.remove('tc-typing'); });
+              for (const el of lines) {
+                el.classList.add('tc-typing');
+                const text = el.dataset.text;
+                for (let i = 1; i <= text.length; i++) { el.textContent = text.slice(0, i); await wait(85); }
+                el.classList.remove('tc-typing');
+                await wait(250);
+              }
+              lines[lines.length - 1].classList.add('tc-typing');
+              await wait(9000);
+            }
+          };
+          type();
+        }
       } else {
         copy.textContent = ad.message_text;
       }
@@ -81,6 +104,7 @@
   };
   const injectStyles = () => {
     if (document.getElementById('tc-side-ads-style')) return;
+    if (!document.getElementById('tc-side-ads-font')) { const font = document.createElement('link'); font.id = 'tc-side-ads-font'; font.rel = 'stylesheet'; font.href = 'https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap'; document.head.appendChild(font); }
     const style = document.createElement('style');
     style.id = 'tc-side-ads-style';
     style.textContent = `
@@ -101,14 +125,16 @@
       .tc-side-ad-body.motion-scroll .tc-side-ad-copy { white-space: nowrap; animation: tc-side-ad-scroll 15s linear infinite; }
       @keyframes tc-side-ad-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: .84; } }
       @keyframes tc-side-ad-scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 18px 8px; min-height: 0; max-height: calc(100vh - 170px); background: linear-gradient(180deg, #fffdf5, #f1fbf6); border: 2px solid transparent; background-clip: padding-box; box-shadow: 0 0 0 2px rgba(201,162,39,.55), 0 10px 26px rgba(15,23,42,.10); }
-      .tc-side-ad-body.ad-vertical .tc-side-ad-copy { display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 0; font-family: 'Montserrat', 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-size: 1.3rem; line-height: 1.05; font-weight: 900; letter-spacing: 0; text-transform: none; overflow-wrap: normal; white-space: nowrap; }
-      .tc-side-ad-word { display: block; }
-      .tc-side-ad-body.motion-shimmer .tc-side-ad-copy { background: linear-gradient(90deg, #b8860b 0%, #f2c94c 25%, #0f7a4f 50%, #f2c94c 75%, #b8860b 100%); background-size: 100% 300%; background-attachment: scroll; -webkit-background-clip: text; background-clip: text; color: transparent; animation: tc-side-ad-shimmer 7s ease-in-out infinite; }
+      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 20px 8px; background: #0c3b2c; border: 0; border-radius: 16px; box-shadow: 0 0 0 2px #d4a72c, 0 12px 28px rgba(15,23,42,.18); }
+      .tc-side-ad-body.ad-vertical .tc-side-ad-copy { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; font-family: 'Courier Prime', 'Courier New', Courier, monospace; text-align: center; overflow-wrap: normal; white-space: nowrap; }
+      .tc-side-ad-word { display: block; min-height: 1.1em; }
+      .tc-side-ad-big { font-size: 1.12rem; line-height: 1.1; font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: #f6c445; }
+      .tc-side-ad-small { font-size: .92rem; line-height: 1.15; font-weight: 700; color: #ffffff; }
+      .tc-typing::after { content: '|'; margin-left: 1px; color: #f6c445; font-weight: 400; animation: tc-caret 1s steps(1) infinite; }
+      @keyframes tc-caret { 50% { opacity: 0; } }
       .tc-side-ad-body.motion-shimmer { animation: tc-side-ad-glow 7s ease-in-out infinite; }
-      @keyframes tc-side-ad-shimmer { 0%,100% { background-position: 0 0%; } 50% { background-position: 0 100%; } }
-      @keyframes tc-side-ad-glow { 0%,100% { box-shadow: 0 0 0 2px rgba(201,162,39,.55), 0 10px 26px rgba(15,23,42,.10); } 50% { box-shadow: 0 0 0 2px rgba(15,122,79,.55), 0 0 18px rgba(15,122,79,.25); } }
-      @media (prefers-reduced-motion: reduce) { .tc-side-ad-body.motion-shimmer, .tc-side-ad-body.motion-shimmer .tc-side-ad-copy { animation: none; } }
+      @keyframes tc-side-ad-glow { 0%,100% { box-shadow: 0 0 0 2px #d4a72c, 0 12px 28px rgba(15,23,42,.18); } 50% { box-shadow: 0 0 0 2px #2fbf7a, 0 0 22px rgba(47,191,122,.45); } }
+      @media (prefers-reduced-motion: reduce) { .tc-side-ad-body.motion-shimmer { animation: none; } }
       @media (max-width: 1120px) { .tc-side-ad { display: none; } }
       .tc-side-ad.tc-home-left-ad { display: block; position: static; width: min(200px, calc(100% - 28px)); max-height: none; margin: 20px 14px; }
       .tc-home-left-ad .tc-side-ad-body { max-height: none; overflow: visible; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
