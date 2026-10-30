@@ -2,6 +2,7 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['entrevista-fundadores-es', 'Español', 'Así nació TexContractor: entrevista'],
     ['kitchen-drain-plumber-en', 'English', "Sink backed up before dinner?"],
     ['techo-goteando-es', 'Español', "¿Se gotea el techo?"],
     ['math-tutor-en', 'English', "Need a math tutor?"],
