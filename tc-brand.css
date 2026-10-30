@@ -1,0 +1,29 @@
+/* Shared TexContractor branding for service pages, Spanish pages and cost guides. */
+:root{--ink:#14262b;--muted:#5a6c70;--line:#dbe4e6;--bg:#f5f8f8;--accent:#0b6a55;--gold:#f5b84b;--req:#b45309}
+*{box-sizing:border-box}
+body.tc-brand{margin:0;max-width:none;padding:0;background:var(--bg);color:var(--ink);font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body.tc-brand a{color:var(--accent)}
+.tc-wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tc-top{background:#fff;border-bottom:3px solid var(--gold);box-shadow:0 4px 16px rgba(15,23,42,.05);position:sticky;top:0;z-index:20}
+.tc-top .tc-wrap{display:flex;align-items:center;gap:14px;padding-block:8px;flex-wrap:wrap}
+.tc-top .tc-logo img{height:64px;width:auto;display:block}
+.tc-nav{display:flex;gap:16px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.tc-nav a{color:var(--ink);text-decoration:none;font-weight:700;font-size:15px}
+.tc-nav a:hover{color:var(--accent)}
+.tc-nav a.tc-nav-req{background:var(--req);color:#fff;padding:9px 14px;border-radius:10px}
+.tc-nav a.tc-nav-lang{border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-weight:600}
+.tc-band{background:linear-gradient(135deg,#0c3b2c,#0b6a55);color:#fff}
+.tc-band .tc-wrap{padding-block:12px;font-weight:700;font-size:15px}
+.tc-band b{color:var(--gold)}
+body.tc-brand main{max-width:860px;margin:22px auto 0;padding:26px max(16px,4vw) 30px;background:#fff;border:1px solid var(--line);border-radius:16px}
+body.tc-brand main h1{color:#0c3b2c;line-height:1.2;margin-top:0}
+body.tc-brand main h2{color:#0c3b2c}
+body.tc-brand a.cta{background:var(--accent)!important;border-radius:10px!important;font-weight:700;color:#fff}
+body.tc-brand a.tc-req-btn,body.tc-brand .ctas a,body.tc-brand .tc-nav a.tc-nav-req{color:#fff}
+body.tc-brand .tc-nav a{color:var(--ink)}body.tc-brand .tc-nav a.tc-nav-req{color:#fff}
+.tc-foot{margin-top:36px;background:#0c3b2c;color:#d7e6e1}
+.tc-foot .tc-wrap{padding-block:22px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:14px}
+.tc-foot a{color:#fff!important;text-decoration:none;font-weight:600}
+.tc-foot img{height:40px;width:auto;background:#fff;border-radius:8px;padding:3px 6px}
+.tc-foot .tc-copy{flex-basis:100%;color:#a9c3bb}
+@media (max-width:640px){.tc-top .tc-logo img{height:52px}.tc-nav{margin-left:0;width:100%;gap:8px 12px}.tc-nav a{font-size:14px}.tc-nav a.tc-nav-req{padding:7px 11px}.tc-top{position:static}}

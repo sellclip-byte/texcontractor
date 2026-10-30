@@ -164,3 +164,6 @@ for (const g of guides) {
 const robots = readFileSync(join(root, 'robots.txt'), 'utf8');
 if (!robots.includes('sitemap-guides.xml')) writeFileSync(join(root, 'robots.txt'), robots.trimEnd() + '\nSitemap: https://texcontractor.com/sitemap-guides.xml\n');
 console.log('Guides built:', urls.length);
+
+// Re-apply the shared logo header/footer to all service pages and guides.
+import('node:child_process').then(({ execSync }) => execSync('node scripts/brand-pages.mjs', { stdio: 'inherit' }));
