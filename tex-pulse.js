@@ -58,7 +58,7 @@
   function pickCard(exclude) { const c = [...document.querySelectorAll('.services-grid .service-card')].filter(el => visible(el) && !exclude.includes(el)); return c.length ? c[Math.floor(Math.random() * c.length)] : null; }
 
   const busyStates = [], busyCards = [];
-  function fire(stateEl) {
+  function fire(stateEl, wantCard) {
     if (!stateEl || running >= 3) return;
     running++; busyStates.push(stateEl);
     const led = document.createElement('div'); led.className = 'tcp-led'; document.body.appendChild(led);
@@ -75,7 +75,7 @@
         setTimeout(() => { led.classList.remove('on'); setTimeout(done, 300); }, 500);
         // The card answers a moment later, on its own (no visible travel).
         setTimeout(() => {
-          const card = pickCard(busyCards); if (!card) return;
+          const card = (wantCard && visible(wantCard) && !busyCards.includes(wantCard)) ? wantCard : pickCard(busyCards); if (!card) return;
           busyCards.push(card);
           if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
           card.classList.remove('tcp-hit'); void card.offsetWidth; card.classList.add('tcp-hit');
@@ -86,11 +86,56 @@
     }, 650);
   }
 
+  // Real activity (state + service only) from the site; played a little after it happens.
+  const API = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/texcontractor_pulse_events';
+  const KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+  const queue = [], seen = new Set();
+  let lastPoll = Date.now() - 30 * 60000;
+  async function poll() {
+    try {
+      const since = new Date(lastPoll - 5 * 60000).toISOString();
+      const res = await fetch(API, { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_since: since }) });
+      if (res.ok) {
+        const rows = await res.json(); lastPoll = Date.now();
+        const counts = {};
+        (Array.isArray(rows) ? rows : []).forEach(r => {
+          const base = r.at + '|' + r.state + '|' + r.service + '|' + r.kind; counts[base] = (counts[base] || 0) + 1;
+          const key = base + '#' + counts[base];
+          if (seen.has(key)) return; seen.add(key);
+          if (Date.now() - Date.parse(r.at) > 35 * 60000) return;
+          queue.push({ state: String(r.state || '').toLowerCase(), service: String(r.service || ''), due: Date.now() + rnd(4000, 60000) });
+        });
+      }
+    } catch (_) {}
+    setTimeout(poll, document.hidden ? 180000 : 60000);
+  }
+  const norm = (t) => String(t || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, ' ').trim();
+  function cardFor(service) {
+    const n = norm(service);
+    return [...document.querySelectorAll('.services-grid .service-card')].find(c => { const img = c.querySelector('img'); return norm(c.querySelector('.service-title')?.textContent) === n || norm(img && img.alt) === n; }) || null;
+  }
+  function stateEl(abbr) {
+    const s = side(); if (!s || !visible(s)) return null;
+    const a = [...s.querySelectorAll('#cr-states a')].find(x => /local\/([a-z]{2})/.test(x.getAttribute('href') || '') && RegExp.$1 === abbr);
+    if (!a) return null;
+    if (!visible(a)) { if (Date.now() < sideBusy) return null; const sr = s.getBoundingClientRect(), ar = a.getBoundingClientRect(); s.scrollTo({ top: s.scrollTop + (ar.top - sr.top) - sr.height / 2, behavior: 'smooth' }); }
+    return a;
+  }
+  function playReal() {
+    const i = queue.findIndex(e => e.due <= Date.now());
+    if (i < 0) return false;
+    const e = queue.splice(i, 1)[0];
+    const el = stateEl(e.state);
+    if (!el) return false;
+    fire(el, cardFor(e.service));
+    return true;
+  }
+
   function tick() {
     const modal = [...document.querySelectorAll('dialog[open], .join-pop')].some(el => el.offsetParent !== null || (el.tagName === 'DIALOG' && el.open));
     if (!document.hidden && !modal) {
       const act = activity();
-      fire(pickAny());
+      if (!playReal()) fire(pickAny());
       // Daytime bursts: sometimes 1-2 more states light up within a few seconds.
       if (act > 0.15 && Math.random() < (act > 0.5 ? 0.35 : 0.15)) {
         const extra = Math.random() < 0.3 ? 2 : 1;
@@ -103,6 +148,7 @@
   }
   document.addEventListener('pointerover', (e) => { if (e.target.closest && e.target.closest('.cr-side')) sideBusy = Date.now() + 10000; }, { passive: true });
   document.addEventListener('wheel', (e) => { if (e.target.closest && e.target.closest('.cr-side')) sideBusy = Date.now() + 10000; }, { passive: true });
-  const start = () => setTimeout(tick, rnd(1500, 3500));
+  const modalOpen = () => [...document.querySelectorAll('dialog[open], .join-pop')].some(el => el.offsetParent !== null || (el.tagName === 'DIALOG' && el.open));
+  const start = () => { setTimeout(tick, rnd(1500, 3500)); poll(); setInterval(() => { if (!document.hidden && !modalOpen() && running < 3) playReal(); }, 2500); };
   if (document.readyState === 'complete') start(); else addEventListener('load', start);
 })();
