@@ -46,6 +46,28 @@
     let r = Math.random() * tot, i = 0; while (i < ws.length - 1 && (r -= ws[i]) > 0) i++;
     return list[i][0];
   }
+  // Mostly the visitor's nearby cities, sometimes states further away; switch in calm phases so the list doesn't jump.
+  const cityLinks = () => [...(side() ? side().querySelectorAll('#cr-near a') : [])];
+  const myAwake = () => window.tcpForceDay ? 1 : awake(new Date().getHours());
+  let phase = { mode: 'city', until: Date.now() + rnd(40000, 90000) };
+  function scrollSideTo(a) {
+    const s = side(); if (!s || visible(a)) return true;
+    if (Date.now() < sideBusy) return false;
+    const sr = s.getBoundingClientRect(), ar = a.getBoundingClientRect();
+    s.scrollTo({ top: s.scrollTop + (ar.top - sr.top) - sr.height / 2, behavior: 'smooth' }); return true;
+  }
+  function pickCity() {
+    const s = side(); if (!s || !visible(s)) return null;
+    const l = cityLinks(); if (!l.length || Math.random() > myAwake() + 0.05) return null;
+    // closer cities (top of the list) a little more often
+    const ws = l.map((_, i) => 1 / (1 + i * 0.12)), tot = ws.reduce((x, y) => x + y, 0);
+    let r = Math.random() * tot, i = 0; while (i < ws.length - 1 && (r -= ws[i]) > 0) i++;
+    return scrollSideTo(l[i]) ? l[i] : null;
+  }
+  function pickNext() {
+    if (Date.now() > phase.until) phase = phase.mode === 'city' ? { mode: 'state', until: Date.now() + rnd(20000, 45000) } : { mode: 'city', until: Date.now() + rnd(45000, 100000) };
+    return (phase.mode === 'city' && cityLinks().length) ? (pickCity() || pickVisible(busyStates)) : pickAny();
+  }
   // Primary event: any state (the sidebar list scrolls itself to it, never the page).
   function pickAny() {
     const s = side(); if (!s || !visible(s)) return null;
@@ -54,7 +76,12 @@
     return a;
   }
   // Extra events in a burst: only states already on screen, so the list doesn't jump.
-  function pickVisible(exclude) { const l = stateLinks().filter(x => visible(x[0]) && !exclude.includes(x[0])); return l.length ? weighted(l) : null; }
+  function pickVisible(exclude) {
+    const st = stateLinks().filter(x => visible(x[0]) && !exclude.includes(x[0]));
+    const ct = cityLinks().filter(a => visible(a) && !exclude.includes(a));
+    if (ct.length && (!st.length || Math.random() < 0.7)) return Math.random() < myAwake() + 0.05 ? ct[Math.floor(Math.random() * ct.length)] : null;
+    return st.length ? weighted(st) : null;
+  }
   function pickCard(exclude) { const c = [...document.querySelectorAll('.services-grid .service-card')].filter(el => visible(el) && !exclude.includes(el)); return c.length ? c[Math.floor(Math.random() * c.length)] : null; }
 
   const busyStates = [], busyCards = [];
@@ -65,8 +92,9 @@
     const done = () => { led.remove(); busyStates.splice(busyStates.indexOf(stateEl), 1); running--; };
     setTimeout(() => {
       if (!visible(stateEl)) return done();
-      const r = stateEl.getBoundingClientRect();
-      led.style.left = (r.left - 9) + 'px'; led.style.top = (r.top + r.height / 2) + 'px';
+      let r = stateEl.getBoundingClientRect();
+      try { const rg = document.createRange(); rg.selectNodeContents(stateEl); const tr = rg.getBoundingClientRect(); if (tr.width) r = tr; } catch (_) {}
+      led.style.left = (r.left - 10) + 'px'; led.style.top = (r.top + r.height / 2) + 'px';
       led.classList.add('on', 'blink');
       setTimeout(() => {
         led.classList.remove('blink');
@@ -103,7 +131,7 @@
           const key = base + '#' + counts[base];
           if (seen.has(key)) return; seen.add(key);
           if (Date.now() - Date.parse(r.at) > 35 * 60000) return;
-          queue.push({ state: String(r.state || '').toLowerCase(), service: String(r.service || ''), due: Date.now() + rnd(4000, 60000) });
+          queue.push({ state: String(r.state || '').toLowerCase(), city: String(r.city || ''), service: String(r.service || ''), due: Date.now() + rnd(4000, 60000) });
         });
       }
     } catch (_) {}
@@ -125,7 +153,8 @@
     const i = queue.findIndex(e => e.due <= Date.now());
     if (i < 0) return false;
     const e = queue.splice(i, 1)[0];
-    const el = stateEl(e.state);
+    const cn = norm(e.city), city = cn && cityLinks().find(a => norm(a.textContent) === cn && (a.getAttribute('href') || '').indexOf('local/' + e.state) >= 0);
+    const el = (city && scrollSideTo(city)) ? city : stateEl(e.state);
     if (!el) return false;
     fire(el, cardFor(e.service));
     return true;
@@ -135,7 +164,7 @@
     const modal = [...document.querySelectorAll('dialog[open], .join-pop')].some(el => el.offsetParent !== null || (el.tagName === 'DIALOG' && el.open));
     if (!document.hidden && !modal) {
       const act = activity();
-      if (!playReal()) fire(pickAny());
+      if (!playReal()) fire(pickNext());
       // Daytime bursts: sometimes 1-2 more states light up within a few seconds.
       if (act > 0.15 && Math.random() < (act > 0.5 ? 0.35 : 0.15)) {
         const extra = Math.random() < 0.3 ? 2 : 1;
