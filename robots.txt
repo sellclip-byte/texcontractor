@@ -5,3 +5,4 @@ Sitemap: https://texcontractor.com/sitemap.xml
 Sitemap: https://texcontractor.com/sitemap-local.xml
 Sitemap: https://texcontractor.com/sitemap-videos.xml
 Sitemap: https://texcontractor.com/sitemap-es.xml
+Sitemap: https://texcontractor.com/sitemap-guides.xml
