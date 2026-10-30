@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}</script><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Remove my phone number · TexContractor</title>
-<meta name="description" content="Someone used your phone number on TexContractor without your permission? Hide it right away and have it removed.">
+<meta name="description" content="Someone used your phone number on TexContractor without your permission? Confirm it is yours and have it removed.">
 <link rel="canonical" href="https://texcontractor.com/remove-number.html">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
 <style>
@@ -21,14 +21,14 @@ footer{color:#64748b;font-size:.9rem}[hidden]{display:none!important}
 <div class="lang"><button type="button" data-l="en" aria-pressed="true">English</button><button type="button" data-l="es" aria-pressed="false">Español</button></div></header>
 <main>
 <h1 data-t="h1">Remove my phone number</h1>
-<p data-t="intro">If your phone number appears on a TexContractor listing that you did not create, tell us here. Every listing with your number is hidden right away.</p>
+<p data-t="intro">If your phone number appears on a TexContractor listing that you did not create, tell us here. After you confirm the number is yours with a texted code, every listing with it is removed.</p>
 
 <form class="card" id="req">
-<h2 data-t="s1" style="margin-top:0;font-size:1.15rem">Step 1 · Hide my number</h2>
+<h2 data-t="s1" style="margin-top:0;font-size:1.15rem">Step 1 · Report my number</h2>
 <label><span data-t="phone">Your phone number</span><input name="phone" type="tel" inputmode="tel" required autocomplete="tel" placeholder="(555) 555-5555"></label>
 <label><span data-t="contact">Your name or email (optional)</span><input name="contact" maxlength="200" autocomplete="email"></label>
 <label><span data-t="details">What happened? (optional)</span><textarea name="details" maxlength="1000"></textarea></label>
-<button class="main" type="submit" data-t="send">Hide my number</button>
+<button class="main" type="submit" data-t="send">Report my number</button>
 <p class="msg" id="req-msg" role="status"></p>
 </form>
 
@@ -46,9 +46,9 @@ footer{color:#64748b;font-size:.9rem}[hidden]{display:none!important}
 <script>
 (function(){
 const URL='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
-const T={es:{h1:'Eliminar mi número de teléfono',intro:'Si tu número aparece en un anuncio de TexContractor que tú no creaste, avísanos aquí. Todos los anuncios con tu número se ocultan de inmediato.',s1:'Paso 1 · Ocultar mi número',phone:'Tu número de teléfono',contact:'Tu nombre o correo (opcional)',details:'¿Qué pasó? (opcional)',send:'Ocultar mi número',s2:'Paso 2 · Confirma que es tu teléfono',s2p:'Te enviaremos un código de 6 dígitos por mensaje de texto a ese número. Escríbelo aquí para eliminar el número para siempre y evitar que se vuelva a usar.',code:'Código de 6 dígitos',confirm:'Eliminar mi número',help:'¿Preguntas? Escribe a <a href="mailto:texcontractor.help@gmail.com">texcontractor.help@gmail.com</a>.',
- okReq:'Listo. Tu número ya está oculto. Te enviaremos un código por mensaje de texto pronto.',okConf:'Listo. Tu número fue eliminado y no se puede volver a usar en TexContractor.',fail:'Algo salió mal. Inténtalo de nuevo.'},
- en:{okReq:'Done. Your number is now hidden. We will text you a code soon.',okConf:'Done. Your number has been removed and cannot be used on TexContractor again.',fail:'Something went wrong. Please try again.'}};
+const T={es:{h1:'Eliminar mi número de teléfono',intro:'Si tu número aparece en un anuncio de TexContractor que tú no creaste, avísanos aquí. Después de confirmar con un código por mensaje que el número es tuyo, se eliminan todos los anuncios con ese número.',s1:'Paso 1 · Reportar mi número',phone:'Tu número de teléfono',contact:'Tu nombre o correo (opcional)',details:'¿Qué pasó? (opcional)',send:'Reportar mi número',s2:'Paso 2 · Confirma que es tu teléfono',s2p:'Te enviaremos un código de 6 dígitos por mensaje de texto a ese número. Escríbelo aquí para eliminar el número para siempre y evitar que se vuelva a usar.',code:'Código de 6 dígitos',confirm:'Eliminar mi número',help:'¿Preguntas? Escribe a <a href="mailto:texcontractor.help@gmail.com">texcontractor.help@gmail.com</a>.',
+ okReq:'Listo. Recibimos tu solicitud y te enviaremos un código por mensaje pronto. Escríbelo abajo para eliminar tu número.',okConf:'Listo. Tu número fue eliminado y no se puede volver a usar en TexContractor.',fail:'Algo salió mal. Inténtalo de nuevo.'},
+ en:{okReq:'Done. We received your request and will text you a code soon. Enter it below to remove your number.',okConf:'Done. Your number has been removed and cannot be used on TexContractor again.',fail:'Something went wrong. Please try again.'}};
 const base={};document.querySelectorAll('[data-t]').forEach(e=>base[e.dataset.t]=e.innerHTML);
 let lang='en';try{if(localStorage.getItem('texcontractor-language')==='es')lang='es'}catch(e){}
 function t(k){return (T[lang]&&T[lang][k])||T.en[k]||base[k]}
