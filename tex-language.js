@@ -421,7 +421,14 @@
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
-  let currentLanguage = localStorage.getItem('texcontractor-language') || 'en';
+  let currentLanguage = 'en';
+  try { currentLanguage = localStorage.getItem('texcontractor-language') || 'en'; } catch (_) {}
+  // Spanish landing pages link here with ?lang=es so the directory opens in Spanish.
+  const requestedLang = pageUrl.searchParams.get('lang');
+  if (requestedLang === 'es' || requestedLang === 'en') {
+    currentLanguage = requestedLang;
+    try { localStorage.setItem('texcontractor-language', currentLanguage); } catch (_) {}
+  }
   let applying = false;
   let observer = null;
 

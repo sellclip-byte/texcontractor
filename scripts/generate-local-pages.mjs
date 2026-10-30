@@ -75,7 +75,7 @@ header.top{background:#fff;border-bottom:1px solid var(--line)}header.top .wrap{
 header.top img{height:44px;width:auto;display:block}.crumbs{font-size:14px;color:var(--muted);padding-block:14px 0}.crumbs a{color:var(--muted)}
 h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:10px 0 8px;text-wrap:balance}.lead{color:var(--muted);max-width:68ch;margin:0 0 18px}
 .cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;background:var(--gold);color:#1b1b1b;font-weight:800;text-decoration:none}
-.cta.alt{background:var(--accent);color:#fff}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+.cta.alt{background:var(--accent);color:#fff}.cta.req{background:#b45309;color:#fff}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .card h3{margin:0;font-size:18px;line-height:1.3}.card .loc{font-size:13px;color:var(--muted);font-weight:600}.card p{margin:0;color:#34484c;font-size:15px}
@@ -152,7 +152,7 @@ async function main() {
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} providers based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
-<div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta alt" href="/auth.html?return_to=contractor-register.html">List your service</a></div>
+<div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/auth.html?return_to=contractor-register.html">List your service</a></div>
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
 ${cards}
 </section>

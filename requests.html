@@ -375,12 +375,14 @@
       $('post-dlg').querySelector('.sub').textContent = locked ? 'Service and state stay the same after technicians send offers.' : row ? 'Change anything and save.' : 'Takes about one minute.';
     }
     async function openPost() {
-      if (!user) { signInFor('post=1'); return; }
+      const wantService = new URLSearchParams(location.search).get('service') || '';
+      if (!user) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '')); return; }
       if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-text','c-call'].forEach((k) => ($(k).checked = false)); $('c-chat').checked = true; }
       setMode(null);
       $('post-msg').textContent = '';
       if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
       fillCities($('p-state'), $('p-city-list'));
+      if (wantService && !$('p-service').value && [...$('p-service').options].some((o) => o.value === wantService)) $('p-service').value = wantService;
       renderSlots(); syncPhone();
       $('post-dlg').showModal();
     }
@@ -578,7 +580,7 @@
       }
       await Promise.all([load(true), loadCount(), loadMine()]);
       const q = new URLSearchParams(location.search);
-      if (q.get('post') && user) openPost();
+      if (q.get('post')) openPost();
       if (q.get('r')) openView(q.get('r'));
       const oid = q.get('offer');
       if (oid && user) { const r = current.find((x) => x.id === oid); if (r) openOffer(r); }
