@@ -381,6 +381,7 @@
         else if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
         else field.value = '';
       }
+      avatarChoices[2].checked=true;syncAvatarChoice();refreshAvatarLibrary();
       stateInput.value = '';
       cityInput.replaceChildren(new Option('Choose a state first', ''));
       cityInput.value = '';
