@@ -97,13 +97,10 @@ select.field{appearance:auto}
   <!-- 4 city reveal -->
   <section class="step" data-s="4">
     <div class="card" id="reveal">
-      <div class="load" id="rload" style="padding:10px"><div class="ring" style="width:54px;height:54px;border-width:6px"></div></div>
-      <div id="rbody" hidden>
-        <div style="font-size:2.4rem;line-height:1" id="ricon"></div>
-        <h1 id="rh"></h1>
-        <p class="sub" id="rp" style="margin-bottom:10px"></p>
-        <div class="cmp" style="margin-top:6px"><div class="good"><b id="rcl"></b><span id="rcn" style="font-size:1.6rem;font-weight:900"></span></div><div class="good"><b id="rsl"></b><span id="rsn" style="font-size:1.6rem;font-weight:900"></span></div></div>
-      </div>
+      <div style="font-size:2.4rem;line-height:1">✅</div>
+      <h1 id="rh"></h1>
+      <p class="sub" id="rp" style="margin-bottom:6px"></p>
+      <div class="chat"><div class="bub" id="rq"></div><div class="bub me" id="ra"></div></div>
     </div>
     <a class="cta ghost" id="seehome" target="_blank" rel="noopener" data-t="seeHome"></a>
     <button class="cta" data-next data-t="next"></button>
@@ -158,8 +155,8 @@ select.field{appearance:auto}
 const T={
  en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'Answer 6 quick questions. Takes 30 seconds. What is your trade?',
   h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',next:'Continue',
-  h3:'How do you get customers today?',k3g:'Quick question',h3g:'Have you looked around TexContractor?',s3g:'Customers pick a city and a service, then text a pro directly. We list local pros in 2,900+ cities across all 50 states. Is {city} on the list?',
-  rYes:'{city} is on TexContractor',rYesP:'Add your profile so customers in {city} can find you next to the others.',rNo:'No {trade} listed in {city} yet',rNoP:'Be the first {trade} customers see in {city}.',seeHome:'👀 See the TexContractor home page',rC:'Listed in {city}',rS:'Listed in {state}',
+  h3:'How do you get customers today?',k3g:'Quick question',rH:'Customers in {city} can find you here',rP:'On TexContractor, a customer picks {city}, chooses {trade}, and texts the pro directly. Add your profile so they can text you.',rQ:'Hi, I need a {trade} in {city}. Are you available this week?',rA:'Yes! Send me a photo of the job.',seeHome:'👀 See the TexContractor home page',h3g:'Have you looked around TexContractor?',s3g:'Customers pick a city and a service, then text a pro directly. We list local pros in 2,900+ cities across all 50 states. Is {city} on the list?',
+  
   k4:'Good to know',h4:'No lead fees. No middleman.',badT:'Lead sites',bad:'You pay for every lead, and the same lead goes to several pros.',good:'Free profile. The customer texts you directly, and you set your own price.',
   chat1:'Hi, I found your service on TexContractor. I need an estimate.',chat2:'Sure! Send me a photo of the problem.',
   h5:'How many new jobs a week would you like?',
@@ -169,8 +166,8 @@ const T={
   finish:'Finish my free profile →',fine:'Takes about 1 minute: add your name, phone and a photo of your work.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'Responde 6 preguntas rápidas. Toma 30 segundos. ¿Cuál es tu oficio?',
   h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',next:'Continuar',
-  h3:'¿Cómo consigues clientes hoy?',k3g:'Una pregunta',h3g:'¿Ya conoces TexContractor?',s3g:'Los clientes eligen una ciudad y un servicio, y le escriben directo al técnico. Tenemos técnicos en más de 2,900 ciudades en los 50 estados. ¿Está {city} en la lista?',
-  rYes:'{city} está en TexContractor',rYesP:'Agrega tu perfil para que los clientes en {city} te encuentren junto a los demás.',rNo:'Todavía no hay {trade} en {city}',rNoP:'Sé el primer {trade} que vean los clientes en {city}.',seeHome:'👀 Ver la página principal de TexContractor',rC:'En {city}',rS:'En {state}',
+  h3:'¿Cómo consigues clientes hoy?',k3g:'Una pregunta',rH:'Los clientes en {city} te pueden encontrar aquí',rP:'En TexContractor, el cliente elige {city}, escoge {trade} y le escribe directo al técnico. Agrega tu perfil para que te escriban a ti.',rQ:'Hola, necesito un {trade} en {city}. ¿Tienes tiempo esta semana?',rA:'¡Sí! Mándame una foto del trabajo.',seeHome:'👀 Ver la página principal de TexContractor',h3g:'¿Ya conoces TexContractor?',s3g:'Los clientes eligen una ciudad y un servicio, y le escriben directo al técnico. Tenemos técnicos en más de 2,900 ciudades en los 50 estados. ¿Está {city} en la lista?',
+  
   k4:'Dato importante',h4:'Sin pagar por clientes. Sin intermediarios.',badT:'Sitios de leads',bad:'Pagas por cada cliente, y el mismo cliente se envía a varios técnicos.',good:'Perfil gratis. El cliente te escribe directo y tú pones tu precio.',
   chat1:'Hola, encontré tu servicio en TexContractor. Necesito un presupuesto.',chat2:'¡Claro! Mándame una foto del problema.',
   h5:'¿Cuántos trabajos nuevos quieres por semana?',
@@ -211,9 +208,7 @@ function render(){
  $$('.opts').forEach(box=>{const q=box.dataset.q;box.innerHTML='';Q[q].forEach((o,i)=>{const b=document.createElement('button');b.className='opt'+(st.answers[q]===i?' sel':'');b.innerHTML='<span class="e">'+o[0]+'</span>'+o[1][L];b.onclick=()=>pick(q,i);box.appendChild(b)})});
  $('#textnote').hidden=st.answers.text!==1;
  const where=st.city||('ZIP '+st.zip);$('#s3g').textContent=T[L].s3g.replace('{city}',where);
- if(st.rev){const R=st.rev,tn=(st.trade?st.trade[L]:'').toLowerCase(),cy=st.city||('ZIP '+st.zip),sub=x=>x.replace(/\{city\}/g,cy).replace(/\{trade\}/g,tn).replace(/\{state\}/g,st.state);
-  const has=R.c>0;$('#ricon').textContent=has?'✅':'🥇';$('#rh').textContent=sub(has?T[L].rYes:T[L].rNo);$('#rp').textContent=sub(has?T[L].rYesP:T[L].rNoP);
-  $('#rcl').textContent=sub(T[L].rC);$('#rcn').textContent=R.ok?String(R.c):'—';$('#rsl').textContent=sub(T[L].rS);$('#rsn').textContent=R.ok?R.s.toLocaleString():'—';}
+ {const tn=(st.trade?st.trade[L]:'').toLowerCase(),cy=st.city||('ZIP '+st.zip),sub=x=>x.replace(/\{city\}/g,cy).replace(/\{trade\}/g,tn);$('#rh').textContent=sub(T[L].rH);$('#rp').textContent=sub(T[L].rP);$('#rq').textContent=sub(T[L].rQ);$('#ra').textContent=T[L].rA;}
  $('#seehome').href='index.html?lang='+L;
  if(st.trade){$('#h8').textContent=T[L].h8.replace('{trade}',st.trade[L].toLowerCase()).replace('{zip}',st.city||st.zip||'');$('#pimg').src='trade-icons/'+st.trade.i+'.webp';$('#pline').textContent=st.trade[L]+' · '+(st.city?st.city+', '+st.state:'ZIP '+st.zip);}
 }
@@ -223,21 +218,13 @@ function pick(q,i){st.answers[q]=i;render();
 function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));
  $('#prog').style.width=Math.round((n-1)/(TOTAL-1)*100)+'%';$('#back').style.visibility=n>1&&n<9?'visible':'hidden';
  render();window.scrollTo(0,0);
- if(n===4)reveal();
  if(n===9){const li=$$('.checks li');li.forEach(x=>x.classList.remove('ok'));li.forEach((x,i)=>setTimeout(()=>x.classList.add('ok'),600+i*650));setTimeout(()=>go(10),2800)}
 }
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#zipgo').disabled=st.zip.length!==5;
  if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state;render()}}}catch(_){}}});
 $('#zipgo').onclick=()=>go(3);
-const SB='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
-async function cnt(table,f){try{const r=await fetch(SB+table+'?select=id&'+f,{headers:{apikey:KEY,Prefer:'count=exact',Range:'0-0'}});const m=(r.headers.get('content-range')||'').match(/\/(\d+)/);return m?+m[1]:null}catch(_){return null}}
-async function reveal(){const rl=$('#rload'),rb=$('#rbody');rl.hidden=false;rb.hidden=true;const t=st.trade,city=st.city,state=st.state;
- const enc=encodeURIComponent;let c=0,s2=0;
- if(t&&city&&state){const fc='state=eq.'+enc(state)+'&city=ilike.'+enc(city)+'&service=eq.'+enc(t.s);const fs='state=eq.'+enc(state);
-  const r=await Promise.all([cnt('texcontractor_public_services',fc+'&is_published=eq.true'),cnt('texcontractor_approved_imported_directory',fc),cnt('texcontractor_public_services',fs+'&is_published=eq.true'),cnt('texcontractor_approved_imported_directory',fs)]);
-  c=(r[0]||0)+(r[1]||0);s2=(r[2]||0)+(r[3]||0);st.rev={c,s:s2,ok:r.some(x=>x!==null)};}else st.rev={c:0,s:0,ok:false};
- rl.hidden=true;rb.hidden=false;render();}
+
 $$('[data-next]').forEach(b=>b.onclick=()=>go(st.step+1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(e){};render()});
 $('#finish').onclick=async()=>{const p=new URLSearchParams({service:st.trade?st.trade.s:'',zip:st.zip,city:st.city,state:st.state,from:'start'});const dest='contractor-register.html?'+p;
