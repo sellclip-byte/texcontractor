@@ -152,7 +152,7 @@ async function main() {
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} providers based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
-<div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/auth.html?return_to=contractor-register.html">List your service</a></div>
+<div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
 ${cards}
 </section>
