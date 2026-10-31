@@ -14,7 +14,7 @@
         MO=['movers-m1','m'], PE=['pest-f1','f'], PO=['pool-m1','m'],
         PW=['pressure-m1','m'], FE=['fence-m1','m'], NO=['notary-f1','f'], TU=['tutor-f1','f'], DO=['dogtrainer-f1','f'], BA=['babysitter-f1','f'], CP=['computer-m1','m'],
         TV=['tvmount-m1','m'], WI=['window-m1','m'],
-        BB=['barber-m1','m'], HS=['stylist-f1','f'], PT=['trainer-f1','f'], IN=['inspector-m1','m'], PH=['photographer-f1','f'], NU=['nurse-f1','f'], EP=['planner-f1','f'], DJ=['dj-m1','m'], MU=['makeup-f1','f'], GR=['groomer-f1','f'], CH=['chef-m1','m'], OF=['officiant-m1','m'], ID=['designer-f1','f'], DR=['driver-m1','m'], SP=['sprinkler-m1','m'], CC=['carpet-m1','m'];
+        BB=['barber-m1','m'], HS=['stylist-f1','f'], PT=['trainer-f1','f'], IN=['inspector-m1','m'], PH=['photographer-f1','f'], NU=['nurse-f1','f'], EP=['planner-f1','f'], DJ=['dj-m1','m'], MU=['makeup-f1','f'], GR=['groomer-f1','f'], CH=['chef-m1','m'], OF=['officiant-m1','m'], ID=['designer-f1','f'], DR=['driver-m1','m'], SP=['sprinkler-m1','m'], CC=['carpet-m1','m'], GU=['gutter-f1','f'];
   const TRADE_ICONS = {
     'Electrical and Wiring Repair': [EL], 'Lighting Installation': [EL],
     'Plumbing Pipe Repair': [PL], 'Plumbing Drain Repair': [PL], 'Bathroom Remodel': [PL, CA],
@@ -23,7 +23,7 @@
     'Floor Installation or Replacement': [FL, CA], 'Furniture Assembly': [HA, CA, TV], 'Handyman': [HA, CA, TV],
     'Mobile Auto Mechanic': [ME], 'Mobile Auto Detailing': [DE], 'Window Tinting': [DE], 'Pressure Washing': [PW], 'General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services': [ME],
     'Lawn Mower, Water Pump & Outdoor Equipment Repair': [ME, SP],
-    'Roof Repair or Maintenance': [RO], 'Gutter Cleaning and Maintenance': [RO],
+    'Roof Repair or Maintenance': [RO, GU], 'Gutter Cleaning and Maintenance': [GU, RO],
     'Interior Painting': [PA], 'Drywall Repair and Texturing': [PA, HA],
     'House Cleaning': [CL, CC], 'Carpet Cleaning': [CC, CL], 'Upholstery and Furniture Cleaning': [CC, CL],
     'Outdoor Landscaping and Design': [LA, SP], 'Tree Trimming and Removal': [TR], 'Pest Control Services': [PE], 'Swimming Pool Cleaning & Maintenance': [PO], 'Notarization': [NO], 'Tutoring & Education Services': [TU], 'Dog Training': [DO], 'Dog Training & Horse Riding Lessons': [DO], 'Babysitting & Childcare Services': [BA], 'Computer Repair': [CP], 'Barber & Hair Styling Services': [BB, HS], 'Personal Training': [PT], 'Home Inspection Consulting': [IN], 'Wedding and Event Photography': [PH], 'In-Home Nursing Care': [NU], 'Event Planning': [EP], 'DJ Services': [DJ], 'Wedding and Event Makeup': [MU], 'Dog Grooming': [GR], 'Specialty Meal Preparation & Dietary Cooking': [CH], 'Wedding Officiant': [OF], 'Interior Design': [ID], 'Private Taxi & Transportation Services': [DR], 'Architectural Services': [ID], 'TV Mounting': [TV, HA]
