@@ -41,6 +41,13 @@ select.field{appearance:auto}
 .cta{display:block;width:100%;margin-top:16px;border:0;border-radius:14px;background:var(--g);color:#fff;font:inherit;font-weight:800;font-size:1.08rem;padding:16px;cursor:pointer;box-shadow:0 6px 16px rgba(7,92,75,.25)}
 .cta:disabled{opacity:.45;box-shadow:none;cursor:default}
 .cta.ghost{background:#fff;color:var(--g);border:2px solid var(--g);box-shadow:none;text-align:center;text-decoration:none}
+.live{margin-top:14px;background:#0f172a;border-radius:20px;padding:8px;box-shadow:0 10px 26px rgba(15,23,42,.18)}
+.livebar{display:flex;align-items:center;gap:8px;color:#e2e8f0;font-size:.78rem;font-weight:800;padding:2px 6px 8px}
+.dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pl 1.6s infinite}
+@keyframes pl{70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.livewin{position:relative;height:300px;overflow:hidden;border-radius:14px;background:#fff}
+.livewin iframe{position:absolute;top:0;left:0;width:200%;height:200%;border:0;transform:scale(.5);transform-origin:0 0;pointer-events:none}
+.liveshield{position:absolute;inset:0}
 .cta.y{background:var(--y);color:#101828;box-shadow:0 6px 16px rgba(242,183,49,.35)}
 .card{background:#fff;border-radius:18px;padding:20px;border:1px solid var(--line);box-shadow:0 8px 24px rgba(15,23,42,.06)}
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
@@ -102,6 +109,7 @@ select.field{appearance:auto}
       <p class="sub" id="rp" style="margin-bottom:6px"></p>
       <div class="chat"><div class="bub" id="rq"></div><div class="bub me" id="ra"></div></div>
     </div>
+    <div class="live"><div class="livebar"><span class="dot"></span><span data-t="liveL"></span></div><div class="livewin"><iframe id="homeframe" title="TexContractor home page" loading="lazy" tabindex="-1"></iframe><div class="liveshield"></div></div></div>
     <a class="cta ghost" id="seehome" target="_blank" rel="noopener" data-t="seeHome"></a>
     <button class="cta" data-next data-t="next"></button>
   </section>
@@ -155,7 +163,7 @@ select.field{appearance:auto}
 const T={
  en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'Answer 6 quick questions. Takes 30 seconds. What is your trade?',
   h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',next:'Continue',
-  h3:'How do you get customers today?',k3g:'Quick question',rH:'Customers in {city} can find you here',rP:'On TexContractor, a customer picks {city}, chooses {trade}, and texts the pro directly. Add your profile so they can text you.',rQ:'Hi, I need a {trade} in {city}. Are you available this week?',rA:'Yes! Send me a photo of the job.',seeHome:'👀 See the TexContractor home page',h3g:'Have you looked around TexContractor?',s3g:'Customers pick a city and a service, then text a pro directly. We list local pros in 2,900+ cities across all 50 states. Is {city} on the list?',
+  h3:'How do you get customers today?',k3g:'Quick question',rH:'Customers in {city} can find you here',rP:'On TexContractor, a customer picks {city}, chooses {trade}, and texts the pro directly. Add your profile so they can text you.',rQ:'Hi, I need a {trade} in {city}. Are you available this week?',rA:'Yes! Send me a photo of the job.',seeHome:'👀 Open the TexContractor home page',liveL:'LIVE · TexContractor home page',h3g:'Have you looked around TexContractor?',s3g:'Customers pick a city and a service, then text a pro directly. We list local pros in 2,900+ cities across all 50 states. Is {city} on the list?',
   
   k4:'Good to know',h4:'No lead fees. No middleman.',badT:'Lead sites',bad:'You pay for every lead, and the same lead goes to several pros.',good:'Free profile. The customer texts you directly, and you set your own price.',
   chat1:'Hi, I found your service on TexContractor. I need an estimate.',chat2:'Sure! Send me a photo of the problem.',
@@ -166,7 +174,7 @@ const T={
   finish:'Finish my free profile →',fine:'Takes about 1 minute: add your name, phone and a photo of your work.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'Responde 6 preguntas rápidas. Toma 30 segundos. ¿Cuál es tu oficio?',
   h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',next:'Continuar',
-  h3:'¿Cómo consigues clientes hoy?',k3g:'Una pregunta',rH:'Los clientes en {city} te pueden encontrar aquí',rP:'En TexContractor, el cliente elige {city}, escoge {trade} y le escribe directo al técnico. Agrega tu perfil para que te escriban a ti.',rQ:'Hola, necesito un {trade} en {city}. ¿Tienes tiempo esta semana?',rA:'¡Sí! Mándame una foto del trabajo.',seeHome:'👀 Ver la página principal de TexContractor',h3g:'¿Ya conoces TexContractor?',s3g:'Los clientes eligen una ciudad y un servicio, y le escriben directo al técnico. Tenemos técnicos en más de 2,900 ciudades en los 50 estados. ¿Está {city} en la lista?',
+  h3:'¿Cómo consigues clientes hoy?',k3g:'Una pregunta',rH:'Los clientes en {city} te pueden encontrar aquí',rP:'En TexContractor, el cliente elige {city}, escoge {trade} y le escribe directo al técnico. Agrega tu perfil para que te escriban a ti.',rQ:'Hola, necesito un {trade} en {city}. ¿Tienes tiempo esta semana?',rA:'¡Sí! Mándame una foto del trabajo.',seeHome:'👀 Abrir la página principal de TexContractor',liveL:'EN VIVO · Página principal de TexContractor',h3g:'¿Ya conoces TexContractor?',s3g:'Los clientes eligen una ciudad y un servicio, y le escriben directo al técnico. Tenemos técnicos en más de 2,900 ciudades en los 50 estados. ¿Está {city} en la lista?',
   
   k4:'Dato importante',h4:'Sin pagar por clientes. Sin intermediarios.',badT:'Sitios de leads',bad:'Pagas por cada cliente, y el mismo cliente se envía a varios técnicos.',good:'Perfil gratis. El cliente te escribe directo y tú pones tu precio.',
   chat1:'Hola, encontré tu servicio en TexContractor. Necesito un presupuesto.',chat2:'¡Claro! Mándame una foto del problema.',
@@ -218,12 +226,18 @@ function pick(q,i){st.answers[q]=i;render();
 function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));
  $('#prog').style.width=Math.round((n-1)/(TOTAL-1)*100)+'%';$('#back').style.visibility=n>1&&n<9?'visible':'hidden';
  render();window.scrollTo(0,0);
+ if(n===4)startLive();else stopLive();
  if(n===9){const li=$$('.checks li');li.forEach(x=>x.classList.remove('ok'));li.forEach((x,i)=>setTimeout(()=>x.classList.add('ok'),600+i*650));setTimeout(()=>go(10),2800)}
 }
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#zipgo').disabled=st.zip.length!==5;
  if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state;render()}}}catch(_){}}});
 $('#zipgo').onclick=()=>go(3);
+let liveT=null;
+function startLive(){const f=$('#homeframe');const want='index.html?lang='+L;if(!f.dataset.src||f.dataset.src!==want){f.dataset.src=want;f.onload=()=>{try{const d=f.contentDocument,st2=d.createElement('style');st2.textContent='dialog[data-join],dialog[data-join]::backdrop{display:none!important}html{scrollbar-width:none}';d.head.appendChild(st2);d.querySelectorAll('dialog[open]').forEach(x=>x.close())}catch(_){}};f.src=want;}
+ stopLive();let y=0,dir=1,wait=0;liveT=setInterval(()=>{try{const w=f.contentWindow,d=w.document;const max=Math.max(0,d.documentElement.scrollHeight-w.innerHeight);if(!max)return;
+  if(wait>0){wait--;return}y+=dir*3;if(y>=Math.min(max,2600)){dir=-1;wait=60}if(y<=0){y=0;dir=1;wait=60}w.scrollTo(0,y)}catch(_){}} ,30);}
+function stopLive(){if(liveT){clearInterval(liveT);liveT=null}}
 
 $$('[data-next]').forEach(b=>b.onclick=()=>go(st.step+1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(e){};render()});
