@@ -8,8 +8,20 @@
 
   // Trade icons: half of the listings in each service show a 3D trade picture instead of the state flag.
   // Choice is fixed per listing (hash of its id). A real profile photo always wins.
+  const EL=['electrical-f1','f'], PL=['plumbing-m1','m'], AC=['ac-m1','m'], CA=['carpentry-m1','m'], ME=['mechanic-m1','m'],
+        RO=['roofing-m1','m'], PA=['painting-m1','m'], HA=['handyman-f1','f'], CL=['cleaning-f1','f'], LA=['landscaping-m1','m'];
   const TRADE_ICONS = {
-    'Electrical and Wiring Repair': [['electrical-f1','f']]
+    'Electrical and Wiring Repair': [EL], 'Lighting Installation': [EL],
+    'Plumbing Pipe Repair': [PL], 'Plumbing Drain Repair': [PL], 'Bathroom Remodel': [PL, CA],
+    'Central Air Conditioning Repair or Maintenance': [AC], 'Heating System Repair or Maintenance': [AC], 'Appliance Repair or Maintenance': [AC, HA],
+    'Deck or Porch Remodel or Addition': [CA], 'Door Installation': [CA, HA], 'Fence and Gate Installation': [CA], 'General Contracting': [CA, HA],
+    'Floor Installation or Replacement': [CA], 'Furniture Assembly': [HA, CA], 'Handyman': [HA, CA], 'TV Mounting': [HA],
+    'Mobile Auto Mechanic': [ME], 'General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services': [ME],
+    'Lawn Mower, Water Pump & Outdoor Equipment Repair': [ME, LA],
+    'Roof Repair or Maintenance': [RO], 'Gutter Cleaning and Maintenance': [RO],
+    'Interior Painting': [PA], 'Drywall Repair and Texturing': [PA, HA],
+    'House Cleaning': [CL], 'Carpet Cleaning': [CL], 'Upholstery and Furniture Cleaning': [CL],
+    'Outdoor Landscaping and Design': [LA], 'Tree Trimming and Removal': [LA]
   };
   const MALE = new Set('aaron adam adrian alan albert alberto alex alejandro alfredo andre andres andrew angel anthony antonio arturo ben benjamin bill billy bob bobby brad brandon brian bruce carl carlos cesar charles chris christian chuck cody craig dan daniel danny darren dave david dennis derek diego don donald doug douglas eddie eduardo edward eric ernesto esteban fernando francisco frank fred gabriel gary george gerardo greg gregory guillermo hector henry hugo ivan jack jacob jaime james jared jason javier jay jeff jeffrey jerry jesse jesus jim jimmy joe joel john johnny jon jonathan jorge jose joseph josh joshua juan julio justin keith ken kenneth kevin kyle larry leo leonard leonardo luis manuel marco marcos mario mark martin matt matthew michael miguel mike nathan nick oscar pablo patrick paul pedro pete peter phil rafael ramon randy ray raul ricardo richard rick ricky rob robert roberto roger ron ronald ruben russell ryan salvador sam samuel scott sergio shawn sonny stephen steve steven terry thomas tim timothy todd tom tommy tony travis troy victor vincent walter wayne william willie'.split(' '));
   const FEMALE = new Set('alice alicia amanda amy ana andrea angela angie anna april ashley barbara beatriz becky beverly brenda brittany carmen carol carolina catherine cindy claudia crystal cynthia dana diana donna dora elena elizabeth emily erica erika esther eva gloria guadalupe heather irma jackie janet jennifer jessica jill joanna julia julie karen karina kathy kelly kim kimberly laura leticia linda lisa lori lucia luz margarita maria marie marisol martha mary melissa michelle monica nancy norma olga pam patricia paula rachel rebecca rosa rosario sandra sara sarah sharon sonia stephanie susan teresa tina veronica vicky wendy yolanda'.split(' '));
