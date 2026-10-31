@@ -48,8 +48,8 @@
     .empty-state p { max-width:650px; margin:8px 0 0; color:var(--muted); }
     .empty-state .profile-button { margin-top:18px; }
     .provider { display:grid; grid-template-columns:96px minmax(0,1fr) auto; align-items:center; gap:12px; min-height:116px; padding:17px 0; border-bottom:1px solid var(--line); }
-    .avatar { display:grid; width:48px; height:48px; place-items:center; border-radius:50%; color:#fff; font-size:.84rem; font-weight:900; letter-spacing:.02em; }
-    .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .avatar { display:grid; width:76px; height:76px; place-items:center; border-radius:16px; overflow:hidden; color:#fff; font-size:.84rem; font-weight:900; letter-spacing:.02em; }
+    .avatar img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
     .avatar.a { background:linear-gradient(135deg,#e87922 0%,#b45309 52%,#7c2d12 100%); } .avatar.b { background:linear-gradient(135deg,#2563eb 0%,#4338ca 52%,#7c3aed 100%); } .avatar.c { background:linear-gradient(135deg,#0891b2 0%,#0d9488 52%,#166534 100%); } .avatar.d { background:linear-gradient(135deg,#db2777 0%,#be185d 52%,#7e22ce 100%); } .avatar.e { background:linear-gradient(135deg,#64748b 0%,#334155 52%,#0f172a 100%); }
     /* Extra letter-avatar palettes; original initials and card layout stay unchanged. */
     .avatar.f { background:linear-gradient(135deg,#059669,#10b981,#047857); }
@@ -111,7 +111,7 @@
     @media (max-width:560px) {
       .site-header { padding:12px 18px; } .brand-logo { width:174px; } .back-link { font-size:.88rem; }
       .notice { align-items:flex-start; font-size:.92rem; } .provider { grid-template-columns:96px minmax(0,1fr); gap:10px; }
-      .avatar { width:42px; height:42px; font-size:.76rem; } .provider-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:center; } .profile-button, .text-button { min-width:0; min-height:38px; margin-top:2px; }
+      .avatar { width:64px; height:64px; border-radius:14px; font-size:.8rem; } .provider-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:center; } .profile-button, .text-button { min-width:0; min-height:38px; margin-top:2px; }
       .how-steps { grid-template-columns:1fr; }
       .share-card-callout { align-items:flex-start; flex-direction:column; }
       .share-card-button { width:100%; }
@@ -144,7 +144,7 @@
     <section class="how" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol class="how-steps"><li><span class="step-number">1</span><span>Choose the service you need.</span></li><li><span class="step-number">2</span><span>Review the provider profiles.</span></li><li><span class="step-number">3</span><span>Send a direct text describing the problem.</span></li></ol></section>
   </main>
   <footer>TexContractor · Local help by text</footer>
-  <script src="tex-state-avatar.js?v=20261018-state-flags"></script>
+  <script src="tex-state-avatar.js?v=20261031-trade"></script>
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
   <script src="tex-quick-signup.js?v=20261022"></script>
@@ -298,7 +298,7 @@
       card.className = 'provider';
       const avatar = document.createElement('div');
       avatar.className = `avatar ${['a','b','c','d','e','f','g','h','i','j','k','l','m'][index % 13]}`;
-      TexStateAvatar.apply(avatar, {name:provider.display_name, state:provider.state, photoUrl:mediaUrl(provider.profile_photo_path)});
+      TexStateAvatar.apply(avatar, {name:provider.display_name, state:provider.state, photoUrl:mediaUrl(provider.profile_photo_path), service:provider.service || service, key:'s'+provider.id});
       const main = document.createElement('div');
       main.className = 'provider-main';
       const status = document.createElement('p');
@@ -412,7 +412,7 @@
               if (blockedProviders.has(String(entry.id))) continue;
               const card=document.createElement('article');card.className='provider';
               const avatar=document.createElement('div');avatar.className='avatar '+['a','b','c','d','e','f','g','h','i','j','k','l','m'][providers.children.length%13];
-              TexStateAvatar.apply(avatar, {name:entry.business_name, state:entry.state});
+              TexStateAvatar.apply(avatar, {name:entry.business_name, state:entry.state, service:entry.service, key:'i'+entry.id});
               const main=document.createElement('div');main.className='provider-main';
               const status=document.createElement('p');status.className='provider-status';status.textContent='Local provider';
               const name=document.createElement('h3');name.className='provider-name';name.textContent=entry.business_name;
