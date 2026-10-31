@@ -86,13 +86,33 @@ select.field{appearance:auto}
     <p class="sub" id="zipcity" style="margin:10px 2px 0;font-weight:700;color:#075c4b"></p>
     <button class="cta" id="zipgo" disabled data-t="next"></button>
   </section>
-  <!-- 3 how get customers -->
+  <!-- 3 guiding question -->
   <section class="step" data-s="3">
+    <span class="kick" data-t="k3g"></span>
+    <h1 data-t="h3g"></h1>
+    <p class="sub" id="s3g"></p>
+    <div class="opts" data-q="seen"></div>
+  </section>
+  <!-- 4 city reveal -->
+  <section class="step" data-s="4">
+    <div class="card" id="reveal">
+      <div class="load" id="rload" style="padding:10px"><div class="ring" style="width:54px;height:54px;border-width:6px"></div></div>
+      <div id="rbody" hidden>
+        <div style="font-size:2.4rem;line-height:1" id="ricon"></div>
+        <h1 id="rh"></h1>
+        <p class="sub" id="rp" style="margin-bottom:10px"></p>
+        <div class="cmp" style="margin-top:6px"><div class="good"><b id="rcl"></b><span id="rcn" style="font-size:1.6rem;font-weight:900"></span></div><div class="good"><b id="rsl"></b><span id="rsn" style="font-size:1.6rem;font-weight:900"></span></div></div>
+      </div>
+    </div>
+    <button class="cta" data-next data-t="next"></button>
+  </section>
+  <!-- 3 how get customers -->
+  <section class="step" data-s="5">
     <h1 data-t="h3"></h1>
     <div class="opts" data-q="source"></div>
   </section>
   <!-- 4 info: no lead fees -->
-  <section class="step" data-s="4">
+  <section class="step" data-s="6">
     <div class="card">
       <span class="kick" data-t="k4"></span>
       <h1 data-t="h4"></h1>
@@ -102,24 +122,24 @@ select.field{appearance:auto}
     <button class="cta" data-next data-t="next"></button>
   </section>
   <!-- 5 jobs per week -->
-  <section class="step" data-s="5">
+  <section class="step" data-s="7">
     <h1 data-t="h5"></h1>
     <div class="opts" data-q="jobs"></div>
   </section>
   <!-- 6 texts -->
-  <section class="step" data-s="6">
+  <section class="step" data-s="8">
     <h1 data-t="h6"></h1>
     <p class="sub" data-t="s6"></p>
     <div class="opts" data-q="text"></div>
     <div class="note" id="textnote" hidden data-t="n6"></div>
   </section>
   <!-- 7 loading -->
-  <section class="step" data-s="7">
+  <section class="step" data-s="9">
     <div class="load"><div class="ring"></div><h1 data-t="h7"></h1>
       <ul class="checks"><li data-t="c1"></li><li data-t="c2"></li><li data-t="c3"></li></ul></div>
   </section>
   <!-- 8 result -->
-  <section class="step" data-s="8">
+  <section class="step" data-s="10">
     <span class="kick" data-t="k8"></span>
     <h1 id="h8"></h1>
     <div class="card"><div class="prof"><img id="pimg" alt=""><div><h3 data-t="yourName"></h3><p id="pline"></p><span class="badge" data-t="accepts"></span></div></div></div>
@@ -134,9 +154,10 @@ select.field{appearance:auto}
 (function(){
 'use strict';
 const T={
- en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'Answer 5 quick questions. Takes 30 seconds. What is your trade?',
+ en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'Answer 6 quick questions. Takes 30 seconds. What is your trade?',
   h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',next:'Continue',
-  h3:'How do you get customers today?',
+  h3:'How do you get customers today?',k3g:'Quick question',h3g:'Have you looked around TexContractor?',s3g:'Customers pick a city and a service, then text a pro directly. We list local pros in 2,900+ cities across all 50 states. Is {city} on the list?',
+  rYes:'{city} is on TexContractor',rYesP:'Add your profile so customers in {city} can find you next to the others.',rNo:'No {trade} listed in {city} yet',rNoP:'Be the first {trade} customers see in {city}.',rC:'Listed in {city}',rS:'Listed in {state}',
   k4:'Good to know',h4:'No lead fees. No middleman.',badT:'Lead sites',bad:'You pay for every lead, and the same lead goes to several pros.',good:'Free profile. The customer texts you directly, and you set your own price.',
   chat1:'Hi, I found your service on TexContractor. I need an estimate.',chat2:'Sure! Send me a photo of the problem.',
   h5:'How many new jobs a week would you like?',
@@ -144,9 +165,10 @@ const T={
   h7:'Building your profile…',c1:'Trade selected',c2:'Service area set',c3:'Profile preview ready',
   k8:'Almost done',h8:'Your {trade} profile for {zip} is ready',yourName:'Your name here',accepts:'✉ Accepts text messages',
   finish:'Finish my free profile →',fine:'Takes about 1 minute: add your name, phone and a photo of your work.'},
- es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'Responde 5 preguntas rápidas. Toma 30 segundos. ¿Cuál es tu oficio?',
+ es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'Responde 6 preguntas rápidas. Toma 30 segundos. ¿Cuál es tu oficio?',
   h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',next:'Continuar',
-  h3:'¿Cómo consigues clientes hoy?',
+  h3:'¿Cómo consigues clientes hoy?',k3g:'Una pregunta',h3g:'¿Ya conoces TexContractor?',s3g:'Los clientes eligen una ciudad y un servicio, y le escriben directo al técnico. Tenemos técnicos en más de 2,900 ciudades en los 50 estados. ¿Está {city} en la lista?',
+  rYes:'{city} está en TexContractor',rYesP:'Agrega tu perfil para que los clientes en {city} te encuentren junto a los demás.',rNo:'Todavía no hay {trade} en {city}',rNoP:'Sé el primer {trade} que vean los clientes en {city}.',rC:'En {city}',rS:'En {state}',
   k4:'Dato importante',h4:'Sin pagar por clientes. Sin intermediarios.',badT:'Sitios de leads',bad:'Pagas por cada cliente, y el mismo cliente se envía a varios técnicos.',good:'Perfil gratis. El cliente te escribe directo y tú pones tu precio.',
   chat1:'Hola, encontré tu servicio en TexContractor. Necesito un presupuesto.',chat2:'¡Claro! Mándame una foto del problema.',
   h5:'¿Cuántos trabajos nuevos quieres por semana?',
@@ -169,12 +191,13 @@ const TRADES=[
  {s:'Floor Installation or Replacement',i:'flooring-f1',en:'Flooring',es:'Pisos'}
 ];
 const Q={
+ seen:[['👀',{en:'Yes, I have seen it',es:'Sí, ya lo vi'}],['🔍',{en:'Not yet, show me my city',es:'Todavía no, muéstrame mi ciudad'}]],
  source:[['🗣️',{en:'Word of mouth',es:'De boca en boca'}],['👥',{en:'Facebook groups',es:'Grupos de Facebook'}],['💸',{en:'Paid lead sites',es:'Sitios de leads pagados'}],['😕',{en:'Not enough customers',es:'No tengo suficientes clientes'}]],
  jobs:[['🙂',{en:'1–2 jobs',es:'1–2 trabajos'}],['💪',{en:'3–5 jobs',es:'3–5 trabajos'}],['🚀',{en:'6–10 jobs',es:'6–10 trabajos'}],['🔥',{en:'As many as I can get',es:'Todos los que pueda'}]],
  text:[['✅',{en:'Yes, text me',es:'Sí, mándame mensajes'}],['📞',{en:'I prefer calls',es:'Prefiero llamadas'}]]
 };
 let L='en';try{L=localStorage.getItem('texcontractor-language')==='es'?'es':'en'}catch(e){}
-const st={step:1,trade:null,zip:'',city:'',state:'',answers:{}};const TOTAL=8;
+const st={step:1,trade:null,zip:'',city:'',state:'',answers:{}};const TOTAL=10;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function render(){
  document.documentElement.lang=L==='es'?'es-US':'en-US';
@@ -185,20 +208,33 @@ function render(){
  const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+(L==='es'?'Otro oficio':'Other trade');m.onclick=()=>{location.href='contractor-register.html'};g.appendChild(m);
  $$('.opts').forEach(box=>{const q=box.dataset.q;box.innerHTML='';Q[q].forEach((o,i)=>{const b=document.createElement('button');b.className='opt'+(st.answers[q]===i?' sel':'');b.innerHTML='<span class="e">'+o[0]+'</span>'+o[1][L];b.onclick=()=>pick(q,i);box.appendChild(b)})});
  $('#textnote').hidden=st.answers.text!==1;
+ const where=st.city||('ZIP '+st.zip);$('#s3g').textContent=T[L].s3g.replace('{city}',where);
+ if(st.rev){const R=st.rev,tn=(st.trade?st.trade[L]:'').toLowerCase(),cy=st.city||('ZIP '+st.zip),sub=x=>x.replace(/\{city\}/g,cy).replace(/\{trade\}/g,tn).replace(/\{state\}/g,st.state);
+  const has=R.c>0;$('#ricon').textContent=has?'✅':'🥇';$('#rh').textContent=sub(has?T[L].rYes:T[L].rNo);$('#rp').textContent=sub(has?T[L].rYesP:T[L].rNoP);
+  $('#rcl').textContent=sub(T[L].rC);$('#rcn').textContent=R.ok?String(R.c):'—';$('#rsl').textContent=sub(T[L].rS);$('#rsn').textContent=R.ok?R.s.toLocaleString():'—';}
  if(st.trade){$('#h8').textContent=T[L].h8.replace('{trade}',st.trade[L].toLowerCase()).replace('{zip}',st.city||st.zip||'');$('#pimg').src='trade-icons/'+st.trade.i+'.webp';$('#pline').textContent=st.trade[L]+' · '+(st.city?st.city+', '+st.state:'ZIP '+st.zip);}
 }
 function pick(q,i){st.answers[q]=i;render();
- if(q==='text'&&i===1){setTimeout(()=>go(7),1600);return}
+ if(q==='text'&&i===1){setTimeout(()=>go(9),1600);return}
  setTimeout(()=>go(st.step+1),250)}
 function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));
- $('#prog').style.width=Math.round((n-1)/(TOTAL-1)*100)+'%';$('#back').style.visibility=n>1&&n<7?'visible':'hidden';
+ $('#prog').style.width=Math.round((n-1)/(TOTAL-1)*100)+'%';$('#back').style.visibility=n>1&&n<9?'visible':'hidden';
  render();window.scrollTo(0,0);
- if(n===7){const li=$$('.checks li');li.forEach(x=>x.classList.remove('ok'));li.forEach((x,i)=>setTimeout(()=>x.classList.add('ok'),600+i*650));setTimeout(()=>go(8),2800)}
+ if(n===4)reveal();
+ if(n===9){const li=$$('.checks li');li.forEach(x=>x.classList.remove('ok'));li.forEach((x,i)=>setTimeout(()=>x.classList.add('ok'),600+i*650));setTimeout(()=>go(10),2800)}
 }
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#zipgo').disabled=st.zip.length!==5;
  if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state;render()}}}catch(_){}}});
 $('#zipgo').onclick=()=>go(3);
+const SB='https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+async function cnt(table,f){try{const r=await fetch(SB+table+'?select=id&'+f,{headers:{apikey:KEY,Prefer:'count=exact',Range:'0-0'}});const m=(r.headers.get('content-range')||'').match(/\/(\d+)/);return m?+m[1]:null}catch(_){return null}}
+async function reveal(){const rl=$('#rload'),rb=$('#rbody');rl.hidden=false;rb.hidden=true;const t=st.trade,city=st.city,state=st.state;
+ const enc=encodeURIComponent;let c=0,s2=0;
+ if(t&&city&&state){const fc='state=eq.'+enc(state)+'&city=ilike.'+enc(city)+'&service=eq.'+enc(t.s);const fs='state=eq.'+enc(state);
+  const r=await Promise.all([cnt('texcontractor_public_services',fc+'&is_published=eq.true'),cnt('texcontractor_approved_imported_directory',fc),cnt('texcontractor_public_services',fs+'&is_published=eq.true'),cnt('texcontractor_approved_imported_directory',fs)]);
+  c=(r[0]||0)+(r[1]||0);s2=(r[2]||0)+(r[3]||0);st.rev={c,s:s2,ok:r.some(x=>x!==null)};}else st.rev={c:0,s:0,ok:false};
+ rl.hidden=true;rb.hidden=false;render();}
 $$('[data-next]').forEach(b=>b.onclick=()=>go(st.step+1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(e){};render()});
 $('#finish').onclick=async()=>{const p=new URLSearchParams({service:st.trade?st.trade.s:'',zip:st.zip,city:st.city,state:st.state,from:'start'});const dest='contractor-register.html?'+p;
