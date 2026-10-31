@@ -226,9 +226,10 @@
       avatarLibrary.replaceChildren();chosenLibraryImage='';
       const service=serviceCatalog.value;
       const tradeList=((window.TexStateAvatar&&TexStateAvatar.TRADE_ICONS)||{})[service]||[];
-      const imagePaths=[...new Set([...tradeList.map(([file])=>'trade-icons/'+file+'.webp'),...(savedImagesByService[service]||[]).map(id=>'assets-optimized/'+id+'.jpg')])];
+      const allTrade=Object.values((window.TexStateAvatar&&TexStateAvatar.TRADE_ICONS)||{}).flat().map(([file])=>'trade-icons/'+file+'.webp');
+      const imagePaths=[...new Set([...tradeList.map(([file])=>'trade-icons/'+file+'.webp'),...(savedImagesByService[service]||[]).map(id=>'assets-optimized/'+id+'.jpg'),...allTrade])];
       const imageIds=imagePaths;
-      libraryNotice.textContent=imageIds.length?'Illustrative images for the selected service (not photos of your completed work).':'No saved profile images are available for this service yet. Upload your own image or use colored initials.';
+      libraryNotice.textContent=imageIds.length?'Pick any picture (pictures for your service are shown first). These are illustrations, not photos of your work.':'No saved profile images are available for this service yet. Upload your own image or use colored initials.';
       libraryNotice.hidden=selectedAvatarChoice()!=='library';
       for(const path of imagePaths){
         const button=document.createElement('button');button.type='button';button.style.cssText='border:2px solid #ddd;border-radius:10px;padding:3px;background:white;cursor:pointer';
