@@ -14,9 +14,9 @@
         MO=['movers-m1','m'], PE=['pest-f1','f'], PO=['pool-m1','m'],
         PW=['pressure-m1','m'], FE=['fence-m1','m'], NO=['notary-f1','f'], TU=['tutor-f1','f'], DO=['dogtrainer-f1','f'], BA=['babysitter-f1','f'], CP=['computer-m1','m'],
         TV=['tvmount-m1','m'], WI=['window-m1','m'],
-        BB=['barber-m1','m'], HS=['stylist-f1','f'], PT=['trainer-f1','f'], IN=['inspector-m1','m'], PH=['photographer-f1','f'], NU=['nurse-f1','f'], EP=['planner-f1','f'], DJ=['dj-m1','m'], MU=['makeup-f1','f'], GR=['groomer-f1','f'], CH=['chef-m1','m'], OF=['officiant-m1','m'], ID=['designer-f1','f'], DR=['driver-m1','m'], SP=['sprinkler-m1','m'], CC=['carpet-m1','m'], GU=['gutter-f1','f'], WE=['welder-m1','m'], TI=['tile-f1','f'];
+        BB=['barber-m1','m'], HS=['stylist-f1','f'], PT=['trainer-f1','f'], IN=['inspector-m1','m'], PH=['photographer-f1','f'], NU=['nurse-f1','f'], EP=['planner-f1','f'], DJ=['dj-m1','m'], MU=['makeup-f1','f'], GR=['groomer-f1','f'], CH=['chef-m1','m'], OF=['officiant-m1','m'], ID=['designer-f1','f'], DR=['driver-m1','m'], SP=['sprinkler-m1','m'], CC=['carpet-m1','m'], GU=['gutter-f1','f'], WE=['welder-m1','m'], TI=['tile-f1','f'], EM=['electrical-m1','m'];
   const TRADE_ICONS = {
-    'Electrical and Wiring Repair': [EL], 'Lighting Installation': [EL],
+    'Electrical and Wiring Repair': [EL, EM], 'Lighting Installation': [EL, EM],
     'Plumbing Pipe Repair': [PL], 'Plumbing Drain Repair': [PL], 'Bathroom Remodel': [TI, PL, CA],
     'Central Air Conditioning Repair or Maintenance': [AC], 'Heating System Repair or Maintenance': [AC], 'Appliance Repair or Maintenance': [AP],
     'Deck or Porch Remodel or Addition': [CA], 'Concrete Installation': [CO], 'Home Foundation Repair': [CO], 'Metalwork': [WE], 'Junk Removal': [JU], 'Furniture Moving and Heavy Lifting': [MO, JU], 'Local Moving (under 50 miles)': [MO], 'Garage Door Repair': [LO], 'Lock Installation and Repair': [LO], 'Window Repair': [WI], 'Door Installation': [CA, HA, WI], 'Fence and Gate Installation': [FE, WE], 'General Contracting': [CA, HA],
