@@ -49,7 +49,7 @@
     box.addEventListener('click', (e) => { if (e.target === box) finish(false); });
     document.addEventListener('keydown', (e) => { if (!box.hidden && e.key === 'Escape') finish(false); });
     box.querySelector('#tqs-google')?.addEventListener('click', () => {
-      TexAuth.signInWithGoogle(location.pathname.replace(/^\//, '') + location.search);
+      TexAuth.signInWithGoogle(current.returnTo || (location.pathname.replace(/^\//, '') + location.search));
     });
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -58,7 +58,7 @@
       try {
         const email = box.querySelector('#tqs-email').value, pass = box.querySelector('#tqs-pass').value;
         const ret = location.pathname.replace(/^\//, '') + location.search;
-        const result = await TexAuth.passwordRequest(email, pass, login ? null : 'customer', ret);
+        const result = await TexAuth.passwordRequest(email, pass, login ? null : (current.intent || 'customer'), current.returnTo || ret);
         if (!result.signedIn) throw new Error('Please sign in with your email and password.');
         if (!login && typeof gtag === 'function') gtag('event', 'sign_up', { method: 'email', source: 'quick_signup' });
         msg.textContent = 'You are in!';
@@ -72,13 +72,35 @@
   }
 
   let current = { name: '' };
+  const PROVIDER = {
+    en: { t: 'Create your free technician account', tl: 'Sign in to finish your profile', s: 'Then add your name, phone and a photo of your work.', sl: 'Welcome back. Sign in and finish your profile.', p: ['Free profile, no lead fees', 'Customers near you text you directly'], go: 'Create account & continue', gol: 'Sign in & continue', sw: 'Already have an account? <a href="#">Sign in</a>', swl: 'New here? <a href="#">Create a free account</a>', h: 'At least 6 characters, with a letter and a number.', pw: 'Password', g: 'Continue with Google' },
+    es: { t: 'Crea tu cuenta gratis de técnico', tl: 'Inicia sesión para terminar tu perfil', s: 'Después agrega tu nombre, teléfono y una foto de tu trabajo.', sl: 'Bienvenido de nuevo. Inicia sesión y termina tu perfil.', p: ['Perfil gratis, sin pagar por clientes', 'Los clientes cerca de ti te escriben directo'], go: 'Crear cuenta y continuar', gol: 'Iniciar sesión y continuar', sw: '¿Ya tienes cuenta? <a href="#">Inicia sesión</a>', swl: '¿Eres nuevo? <a href="#">Crea una cuenta gratis</a>', h: 'Mínimo 6 caracteres, con una letra y un número.', pw: 'Contraseña', g: 'Continuar con Google' }
+  };
   function setMode(isLogin) {
     login = isLogin;
+    if (current.intent === 'provider') {
+      let L = 'en'; try { L = localStorage.getItem('texcontractor-language') === 'es' ? 'es' : 'en'; } catch (_) {}
+      const P = PROVIDER[L];
+      box.querySelector('#tqs-title').textContent = login ? P.tl : P.t;
+      box.querySelector('#tqs-sub').textContent = login ? P.sl : P.s;
+      const perks = box.querySelector('#tqs-perks'); perks.hidden = login; perks.innerHTML = P.p.map(x => '<li>' + x + '</li>').join('');
+      box.querySelector('#tqs-hint').hidden = login; box.querySelector('#tqs-hint').textContent = P.h;
+      box.querySelector('label[for="tqs-pass"]').textContent = P.pw;
+      const g = box.querySelector('#tqs-google'); if (g) g.textContent = P.g;
+      box.querySelector('#tqs-pass').autocomplete = login ? 'current-password' : 'new-password';
+      box.querySelector('#tqs-go').textContent = login ? P.gol : P.go;
+      const sw = box.querySelector('#tqs-switch');
+      sw.innerHTML = login ? P.swl : P.sw;
+      sw.querySelector('a').addEventListener('click', (e) => { e.preventDefault(); box.querySelector('#tqs-msg').textContent = ''; setMode(!login); });
+      return;
+    }
     const who = current.name ? current.name : 'this technician';
     box.querySelector('#tqs-title').textContent = login ? 'Sign in to contact ' + who : 'Create a free account to contact ' + who;
     box.querySelector('#tqs-sub').textContent = login ? 'Welcome back. Sign in and we will open the message for you.' : 'It takes about 20 seconds. Right after, we open the message for you.';
-    box.querySelector('#tqs-perks').hidden = login;
-    box.querySelector('#tqs-hint').hidden = login;
+    const perks = box.querySelector('#tqs-perks'); perks.hidden = login; perks.innerHTML = '<li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li>';
+    box.querySelector('#tqs-hint').hidden = login; box.querySelector('#tqs-hint').textContent = 'At least 6 characters, with a letter and a number.';
+    box.querySelector('label[for="tqs-pass"]').textContent = 'Password';
+    const g = box.querySelector('#tqs-google'); if (g) g.textContent = 'Continue with Google';
     box.querySelector('#tqs-pass').autocomplete = login ? 'current-password' : 'new-password';
     box.querySelector('#tqs-go').textContent = login ? 'Sign in & continue' : 'Create account & continue';
     const sw = box.querySelector('#tqs-switch');
@@ -100,7 +122,7 @@
     if (!window.TexAuth) return false;
     if (!box) build();
     if (pending) finish(false);
-    current = { name: (opts && opts.name) || '' };
+    current = { name: (opts && opts.name) || '', intent: (opts && opts.intent) || '', returnTo: (opts && opts.returnTo) || '' };
     setMode(false);
     box.querySelector('#tqs-msg').textContent = '';
     box.hidden = false;

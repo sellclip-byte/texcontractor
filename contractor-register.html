@@ -424,6 +424,26 @@
         }
       }
     };
+    // Coming from the technician quiz (start.html): fill service, state and city from the link.
+    const prefillFromQuery = async () => {
+      const q = new URLSearchParams(window.location.search);
+      if (q.get('from') !== 'start') return;
+      const svc = q.get('service') || '';
+      const sf = registerForm.elements.namedItem('service');
+      if (svc && sf && !sf.value && [...sf.options].some(o => o.value === svc)) { sf.value = svc; sf.dispatchEvent(new Event('change')); }
+      const st = String(q.get('state') || '').toUpperCase();
+      if (st && !stateInput.value && [...stateInput.options].some(o => o.value === st)) {
+        stateInput.value = st;
+        stateInput.dispatchEvent(new Event('change'));
+        for (let i = 0; i < 60 && cityInput.disabled; i++) await new Promise(r => setTimeout(r, 250));
+        const city = String(q.get('city') || '').trim();
+        if (city) {
+          const match = [...cityInput.options].find(o => o.value && o.value.toLowerCase() === city.toLowerCase());
+          if (match) { cityInput.value = match.value; cityInput.dispatchEvent(new Event('change')); }
+          else { cityInput.value = '__other__'; cityInput.dispatchEvent(new Event('change')); otherCityInput.value = city; }
+        }
+      }
+    };
     window.addEventListener('pageshow', (event) => {
       if (event.persisted) { clearPostingForm(); resetServiceSearch(); restoreDraft(); }
     });
@@ -552,7 +572,7 @@
     };
     clearPostingForm();
     resetServiceSearch();
-    restoreDraft().then(() => TexAuth.getUser()).then(async user => { if (!user) return; signedInUser = signedInUser || user; await prefillFromProfile(user); if (!(await TexAdminApi.getAdminRecord(user).catch(() => null))) { loadMyServices(); TexPhoneVerify.render('phone-verify-box'); } }).catch(() => {});
+    restoreDraft().then(prefillFromQuery).then(() => TexAuth.getUser()).then(async user => { if (!user) return; signedInUser = signedInUser || user; await prefillFromProfile(user); if (!(await TexAdminApi.getAdminRecord(user).catch(() => null))) { loadMyServices(); TexPhoneVerify.render('phone-verify-box'); } }).catch(() => {});
     registerForm.addEventListener('input', saveDraft);
     registerForm.addEventListener('change', saveDraft);
     const submitButton = registerForm.querySelector('.submit');

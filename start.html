@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Get customers who text you · TexContractor</title>
+<meta name="description" content="Answer a few quick questions and get your free TexContractor profile ready. Customers near you text you directly.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.ico">
+<style>
+:root{--g:#075c4b;--g2:#0a7a63;--y:#F2B731;--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--bg:#f4f7f6}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
+.bar{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.back{width:36px;height:36px;border:0;border-radius:10px;background:#f1f5f9;font-size:20px;cursor:pointer;visibility:hidden}
+.logo{height:34px;margin:0 auto}
+.lang{display:flex;gap:4px;background:#f1f5f9;border-radius:99px;padding:3px}
+.lang button{border:0;background:transparent;border-radius:99px;padding:5px 9px;font:inherit;font-size:.72rem;font-weight:800;cursor:pointer;color:#334155}
+.lang button[aria-pressed=true]{background:var(--g);color:#fff}
+.prog{height:5px;background:#e8eef0}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--y));transition:width .35s}
+main{max-width:560px;margin:0 auto;padding:22px 16px 40px}
+.step{display:none;animation:in .3s ease}.step.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kick{display:inline-block;background:#fff4d6;color:#8a5a00;font-weight:800;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:99px;margin-bottom:10px}
+h1{font-size:1.65rem;line-height:1.15;margin:0 0 8px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 18px;line-height:1.45}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 6px 10px;text-align:center;cursor:pointer;font:inherit;font-weight:700;font-size:.82rem;color:var(--ink);transition:.15s}
+.tile img{width:100%;max-width:92px;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block;margin:0 auto 6px;background:#eef2f1}
+.tile:hover{border-color:var(--g2)}.tile.sel{border-color:var(--g);background:#ecf7f3}
+.tile.more{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--g)}
+.tile.more b{font-size:1.8rem;line-height:1}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:15px 16px;font:inherit;font-weight:700;font-size:1rem;text-align:left;cursor:pointer;color:var(--ink)}
+.opt .e{font-size:1.35rem;width:28px;text-align:center}
+.opt:hover{border-color:var(--g2)}.opt.sel{border-color:var(--g);background:#ecf7f3}
+.field{display:block;width:100%;font:inherit;font-size:1.15rem;padding:15px 16px;border:2px solid var(--line);border-radius:14px;background:#fff}
+.field:focus{outline:none;border-color:var(--g)}
+select.field{appearance:auto}
+.cta{display:block;width:100%;margin-top:16px;border:0;border-radius:14px;background:var(--g);color:#fff;font:inherit;font-weight:800;font-size:1.08rem;padding:16px;cursor:pointer;box-shadow:0 6px 16px rgba(7,92,75,.25)}
+.cta:disabled{opacity:.45;box-shadow:none;cursor:default}
+.cta.y{background:var(--y);color:#101828;box-shadow:0 6px 16px rgba(242,183,49,.35)}
+.card{background:#fff;border-radius:18px;padding:20px;border:1px solid var(--line);box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+.cmp div{border-radius:14px;padding:14px;font-size:.9rem;line-height:1.4}
+.cmp .bad{background:#fff1f0;color:#7a271a}.cmp .good{background:#ecf7f3;color:#064e3b}
+.cmp b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.chat{background:#f1f5f9;border-radius:16px;padding:14px;margin-top:12px}
+.bub{background:#fff;border-radius:14px 14px 14px 4px;padding:10px 12px;font-size:.9rem;max-width:85%;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.bub.me{background:var(--g);color:#fff;border-radius:14px 14px 4px 14px;margin:8px 0 0 auto}
+.load{text-align:center;padding:26px 6px}
+.ring{width:84px;height:84px;border-radius:50%;border:8px solid #e2ece9;border-top-color:var(--g);margin:0 auto 18px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.checks{list-style:none;padding:0;margin:14px auto 0;max-width:320px;text-align:left}
+.checks li{padding:7px 0;color:#94a3b8;font-weight:700;transition:.3s}.checks li.ok{color:var(--g)}
+.checks li::before{content:"○ ";}.checks li.ok::before{content:"✓ "}
+.prof{display:flex;gap:14px;align-items:center}
+.prof img{width:76px;height:76px;border-radius:16px;object-fit:cover}
+.prof h3{margin:0 0 4px;font-size:1.1rem}.prof p{margin:0;color:var(--mut);font-size:.9rem}
+.badge{display:inline-block;background:#ecf7f3;color:var(--g);font-weight:800;font-size:.72rem;padding:3px 8px;border-radius:99px;margin-top:6px}
+.fine{color:var(--mut);font-size:.78rem;text-align:center;margin-top:12px}
+.note{background:#fff8e6;border:1px solid #f6dfa0;border-radius:12px;padding:12px;font-size:.88rem;margin-top:12px;color:#6b4e00}
+</style>
+</head>
+<body>
+<div class="top"><div class="bar">
+  <button class="back" id="back" aria-label="Back">‹</button>
+  <img class="logo" src="texcontractor-logo.png" alt="TexContractor">
+  <div class="lang"><button data-l="en" aria-pressed="true">🇺🇸 EN</button><button data-l="es" aria-pressed="false">🇲🇽 ES</button></div>
+</div><div class="prog"><i id="prog"></i></div></div>
+
+<main id="app">
+  <!-- 1 trade -->
+  <section class="step on" data-s="1">
+    <span class="kick" data-t="k1"></span>
+    <h1 data-t="h1"></h1>
+    <p class="sub" data-t="s1"></p>
+    <div class="grid" id="trades"></div>
+  </section>
+  <!-- 2 area -->
+  <section class="step" data-s="2">
+    <h1 data-t="h2"></h1>
+    <p class="sub" data-t="s2"></p>
+    <input class="field" id="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="75001">
+    <p class="sub" id="zipcity" style="margin:10px 2px 0;font-weight:700;color:#075c4b"></p>
+    <button class="cta" id="zipgo" disabled data-t="next"></button>
+  </section>
+  <!-- 3 how get customers -->
+  <section class="step" data-s="3">
+    <h1 data-t="h3"></h1>
+    <div class="opts" data-q="source"></div>
+  </section>
+  <!-- 4 info: no lead fees -->
+  <section class="step" data-s="4">
+    <div class="card">
+      <span class="kick" data-t="k4"></span>
+      <h1 data-t="h4"></h1>
+      <div class="cmp"><div class="bad"><b data-t="badT"></b><span data-t="bad"></span></div><div class="good"><b>TexContractor</b><span data-t="good"></span></div></div>
+      <div class="chat"><div class="bub" data-t="chat1"></div><div class="bub me" data-t="chat2"></div></div>
+    </div>
+    <button class="cta" data-next data-t="next"></button>
+  </section>
+  <!-- 5 jobs per week -->
+  <section class="step" data-s="5">
+    <h1 data-t="h5"></h1>
+    <div class="opts" data-q="jobs"></div>
+  </section>
+  <!-- 6 texts -->
+  <section class="step" data-s="6">
+    <h1 data-t="h6"></h1>
+    <p class="sub" data-t="s6"></p>
+    <div class="opts" data-q="text"></div>
+    <div class="note" id="textnote" hidden data-t="n6"></div>
+  </section>
+  <!-- 7 loading -->
+  <section class="step" data-s="7">
+    <div class="load"><div class="ring"></div><h1 data-t="h7"></h1>
+      <ul class="checks"><li data-t="c1"></li><li data-t="c2"></li><li data-t="c3"></li></ul></div>
+  </section>
+  <!-- 8 result -->
+  <section class="step" data-s="8">
+    <span class="kick" data-t="k8"></span>
+    <h1 id="h8"></h1>
+    <div class="card"><div class="prof"><img id="pimg" alt=""><div><h3 data-t="yourName"></h3><p id="pline"></p><span class="badge" data-t="accepts"></span></div></div></div>
+    <button class="cta y" id="finish" data-t="finish"></button>
+    <p class="fine" data-t="fine"></p>
+  </section>
+</main>
+<script src="tex-auth.js?v=20261021-signup"></script>
+<script src="tex-quick-signup.js?v=20261031prov"></script>
+
+<script>
+(function(){
+'use strict';
+const T={
+ en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'Answer 5 quick questions. Takes 30 seconds. What is your trade?',
+  h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',next:'Continue',
+  h3:'How do you get customers today?',
+  k4:'Good to know',h4:'No lead fees. No middleman.',badT:'Lead sites',bad:'You pay for every lead, and the same lead goes to several pros.',good:'Free profile. The customer texts you directly, and you set your own price.',
+  chat1:'Hi, I found your service on TexContractor. I need an estimate.',chat2:'Sure! Send me a photo of the problem.',
+  h5:'How many new jobs a week would you like?',
+  h6:'Can customers text you?',s6:'On TexContractor, customers send a text message first.',n6:'Customers on TexContractor contact pros by text. You can still call them back after the first message.',
+  h7:'Building your profile…',c1:'Trade selected',c2:'Service area set',c3:'Profile preview ready',
+  k8:'Almost done',h8:'Your {trade} profile for {zip} is ready',yourName:'Your name here',accepts:'✉ Accepts text messages',
+  finish:'Finish my free profile →',fine:'Takes about 1 minute: add your name, phone and a photo of your work.'},
+ es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'Responde 5 preguntas rápidas. Toma 30 segundos. ¿Cuál es tu oficio?',
+  h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',next:'Continuar',
+  h3:'¿Cómo consigues clientes hoy?',
+  k4:'Dato importante',h4:'Sin pagar por clientes. Sin intermediarios.',badT:'Sitios de leads',bad:'Pagas por cada cliente, y el mismo cliente se envía a varios técnicos.',good:'Perfil gratis. El cliente te escribe directo y tú pones tu precio.',
+  chat1:'Hola, encontré tu servicio en TexContractor. Necesito un presupuesto.',chat2:'¡Claro! Mándame una foto del problema.',
+  h5:'¿Cuántos trabajos nuevos quieres por semana?',
+  h6:'¿Los clientes te pueden mandar mensajes de texto?',s6:'En TexContractor, el cliente manda un mensaje de texto primero.',n6:'En TexContractor los clientes contactan por mensaje de texto. Después del primer mensaje puedes llamarles.',
+  h7:'Preparando tu perfil…',c1:'Oficio elegido',c2:'Zona de servicio lista',c3:'Vista previa del perfil lista',
+  k8:'Ya casi',h8:'Tu perfil de {trade} para {zip} está listo',yourName:'Tu nombre aquí',accepts:'✉ Acepta mensajes de texto',
+  finish:'Terminar mi perfil gratis →',fine:'Toma como 1 minuto: agrega tu nombre, teléfono y una foto de tu trabajo.'}
+};
+const TRADES=[
+ {s:'Electrical and Wiring Repair',i:'electrical-m1',en:'Electrician',es:'Electricista'},
+ {s:'Plumbing Pipe Repair',i:'plumbing-m1',en:'Plumber',es:'Plomero'},
+ {s:'Central Air Conditioning Repair or Maintenance',i:'ac-m1',en:'AC & Heating',es:'Aire acondicionado'},
+ {s:'Handyman',i:'handyman-f1',en:'Handyman',es:'Handyman'},
+ {s:'Interior Painting',i:'painting-m1',en:'Painter',es:'Pintor'},
+ {s:'Roof Repair or Maintenance',i:'roofing-m1',en:'Roofer',es:'Techador'},
+ {s:'House Cleaning',i:'cleaning-f1',en:'House cleaning',es:'Limpieza'},
+ {s:'Outdoor Landscaping and Design',i:'landscaping-m1',en:'Landscaping',es:'Jardinería'},
+ {s:'Mobile Auto Mechanic',i:'mechanic-m1',en:'Mobile mechanic',es:'Mecánico'},
+ {s:'Tree Trimming and Removal',i:'tree-m1',en:'Tree service',es:'Árboles'},
+ {s:'Floor Installation or Replacement',i:'flooring-f1',en:'Flooring',es:'Pisos'}
+];
+const Q={
+ source:[['🗣️',{en:'Word of mouth',es:'De boca en boca'}],['👥',{en:'Facebook groups',es:'Grupos de Facebook'}],['💸',{en:'Paid lead sites',es:'Sitios de leads pagados'}],['😕',{en:'Not enough customers',es:'No tengo suficientes clientes'}]],
+ jobs:[['🙂',{en:'1–2 jobs',es:'1–2 trabajos'}],['💪',{en:'3–5 jobs',es:'3–5 trabajos'}],['🚀',{en:'6–10 jobs',es:'6–10 trabajos'}],['🔥',{en:'As many as I can get',es:'Todos los que pueda'}]],
+ text:[['✅',{en:'Yes, text me',es:'Sí, mándame mensajes'}],['📞',{en:'I prefer calls',es:'Prefiero llamadas'}]]
+};
+let L='en';try{L=localStorage.getItem('texcontractor-language')==='es'?'es':'en'}catch(e){}
+const st={step:1,trade:null,zip:'',city:'',state:'',answers:{}};const TOTAL=8;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+function render(){
+ document.documentElement.lang=L==='es'?'es-US':'en-US';
+ $$('[data-t]').forEach(e=>{const k=e.dataset.t;if(T[L][k]!=null)e.textContent=T[L][k]});
+ $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===L)));
+ const g=$('#trades');g.innerHTML='';
+ TRADES.forEach(t=>{const b=document.createElement('button');b.className='tile'+(st.trade===t?' sel':'');b.innerHTML='<img src="trade-icons/'+t.i+'.webp" alt="">'+t[L];b.onclick=()=>{st.trade=t;go(2)};g.appendChild(b)});
+ const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+(L==='es'?'Otro oficio':'Other trade');m.onclick=()=>{location.href='contractor-register.html'};g.appendChild(m);
+ $$('.opts').forEach(box=>{const q=box.dataset.q;box.innerHTML='';Q[q].forEach((o,i)=>{const b=document.createElement('button');b.className='opt'+(st.answers[q]===i?' sel':'');b.innerHTML='<span class="e">'+o[0]+'</span>'+o[1][L];b.onclick=()=>pick(q,i);box.appendChild(b)})});
+ $('#textnote').hidden=st.answers.text!==1;
+ if(st.trade){$('#h8').textContent=T[L].h8.replace('{trade}',st.trade[L].toLowerCase()).replace('{zip}',st.city||st.zip||'');$('#pimg').src='trade-icons/'+st.trade.i+'.webp';$('#pline').textContent=st.trade[L]+' · '+(st.city?st.city+', '+st.state:'ZIP '+st.zip);}
+}
+function pick(q,i){st.answers[q]=i;render();
+ if(q==='text'&&i===1){setTimeout(()=>go(7),1600);return}
+ setTimeout(()=>go(st.step+1),250)}
+function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));
+ $('#prog').style.width=Math.round((n-1)/(TOTAL-1)*100)+'%';$('#back').style.visibility=n>1&&n<7?'visible':'hidden';
+ render();window.scrollTo(0,0);
+ if(n===7){const li=$$('.checks li');li.forEach(x=>x.classList.remove('ok'));li.forEach((x,i)=>setTimeout(()=>x.classList.add('ok'),600+i*650));setTimeout(()=>go(8),2800)}
+}
+$('#back').onclick=()=>go(Math.max(1,st.step-1));
+$('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#zipgo').disabled=st.zip.length!==5;
+ if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state;render()}}}catch(_){}}});
+$('#zipgo').onclick=()=>go(3);
+$$('[data-next]').forEach(b=>b.onclick=()=>go(st.step+1));
+$$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(e){};render()});
+$('#finish').onclick=async()=>{const p=new URLSearchParams({service:st.trade?st.trade.s:'',zip:st.zip,city:st.city,state:st.state,from:'start'});const dest='contractor-register.html?'+p;
+ if(typeof gtag==='function')gtag('event','quiz_finish',{trade:st.trade?st.trade.s:''});
+ let ok=false;try{ok=await TexQuickSignup.require({intent:'provider',returnTo:dest,source:'start_quiz'})}catch(_){ok=false}
+ if(ok)location.href=dest;};
+render();go(1);
+})();
+</script>
+</body>
+</html>
