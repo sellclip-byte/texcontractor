@@ -117,9 +117,9 @@
         <h2>Profile photo</h2>
         <p class="hint">Upload one clear photo of yourself. This is the photo customers see beside your name; it is separate from your work photos.</p>
         <fieldset class="avatar-picker"><legend>Choose your profile picture</legend><div class="avatar-options">
-          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials"> State flag with your initials</label>
+          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials" checked> State flag with your initials</label>
           <label class="avatar-option"><input type="radio" name="avatarChoice" value="upload"> Upload from my device or phone</label>
-          <label class="avatar-option"><input type="radio" name="avatarChoice" value="library" checked> Choose a TexContractor picture for your trade</label>
+          <label class="avatar-option"><input type="radio" name="avatarChoice" value="library"> Choose a TexContractor picture</label>
         </div></fieldset>
         <div id="avatar-library" hidden style="display:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0"></div>
         <input id="profile-photo" name="profilePhoto" type="file" accept="image/*" hidden>
@@ -375,13 +375,13 @@
     // Clear prior posting values even if the browser restores a cached form.
     const clearPostingForm = () => {
       registerForm.reset();
-      chosenLibraryImage='';avatarChoices[2].checked=true;syncAvatarChoice();
+      chosenLibraryImage='';avatarChoices[0].checked=true;syncAvatarChoice();
       for (const field of registerForm.querySelectorAll('input, textarea, select')) {
         if (field.type === 'file') field.value = '';
         else if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
         else field.value = '';
       }
-      avatarChoices[2].checked=true;syncAvatarChoice();refreshAvatarLibrary();
+      avatarChoices[0].checked=true;syncAvatarChoice();refreshAvatarLibrary();
       stateInput.value = '';
       cityInput.replaceChildren(new Option('Choose a state first', ''));
       cityInput.value = '';
