@@ -113,7 +113,7 @@
   </main>
   <script src="tex-state-avatar.js?v=20261031-trade25"></script>
   <script src="tex-auth.js?v=20261021-signup"></script>
-  <script src="tex-notices.js?v=20261025" defer></script><script src="tex-quick-signup.js?v=20261022"></script>
+  <script src="tex-notices.js?v=20261025" defer></script><script src="tex-quick-signup.js?v=20261022"></script><script src="tex-sms-message.js?v=20261031"></script>
   <script>
     const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -177,14 +177,12 @@
     else document.querySelector('.fact:nth-child(3)').hidden = true;
     if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
     const textLink = document.getElementById('text-link');
-    const messageTemplate = [
-      'Hello, I found your service on TexContractor:',
-      'https://texcontractor.com',
-      'I need an estimate.',
-      'My ZIP code: __________',
-      'Problem description: ____________________',
-      'If you would like photos or a video, I can send them. Thank you.'
-    ].join('\n');
+    const messageTemplate = () => TexSmsMessage({
+      name: profile.name || '',
+      service: profile.service || '',
+      person: !profile.imported,
+      profileUrl: 'https://texcontractor.com/profile.html?' + new URLSearchParams({ [profile.imported ? 'imported' : 'contractor']: profile.id, service: profile.service || '' }).toString()
+    });
     textLink.href = '#';
     textLink.addEventListener('click', async (event) => {
       event.preventDefault();
@@ -206,7 +204,7 @@
         const phone = String(profile.imported ? (typeof rows==='string'?rows:rows?.phone||'') : rows?.[0]?.phone||'').replace(/[^\d+]/g, '');
         if (!phone) throw new Error('The contractor phone number is not available yet.');
         window.TexContactTracking?.record('sms');
-        window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate)}`;
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate())}`;
       } catch (error) {
         textLink.textContent = 'Text this contractor';
         window.alert(error.message);
@@ -249,7 +247,7 @@
   <script src="tex-share-profile.js?v=20261021b"></script>
   <script src="tex-chat.js?v=20261022b"></script>
   <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id);});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
-  <script src="tex-language.js?v=20261025es"></script>
+  <script src="tex-language.js?v=20261031sms"></script>
   <script src="tex-side-ads.js?v=20261029-typewriter-2"></script>
 </body>
 </html>

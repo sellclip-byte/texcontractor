@@ -148,6 +148,7 @@
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
   <script src="tex-quick-signup.js?v=20261022"></script>
+  <script src="tex-sms-message.js?v=20261031"></script>
   <script>
     const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -166,14 +167,8 @@
     document.getElementById('location-label').textContent = locationText;
     document.getElementById('page-title').textContent = `${service} contractors near you`;
     document.querySelectorAll('.provider-trade').forEach((element) => { element.textContent = service; });
-    const messageTemplate = () => [
-      'Hello, I found your service on TexContractor:',
-      'https://texcontractor.com',
-      'I need an estimate.',
-      'My ZIP code: __________',
-      'Problem description: ____________________',
-      'If you would like photos or a video, I can send them. Thank you.'
-    ].join('\n');
+    const profileLink = (key, id, svc) => 'https://texcontractor.com/profile.html?' + new URLSearchParams({ [key]: id, service: svc || service }).toString();
+    const messageTemplate = (name, svc, person, url) => TexSmsMessage({ name, service: svc || service, person, profileUrl: url });
     const getContractorPhone = async (serviceId, displayName) => {
       let token = await TexAuth.getAccessToken();
       if (!token) {
@@ -331,7 +326,7 @@
           }
           textButton.textContent = 'Text this contractor';
           window.TexContactTracking?.record('sms');
-          window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name))}`;
+          window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name, provider.service, true, profileLink('contractor', provider.id, provider.service)))}`;
         } catch (error) {
           textButton.textContent = 'Text this contractor';
           window.alert(error.message);
@@ -442,7 +437,7 @@
                   const phone=await res.json();
                   if(!phone)throw new Error('Phone unavailable');
                   window.TexContactTracking?.record('sms');
-                  window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name));
+                  window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name, entry.service, false, profileLink('imported', entry.id, entry.service)));
                 }catch(e){alert(e.message);}
               });
               const profile=document.createElement('a');profile.className='profile-button';profile.textContent='View profile';
@@ -558,7 +553,7 @@
     startLocationSearch();
   </script>
   <script src="tex-chat.js?v=20261022b"></script>
-  <script src="tex-language.js?v=20261025es"></script>
+  <script src="tex-language.js?v=20261031sms"></script>
   <script src="tex-side-ads.js?v=20261029-typewriter-2"></script>
 <script>
 (async function(){

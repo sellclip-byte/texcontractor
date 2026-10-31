@@ -429,6 +429,11 @@
     currentLanguage = requestedLang;
     try { localStorage.setItem('texcontractor-language', currentLanguage); } catch (_) {}
   }
+  // Used by the SMS message builder (tex-sms-message.js).
+  window.TexLanguage = {
+    lang: () => currentLanguage,
+    service: (name) => serviceTranslations[name] || name
+  };
   let applying = false;
   let observer = null;
 
