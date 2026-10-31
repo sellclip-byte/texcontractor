@@ -540,22 +540,36 @@
 
   function mountPicker() {
     if (document.getElementById('tex-language-picker')) return;
+    const US = '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><g fill="#b22234"><rect width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3c3b6e"/><g fill="#fff"><circle cx="2.2" cy="2" r=".55"/><circle cx="5.2" cy="2" r=".55"/><circle cx="8.2" cy="2" r=".55"/><circle cx="11" cy="2" r=".55"/><circle cx="3.7" cy="4.2" r=".55"/><circle cx="6.7" cy="4.2" r=".55"/><circle cx="9.6" cy="4.2" r=".55"/><circle cx="2.2" cy="6.4" r=".55"/><circle cx="5.2" cy="6.4" r=".55"/><circle cx="8.2" cy="6.4" r=".55"/><circle cx="11" cy="6.4" r=".55"/><circle cx="3.7" cy="8.6" r=".55"/><circle cx="6.7" cy="8.6" r=".55"/><circle cx="9.6" cy="8.6" r=".55"/></g></svg>';
+    const MX = '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><ellipse cx="15" cy="10.6" rx="2.4" ry="2.1" fill="#8c5a2b"/><path d="M12.6 12.4q2.4 2 4.8 0" stroke="#3f7d3a" stroke-width=".8" fill="none"/></svg>';
     const style = document.createElement('style');
-    style.textContent = `.tex-language-wrap{display:flex;align-items:center;gap:6px;margin-right:8px;white-space:nowrap}.tex-language-label{font-size:.78rem;font-weight:800;color:#52606d}.tex-language-select{min-height:38px;padding:7px 28px 7px 9px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#1f2937;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}.tex-language-select:focus{outline:3px solid rgba(7,92,75,.18);border-color:#075c4b}@media(max-width:720px){.tex-language-label{display:none}.tex-language-wrap{margin-right:2px}.tex-language-select{min-height:36px;padding-left:7px;padding-right:22px;font-size:.76rem}}`;
+    style.textContent = `.tex-language-wrap{display:flex;align-items:center;gap:4px;margin-right:8px;white-space:nowrap;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:999px;padding:3px}.tex-language-select{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.tex-lang-btn{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:4px 11px 4px 6px;border:0;border-radius:999px;background:transparent;color:#334155;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer;line-height:1}.tex-lang-btn svg{width:24px;height:16px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex:none}.tex-lang-btn[aria-pressed="true"]{background:#075c4b;color:#fff;box-shadow:0 2px 6px rgba(7,92,75,.3)}.tex-lang-btn:not([aria-pressed="true"]):hover{background:#e2e8f0}.tex-lang-btn:focus-visible{outline:3px solid rgba(7,92,75,.35)}@media(max-width:720px){.tex-language-wrap{margin-right:2px}.tex-lang-btn{min-height:30px;padding:3px 8px 3px 4px;font-size:.74rem;gap:4px}.tex-lang-btn svg{width:20px;height:13px}}`;
     document.head.appendChild(style);
-    const wrap = document.createElement('label');
+    const wrap = document.createElement('div');
     wrap.className = 'tex-language-wrap';
-    wrap.title = 'Language / Idioma';
-    wrap.innerHTML = '<span class="tex-language-label">Language</span><select class="tex-language-select" id="tex-language-picker" aria-label="Language"><option value="en">English (US)</option><option value="es">Español</option></select>';
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', 'Language / Idioma');
+    wrap.innerHTML = '<select class="tex-language-select" id="tex-language-picker" aria-label="Language" tabindex="-1"><option value="en">English</option><option value="es">Español</option></select>'
+      + '<button type="button" class="tex-lang-btn" data-lang="en" lang="en" aria-pressed="false">' + US + '<span data-tex-keep>English</span></button>'
+      + '<button type="button" class="tex-lang-btn" data-lang="es" lang="es" aria-pressed="false">' + MX + '<span data-tex-keep>Español</span></button>';
     const host = document.querySelector('.header-actions') || document.querySelector('header') || document.querySelector('main');
     if (host) host.insertBefore(wrap, host.firstChild);
     else { wrap.style.position = 'fixed'; wrap.style.top = '12px'; wrap.style.right = '16px'; wrap.style.zIndex = '20'; document.body.appendChild(wrap); }
-    wrap.querySelector('select').addEventListener('change', (event) => {
+    const select = wrap.querySelector('select');
+    const sync = () => wrap.querySelectorAll('.tex-lang-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === currentLanguage)));
+    select.addEventListener('change', (event) => {
       currentLanguage = event.target.value;
       localStorage.setItem('texcontractor-language', currentLanguage);
       remember(document.body);
       applyLanguage();
+      sync();
     });
+    wrap.querySelectorAll('.tex-lang-btn').forEach((b) => b.addEventListener('click', () => {
+      if (b.dataset.lang === currentLanguage) return;
+      select.value = b.dataset.lang;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }));
+    sync();
   }
 
   function start() {
