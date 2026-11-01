@@ -66,6 +66,7 @@
     .provider-name { margin:0; overflow:hidden; font-size:1rem; text-overflow:ellipsis; white-space:nowrap; }
     .provider-rating { margin:3px 0 0; color:#123DCC; font-size:.88rem; letter-spacing:.04em; }
     .provider-rating span { color:var(--muted); letter-spacing:0; }
+    .hablo{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font:800 .82rem/1.2 "Segoe UI",Arial,sans-serif;color:#111;white-space:nowrap}.hablo .mx{font-size:1.05rem;line-height:1}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}
     .provider-trade { margin:5px 0 0; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .provider-identity { display:flex; flex-direction:column; align-items:center; gap:6px; }
     .provider-contact-icons { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:0; max-width:96px; }
@@ -309,6 +310,7 @@
       trade.className = 'provider-trade';
       trade.textContent = provider.service;
       main.append(status, name, rating, trade);
+      if (provider.speaks_spanish) main.append(habloBadge());
       const actions = document.createElement('div');
       actions.className = 'provider-actions';
       const textButton = document.createElement('a');
@@ -373,9 +375,10 @@
       }
       throw new Error('Too many results to load safely.');
     }
+    const habloBadge=()=>{const s=document.createElement('span');s.className='hablo';s.setAttribute('lang','es');s.title='This provider speaks Spanish';s.innerHTML='<span class="mx" aria-hidden="true">\u{1F1F2}\u{1F1FD}</span><b>Hablo</b> <em>español</em>';return s;};
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
         // The public submissions endpoint must not prevent approved imports from loading.
@@ -398,7 +401,7 @@
         // Keep registered technician cards intact; append approved, unclaimed businesses in the same visual layout.
         { // Check approved imported contractors for every service catalog.
           try {
-            const params = new URLSearchParams({select:'id,business_name,service,city,state,about',order:'id.asc'});
+            const params = new URLSearchParams({select:'id,business_name,service,city,state,about,speaks_spanish',order:'id.asc'});
             if (service !== 'Local service') params.set('service', 'eq.' + service);
             if (state) params.set('state', 'ilike.' + state);
             const imported = await fetchAllPages(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory', params);
@@ -413,7 +416,7 @@
               const name=document.createElement('h3');name.className='provider-name';name.textContent=entry.business_name;
               const location=document.createElement('p');location.className='provider-rating';location.textContent=entry.city+', '+entry.state;
               const trade=document.createElement('p');trade.className='provider-trade';trade.textContent=entry.service;
-              main.append(status,name,location,trade);
+              main.append(status,name,location,trade);if(entry.speaks_spanish)main.append(habloBadge());
               const actions=document.createElement('div');actions.className='provider-actions';
               const sms=document.createElement('a');sms.className='text-button';sms.href='#';sms.textContent='Text this contractor';
               const loadImportedPhone = async () => {

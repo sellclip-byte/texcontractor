@@ -68,7 +68,8 @@
     .gallery-text-cta:hover { background:#991b1b; }
     @keyframes galleryPulse { 0%,100% { opacity:1; box-shadow:0 0 0 2px rgba(185,28,28,.15); } 50% { opacity:.75; box-shadow:0 0 0 7px rgba(185,28,28,.06); } }
     @media (prefers-reduced-motion:reduce) { .gallery-text-cta { animation:none; } }
-  </style>
+  .hablo{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font:800 .82rem/1.2 "Segoe UI",Arial,sans-serif;color:#111;white-space:nowrap}.hablo .mx{font-size:1.05rem;line-height:1}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}#hablo-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 2px}.hablo-note{font-weight:700;color:#006847;font-size:.9rem}
+</style>
 <link rel="stylesheet" href="tex-gold.css?v=1">
 <script src="/tex-readable.js?v=1" defer></script></head>
 <body>
@@ -124,7 +125,7 @@
     let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
-      const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
       const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, ...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {}) } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
@@ -140,16 +141,17 @@
         profilePhoto:mediaUrl(row.profile_photo_path),
         work:(Array.isArray(row.work_photo_paths) ? row.work_photo_paths : []).map(mediaUrl),
         years:row.years || '—',
-        service:row.service || service
+        service:row.service || service,
+        spanish:!!row.speaks_spanish
       } : null;
     };
     const importedId=params.get('imported');
     async function loadImportedProfile(){
-      const q=new URLSearchParams({select:'id,business_name,service,city,state,about',id:'eq.'+importedId,limit:'1'});
+      const q=new URLSearchParams({select:'id,business_name,service,city,state,about,speaks_spanish',id:'eq.'+importedId,limit:'1'});
       const r=await fetch(SUPABASE_URL+'/rest/v1/texcontractor_approved_imported_directory?'+q,{headers:{apikey:SUPABASE_KEY,...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {})}});
       if(!r.ok)throw Error('Profile unavailable');
       const e=(await r.json())[0];if(!e)return null;
-      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),ratingLabel:'Profile',rating:'Local provider',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true};
+      return {id:e.id,state:e.state,name:e.business_name,initials:String(e.business_name||'B').split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase(),ratingLabel:'Profile',rating:'Local provider',location:e.city+', '+e.state,service:e.service,about:String(e.about||'').replace(/https?:[^ ]+|www[.][^ ]+/gi,'').trim(),years:null,work:[],profilePhoto:'',imported:true,spanish:!!e.speaks_spanish};
     }
     const renderProfile = async () => {
       directoryToken = await TexAuth.getAccessToken();
@@ -166,6 +168,11 @@
     } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
+    if (profile.spanish && !document.getElementById('hablo-box')) {
+      const box=document.createElement('div');box.id='hablo-box';box.setAttribute('lang','es');
+      box.innerHTML='<span class="hablo"><span class="mx" aria-hidden="true">\u{1F1F2}\u{1F1FD}</span><b>Hablo</b> <em>español</em></span><span class="hablo-note">Puedes escribirle en español.</span>';
+      document.getElementById('contractor-name').insertAdjacentElement('afterend',box);
+    }
     TexStateAvatar.apply(document.getElementById('avatar'), {name:profile.name, state:profile.state, photoUrl:profile.profilePhoto, service:profile.service, key:(profile.imported?'i':'s')+profile.id});
     document.getElementById('rating-label').textContent = profile.ratingLabel || 'Rating';
     document.getElementById('rating').textContent = profile.rating;

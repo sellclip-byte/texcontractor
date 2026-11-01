@@ -79,6 +79,7 @@
     <section id="my-services" hidden style="margin:0 0 18px;padding:18px 20px;border:1px solid #dbe5e2;border-radius:16px;background:#fff">
       <h2 style="margin:0 0 4px;font-size:1.15rem">Your services <span id="my-services-count" style="color:#64748b;font-weight:700"></span></h2>
       <p class="hint" style="margin:0 0 12px">Each technician can list up to 2 services. You can change or delete a service at any time.</p>
+      <label id="my-spanish" style="display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;border:2px solid #006847;border-radius:12px;background:#f6fbf8;font-weight:800;cursor:pointer"><input type="checkbox" id="my-spanish-box" style="width:22px;height:22px;accent-color:#006847"> <span>🇲🇽 I speak Spanish — <span lang="es" style="color:#006847">Hablo</span> <span lang="es" style="color:#ce1126">español</span><span class="hint" style="display:block;font-weight:600">Shows a “Hablo español” badge on all your listings.</span></span></label>
       <div id="my-services-list" style="display:grid;gap:10px"></div>
       <p id="my-services-status" role="status" style="margin:10px 0 0;font-weight:700"></p>
     </section>
@@ -92,6 +93,7 @@
           <input type="hidden" name="realName">
           <label>Mobile number <span class="hint">A mobile number that can receive texts — not a landline.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <input type="hidden" name="email">
+          <label>Do you speak Spanish? <span class="hint" lang="es">¿Hablas español? Customers will see a 🇲🇽 “Hablo español” badge on your listing.</span><select name="speaksSpanish"><option value="no">No</option><option value="yes">Yes — Sí, hablo español</option></select></label>
         </div>
       </section>
       <section class="panel">
@@ -140,7 +142,7 @@
   </main>
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261023-mysvc"></script>
+  <script src="tex-admin.js?v=20261101-es"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261031-trade25"></script>
   <script>
@@ -396,7 +398,7 @@
     };
     // Keep a draft of the typed details (not photos) so a refresh does not wipe the form.
     const DRAFT_KEY = 'texcontractor-register-draft';
-    const DRAFT_FIELDS = ['phone','displayName','years','service','about','state','city','otherCity'];
+    const DRAFT_FIELDS = ['phone','displayName','years','service','about','state','city','otherCity','speaksSpanish'];
     const saveDraft = () => {
       try {
         const d = {};
@@ -530,6 +532,14 @@
       let rows = [];
       try { rows = await TexAdminApi.myServices() || []; } catch (_) { return; }
       myBox.hidden = rows.length === 0;
+      const spanishBox = document.getElementById('my-spanish-box');
+      spanishBox.checked = rows.some((r) => r.speaks_spanish);
+      spanishBox.onchange = async () => {
+        spanishBox.disabled = true;
+        try { await TexAdminApi.setMySpanish(spanishBox.checked); myStatus.textContent = spanishBox.checked ? 'Saved: your listings now show “Hablo español”.' : 'Saved: the Spanish badge is removed.'; }
+        catch (error) { spanishBox.checked = !spanishBox.checked; myStatus.textContent = 'Could not save. Please try again.'; }
+        spanishBox.disabled = false;
+      };
       document.getElementById('my-services-count').textContent = `(${rows.length} of ${MAX_SERVICES})`;
       const full = rows.length >= MAX_SERVICES;
       limitNote.hidden = !full;

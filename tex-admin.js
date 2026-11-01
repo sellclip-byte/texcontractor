@@ -120,6 +120,7 @@
         state: data.state.trim().toUpperCase(),
         service: data.service,
         about: data.about.trim(),
+        speaks_spanish: data.speaksSpanish === 'yes',
         profile_photo_path: profilePath,
         work_photo_paths: workPaths,
         status: 'approved'
@@ -391,6 +392,7 @@
 
   // A technician's own services (max 2): list, change the service, delete.
   const myServices = () => rpc('texcontractor_my_services', {});
+  const setMySpanish = (value) => rpc('texcontractor_my_spanish', { p_value: !!value });
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
   const deleteMyService = async (id) => {
     const result = await rpc('texcontractor_my_service_delete', { p_id: id });
@@ -399,5 +401,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, setMySpanish, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
