@@ -116,7 +116,9 @@ async function main() {
   const raw = await loadRows();
   const servicePages = new Set(existsSync(join(root, 'services')) ? readdirSync(join(root, 'services')) : []);
   const rows = raw
-    .map((r) => ({ ...r, state: String(r.state || '').trim().toUpperCase(), city: titleCase(r.city), service: String(r.service || '').trim(), name: cleanName(r.name), about: cleanAbout(r.about) }))
+    .map((r) => ({ ...r, state: String(r.state || '').trim().toUpperCase(), city: titleCase(r.city), service: String(r.service || '').trim(), name: cleanName(String(r.name || '').replace(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]*\d{3}[\s.-]*\d{4}/g, ' ')), about: cleanAbout(r.about) }))
+    // A provider who typed a phone number as their name keeps their listing under a neutral name.
+    .map((r) => (r.name ? r : { ...r, name: r.service ? `${r.service} pro` : '' }))
     .filter((r) => STATES[r.state] && r.city && r.service && r.name && r.id);
 
   // Group by state → city → service.
