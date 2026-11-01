@@ -16,6 +16,7 @@ const SITE = 'https://texcontractor.com';
 const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
 const MIN_PER_PAGE = Number(process.env.LOCAL_MIN_PER_PAGE || 5);
+const CITY_MIN = Number(process.env.LOCAL_CITY_MIN || 3); // city hubs with fewer listings are noindex
 const OUT = join(root, 'local');
 
 const STATES = { AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia' };
@@ -85,7 +86,7 @@ h2{font-size:22px;margin:34px 0 10px}.links{display:flex;flex-wrap:wrap;gap:8px;
 .links a span{color:var(--muted)}.note{font-size:14px;color:var(--muted);max-width:70ch}
 footer{margin-top:40px;border-top:1px solid var(--line);background:#fff}footer .wrap{padding-block:18px;font-size:14px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}`;
 
-function page({ path, title, description, crumbs, body, jsonld }) {
+function page({ path, title, description, crumbs, body, jsonld, noindex }) {
   const url = `${SITE}/${path}`;
   return `<!doctype html>
 <html lang="en"><head>
@@ -93,7 +94,7 @@ ${gtag}
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="robots" content="index,follow"><link rel="canonical" href="${url}">
+<meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}"><link rel="canonical" href="${url}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:type" content="website"><meta property="og:image" content="${SITE}/texcontractor-logo.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
 <style>${css}</style>
@@ -132,8 +133,15 @@ async function main() {
   });
 
   rmSync(OUT, { recursive: true, force: true });
-  const cityMap = new Map(); // "ST|City" -> pages
+  const cityMap = new Map(); // "ST|City" -> service pages (5+ providers)
   for (const p of pages) { const k = `${p.state}|${p.city}`; if (!cityMap.has(k)) cityMap.set(k, []); cityMap.get(k).push(p); }
+  // Every listing appears on its city hub, so no provider is hidden just because their
+  // service has fewer than MIN_PER_PAGE listings in that city.
+  const cityRows = new Map(); // "ST|City" -> all listings
+  for (const r of rows) { const k = `${r.state}|${r.city}`; if (!cityRows.has(k)) cityRows.set(k, []); cityRows.get(k).push(r); }
+  for (const k of cityRows.keys()) if (!cityMap.has(k)) cityMap.set(k, []);
+  const cityTotal = (k) => cityRows.get(k).length;
+  const indexable = (k) => cityTotal(k) >= CITY_MIN;
   const stateMap = new Map(); // ST -> [city keys]
   for (const k of cityMap.keys()) { const st = k.split('|')[0]; if (!stateMap.has(st)) stateMap.set(st, []); stateMap.get(st).push(k); }
   const updated = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -172,23 +180,41 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
     writeFileSync(join(root, p.path), html);
   }
 
-  // City hubs.
+  // City hubs: every provider in the city, grouped by service.
+  const card = (r) => {
+    const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+    return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)}</div>${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
+  };
   for (const [k, list] of cityMap) {
     const [state, city] = k.split('|');
     const path = `local/${state.toLowerCase()}/${slug(city)}/index.html`;
-    list.sort((a, b) => b.list.length - a.list.length);
-    const total = list.reduce((s, p) => s + p.list.length, 0);
+    const all = cityRows.get(k);
+    const bySvc = new Map();
+    for (const r of all) { if (!bySvc.has(r.service)) bySvc.set(r.service, []); bySvc.get(r.service).push(r); }
+    const svcs = [...bySvc.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+    const pageFor = new Map(list.map((p) => [p.service, p]));
+    const total = all.length;
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [STATES[state], `/local/${state.toLowerCase()}/`], [city, null]];
+    const sections = svcs.map(([svc, rs]) => {
+      rs.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'contractor' ? -1 : 1) || a.name.localeCompare(b.name));
+      const sp = pageFor.get(svc);
+      const shown = sp ? rs.slice(0, 6) : rs;
+      return `<h2 id="${slug(svc)}">${esc(svc)} <span class="badge">${rs.length}</span></h2>
+<section class="grid" aria-label="${esc(svc)} in ${esc(city)}">${shown.map(card).join('\n')}</section>${sp ? `<p><a href="/${sp.path}">See all ${rs.length} ${esc(svc.toLowerCase())} providers in ${esc(city)} →</a></p>` : ''}`;
+    }).join('\n');
     const body = `<h1>Local services in ${esc(city)}, ${esc(state)}</h1>
-<p class="lead">${total} providers across ${list.length} service categories in ${esc(city)}, ${esc(STATES[state])}. Choose a service to see who is listed and text them directly.</p>
-<ul class="links">${list.map((p) => `<li><a href="/${p.path}">${esc(p.service)} <span>(${p.list.length})</span></a></li>`).join('')}</ul>`;
-    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), title: `Local services in ${city}, ${state} | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${list.slice(0, 4).map((p) => p.service).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
+<p class="lead">${total} provider${total === 1 ? '' : 's'} across ${svcs.length} service ${svcs.length === 1 ? 'category' : 'categories'} in ${esc(city)}, ${esc(STATES[state])}. Open a profile, sign in to see the phone number, and text the provider directly.</p>
+<div class="ctas"><a class="cta req" href="/requests.html?post=1">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
+<ul class="links">${svcs.map(([svc, rs]) => `<li><a href="#${slug(svc)}">${esc(svc)} <span>(${rs.length})</span></a></li>`).join('')}</ul>
+${sections}`;
+    mkdirSync(join(root, path, '..'), { recursive: true });
+    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), noindex: !indexable(k), title: `${total} local service providers in ${city}, ${state} | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${svcs.slice(0, 4).map(([s]) => s).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
   }
 
   // State hubs.
   for (const [st, cityKeys] of stateMap) {
     const path = `local/${st.toLowerCase()}/index.html`;
-    const cities = cityKeys.map((k) => ({ city: k.split('|')[1], count: cityMap.get(k).reduce((s, p) => s + p.list.length, 0) })).sort((a, b) => b.count - a.count);
+    const cities = cityKeys.map((k) => ({ city: k.split('|')[1], count: cityTotal(k) })).sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [STATES[st], null]];
     const body = `<h1>Local service providers in ${esc(STATES[st])}</h1>
 <p class="lead">Choose your city to see local providers by service.</p>
@@ -199,7 +225,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 
   // Root hub.
   const states = [...stateMap.keys()].sort((a, b) => STATES[a].localeCompare(STATES[b]));
-  const topCities = [...cityMap.entries()].map(([k, l]) => ({ k, count: l.reduce((s, p) => s + p.list.length, 0) })).sort((a, b) => b.count - a.count).slice(0, 30);
+  const topCities = [...cityMap.keys()].map((k) => ({ k, count: cityTotal(k) })).sort((a, b) => b.count - a.count).slice(0, 30);
   writeFileSync(join(OUT, 'index.html'), page({
     path: 'local/', title: 'Browse local service providers by city | TexContractor',
     description: 'Find local service providers by state and city on TexContractor — plumbers, electricians, AC repair, cleaning, lawn care and more. Text providers directly.',
@@ -213,14 +239,14 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
   // Small city list for the home page sidebar ("Nearby cities", "Cities by state").
   let coords = {};
   try { coords = JSON.parse(readFileSync(join(root, 'city-coordinates-2025.json'), 'utf8')); } catch (_) {}
-  const sideCities = [...cityMap.keys()].map((k) => { const [st, c] = k.split('|'); const ll = coords[`${st}|${c.toLowerCase()}`]; return ll ? [`${st.toLowerCase()}/${slug(c)}`, c, Math.round(ll[0] * 100) / 100, Math.round(ll[1] * 100) / 100] : null; }).filter(Boolean);
+  const sideCities = [...cityMap.keys()].filter(indexable).map((k) => { const [st, c] = k.split('|'); const ll = coords[`${st}|${c.toLowerCase()}`]; return ll ? [`${st.toLowerCase()}/${slug(c)}`, c, Math.round(ll[0] * 100) / 100, Math.round(ll[1] * 100) / 100] : null; }).filter(Boolean);
   writeFileSync(join(OUT, 'cities.json'), JSON.stringify({ states: states.map((st) => [st.toLowerCase(), STATES[st]]), cities: sideCities }));
 
   // Separate sitemap so the existing 66-URL sitemap and its checks stay untouched.
-  const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.map((p) => p.path)];
+  const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].filter(indexable).map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.map((p) => p.path)];
   const today = new Date().toISOString().slice(0, 10);
   writeFileSync(join(root, 'sitemap-local.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}/${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
-  console.log(`Local pages: ${pages.length} city/service pages, ${cityMap.size} city hubs, ${stateMap.size} state hubs, ${urls.length} sitemap URLs (min ${MIN_PER_PAGE} providers per page, ${rows.length} usable listings).`);
+  console.log(`Local pages: ${pages.length} city/service pages, ${cityMap.size} city hubs (${[...cityMap.keys()].filter(indexable).length} indexable), ${stateMap.size} state hubs, ${urls.length} sitemap URLs (min ${MIN_PER_PAGE} providers per page, ${rows.length} usable listings).`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
