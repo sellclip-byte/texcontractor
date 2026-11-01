@@ -78,7 +78,7 @@ header.top img{height:44px;width:auto;display:block}.crumbs{font-size:14px;color
 h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:10px 0 8px;text-wrap:balance}.lead{color:#111;max-width:68ch;margin:0 0 18px}
 .cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;background:var(--gold);color:#1b1b1b;font-weight:800;text-decoration:none}
 .cta.alt{background:var(--accent);color:#fff}.cta.req{background:#b45309;color:#fff}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
-.hablo{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font-weight:800;font-size:13px;color:#111}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}
+.hablo{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font-weight:800;font-size:13px;color:#111}.hablo .mxf{flex:none;border-radius:3px;box-shadow:0 0 0 1px #cfd8d3}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}
 .nearest{display:block;margin:0 0 22px;padding:16px 20px;border-radius:14px;background:#f5b84b;border:2px solid #d4a017;color:#000;text-decoration:none;box-shadow:0 4px 14px rgba(212,160,23,.35)}.nearest b{display:block;font-size:clamp(18px,3.4vw,22px);line-height:1.25}.nearest span{display:block;font-size:15px;font-weight:600;margin-top:4px}.nearest:hover{background:#ffc94d}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -166,7 +166,7 @@ async function main() {
     const serviceSlug = slug(p.service) + '.html';
     const cards = p.list.map((r) => {
       const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
-      return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><span aria-hidden="true">\u{1F1F2}\u{1F1FD}</span><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
+      return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
