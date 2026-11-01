@@ -60,7 +60,7 @@
     .bs-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
     .bs-ex { position:absolute; top:-9px; left:12px; background:#0f3d2e; color:#fff; font-size:.66rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; }
     .bs-green { color:#15803d; }
-    .cr-ex { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; margin:10px 0 12px; padding:14px 6px 8px; border:1px solid #d6e4dc; border-radius:12px; background:linear-gradient(#f3fbf6,#fff); text-decoration:none; color:#0f172a; }
+    .cr-ex { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; margin:12px 0 12px; padding:14px 6px 8px; border:1px solid #d6e4dc; border-radius:12px; background:linear-gradient(#f3fbf6,#fff); text-decoration:none; color:#0f172a; }
     .cr-ex img { width:52px; height:52px; border-radius:12px; object-fit:cover; }
     .cr-ex strong { font-size:.85rem; } .cr-ex-meta { font-size:.72rem; color:#1d4ed8; }
     .cr-ex .bs-avail, .cr-ex .bs-hablo { font-size:.72rem; padding:2px 8px; } .cr-ex .bs-hablo { padding-left:5px; }
@@ -592,11 +592,13 @@
 <style>dialog.join-box{position:fixed;inset:0;width:min(1000px,calc(100% - 40px));max-height:calc(100dvh - 40px);height:fit-content;margin:auto;padding:28px 24px 22px;background:#fff;border:0;border-radius:14px;overflow:auto;box-sizing:border-box;box-shadow:0 18px 65px rgba(0,0,0,.22)}dialog.join-box:not([open]){display:none!important}dialog.join-box::backdrop{background:rgba(15,23,42,.42)}.join-dismiss{position:absolute;right:2px;top:2px;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;background:transparent;color:#34443e;font-size:28px;line-height:1;cursor:pointer}.join-dismiss:hover{color:#075c4b;background:#edf5f1;border-radius:50%}@media(max-width:650px){dialog.join-box{width:calc(100% - 24px);max-height:calc(100dvh - 24px);padding:36px 16px 18px}}</style><link rel="stylesheet" href="tex-gold.css?v=1">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "TexContractor", "url": "https://texcontractor.com/", "logo": "https://texcontractor.com/texcontractor-icon-512.png", "email": "texcontractor.help@gmail.com", "areaServed": "Texas", "sameAs": ["https://www.facebook.com/profile.php?id=61595383285520", "https://www.instagram.com/texcontractor/", "https://www.youtube.com/@TexContractor", "https://www.tiktok.com/@texcontractor"]}</script>
 <style>
-@media(max-width:1099px){.container{display:flex;flex-direction:column}.container>.cl-side{order:99;display:block;margin:10px auto 0;width:min(340px,100%);padding:14px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;color:#0f172a}.cl-side-links{margin-top:18px}}
+@media(max-width:1099px){.container{display:flex;flex-direction:column}.container .cl-side{order:99;display:block;margin:10px auto 0;width:min(340px,100%);padding:14px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;color:#0f172a}.cl-side-links{margin-top:18px}}
 @media(min-width:1100px){
 .container{display:grid;grid-template-columns:184px minmax(0,1fr);column-gap:26px;max-width:1460px}
 .container>*{grid-column:2}
-.container>.cl-side{grid-column:1;grid-row:1 / span 20;display:block;position:sticky;top:104px;max-height:calc(100vh - 116px);overflow:auto;align-self:start;margin-top:18px;padding:14px 10px 18px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;font-size:.92rem;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+@media(min-width:1100px){.container>.cl-col{grid-column:1;grid-row:1 / span 20;align-self:stretch;min-width:0}.cl-col .cl-side{margin-top:12px!important}.cl-ex-box{margin-top:18px}.cl-ex-box .cr-ex{margin:8px 0 0;background:#fff;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(15,23,42,.06)}}
+@media(max-width:1099px){.container>.cl-col{display:contents}.cl-ex-box{order:98;width:min(340px,100%);margin:10px auto 0}}
+.container .cl-side{grid-column:1;grid-row:1 / span 20;display:block;position:sticky;top:104px;max-height:calc(100vh - 116px);overflow:auto;align-self:start;margin-top:18px;padding:14px 10px 18px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;font-size:.92rem;color:#0f172a;box-shadow:0 1px 3px rgba(15,23,42,.06)}
 }
 .cl-side-post{display:block;margin:0 0 10px;padding:8px 6px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;color:#0f172a;font-weight:700;font-size:1.02rem;text-decoration:none}
 .cl-side-post span{margin-right:4px}
@@ -764,6 +766,18 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 
   <div class="container">
     
+    <div class="cl-col">
+    <div class="cl-ex-box">
+      <a class="cr-ex" href="site-guide.html#badges" aria-label="Example: what the Available now and Hablo español badges mean">
+        <span class="bs-ex">Example</span>
+        <img src="assets/sample-pro.jpg" alt="" width="52" height="52" loading="lazy">
+        <strong>Miguel R.</strong><span class="cr-ex-meta">Plumbing · Houston</span>
+        <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
+        <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="20" height="14" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
+        <small>Blinking = available right now. Text them first.</small>
+        <small lang="es">Si parpadea, está disponible ahora.</small>
+      </a>
+    </div>
     <aside class="cl-side" aria-label="Quick links">
       <a class="cl-side-post" href="start.html"><span aria-hidden="true">&#9998;</span> List your service</a>
       <a class="cl-side-post cl-side-req" href="requests.html?post=1"><span aria-hidden="true">&#128203;</span> Post a request</a>
@@ -789,16 +803,8 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
         <a href="site-guide.html#terms">Terms of use</a>
       </nav>
     </aside>
+    </div>
     <aside class="cr-side" aria-label="Cities">
-      <a class="cr-ex" href="site-guide.html#badges" aria-label="Example: what the Available now and Hablo español badges mean">
-        <span class="bs-ex">Example</span>
-        <img src="assets/sample-pro.jpg" alt="" width="52" height="52" loading="lazy">
-        <strong>Miguel R.</strong><span class="cr-ex-meta">Plumbing · Houston</span>
-        <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
-        <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="20" height="14" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
-        <small>Blinking = available right now. Text them first.</small>
-        <small lang="es">Si parpadea, está disponible ahora.</small>
-      </a>
       <select id="cr-lang" aria-label="Language"><option value="en">English</option><option value="es">Español</option></select>
       <h3>Nearby cities</h3>
       <div class="cr-list" id="cr-near"></div>
