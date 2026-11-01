@@ -80,6 +80,7 @@
       <h2 style="margin:0 0 4px;font-size:1.15rem">Your services <span id="my-services-count" style="color:#64748b;font-weight:700"></span></h2>
       <p class="hint" style="margin:0 0 12px">Each technician can list up to 2 services. You can change or delete a service at any time.</p>
       <label id="my-spanish" style="display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;border:2px solid #006847;border-radius:12px;background:#f6fbf8;font-weight:800;cursor:pointer"><input type="checkbox" id="my-spanish-box" style="width:22px;height:22px;accent-color:#006847"> <span>🇲🇽 I speak Spanish — <span lang="es" style="color:#006847">Hablo</span> <span lang="es" style="color:#ce1126">español</span><span class="hint" style="display:block;font-weight:600">Shows a “Hablo español” badge on all your listings.</span></span></label>
+<div id="my-hours" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;border:2px solid #16a34a;border-radius:12px;background:#f3fbf6"><strong style="flex-basis:100%">🟢 Hours you are available <span class="hint" style="font-weight:600">(Texas time — the green “Available now” badge shows only during these hours)</span></strong><label>From <select id="my-from"><option value="">Not set</option><option value="0">12 AM</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option></select></label><label>To <select id="my-to"><option value="">Not set</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option><option value="24">12 AM</option></select></label><button type="button" id="my-hours-save" style="min-height:38px;padding:7px 14px;border:0;border-radius:9px;background:#16a34a;color:#fff;font:inherit;font-weight:800;cursor:pointer">Save hours</button></div>
       <div id="my-services-list" style="display:grid;gap:10px"></div>
       <p id="my-services-status" role="status" style="margin:10px 0 0;font-weight:700"></p>
     </section>
@@ -94,6 +95,7 @@
           <label>Mobile number <span class="hint">A mobile number that can receive texts — not a landline.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <input type="hidden" name="email">
           <label>Do you speak Spanish? <span class="hint" lang="es">¿Hablas español? Customers will see a 🇲🇽 “Hablo español” badge on your listing.</span><select name="speaksSpanish"><option value="no">No</option><option value="yes">Yes — Sí, hablo español</option></select></label>
+          <div class="avail-pick" style="display:grid;gap:6px"><span style="font-weight:800">Hours you are available <span class="hint">Texas time. A green “Available now” badge shows on your listing during these hours and hides by itself after.</span></span><div style="display:flex;gap:10px;flex-wrap:wrap"><label style="flex:1;min-width:130px">From<select name="availFrom"><option value="">Not set</option><option value="0">12 AM</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option></select></label><label style="flex:1;min-width:130px">To<select name="availTo"><option value="">Not set</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option><option value="24">12 AM</option></select></label></div></div>
         </div>
       </section>
       <section class="panel">
@@ -142,7 +144,7 @@
   </main>
   <script src="tex-auth.js?v=20261021-signup"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261101-es"></script>
+  <script src="tex-admin.js?v=20261101-hrs"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261031-trade25"></script>
   <script>
@@ -398,7 +400,7 @@
     };
     // Keep a draft of the typed details (not photos) so a refresh does not wipe the form.
     const DRAFT_KEY = 'texcontractor-register-draft';
-    const DRAFT_FIELDS = ['phone','displayName','years','service','about','state','city','otherCity','speaksSpanish'];
+    const DRAFT_FIELDS = ['phone','displayName','years','service','about','state','city','otherCity','speaksSpanish','availFrom','availTo'];
     const saveDraft = () => {
       try {
         const d = {};
@@ -532,6 +534,15 @@
       let rows = [];
       try { rows = await TexAdminApi.myServices() || []; } catch (_) { return; }
       myBox.hidden = rows.length === 0;
+      const withHours = rows.find((r) => r.avail_from != null && r.avail_to != null);
+      document.getElementById('my-from').value = withHours ? String(withHours.avail_from) : '';
+      document.getElementById('my-to').value = withHours ? String(withHours.avail_to) : '';
+      document.getElementById('my-hours-save').onclick = async () => {
+        const f = document.getElementById('my-from').value, t = document.getElementById('my-to').value;
+        if ((f === '') !== (t === '') || (f !== '' && Number(f) === Number(t) % 24)) { myStatus.textContent = 'Choose both hours (From and To), or set both to Not set.'; return; }
+        try { await TexAdminApi.setMyHours(f === '' ? null : Number(f), t === '' ? null : Number(t)); myStatus.textContent = f === '' ? 'Saved: the Available now badge is off.' : 'Saved: your hours are updated.'; }
+        catch (error) { myStatus.textContent = 'Could not save your hours. Please try again.'; }
+      };
       const spanishBox = document.getElementById('my-spanish-box');
       spanishBox.checked = rows.some((r) => r.speaks_spanish);
       spanishBox.onchange = async () => {
@@ -614,6 +625,9 @@
       // One name field: it is both the public name and the private contact name.
       data.displayName = String(data.displayName || '').trim();
       if (!String(data.realName || '').trim()) data.realName = data.displayName;
+      if ((data.availFrom === '') !== (data.availTo === '') || (data.availFrom !== '' && Number(data.availFrom) === Number(data.availTo) % 24)) {
+        submitButton.disabled=false;submitButton.textContent='Publish my service';success.classList.add('show');success.textContent='Choose both hours you are available (From and To), or leave both as Not set.';return;
+      }
       // The public name must be a name, not a phone number or a list of keywords.
       if (/\d{3}\D{0,3}\d{3}\D{0,3}\d{4}/.test(data.displayName) || (data.displayName.match(/,/g) || []).length >= 2) {
         submitButton.disabled=false;submitButton.textContent='Publish my service';success.classList.add('show');success.textContent='Please enter your name or nickname only (for example Mike Johnson). Do not put a phone number or a list of services in the name.';return;

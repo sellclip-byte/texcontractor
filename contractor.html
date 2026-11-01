@@ -66,6 +66,7 @@
     .provider-name { margin:0; overflow:hidden; font-size:1rem; text-overflow:ellipsis; white-space:nowrap; }
     .provider-rating { margin:3px 0 0; color:#123DCC; font-size:.88rem; letter-spacing:.04em; }
     .provider-rating span { color:var(--muted); letter-spacing:0; }
+    .avail-now{display:inline-flex;align-items:center;gap:6px;margin:6px 6px 0 0;padding:3px 10px;border-radius:999px;background:#e7f8ee;border:2px solid #16a34a;color:#0f5132;font:800 .8rem/1.2 "Segoe UI",Arial,sans-serif;white-space:nowrap}.avail-now i{width:9px;height:9px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.25);animation:availBlink 1s ease-in-out infinite}@keyframes availBlink{0%,100%{opacity:1;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.55),0 0 10px 3px rgba(34,197,94,.85)}50%{opacity:.25;background:#16a34a;box-shadow:0 0 0 7px rgba(34,197,94,0),0 0 0 0 rgba(34,197,94,0)}}.avail-now{animation:availGlow 2s ease-in-out infinite}@keyframes availGlow{50%{box-shadow:0 0 12px rgba(34,197,94,.55)}}@media (prefers-reduced-motion:reduce){.avail-now,.avail-now i{animation:none}}
     .hablo{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font:800 .82rem/1.2 "Segoe UI",Arial,sans-serif;color:#111;white-space:nowrap}.hablo .mx{font-size:1.05rem;line-height:1}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}
     .provider-trade { margin:5px 0 0; color:var(--muted); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .provider-identity { display:flex; flex-direction:column; align-items:center; gap:6px; }
@@ -310,6 +311,7 @@
       trade.className = 'provider-trade';
       trade.textContent = provider.service;
       main.append(status, name, rating, trade);
+      if (texAvailableNow(provider.avail_from, provider.avail_to)) main.append(availBadge(provider.avail_from, provider.avail_to));
       if (provider.speaks_spanish) main.append(habloBadge());
       const actions = document.createElement('div');
       actions.className = 'provider-actions';
@@ -375,10 +377,13 @@
       }
       throw new Error('Too many results to load safely.');
     }
+    const texHourLabel=(h)=>{h=Number(h)%24;return (h%12||12)+(h<12?' AM':' PM');};
+    const texAvailableNow=(from,to)=>{if(from==null||to==null||from===to)return false;const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',hourCycle:'h23'}).format(new Date()))%24;from=Number(from);to=Number(to);return from<to?(h>=from&&h<to):(h>=from||h<to);};
+    const availBadge=(from,to)=>{const s=document.createElement('span');s.className='avail-now';s.title='Usually available '+texHourLabel(from)+' – '+texHourLabel(to)+' (Texas time)';s.innerHTML='<i aria-hidden="true"></i>Available now';return s;};
     const habloBadge=()=>{const s=document.createElement('span');s.className='hablo';s.setAttribute('lang','es');s.title='This provider speaks Spanish';s.innerHTML='<span class="mx" aria-hidden="true">\u{1F1F2}\u{1F1FD}</span><b>Hablo</b> <em>español</em>';return s;};
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish,avail_from,avail_to', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
         // The public submissions endpoint must not prevent approved imports from loading.
