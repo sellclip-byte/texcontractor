@@ -40,7 +40,7 @@
       return sideRows.find((row) => row.placement === current) || sideRows.find((row) => row.placement === 'all');
     }).filter(Boolean);
   };
-  const render = (ad) => {
+  const render = (ad, holder) => {
     const aside = document.createElement('aside');
     aside.className = `tc-side-ad tc-side-ad-${ad.side}`;
     const homepageLeft = pageKey() === 'homepage' && ad.side === 'left';
@@ -99,8 +99,27 @@
       body.appendChild(copy);
     }
     aside.appendChild(body);
-    if (homepageLeft) document.body.insertBefore(aside, document.querySelector('footer'));
+    if (holder) holder.appendChild(aside);
+    else if (homepageLeft) document.body.insertBefore(aside, document.querySelector('footer'));
     else document.body.appendChild(aside);
+  };
+  // Spanish versions of the vertical banners (owner request 11-01): English pair stacked on the left, Spanish pair on the right.
+  const SPANISH = {
+    '*Join* | if you are a | *professional* | *technician* | and start | receiving | *contact* | from customers': '*Únete* | si eres un | *técnico* | *profesional* | y empieza | a recibir | *mensajes* | de clientes',
+    '*Join* | *thousands* | of technicians | in all | *50 states* | customers | *text you* | directly': '*Únete* | a | *miles* | de técnicos | en los | *50 estados* | los clientes | *te escriben* | directo',
+    "*Be* | *professional* | and keep | your | *appointments* | reliable | to earn | our customers' | *trust*": '*Sé* | *profesional* | y cumple | tus | *citas* | para ganarte | la | *confianza* | de los clientes',
+    '*Honesty* | and | *trust* | are what | bring you | *customers*': 'La | *honestidad* | y la | *confianza* | te traen | *clientes*'
+  };
+  const stackColumns = (ads) => {
+    const vertical = ads.filter((a) => a.style === 'vertical' && a.message_text);
+    if (vertical.length < 2 || !['contractor', 'profile'].includes(pageKey())) return false;
+    const pair = ['left', 'right'].map((side) => vertical.find((a) => a.side === side)).filter(Boolean);
+    const left = document.createElement('div'); left.className = 'tc-side-col tc-side-col-left';
+    const right = document.createElement('div'); right.className = 'tc-side-col tc-side-col-right'; right.lang = 'es';
+    document.body.append(left, right);
+    pair.forEach((ad) => render({ ...ad, side: 'left' }, left));
+    pair.forEach((ad) => render({ ...ad, side: 'right', message_text: SPANISH[ad.message_text.trim()] || ad.message_text }, right));
+    return true;
   };
   const injectStyles = () => {
     if (document.getElementById('tc-side-ads-style')) return;
@@ -135,6 +154,13 @@
       .tc-side-ad-body.motion-shimmer { animation: tc-side-ad-glow 7s ease-in-out infinite; }
       @keyframes tc-side-ad-glow { 0%,100% { box-shadow: 0 0 0 2px #d4a72c, 0 12px 28px rgba(15,23,42,.18); } 50% { box-shadow: 0 0 0 2px #2fbf7a, 0 0 22px rgba(47,191,122,.45); } }
       @media (prefers-reduced-motion: reduce) { .tc-side-ad-body.motion-shimmer { animation: none; } }
+      .tc-side-col { position: fixed; z-index: 40; top: 110px; width: min(160px, 12vw); display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 120px); overflow: hidden; pointer-events: none; }
+      .tc-side-col-left { left: 14px; } .tc-side-col-right { right: 14px; }
+      .tc-side-col .tc-side-ad { position: static; width: 100%; max-height: none; }
+      .tc-side-col .tc-side-ad-body { max-height: none; }
+      .tc-side-col .tc-side-ad-body.ad-vertical { padding: 14px 6px; }
+      .tc-side-col .tc-side-ad-body.ad-vertical .tc-side-ad-copy { gap: 8px; }
+      @media (max-width: 1120px) { .tc-side-col { display: none; } }
       @media (max-width: 1120px) { .tc-side-ad { display: none; } }
       .tc-side-ad.tc-home-left-ad { display: block; position: static; width: min(200px, calc(100% - 28px)); max-height: none; margin: 20px 14px; }
       .tc-home-left-ad .tc-side-ad-body { max-height: none; overflow: visible; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
@@ -149,7 +175,7 @@
       const ads = await getAds();
       if (!ads.length) return;
       injectStyles();
-      ads.forEach(render);
+      if (!stackColumns(ads)) ads.forEach((ad) => render(ad));
       // Give both vertical text boxes the same height so the sides look balanced.
       const boxes = [...document.querySelectorAll('.tc-side-ad-body.ad-vertical')];
       if (boxes.length > 1) { const tallest = Math.max(...boxes.map((b) => b.offsetHeight)); boxes.forEach((b) => { b.style.minHeight = tallest + 'px'; }); }
