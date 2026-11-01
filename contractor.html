@@ -460,8 +460,10 @@
         // alphabetical ranking rather than hiding any contractors.
         let censusCityCenters = {};
         try {
-          const geoResponse = await fetch('city-coordinates-2025.json', {cache:'force-cache'});
+          const geoResponse = await fetch('city-coordinates-2025.json?v=2', {cache:'force-cache'});
           if (geoResponse.ok) censusCityCenters = await geoResponse.json();
+          // Region names some listings use ("Dallas–Fort Worth", "East Texas") mapped to a central point.
+          try { const aliasResponse = await fetch('city-aliases.json?v=1', {cache:'force-cache'}); if (aliasResponse.ok) Object.assign(censusCityCenters, await aliasResponse.json()); } catch (aliasError) {}
         } catch (geoError) { console.warn('City distance data unavailable',geoError); }
         const normalizeCity = value => String(value || '').trim().toLowerCase();
         const origin = censusCityCenters[String(state || '').toUpperCase() + '|' + normalizeCity(city)];
