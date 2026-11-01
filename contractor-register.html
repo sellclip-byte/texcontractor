@@ -604,6 +604,10 @@
       // One name field: it is both the public name and the private contact name.
       data.displayName = String(data.displayName || '').trim();
       if (!String(data.realName || '').trim()) data.realName = data.displayName;
+      // The public name must be a name, not a phone number or a list of keywords.
+      if (/\d{3}\D{0,3}\d{3}\D{0,3}\d{4}/.test(data.displayName) || (data.displayName.match(/,/g) || []).length >= 2) {
+        submitButton.disabled=false;submitButton.textContent='Publish my service';success.classList.add('show');success.textContent='Please enter your name or nickname only (for example Mike Johnson). Do not put a phone number or a list of services in the name.';return;
+      }
       // The contact email is the signed-in account's email (no need to type it again).
       data.email = String(signedInUser?.email || data.email || '').trim();
       if (data.rulesAccepted !== 'yes') {
