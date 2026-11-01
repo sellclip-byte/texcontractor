@@ -1,0 +1,46 @@
+// Site-wide readability: light-gray text on light backgrounds becomes near-black, and
+// light pill buttons/links get bold black text with a bright gold border.
+// Brand colors (green, orange, gold) and anything on a dark background are left alone.
+(function () {
+  const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+  const lum = ([r, g, b]) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  const grayish = ([r, g, b]) => Math.max(r, g, b) - Math.min(r, g, b) < 40;
+  function bgOf(el) {
+    for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
+      const cs = getComputedStyle(e);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null; // photo or gradient behind the text: keep as designed
+      const c = rgb(cs.backgroundColor);
+      if (c.length >= 3 && (c[3] === undefined || c[3] > 0.5)) return c;
+    }
+    return [255, 255, 255];
+  }
+  function fix(el) {
+    if (el.dataset.texReadable) return;
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none' || !el.offsetParent && cs.position !== 'fixed') return; // hidden now; checked again when shown
+    el.dataset.texReadable = '1';
+    const bg = bgOf(el);
+    if (!bg || lum(bg) < 0.8) return; // dark or photo background: keep as designed
+    const fg = rgb(cs.color);
+    const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+    if (hasText && grayish(fg) && lum(fg) > 0.12) el.style.setProperty('color', '#111', 'important');
+    // Light pill buttons / chips.
+    const radius = parseFloat(cs.borderTopLeftRadius) || 0;
+    const bw = parseFloat(cs.borderTopWidth) || 0;
+    const ownBg = rgb(cs.backgroundColor);
+    const ownBgLight = ownBg.length < 3 || ownBg[3] === 0 || lum(ownBg) > 0.85;
+    if (/^(A|BUTTON|SPAN|LI|LABEL)$/.test(el.tagName) && radius >= 12 && bw > 0 && ownBgLight && el.offsetHeight < 70 && el.textContent.trim().length < 80 && grayish(rgb(cs.borderTopColor))) {
+      el.style.setProperty('border', '2px solid #d4a017', 'important');
+      el.style.setProperty('box-shadow', 'inset 0 0 0 1px #f7d774, 0 1px 4px rgba(212,160,23,.35)', 'important');
+      el.style.setProperty('color', '#000', 'important');
+      el.style.setProperty('font-weight', '700', 'important');
+      el.querySelectorAll('*').forEach((c) => { c.style.setProperty('color', '#000', 'important'); c.dataset.texReadable = '1'; });
+    }
+  }
+  const SEL = 'body *:not(script):not(style):not(svg):not(svg *):not(img):not(video):not(input):not(select):not(textarea)';
+  const run = (root) => { try { (root.querySelectorAll ? root : document).querySelectorAll(SEL).forEach(fix); } catch (e) {} };
+  let t = 0;
+  const schedule = () => { clearTimeout(t); t = setTimeout(() => run(document), 250); };
+  const start = () => { run(document); try { new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'open', 'aria-expanded'] }); } catch (e) {} };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();

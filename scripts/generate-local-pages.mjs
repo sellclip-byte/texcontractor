@@ -98,6 +98,7 @@ ${gtag}
 <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}"><link rel="canonical" href="${url}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:type" content="website"><meta property="og:image" content="${SITE}/texcontractor-logo.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
+<script src="/tex-readable.js?v=1" defer></script>
 <style>${css}</style>
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
 </head><body>
