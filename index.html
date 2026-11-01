@@ -48,7 +48,7 @@
     .req-strip-btns { display:flex; gap:8px; }
     .badge-strip { background:linear-gradient(90deg,#ecfdf3,#fff 45%,#fff5f5); border-bottom:1px solid #d1fadf; }
     .badge-strip-in { max-width:1240px; margin:0 auto; padding:12px 32px; display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
-    .bs-avail { display:inline-flex; align-items:center; gap:7px; padding:4px 12px; border-radius:999px; background:#e7f8ee; border:2px solid #16a34a; color:#0f5132; font-weight:850; font-size:.85rem; white-space:nowrap; animation:bsGlow 2s ease-in-out infinite; }
+    .bs-avail { display:inline-flex; align-items:center; gap:7px; padding:4px 12px; border-radius:999px; background:#e7f8ee; border:2px solid #16a34a; color:#0f5132; font-weight:850; font-size:.85rem; white-space:nowrap; }
     .bs-avail i { width:10px; height:10px; border-radius:50%; background:#22c55e; animation:bsBlink 1s ease-in-out infinite; }
     @keyframes bsBlink { 0%,100%{opacity:1;box-shadow:0 0 0 2px rgba(34,197,94,.5),0 0 10px 3px rgba(34,197,94,.8)} 50%{opacity:.25;box-shadow:none} }
     @keyframes bsGlow { 50%{box-shadow:0 0 12px rgba(34,197,94,.5)} }
@@ -60,6 +60,12 @@
     .bs-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
     .bs-ex { position:absolute; top:-9px; left:12px; background:#0f3d2e; color:#fff; font-size:.66rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; }
     .bs-green { color:#15803d; }
+    .cr-ex { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; margin:10px 0 12px; padding:14px 6px 8px; border:1px solid #d6e4dc; border-radius:12px; background:linear-gradient(#f3fbf6,#fff); text-decoration:none; color:#0f172a; }
+    .cr-ex img { width:52px; height:52px; border-radius:12px; object-fit:cover; }
+    .cr-ex strong { font-size:.85rem; } .cr-ex-meta { font-size:.72rem; color:#1d4ed8; }
+    .cr-ex .bs-avail, .cr-ex .bs-hablo { font-size:.72rem; padding:2px 8px; } .cr-ex .bs-hablo { padding-left:5px; }
+    .cr-ex small { font-size:.68rem; line-height:1.25; color:#14532d; font-weight:700; }
+    .cr-ex .bs-ex { top:-8px; left:50%; transform:translateX(-50%); }
     .bs-text { font-weight:800; color:#0f3d2e; flex:1 1 300px; }
     .bs-text small { display:block; font-weight:600; color:#14532d; font-size:.85rem; margin-top:2px; }
     .bs-btns { display:flex; gap:8px; flex-wrap:wrap; } .bs-btns a { white-space:nowrap; font-weight:800; text-decoration:none; border-radius:9px; padding:8px 14px; }
@@ -695,17 +701,6 @@
     <span class="req-strip-text">Need a job done? Post a request with photos and get offers from local technicians.<span class="req-strip-count" id="req-strip-count" hidden></span></span>
     <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
   </div></div>
-  <div class="badge-strip" id="badge-strip"><div class="badge-strip-in">
-    <div class="bs-card" aria-label="Example technician card">
-      <span class="bs-ex">Example</span>
-      <img src="assets/sample-pro.jpg" alt="" width="64" height="64" loading="lazy">
-      <div class="bs-card-main"><strong>Miguel R.</strong><span class="bs-meta">Plumbing · Houston, TX</span>
-        <span class="bs-badges"><span class="bs-avail"><i aria-hidden="true"></i>Available now</span><span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span></span></div>
-    </div>
-    <span class="bs-text">See it blinking? <span class="bs-green">That technician is available right now</span> — text them first.<small>“Hablo español” means you can text them in Spanish.</small><small lang="es">¿La ves parpadear? Ese técnico está disponible ahora. “Hablo español”: escríbele en español.</small></span>
-    <span class="bs-btns"><a class="bs-find" href="site-guide.html#badges">How it works</a><a class="bs-pro" href="contractor-register.html">Technicians: get the badges</a></span>
-  </div></div>
-
 <style>
 dialog.join-box.join-pop{display:block;width:min(820px,calc(100% - 32px))!important;max-height:calc(100dvh - 32px)!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;grid-template-columns:none!important}
 dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
@@ -795,6 +790,15 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       </nav>
     </aside>
     <aside class="cr-side" aria-label="Cities">
+      <a class="cr-ex" href="site-guide.html#badges" aria-label="Example: what the Available now and Hablo español badges mean">
+        <span class="bs-ex">Example</span>
+        <img src="assets/sample-pro.jpg" alt="" width="52" height="52" loading="lazy">
+        <strong>Miguel R.</strong><span class="cr-ex-meta">Plumbing · Houston</span>
+        <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
+        <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="20" height="14" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
+        <small>Blinking = available right now. Text them first.</small>
+        <small lang="es">Si parpadea, está disponible ahora.</small>
+      </a>
       <select id="cr-lang" aria-label="Language"><option value="en">English</option><option value="es">Español</option></select>
       <h3>Nearby cities</h3>
       <div class="cr-list" id="cr-near"></div>
