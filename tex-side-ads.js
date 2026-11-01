@@ -64,31 +64,39 @@
       const copy = document.createElement('div');
       copy.className = 'tc-side-ad-copy';
       if (ad.style === 'vertical') {
-        // Lines are separated by "|"; a line wrapped in *stars* is emphasized. Typed out like a typewriter.
-        const lines = ad.message_text.split('|').map((part) => part.trim()).filter(Boolean).map((part) => {
-          const big = /^\*.*\*$/.test(part);
-          const el = document.createElement('span');
-          el.className = big ? 'tc-side-ad-word tc-side-ad-big' : 'tc-side-ad-word tc-side-ad-small';
-          el.dataset.text = big ? part.slice(1, -1) : part;
-          el.textContent = el.dataset.text;
-          copy.appendChild(el);
-          return el;
-        });
+        // Lines are separated by "|"; a line wrapped in *stars* is emphasized. Typed out like a typewriter,
+        // alternating English and Spanish in the same box when a Spanish version exists.
+        const texts = [ad.message_text, SPANISH[ad.message_text.trim()]].filter(Boolean);
+        const build = (text) => {
+          copy.replaceChildren();
+          copy.lang = text === ad.message_text ? 'en' : 'es';
+          return text.split('|').map((part) => part.trim()).filter(Boolean).map((part) => {
+            const big = /^\*.*\*$/.test(part);
+            const el = document.createElement('span');
+            el.className = big ? 'tc-side-ad-word tc-side-ad-big' : 'tc-side-ad-word tc-side-ad-small';
+            el.dataset.text = big ? part.slice(1, -1) : part;
+            el.textContent = el.dataset.text;
+            copy.appendChild(el);
+            return el;
+          });
+        };
+        let lines = build(texts[0]);
         const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!reduce && lines.length) {
           const wait = (ms) => new Promise((r) => setTimeout(r, ms));
           const type = async () => {
-            for (;;) {
+            for (let round = 0; ; round++) {
+              lines = build(texts[round % texts.length]);
               lines.forEach((el) => { el.textContent = '\u00a0'; el.classList.remove('tc-typing'); });
               for (const el of lines) {
                 el.classList.add('tc-typing');
                 const text = el.dataset.text;
-                for (let i = 1; i <= text.length; i++) { el.textContent = text.slice(0, i); await wait(85); }
+                for (let i = 1; i <= text.length; i++) { el.textContent = text.slice(0, i); await wait(70); }
                 el.classList.remove('tc-typing');
-                await wait(250);
+                await wait(200);
               }
               lines[lines.length - 1].classList.add('tc-typing');
-              await wait(9000);
+              await wait(5000);
             }
           };
           type();
@@ -175,7 +183,7 @@
       const ads = await getAds();
       if (!ads.length) return;
       injectStyles();
-      if (!stackColumns(ads)) ads.forEach((ad) => render(ad));
+      ads.forEach((ad) => render(ad));
       // Give both vertical text boxes the same height so the sides look balanced.
       const boxes = [...document.querySelectorAll('.tc-side-ad-body.ad-vertical')];
       if (boxes.length > 1) { const tallest = Math.max(...boxes.map((b) => b.offsetHeight)); boxes.forEach((b) => { b.style.minHeight = tallest + 'px'; }); }
