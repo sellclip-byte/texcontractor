@@ -54,8 +54,14 @@
     @keyframes bsGlow { 50%{box-shadow:0 0 12px rgba(34,197,94,.5)} }
     .bs-hablo { display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 7px; border-radius:999px; background:#fff; border:2px solid #006847; font-weight:850; font-size:.85rem; color:#111; white-space:nowrap; }
     .bs-hablo .mxf { border-radius:3px; box-shadow:0 0 0 1px #cfd8d3; } .bs-hablo b { color:#006847; } .bs-hablo em { font-style:normal; color:#ce1126; }
+    .bs-card { position:relative; display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #d6e4dc; border-radius:16px; padding:12px 14px 10px; box-shadow:0 6px 18px rgba(15,61,46,.10); }
+    .bs-card img { width:64px; height:64px; border-radius:14px; object-fit:cover; flex:none; }
+    .bs-card-main { display:grid; gap:2px; } .bs-card-main strong { font-size:1rem; color:#0f172a; } .bs-meta { font-size:.82rem; color:#1d4ed8; }
+    .bs-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+    .bs-ex { position:absolute; top:-9px; left:12px; background:#0f3d2e; color:#fff; font-size:.66rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; }
+    .bs-green { color:#15803d; }
     .bs-text { font-weight:800; color:#0f3d2e; flex:1 1 300px; }
-    .bs-text small { display:block; font-weight:600; color:#14532d; }
+    .bs-text small { display:block; font-weight:600; color:#14532d; font-size:.85rem; margin-top:2px; }
     .bs-btns { display:flex; gap:8px; flex-wrap:wrap; } .bs-btns a { white-space:nowrap; font-weight:800; text-decoration:none; border-radius:9px; padding:8px 14px; }
     .bs-find { background:#16a34a; color:#fff; } .bs-pro { background:#fff; color:#006847; border:2px solid #006847; }
     @media (max-width:640px){ .badge-strip-in{padding:12px 16px} }
@@ -690,9 +696,13 @@
     <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
   </div></div>
   <div class="badge-strip" id="badge-strip"><div class="badge-strip-in">
-    <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
-    <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
-    <span class="bs-text" id="bs-text">Need help fast? Look for the blinking green badge — that pro is working right now. Prefer Spanish? Look for “Hablo español”.<small lang="es">¿Lo necesitas ya? Busca la señal verde. ¿Prefieres español? Busca “Hablo español”.</small></span>
+    <div class="bs-card" aria-label="Example technician card">
+      <span class="bs-ex">Example</span>
+      <img src="assets/sample-pro.jpg" alt="" width="64" height="64" loading="lazy">
+      <div class="bs-card-main"><strong>Miguel R.</strong><span class="bs-meta">Plumbing · Houston, TX</span>
+        <span class="bs-badges"><span class="bs-avail"><i aria-hidden="true"></i>Available now</span><span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span></span></div>
+    </div>
+    <span class="bs-text">See it blinking? <span class="bs-green">That technician is available right now</span> — text them first.<small>“Hablo español” means you can text them in Spanish.</small><small lang="es">¿La ves parpadear? Ese técnico está disponible ahora. “Hablo español”: escríbele en español.</small></span>
     <span class="bs-btns"><a class="bs-find" href="site-guide.html#badges">How it works</a><a class="bs-pro" href="contractor-register.html">Technicians: get the badges</a></span>
   </div></div>
 
