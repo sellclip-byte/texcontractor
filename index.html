@@ -46,6 +46,20 @@
     .req-strip-text { font-weight:800; color:#7c2d12; flex:1 1 320px; }
     .req-strip-count { font-weight:400; color:#9a3412; font-size:.9rem; margin-left:6px; }
     .req-strip-btns { display:flex; gap:8px; }
+    .badge-strip { background:linear-gradient(90deg,#ecfdf3,#fff 45%,#fff5f5); border-bottom:1px solid #d1fadf; }
+    .badge-strip-in { max-width:1240px; margin:0 auto; padding:12px 32px; display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; }
+    .bs-avail { display:inline-flex; align-items:center; gap:7px; padding:4px 12px; border-radius:999px; background:#e7f8ee; border:2px solid #16a34a; color:#0f5132; font-weight:850; font-size:.85rem; white-space:nowrap; animation:bsGlow 2s ease-in-out infinite; }
+    .bs-avail i { width:10px; height:10px; border-radius:50%; background:#22c55e; animation:bsBlink 1s ease-in-out infinite; }
+    @keyframes bsBlink { 0%,100%{opacity:1;box-shadow:0 0 0 2px rgba(34,197,94,.5),0 0 10px 3px rgba(34,197,94,.8)} 50%{opacity:.25;box-shadow:none} }
+    @keyframes bsGlow { 50%{box-shadow:0 0 12px rgba(34,197,94,.5)} }
+    .bs-hablo { display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 7px; border-radius:999px; background:#fff; border:2px solid #006847; font-weight:850; font-size:.85rem; color:#111; white-space:nowrap; }
+    .bs-hablo .mxf { border-radius:3px; box-shadow:0 0 0 1px #cfd8d3; } .bs-hablo b { color:#006847; } .bs-hablo em { font-style:normal; color:#ce1126; }
+    .bs-text { font-weight:800; color:#0f3d2e; flex:1 1 300px; }
+    .bs-text small { display:block; font-weight:600; color:#14532d; }
+    .bs-btns { display:flex; gap:8px; flex-wrap:wrap; } .bs-btns a { white-space:nowrap; font-weight:800; text-decoration:none; border-radius:9px; padding:8px 14px; }
+    .bs-find { background:#16a34a; color:#fff; } .bs-pro { background:#fff; color:#006847; border:2px solid #006847; }
+    @media (max-width:640px){ .badge-strip-in{padding:12px 16px} }
+    @media (prefers-reduced-motion:reduce){ .bs-avail,.bs-avail i{animation:none} }
     .req-strip-btns a { white-space:nowrap; font-weight:800; text-decoration:none; border-radius:9px; padding:8px 14px; }
     .req-strip-post { background:#075c4b; color:#fff; }
     .req-strip-see { color:#b45309; border:1.5px solid #b45309; background:#fff; padding:6.5px 12px !important; }
@@ -674,6 +688,12 @@
     <span class="req-strip-tag">📋 NEW</span>
     <span class="req-strip-text">Need a job done? Post a request with photos and get offers from local technicians.<span class="req-strip-count" id="req-strip-count" hidden></span></span>
     <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
+  </div></div>
+  <div class="badge-strip" id="badge-strip"><div class="badge-strip-in">
+    <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
+    <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
+    <span class="bs-text" id="bs-text">Need help fast? Look for the blinking green badge — that pro is working right now. Prefer Spanish? Look for “Hablo español”.<small lang="es">¿Lo necesitas ya? Busca la señal verde. ¿Prefieres español? Busca “Hablo español”.</small></span>
+    <span class="bs-btns"><a class="bs-find" href="site-guide.html#badges">How it works</a><a class="bs-pro" href="contractor-register.html">Technicians: get the badges</a></span>
   </div></div>
 
 <style>
