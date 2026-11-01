@@ -2,6 +2,10 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['roof-leak-story-en', 'English', "Roof leak"],
+    ['get-a-pro-near-you-en', 'English', "Get a pro near you"],
+    ['four-languages-couples-en', 'English', "4 languages"],
+    ['stop-waiting-on-hold-en', 'English', "Stop waiting on hold"],
     ['entrevista-fundadores-es', 'Español', 'Así nació TexContractor: entrevista'],
     ['interview-founders-en', 'English', 'How TexContractor started: interview'],
     ['kitchen-drain-plumber-en', 'English', "Sink backed up before dinner?"],
