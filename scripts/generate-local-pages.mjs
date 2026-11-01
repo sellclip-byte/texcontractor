@@ -78,6 +78,7 @@ header.top img{height:44px;width:auto;display:block}.crumbs{font-size:14px;color
 h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:10px 0 8px;text-wrap:balance}.lead{color:#111;max-width:68ch;margin:0 0 18px}
 .cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;background:var(--gold);color:#1b1b1b;font-weight:800;text-decoration:none}
 .cta.alt{background:var(--accent);color:#fff}.cta.req{background:#b45309;color:#fff}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+.nearest{display:block;margin:0 0 22px;padding:16px 20px;border-radius:14px;background:#f5b84b;border:2px solid #d4a017;color:#000;text-decoration:none;box-shadow:0 4px 14px rgba(212,160,23,.35)}.nearest b{display:block;font-size:clamp(18px,3.4vw,22px);line-height:1.25}.nearest span{display:block;font-size:15px;font-weight:600;margin-top:4px}.nearest:hover{background:#ffc94d}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .card h3{margin:0;font-size:18px;line-height:1.3}.card .loc{font-size:13px;color:var(--muted);font-weight:600}.card p{margin:0;color:#34484c;font-size:15px}
@@ -123,6 +124,10 @@ async function main() {
     .map((r) => (r.name ? r : { ...r, name: r.service ? `${r.service} pro` : '' }))
     .filter((r) => STATES[r.state] && r.city && r.service && r.name && r.id);
 
+  // Statewide count per service: the main search lists all of them, same city first, then nearest.
+  const stateSvc = new Map();
+  for (const r of rows) { const k = `${r.state}|${r.service}`; stateSvc.set(k, (stateSvc.get(k) || 0) + 1); }
+
   // Group by state → city → service.
   const groups = new Map();
   for (const r of rows) {
@@ -164,7 +169,8 @@ async function main() {
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
-<div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
+<a class="nearest" href="${esc(browse)}"><b>See all ${stateSvc.get(`${p.state}|${p.service}`)} ${esc(p.service.toLowerCase())} providers near ${esc(p.city)}</b><span>Nearest first: ${esc(p.city)}, then nearby cities, then the rest of ${esc(stName)} →</span></a>
+<div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
 ${cards}
 </section>
