@@ -17,6 +17,7 @@ const SUPABASE_URL = 'https://rryehtaskbjnfbodymjj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
 const MIN_PER_PAGE = Number(process.env.LOCAL_MIN_PER_PAGE || 5);
 const CITY_MIN = Number(process.env.LOCAL_CITY_MIN || 3); // city hubs with fewer listings are noindex
+const PAGE_INDEX_MIN = Number(process.env.LOCAL_PAGE_INDEX_MIN || 3); // every city+service has a page; smaller ones are noindex
 const OUT = join(root, 'local');
 
 const STATES = { AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia' };
@@ -128,10 +129,10 @@ async function main() {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(r);
   }
-  const pages = [...groups.entries()].filter(([, list]) => list.length >= MIN_PER_PAGE).map(([key, list]) => {
+  const pages = [...groups.entries()].map(([key, list]) => {
     const [state, city, service] = key.split('|');
     list.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'contractor' ? -1 : 1) || a.name.localeCompare(b.name));
-    return { state, city, service, list, path: `local/${state.toLowerCase()}/${slug(city)}/${slug(service)}.html` };
+    return { state, city, service, list, indexable: list.length >= PAGE_INDEX_MIN, path: `local/${state.toLowerCase()}/${slug(city)}/${slug(service)}.html` };
   });
 
   rmSync(OUT, { recursive: true, force: true });
@@ -161,7 +162,7 @@ async function main() {
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
     const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
-<p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} providers based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
+<p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
 <div class="ctas"><a class="cta" href="${esc(browse)}">Browse more near ${esc(p.city)}</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
 ${cards}
@@ -173,44 +174,28 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [stName, `/local/${p.state.toLowerCase()}/`], [p.city, cityPath], [p.service, null]];
     const html = page({
       path: p.path,
-      title: `${p.service} in ${p.city}, ${p.state} — ${p.list.length} local providers | TexContractor`,
+      title: `${p.service} in ${p.city}, ${p.state} — ${p.list.length} local provider${p.list.length === 1 ? '' : 's'} | TexContractor`,
       description: `Find ${p.list.length} ${p.service.toLowerCase()} providers in ${p.city}, ${stName}. View profiles and text local providers directly for a quote on TexContractor.`,
-      crumbs, body,
+      crumbs, body, noindex: !p.indexable,
       jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
     });
     mkdirSync(join(root, p.path, '..'), { recursive: true });
     writeFileSync(join(root, p.path), html);
   }
 
-  // City hubs: every provider in the city, grouped by service.
-  const card = (r) => {
-    const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
-    return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)}</div>${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
-  };
+  // City hubs: one button per service; each opens the page listing every provider for it.
   for (const [k, list] of cityMap) {
     const [state, city] = k.split('|');
     const path = `local/${state.toLowerCase()}/${slug(city)}/index.html`;
-    const all = cityRows.get(k);
-    const bySvc = new Map();
-    for (const r of all) { if (!bySvc.has(r.service)) bySvc.set(r.service, []); bySvc.get(r.service).push(r); }
-    const svcs = [...bySvc.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-    const pageFor = new Map(list.map((p) => [p.service, p]));
-    const total = all.length;
+    list.sort((a, b) => b.list.length - a.list.length || a.service.localeCompare(b.service));
+    const total = cityTotal(k);
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [STATES[state], `/local/${state.toLowerCase()}/`], [city, null]];
-    const sections = svcs.map(([svc, rs]) => {
-      rs.sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'contractor' ? -1 : 1) || a.name.localeCompare(b.name));
-      const sp = pageFor.get(svc);
-      const shown = sp ? rs.slice(0, 6) : rs;
-      return `<h2 id="${slug(svc)}">${esc(svc)} <span class="badge">${rs.length}</span></h2>
-<section class="grid" aria-label="${esc(svc)} in ${esc(city)}">${shown.map(card).join('\n')}</section>${sp ? `<p><a href="/${sp.path}">See all ${rs.length} ${esc(svc.toLowerCase())} providers in ${esc(city)} →</a></p>` : ''}`;
-    }).join('\n');
     const body = `<h1>Local services in ${esc(city)}, ${esc(state)}</h1>
-<p class="lead">${total} provider${total === 1 ? '' : 's'} across ${svcs.length} service ${svcs.length === 1 ? 'category' : 'categories'} in ${esc(city)}, ${esc(STATES[state])}. Open a profile, sign in to see the phone number, and text the provider directly.</p>
-<div class="ctas"><a class="cta req" href="/requests.html?post=1">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
-<ul class="links">${svcs.map(([svc, rs]) => `<li><a href="#${slug(svc)}">${esc(svc)} <span>(${rs.length})</span></a></li>`).join('')}</ul>
-${sections}`;
+<p class="lead">${total} provider${total === 1 ? '' : 's'} across ${list.length} service ${list.length === 1 ? 'category' : 'categories'} in ${esc(city)}, ${esc(STATES[state])}. Choose a service to see every provider listed and text them directly.</p>
+<ul class="links">${list.map((p) => `<li><a href="/${p.path}">${esc(p.service)} <span>(${p.list.length})</span></a></li>`).join('')}</ul>
+<div class="ctas" style="margin-top:22px"><a class="cta req" href="/requests.html?post=1">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>`;
     mkdirSync(join(root, path, '..'), { recursive: true });
-    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), noindex: !indexable(k), title: `${total} local service providers in ${city}, ${state} | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${svcs.slice(0, 4).map(([s]) => s).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
+    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), noindex: !indexable(k), title: `Local services in ${city}, ${state} — ${total} providers | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${list.slice(0, 4).map((p) => p.service).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
   }
 
   // State hubs.
@@ -245,7 +230,7 @@ ${sections}`;
   writeFileSync(join(OUT, 'cities.json'), JSON.stringify({ states: states.map((st) => [st.toLowerCase(), STATES[st]]), cities: sideCities }));
 
   // Separate sitemap so the existing 66-URL sitemap and its checks stay untouched.
-  const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].filter(indexable).map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.map((p) => p.path)];
+  const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].filter(indexable).map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.filter((p) => p.indexable).map((p) => p.path)];
   const today = new Date().toISOString().slice(0, 10);
   writeFileSync(join(root, 'sitemap-local.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}/${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
   console.log(`Local pages: ${pages.length} city/service pages, ${cityMap.size} city hubs (${[...cityMap.keys()].filter(indexable).length} indexable), ${stateMap.size} state hubs, ${urls.length} sitemap URLs (min ${MIN_PER_PAGE} providers per page, ${rows.length} usable listings).`);
