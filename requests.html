@@ -276,7 +276,7 @@
       const photos = (r.photo_paths || []).slice(0, 4);
       const ways = [];
       if (r.contact_chat) ways.push('<span>💬 Chat</span>');
-      if (r.contact_text) ways.push(r.phone ? `<a href="sms:${esc(r.phone)}">✉ Text ${esc(fmtPhone(r.phone))}</a>` : '<span>✉ Text</span>');
+      if (r.contact_text) ways.push(r.phone ? `<a href="sms:${esc(r.phone)}">✉ Text ${esc(fmtPhone(r.phone))}</a>` : '<a href="start.html">✉ Text · list your service free to see the number</a>');
       if (r.contact_call) ways.push(r.phone ? `<a href="tel:${esc(r.phone)}">📞 Call</a>` : '<span>📞 Call</span>');
       let action;
       if (r.mine) action = '<div class="status-note">This is your request</div>';
