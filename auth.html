@@ -129,6 +129,21 @@
       <button type="button" role="tab" data-join-mode="login" aria-selected="false">Sign in</button>
     </div>
     <div class="mobile-required"><p data-join-copy>Sign up to receive customer requests by text message.</p></div>
+    <div id="quick-pro" hidden>
+      <a class="join-submit" id="quick-pro-go" href="start.html" style="display:block;text-align:center;text-decoration:none">List my service free · 1 minute →</a>
+      <p class="join-note" id="quick-pro-note">Pick your trade, enter your ZIP and mobile number, and we text you a code. No email or password.</p>
+    </div>
+    <div id="phone-box">
+      <div class="join-fields">
+        <label><span id="pb-l">Mobile number</span><input id="pb-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16"></label>
+        <label id="pb-codewrap" hidden><span id="pb-cl">Code we texted you</span><input id="pb-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456"></label>
+      </div>
+      <p class="join-note" id="pb-hint">We text you a one-time code. No password needed. Msg &amp; data rates may apply.</p>
+      <button class="join-submit" type="button" id="pb-go">Text me a code</button>
+      <p class="join-status" id="pb-status" role="status" aria-live="polite"></p>
+      <p class="join-note"><a href="#" id="pb-useemail">Use email instead</a></p>
+    </div>
+    <div id="email-box" hidden>
     <form data-join-form>
       <div class="join-fields">
         <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
@@ -142,6 +157,7 @@
     <div class="join-divider">or</div>
     <button class="join-alt" type="button" id="google-submit">Continue with Google</button>
     <button class="join-alt" type="button" id="magic-submit">Email me a sign-in link</button>
+    </div>
   </div>
 </section>
 
@@ -166,4 +182,51 @@
 })();
 </script>
 <script src="tex-auth.js?v=20261102phone"></script><script src="tex-join.js?v=20261023-exists"></script>
+<script>
+(function () {
+  var box = document.querySelector('[data-join]');
+  var es = function () { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } };
+  var q = new URLSearchParams(location.search);
+  var emailMode = false, sent = false;
+  function intent() { var b = box.querySelector('.auth-cta[aria-pressed="true"]'); return b ? b.dataset.intent : (q.get('intent') === 'customer' ? 'customer' : 'provider'); }
+  function sync() {
+    var login = box.classList.contains('is-login'), pro = intent() === 'provider';
+    var quick = pro && !login;
+    document.getElementById('quick-pro').hidden = !pro;
+    document.getElementById('phone-box').hidden = quick || emailMode;
+    document.getElementById('email-box').hidden = quick || !emailMode;
+    var E = es();
+    document.getElementById('quick-pro-go').textContent = E ? 'Publica tu servicio gratis · 1 minuto →' : 'List my service free · 1 minute →';
+    document.getElementById('quick-pro-note').textContent = E ? 'Elige tu oficio, tu código postal y tu celular, y te mandamos un código. Sin email ni contraseña.' : 'Pick your trade, enter your ZIP and mobile number, and we text you a code. No email or password.';
+    document.getElementById('pb-l').textContent = E ? 'Número de celular' : 'Mobile number';
+    document.getElementById('pb-cl').textContent = E ? 'Código que te mandamos' : 'Code we texted you';
+    document.getElementById('pb-hint').textContent = E ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
+    document.getElementById('pb-useemail').textContent = E ? 'Usar email' : 'Use email instead';
+    if (!sent) document.getElementById('pb-go').textContent = E ? 'Mándame un código' : 'Text me a code';
+  }
+  new MutationObserver(sync).observe(box, { attributes: true, subtree: true, attributeFilter: ['class', 'aria-pressed'] });
+  document.getElementById('pb-useemail').addEventListener('click', function (e) { e.preventDefault(); emailMode = true; sync(); });
+  var st = document.getElementById('pb-status');
+  document.getElementById('pb-go').addEventListener('click', async function () {
+    var btn = this, E = es(); btn.disabled = true; st.dataset.error = 'false'; st.textContent = E ? 'Un momento…' : 'Please wait…';
+    var phone = document.getElementById('pb-phone').value;
+    try {
+      if (!sent) {
+        await TexAuth.sendPhoneCode(phone, box.classList.contains('is-login') ? null : intent());
+        sent = true; document.getElementById('pb-codewrap').hidden = false; document.getElementById('pb-phone').readOnly = true;
+        btn.textContent = E ? 'Confirmar y entrar' : 'Confirm & sign in';
+        st.textContent = E ? 'Te mandamos un código por mensaje.' : 'We texted you a code.';
+        document.getElementById('pb-code').focus();
+      } else {
+        await TexAuth.verifyPhoneCode(phone, document.getElementById('pb-code').value);
+        if (typeof gtag === 'function') gtag('event', 'login', { method: 'phone' });
+        var ret = TexAuth.safeReturnTo(q.get('return_to') || 'index.html');
+        location.assign(await TexAuth.postLoginDestination(ret));
+      }
+    } catch (err) { st.dataset.error = 'true'; st.textContent = (err && err.message) || 'Something went wrong.'; }
+    finally { btn.disabled = false; }
+  });
+  sync();
+})();
+</script>
 <script src="tex-language.js?v=20261031flag"></script></body></html>
