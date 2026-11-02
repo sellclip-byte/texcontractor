@@ -33,6 +33,16 @@
       <h2 id="tqs-title"></h2>
       <p class="tqs-sub" id="tqs-sub"></p>
       <ul class="tqs-perks" id="tqs-perks"><li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li></ul>
+      <div id="tqs-phonebox">
+        <label for="tqs-phone" id="tqs-phone-l">Mobile number</label>
+        <input id="tqs-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16">
+        <div id="tqs-codebox" hidden><label for="tqs-code" id="tqs-code-l">Code we texted you</label>
+        <input id="tqs-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456"></div>
+        <p class="tqs-hint" id="tqs-phint">We text you a one-time code. No password needed. Msg &amp; data rates may apply.</p>
+        <button class="tqs-go" type="button" id="tqs-pgo">Text me a code</button>
+        <p class="tqs-switch"><a href="#" id="tqs-useemail">Use email instead</a></p>
+      </div>
+      <div id="tqs-emailbox" hidden>
       <label for="tqs-email">Email</label>
       <input id="tqs-email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
       <label for="tqs-pass">Password</label>
@@ -40,8 +50,9 @@
       <p class="tqs-hint" id="tqs-hint">At least 6 characters, with a letter and a number.</p>
       <button class="tqs-go" type="submit" id="tqs-go"></button>
       ${inApp ? '' : '<button class="tqs-google" type="button" id="tqs-google">Continue with Google</button>'}
-      <p class="tqs-msg" id="tqs-msg" role="status"></p>
       <p class="tqs-switch" id="tqs-switch"></p>
+      </div>
+      <p class="tqs-msg" id="tqs-msg" role="status"></p>
     </form>`;
     document.body.appendChild(box);
     const form = box.querySelector('form');
@@ -50,6 +61,30 @@
     document.addEventListener('keydown', (e) => { if (!box.hidden && e.key === 'Escape') finish(false); });
     box.querySelector('#tqs-google')?.addEventListener('click', () => {
       TexAuth.signInWithGoogle(current.returnTo || (location.pathname.replace(/^\//, '') + location.search));
+    });
+    box.querySelector('#tqs-useemail').addEventListener('click', (e) => { e.preventDefault(); box.querySelector('#tqs-phonebox').hidden = true; box.querySelector('#tqs-emailbox').hidden = false; box.querySelector('#tqs-msg').textContent = ''; setTimeout(() => box.querySelector('#tqs-email').focus(), 30); });
+    box.querySelector('#tqs-pgo').addEventListener('click', async () => {
+      const msg = box.querySelector('#tqs-msg'), go = box.querySelector('#tqs-pgo');
+      const es = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
+      msg.className = 'tqs-msg'; msg.textContent = es ? 'Un momento…' : 'Please wait…'; go.disabled = true;
+      try {
+        const phone = box.querySelector('#tqs-phone').value;
+        if (box.dataset.sent !== '1') {
+          await TexAuth.sendPhoneCode(phone, current.intent || 'customer');
+          box.dataset.sent = '1'; box.querySelector('#tqs-codebox').hidden = false; box.querySelector('#tqs-phone').readOnly = true;
+          go.textContent = es ? 'Confirmar y continuar' : 'Confirm & continue';
+          msg.textContent = es ? 'Te mandamos un código por mensaje.' : 'We texted you a code.';
+          if (typeof gtag === 'function') gtag('event', 'quick_code_sent', { source: 'quick_signup' });
+          setTimeout(() => box.querySelector('#tqs-code').focus(), 30);
+        } else {
+          await TexAuth.verifyPhoneCode(phone, box.querySelector('#tqs-code').value);
+          if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'phone', source: 'quick_signup' });
+          msg.textContent = es ? '¡Listo!' : 'You are in!';
+          finish(true);
+        }
+      } catch (err) {
+        msg.className = 'tqs-msg err'; msg.textContent = (err && err.message) || 'Something went wrong. Please try again.';
+      } finally { go.disabled = false; }
     });
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -125,10 +160,18 @@
     current = { name: (opts && opts.name) || '', intent: (opts && opts.intent) || '', returnTo: (opts && opts.returnTo) || '' };
     setMode(false);
     box.querySelector('#tqs-msg').textContent = '';
+    box.querySelector('#tqs-phonebox').hidden = false; box.querySelector('#tqs-emailbox').hidden = true;
+    { const es = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
+      box.querySelector('#tqs-phone-l').textContent = es ? 'Número de celular' : 'Mobile number';
+      box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
+      box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
+      box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
+      box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
+      box.dataset.sent = ''; box.querySelector('#tqs-codebox').hidden = true; box.querySelector('#tqs-phone').readOnly = false; box.querySelector('#tqs-code').value = ''; }
     box.hidden = false;
     document.documentElement.style.overflow = 'hidden';
     if (typeof gtag === 'function') gtag('event', 'quick_signup_open', { source: (opts && opts.source) || 'contact' });
-    setTimeout(() => box.querySelector('#tqs-email').focus(), 50);
+    setTimeout(() => box.querySelector('#tqs-phone').focus(), 50);
     return new Promise((resolve) => { pending = resolve; });
   }
 
