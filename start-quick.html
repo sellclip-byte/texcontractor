@@ -251,7 +251,8 @@ $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textConten
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
- if(u){try{$('#google').lastChild.textContent=t('googleIn')}catch(_){}}
+ if(u){try{$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
+   const n=document.createElement('p');n.className='small';n.textContent=(L==='es'?'Ya entraste como ':'Signed in as ')+(u.email||u.phone||'');$('#google').after(n)}catch(_){}}
  const d=q.get('resume')?readDraft():null;
  if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||null;st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;
   if(st.trade){go(3);$('#name').value=st.name;$('#phone').value=st.phone;$('#agree').checked=true;can3();
