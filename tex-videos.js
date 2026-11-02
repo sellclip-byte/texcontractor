@@ -2,6 +2,7 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['one-text-pro-near-you-en', 'English', "Home trouble? Text a pro"],
     ['the-pros-are-coming-en', 'English', "The pros are coming"],
     ['day-laborers-red-light-en', 'English', "Day laborers: list your service free"],
     ['plomero-hablo-espanol-es', 'Español', "Plomero que habla espa\u00f1ol"],
