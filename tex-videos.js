@@ -2,6 +2,7 @@
 // with a link to every video on the About & Media page.
 (function () {
   const ITEMS = [
+    ['day-laborers-red-light-en', 'English', "Day laborers: list your service free"],
     ['plomero-hablo-espanol-es', 'Español', "Plomero que habla espa\u00f1ol"],
     ['roof-leak-story-en', 'English', "Roof leak"],
     ['get-a-pro-near-you-en', 'English', "Get a pro near you"],
