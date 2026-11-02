@@ -70,6 +70,7 @@ select.field{appearance:auto}
 .fine{color:var(--mut);font-size:.78rem;text-align:center;margin-top:12px}
 .note{background:#fff8e6;border:1px solid #f6dfa0;border-radius:12px;padding:12px;font-size:.88rem;margin-top:12px;color:#6b4e00}
 
+[hidden]{display:none!important}
 .otp{letter-spacing:.5em;text-align:center;font-size:1.6rem;font-weight:800}
 .err{color:#b42318;font-weight:700;font-size:.9rem;margin:10px 2px 0;min-height:1.2em}
 .chk{display:flex;gap:10px;align-items:flex-start;margin:14px 2px 0;font-size:.82rem;color:#475569;line-height:1.4}
@@ -114,7 +115,9 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
     <label class="lb" for="phone" data-t="phoneL"></label>
     <input class="field" id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16">
     <label class="chk"><input type="checkbox" id="agree"><span data-t="agree"></span></label>
-    <button class="cta y" id="send" disabled data-t="send"></button>
+    <button class="cta y" id="send" disabled data-t="send" hidden></button>
+    <button class="cta" id="google" disabled><span style="background:#fff;border-radius:50%;display:inline-grid;place-items:center;width:24px;height:24px;margin-right:8px;vertical-align:-6px"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.8 6C12.4 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.8c-.5-1.4-.8-3-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.5 0 20.1 0 24s1 7.5 2.7 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-9.9l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg></span><span data-t="google"></span></button>
+    <p class="small" style="margin-top:10px"><button class="link" id="useemail" data-t="useEmail"></button></p>
     <p class="err" id="err3" role="alert"></p>
   </section>
   <section class="step" data-s="4">
@@ -138,26 +141,27 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 </main>
 <script src="tex-auth.js?v=20261102phone"></script>
 <script src="tex-admin.js?v=20261102phone"></script>
+<script src="tex-quick-signup.js?v=20261031prov"></script>
 <script>
 (function(){
 'use strict';
 const T={
  en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'3 quick steps, under a minute. No lead fees. What is your trade?',
   st2:'Step 2 of 3',h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',cityL:'Your city',next:'Continue',
-  st3:'Step 3 of 3',h3:'Where should customers text you?',s3:'We text you a one-time code to confirm it is your number. No email or password needed.',
+  st3:'Step 3 of 3',h3:'Where should customers text you?',s3:'Customers text you at this number. Then publish with one tap, no password needed.',
   nameL:'Your name or nickname',phoneL:'Mobile number',
-  agree:'This is my mobile number. I agree to receive a one-time verification code by text (msg & data rates may apply) and to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms</a> and <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
-  send:'Text me my code →',sending:'Sending…',
+  agree:'This is my mobile number and I can reply to customer texts. I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms</a> and <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
+  send:'Text me my code →',sending:'Sending…',google:'Publish with Google (1 tap)',googleIn:'Publish my free profile',useEmail:'No Google? Use email instead',publishing:'Publishing…',
   st4:'Last step',h4:'Enter the code we texted you',s4:'We sent a 6-digit code to {phone}.',verify:'Publish my free profile',verifying:'Publishing…',resend:'Send a new code',edit:'Change number',resent:'New code sent.',
   h5:'You are live, {name}!',s5:'Customers in {city} can now find you under {trade} and text you directly at {phone}.',seeProf:'See my profile',
   more:'Add a photo, hours and details (optional)',
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos, menos de un minuto. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
-  st3:'Paso 3 de 3',h3:'¿A qué número te escriben los clientes?',s3:'Te mandamos un código por mensaje para confirmar que es tu número. Sin email ni contraseña.',
+  st3:'Paso 3 de 3',h3:'¿A qué número te escriben los clientes?',s3:'Los clientes te escriben a este número. Luego publica con un toque, sin contraseña.',
   nameL:'Tu nombre o apodo',phoneL:'Número de celular',
-  agree:'Este es mi celular. Acepto recibir un código de verificación por mensaje de texto (pueden aplicar cargos) y los <a href="site-guide.html#terms" target="_blank" rel="noopener">Términos</a> y la <a href="site-guide.html#privacy" target="_blank" rel="noopener">Política de privacidad</a>.',
-  send:'Mándame mi código →',sending:'Enviando…',
+  agree:'Este es mi celular y puedo responder mensajes de clientes. Acepto los <a href="site-guide.html#terms" target="_blank" rel="noopener">Términos</a> y la <a href="site-guide.html#privacy" target="_blank" rel="noopener">Política de privacidad</a>.',
+  send:'Mándame mi código →',sending:'Enviando…',google:'Publicar con Google (1 toque)',googleIn:'Publicar mi perfil gratis',useEmail:'¿Sin Google? Usa tu email',publishing:'Publicando…',
   st4:'Último paso',h4:'Escribe el código que te mandamos',s4:'Mandamos un código de 6 dígitos al {phone}.',verify:'Publicar mi perfil gratis',verifying:'Publicando…',resend:'Mandar otro código',edit:'Cambiar número',resent:'Código nuevo enviado.',
   h5:'¡Ya estás publicado, {name}!',s5:'Los clientes en {city} ya te pueden encontrar en {trade} y escribirte directo al {phone}.',seeProf:'Ver mi perfil',
   more:'Agregar foto, horario y detalles (opcional)',
@@ -205,7 +209,31 @@ $('#zipgo').onclick=()=>{if(!st.city){st.city=$('#cityin').value.trim();st.state
 // step 3
 const digits=v=>String(v||'').replace(/\D/g,'');
 const pretty=d=>{d=d.replace(/^1(?=\d{10}$)/,'');return d.length===10?'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6):d};
-const can3=()=>{const d=digits($('#phone').value).replace(/^1(?=\d{10}$)/,'');$('#send').disabled=!($('#name').value.trim().length>1&&d.length===10&&$('#agree').checked)};
+const PHONE_OTP=false; // turn on when Twilio Verify is connected in Supabase Auth
+const ready3=()=>{const d=digits($('#phone').value).replace(/^1(?=\d{10}$)/,'');return $('#name').value.trim().length>1&&d.length===10&&$('#agree').checked};
+const can3=()=>{const r=ready3();$('#send').disabled=!r;$('#google').disabled=!r;$('#useemail').disabled=!r};
+const DRAFT='texcontractor-quick-draft';
+const saveDraft=()=>{try{localStorage.setItem(DRAFT,JSON.stringify({trade:st.trade&&st.trade.s,zip:st.zip,city:st.city,state:st.state,name:st.name,phone:st.phone,L,at:Date.now()}))}catch(_){}};
+const readDraft=()=>{try{const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d||Date.now()-d.at>3600e3)return null;return d}catch(_){return null}};
+const collect3=()=>{st.name=$('#name').value.trim().replace(/\s+/g,' ');st.phone=pretty(digits($('#phone').value))};
+async function publish(user){
+  const svc=st.trade.s;
+  const data={realName:st.name,displayName:st.name,phone:st.phone,email:String(user.email||''),years:'',city:st.city,state:st.state||'TX',service:svc,
+   about:(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'. Manda un mensaje para pedir un presupuesto.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'. Send a text to get a quote.'),
+   speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:''};
+  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:'',workPhotos:[]}});
+  try{localStorage.removeItem(DRAFT)}catch(_){}
+  ev('quick_published',{trade:svc});
+  $('#seeprof').href=saved&&saved.id?'profile.html?contractor='+encodeURIComponent(saved.id):'account.html';
+  go(5);
+}
+const RET='start-quick.html?resume=1';
+$('#google').onclick=async()=>{collect3();const b=$('#google');$('#err3').textContent='';
+  try{const u=await TexAuth.getUser();if(u){b.disabled=true;b.lastChild.textContent=t('publishing');await publish(u);return}}catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.lastChild.textContent=t('googleIn');return}
+  saveDraft();ev('quick_google');TexAuth.signInWithGoogle(RET)};
+$('#useemail').onclick=async()=>{collect3();saveDraft();$('#err3').textContent='';
+  let ok=false;try{ok=await TexQuickSignup.require({intent:'provider',returnTo:RET,source:'start_quick'})}catch(_){ok=false}
+  if(!ok)return;try{const u=await TexAuth.getUser();await publish(u)}catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric')}};
 ['#name','#phone'].forEach(s=>$(s).addEventListener('input',can3));$('#agree').addEventListener('change',can3);
 async function sendCode(){const b=$('#send');$('#err3').textContent='';st.name=$('#name').value.trim().replace(/\s+/g,' ');st.phone=pretty(digits($('#phone').value));
  if(st.name.length<2){$('#err3').textContent=t('errName');return false}
@@ -219,17 +247,16 @@ $('#code').addEventListener('input',e=>{e.target.value=digits(e.target.value).sl
 $('#resend').onclick=async()=>{$('#err4').textContent='';try{await TexAuth.sendPhoneCode(st.phone,'provider');$('#err4').style.color='#075c4b';$('#err4').textContent=t('resent')}catch(e){$('#err4').style.color='';$('#err4').textContent=(e&&e.message)||t('errGeneric')}};
 $('#edit').onclick=()=>go(3);
 $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textContent=t('verifying');$('#err4').style.color='';$('#err4').textContent='';
- try{const user=await TexAuth.verifyPhoneCode(st.phone,$('#code').value);
-  const svc=st.trade.s;
-  const data={realName:st.name,displayName:st.name,phone:st.phone,email:'',years:'',city:st.city,state:st.state||'TX',service:svc,
-   about:(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'. Manda un mensaje para pedir un presupuesto.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'. Send a text to get a quote.'),
-   speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:''};
-  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:'',workPhotos:[]}});
-  try{await TexAuth.updateProfile({full_name:st.name})}catch(_){}
-  ev('quick_published',{trade:svc});
-  $('#seeprof').href=saved&&saved.id?'profile.html?contractor='+encodeURIComponent(saved.id):'account.html';
-  go(5);
+ try{const user=await TexAuth.verifyPhoneCode(st.phone,$('#code').value);await publish(user);
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
+if(PHONE_OTP){$('#send').hidden=false;$('#google').hidden=true;$('#useemail').hidden=true}
+(async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
+ if(u){try{$('#google').lastChild.textContent=t('googleIn')}catch(_){}}
+ const d=q.get('resume')?readDraft():null;
+ if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||null;st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;
+  if(st.trade){go(3);$('#name').value=st.name;$('#phone').value=st.phone;$('#agree').checked=true;can3();
+   try{$('#google').disabled=true;$('#google').lastChild.textContent=t('publishing');await publish(u)}catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');$('#google').disabled=false;$('#google').lastChild.textContent=t('googleIn')}}}
+})();
 render();go(1);
 })();
 </script>
