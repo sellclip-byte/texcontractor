@@ -333,8 +333,8 @@
           const open = r.status === 'open';
           const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
           d.className = 'mine-row' + (open ? '' : ' closed');
-          d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? `closes in ${days} day${days === 1 ? '' : 's'}` : 'closed'}</small></div>
-            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
+          d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? (days > 365 ? 'open until you close it' : `closes in ${days} day${days === 1 ? '' : 's'}`) : 'closed'}</small></div>
+            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? `<a class="msgs-link" href="contractor.html?service=${encodeURIComponent(r.service)}&city=${encodeURIComponent(r.city)}&state=${encodeURIComponent(r.state)}">Pros near you</a>` : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
           d.querySelector('[data-v]').addEventListener('click', () => openView(r.id));
           d.querySelector('[data-e]')?.addEventListener('click', () => openEdit(r.id));
           d.querySelector('.close-btn:not([data-h])')?.addEventListener('click', (ev) => closeRequest(r.id, ev.target));
@@ -440,6 +440,12 @@
         setMode(null);
         $('f-service').value = ''; $('f-state').value = ''; $('f-city').value = '';
         await Promise.all([load(true), loadMine(), loadCount()]);
+        if (!wasEditing) {
+          const href = 'contractor.html?service=' + encodeURIComponent(v.service) + '&city=' + encodeURIComponent(v.city) + '&state=' + encodeURIComponent(v.state);
+          let n = document.getElementById('near-note');
+          if (!n) { n = document.createElement('div'); n.id = 'near-note'; n.style.cssText = 'margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#ecf7f3;border:1px solid #b7e0d2;color:#064e3b;font-weight:700;line-height:1.45'; $('mine').prepend(n); }
+          n.innerHTML = '✅ Your request is posted. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>';
+        }
         $('mine').scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch (err) { msg.className = 'msg-line error'; msg.textContent = err.message; }
       finally { btn.disabled = false; }
