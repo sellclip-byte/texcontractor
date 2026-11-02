@@ -231,6 +231,36 @@
     });
   };
 
+
+  // Phone sign-in (Supabase Auth phone provider via Twilio Verify): no email or password needed.
+  const normalizeUsPhone = (phone) => {
+    const d = String(phone || '').replace(/\D/g, '');
+    if (d.length === 10) return '+1' + d;
+    if (d.length === 11 && d.startsWith('1')) return '+' + d;
+    throw new Error('Enter a 10-digit U.S. mobile number.');
+  };
+  const sendPhoneCode = async (phone, intent) => {
+    const e164 = normalizeUsPhone(phone);
+    await requestJson(`${SUPABASE_URL}/auth/v1/otp`, {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ phone: e164, create_user: true, channel: 'sms', ...(intent ? { data: { account_intent: intent } } : {}) })
+    });
+    return e164;
+  };
+  const verifyPhoneCode = async (phone, code) => {
+    const e164 = normalizeUsPhone(phone);
+    const token = String(code || '').replace(/\D/g, '');
+    if (token.length < 4) throw new Error('Enter the code we texted you.');
+    const result = await requestJson(`${SUPABASE_URL}/auth/v1/verify`, {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ type: 'sms', phone: e164, token })
+    });
+    if (!result.access_token) throw new Error('That code did not work. Try again.');
+    const user = await finalizeUser(result.user, result.access_token, result);
+    if (!user) throw new Error('Access to this account is blocked.');
+    return user;
+  };
+
   const passwordRequest = async (email, password, intent, returnTo) => {
     const cleanEmail = String(email || '').trim().toLowerCase();
     const parts = cleanEmail.split('@');
@@ -324,6 +354,8 @@
 
   window.TexAuth = {
     passwordRequest,
+    sendPhoneCode,
+    verifyPhoneCode,
     postLoginDestination,
     updateProfile,
     uploadAccountPhoto,
