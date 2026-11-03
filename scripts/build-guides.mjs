@@ -21,6 +21,10 @@ const SRC = {
   nerdRoof: ['NerdWallet – Roof Replacement Cost (data from Angi)', 'https://www.nerdwallet.com/home-ownership/home-improvement/learn/roof-replacement-cost'],
   haPlumb: ['HomeAdvisor – Cost to Hire a Plumber', 'https://www.homeadvisor.com/cost/plumbing/hire-a-plumber/'],
   inchPlumb: ['Inch Calculator – Cost to Hire a Plumber', 'https://www.inchcalculator.com/plumbing-cost-guide/'],
+  fixrAc: ['Fixr – How Much Does AC Repair Cost?', 'https://www.fixr.com/costs/air-conditioner-repair'],
+  tohAc: ['This Old House – Air Conditioner Repair Cost', 'https://www.thisoldhouse.com/heating-cooling/air-conditioner-repair-cost'],
+  tohGarage: ['This Old House – Garage Door Repair Cost', 'https://www.thisoldhouse.com/garages/garage-door-repair-cost/'],
+  inchGarage: ['Inch Calculator – Cost to Repair a Garage Door', 'https://www.inchcalculator.com/cost-to-repair-garage-door/'],
 };
 
 const table = (head, rows) => `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -101,6 +105,94 @@ ${ul(['Describe el problema y envía fotos antes de la visita.', 'Pregunta si el
       ctaBrowse: 'Encontrar plomeros cerca de ti', ctaReq: 'Publicar una solicitud de plomería',
       upd: 'Actualizado en octubre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
       srcTitle: 'Fuentes', sources: [SRC.haPlumb, SRC.inchPlumb],
+    },
+  },
+  {
+    slugEn: 'ac-repair-cost', slugEs: 'costo-reparar-aire-acondicionado',
+    service: 'Central Air Conditioning Repair or Maintenance', svcSlug: 'central-air-conditioning-repair-or-maintenance',
+    en: {
+      title: 'How Much Does AC Repair Cost?',
+      desc: 'Typical air conditioner repair prices, common part costs, service call and hourly rates, and when replacing the unit makes more sense.',
+      body: `<p>When the air conditioner stops cooling, the price of the fix depends on which part failed, how old the system is and when you need the technician. These national figures help you know what to expect before you call AC technicians near you.</p>
+<h2>Typical total cost</h2>
+<p>One guide puts the national average AC repair at about <strong>$375</strong>, with most homeowners paying <strong>$250 – $700</strong>. Another reports that common fixes usually run <strong>$150 – $650</strong>. Small jobs can be close to $100, while a major part like the compressor can reach <strong>$3,000</strong> or more.</p>
+<h2>Service call and labor</h2>
+${table(['Item', 'Typical range'], [['Diagnostic / service call fee', '$75 – $150 (some companies apply it to the repair)'], ['Hourly labor', '$75 – $175 per hour'], ['Nights, weekends, holidays', 'About 2 – 3 times the normal hourly rate, or $150 – $300 per hour']])}
+<h2>Common repairs</h2>
+${table(['Repair', 'Typical range'], [['Clogged condensate drain line', '$75 – $250'], ['Capacitor replacement', '$100 – $400'], ['Contactor (relay) repair', '$100 – $450'], ['Thermostat replacement', '$100 – $500'], ['Refrigerant recharge', '$100 – $600'], ['Refrigerant leak repair', '$200 – $1,500'], ['Blower motor repair', '$200 – $900'], ['Fan motor', '$300 – $800'], ['Evaporator coil replacement', '$400 – $2,700'], ['Condenser coil replacement', '$600 – $2,700'], ['Compressor replacement', '$600 – $3,000+']])}
+<h2>Repair or replace?</h2>
+<p>One guide suggests a simple rule: multiply the age of the unit in years by the repair cost. If the result is more than <strong>$5,000</strong>, replacing the system may make more sense. Other signs: the repair costs more than half the price of a new unit, the system is more than about 12 years old, it uses old R-22 refrigerant, or it keeps breaking down.</p>
+<p class="note"><strong>Example:</strong> a $400 repair on a 15-year-old unit gives 15 × $400 = $6,000, which is over $5,000 — worth asking for a replacement quote too. Your real price depends on your system and your area — always get a written quote.</p>
+<h2>What to ask before you hire</h2>
+${ul(['What is the service call fee, and is it applied to the repair?', 'What exactly failed, and can you show me the part?', 'Is the price in writing, with parts and labor separated?', 'Is there an extra charge for nights or weekends?', 'What warranty covers the part and the labor?'])}
+<p>For big repairs like a compressor or coil, get more than one quote and compare the same items in each one.</p>`,
+      ctaBrowse: 'Find AC technicians near you', ctaReq: 'Post an AC repair request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.fixrAc, SRC.tohAc],
+    },
+    es: {
+      title: '¿Cuánto cuesta reparar el aire acondicionado?',
+      desc: 'Precios típicos para reparar el aire acondicionado, costo de las piezas más comunes, cargo por visita y tarifa por hora, y cuándo conviene más cambiar el equipo.',
+      body: `<p>Cuando el aire acondicionado deja de enfriar, el precio de la reparación depende de la pieza que falló, la edad del equipo y cuándo necesitas al técnico. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a técnicos de aire acondicionado cerca de ti.</p>
+<h2>Costo total típico</h2>
+<p>Una guía indica que el promedio nacional para reparar el aire acondicionado es de unos <strong>$375</strong>, y la mayoría de los dueños de casa paga entre <strong>$250 y $700</strong>. Otra guía reporta que las reparaciones comunes normalmente cuestan entre <strong>$150 y $650</strong>. Los trabajos pequeños pueden costar cerca de $100, mientras que una pieza grande como el compresor puede llegar a <strong>$3,000</strong> o más.</p>
+<h2>Cargo por visita y mano de obra</h2>
+${table(['Concepto', 'Rango típico'], [['Diagnóstico / cargo por visita', '$75 – $150 (algunas compañías lo descuentan de la reparación)'], ['Mano de obra por hora', '$75 – $175 por hora'], ['Noches, fines de semana, días festivos', 'Unas 2 – 3 veces la tarifa normal, o $150 – $300 por hora']])}
+<h2>Reparaciones comunes</h2>
+${table(['Reparación', 'Rango típico'], [['Destapar la línea de drenaje', '$75 – $250'], ['Cambiar el capacitor', '$100 – $400'], ['Reparar el contactor (relé)', '$100 – $450'], ['Cambiar el termostato', '$100 – $500'], ['Recargar refrigerante', '$100 – $600'], ['Reparar una fuga de refrigerante', '$200 – $1,500'], ['Reparar el motor del soplador', '$200 – $900'], ['Motor del ventilador', '$300 – $800'], ['Cambiar el serpentín evaporador', '$400 – $2,700'], ['Cambiar el serpentín condensador', '$600 – $2,700'], ['Cambiar el compresor', '$600 – $3,000+']])}
+<h2>¿Reparar o cambiar el equipo?</h2>
+<p>Una guía sugiere una regla sencilla: multiplica la edad del equipo en años por el costo de la reparación. Si el resultado pasa de <strong>$5,000</strong>, puede convenir más cambiar el sistema. Otras señales: la reparación cuesta más de la mitad del precio de un equipo nuevo, el sistema tiene más de unos 12 años, usa el refrigerante viejo R-22 o se descompone seguido.</p>
+<p class="note"><strong>Ejemplo:</strong> una reparación de $400 en un equipo de 15 años da 15 × $400 = $6,000, que pasa de $5,000 — vale la pena pedir también un presupuesto para cambiarlo. El precio real depende de tu equipo y de tu zona — pide siempre un presupuesto por escrito.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Cuánto es el cargo por visita y se descuenta de la reparación?', '¿Qué falló exactamente y me puede mostrar la pieza?', '¿El precio es por escrito, con piezas y mano de obra por separado?', '¿Cobra más por noches o fines de semana?', '¿Qué garantía tienen la pieza y el trabajo?'])}
+<p>Para reparaciones grandes, como el compresor o el serpentín, pide más de un presupuesto y compara los mismos puntos en cada uno.</p>`,
+      ctaBrowse: 'Encontrar técnicos de aire acondicionado cerca de ti', ctaReq: 'Publicar una solicitud de reparación de aire',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.fixrAc, SRC.tohAc],
+    },
+  },
+  {
+    slugEn: 'garage-door-repair-cost', slugEs: 'costo-reparar-puerta-de-garaje',
+    service: 'Garage Door Repair', svcSlug: 'garage-door-repair',
+    en: {
+      title: 'How Much Does Garage Door Repair Cost?',
+      desc: 'Typical garage door repair prices for springs, cables, tracks, sensors, panels and openers, plus service call fees and what to ask before you hire.',
+      body: `<p>A garage door that will not open is usually caused by a broken spring, a loose cable, a bent track or an opener problem. The price depends on which part failed and how fast you need it fixed. These national figures help you compare quotes from garage door technicians near you.</p>
+<h2>Typical total cost</h2>
+<p>One guide reports an average garage door repair of about <strong>$479</strong>, with a typical range of <strong>$98 – $860</strong>. Another puts the average at about <strong>$300</strong>, with most repairs between <strong>$100 and $600</strong>.</p>
+<h2>Common repairs</h2>
+${table(['Repair', 'Typical range'], [['Spring repair (torsion or extension)', '$150 – $375'], ['Cable repair', '$100 – $375'], ['Track repair or realignment', '$125 – $400'], ['Safety sensor (photo-eye) repair', '$110 – $200'], ['Opener repair', '$180 – $360'], ['Door panel replacement', '$400 – $900']])}
+<p class="note"><strong>Example:</strong> one guide breaks down a basic spring replacement at about $360: $108 in parts, $192 in labor and a $60 service call. Your real price depends on your door and your area — always get a written quote.</p>
+<h2>Service call, labor and emergencies</h2>
+${ul(['Service call fee: about $50 – $75, often waived if you approve the repair.', 'Labor: about $60 per hour on average, and $150 or more per hour with some companies.', 'Emergency or weekend work costs more — one guide notes a $300 spring job can double on an emergency weekend call.'])}
+<h2>Safety first</h2>
+<p>Garage door springs hold a lot of tension and can cause serious injury. If a spring or cable is broken, keep the door closed, do not try to lift it by hand, and let a technician do the repair.</p>
+<h2>What to ask before you hire</h2>
+${ul(['What is the service call fee, and is it waived if I approve the repair?', 'Is the price in writing, with parts and labor separated?', 'If one spring broke, should both springs be replaced?', 'Is there an extra charge for same-day or weekend service?', 'What warranty covers the parts and the labor?'])}
+<p>If the repair is close to the price of a new door (about $700 – $2,500 according to one guide), ask for a replacement quote too.</p>`,
+      ctaBrowse: 'Find garage door technicians near you', ctaReq: 'Post a garage door request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.tohGarage, SRC.inchGarage],
+    },
+    es: {
+      title: '¿Cuánto cuesta reparar una puerta de garaje?',
+      desc: 'Precios típicos para reparar una puerta de garaje: resortes, cables, rieles, sensores, paneles y abridor, más el cargo por visita y qué preguntar antes de contratar.',
+      body: `<p>Una puerta de garaje que no abre normalmente tiene un resorte roto, un cable suelto, un riel doblado o un problema con el abridor. El precio depende de la pieza que falló y de qué tan rápido la necesitas arreglada. Estas cifras nacionales te ayudan a comparar presupuestos de técnicos de puertas de garaje cerca de ti.</p>
+<h2>Costo total típico</h2>
+<p>Una guía reporta un promedio de unos <strong>$479</strong> para reparar una puerta de garaje, con un rango típico de <strong>$98 a $860</strong>. Otra indica un promedio de unos <strong>$300</strong>, y la mayoría de las reparaciones entre <strong>$100 y $600</strong>.</p>
+<h2>Reparaciones comunes</h2>
+${table(['Reparación', 'Rango típico'], [['Reparar resortes (de torsión o de extensión)', '$150 – $375'], ['Reparar cables', '$100 – $375'], ['Reparar o alinear el riel', '$125 – $400'], ['Reparar el sensor de seguridad (fotocelda)', '$110 – $200'], ['Reparar el abridor', '$180 – $360'], ['Cambiar un panel de la puerta', '$400 – $900']])}
+<p class="note"><strong>Ejemplo:</strong> una guía desglosa el cambio básico de un resorte en unos $360: $108 de piezas, $192 de mano de obra y $60 de cargo por visita. El precio real depende de tu puerta y de tu zona — pide siempre un presupuesto por escrito.</p>
+<h2>Cargo por visita, mano de obra y emergencias</h2>
+${ul(['Cargo por visita: unos $50 – $75, muchas veces no se cobra si apruebas la reparación.', 'Mano de obra: unos $60 por hora en promedio, y $150 o más por hora con algunas compañías.', 'Los trabajos de emergencia o de fin de semana cuestan más — una guía indica que un cambio de resorte de $300 puede costar el doble en una llamada de emergencia en fin de semana.'])}
+<h2>Primero la seguridad</h2>
+<p>Los resortes de la puerta de garaje tienen mucha tensión y pueden causar lesiones graves. Si un resorte o un cable está roto, deja la puerta cerrada, no intentes levantarla a mano y deja que un técnico haga la reparación.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Cuánto es el cargo por visita y se elimina si apruebo la reparación?', '¿El precio es por escrito, con piezas y mano de obra por separado?', 'Si se rompió un resorte, ¿conviene cambiar los dos?', '¿Cobra más por servicio el mismo día o en fin de semana?', '¿Qué garantía tienen las piezas y el trabajo?'])}
+<p>Si la reparación cuesta casi lo mismo que una puerta nueva (unos $700 – $2,500 según una guía), pide también un presupuesto para cambiarla.</p>`,
+      ctaBrowse: 'Encontrar técnicos de puertas de garaje cerca de ti', ctaReq: 'Publicar una solicitud de puerta de garaje',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.tohGarage, SRC.inchGarage],
     },
   },
 ];
