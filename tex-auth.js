@@ -27,19 +27,30 @@
   // --- Where new members come from (first visit only) and the Google Ads "Sign-up" conversion. ---
   const FIRST_TOUCH_KEY = 'texcontractor-first-touch';
   const SIGNUP_CONVERSION = 'AW-18516159223/6QEpCLq_pqUdEPfVmP1E';
+  const LAST_TOUCH_KEY = 'texcontractor-last-touch';
   try {
     const q = new URLSearchParams(window.location.search);
-    if (!localStorage.getItem(FIRST_TOUCH_KEY)) {
-      let ref = '';
-      try { ref = document.referrer && new URL(document.referrer).hostname !== window.location.hostname ? new URL(document.referrer).hostname : ''; } catch (_) {}
-      const source = q.get('utm_source') || (q.get('gclid') ? 'google-ads' : q.get('fbclid') ? 'facebook' : '') || ref || 'direct';
-      localStorage.setItem(FIRST_TOUCH_KEY, JSON.stringify({
-        source: source.slice(0, 60), medium: (q.get('utm_medium') || (q.get('gclid') ? 'cpc' : '')).slice(0, 40),
-        campaign: (q.get('utm_campaign') || '').slice(0, 80), landing: window.location.pathname.slice(0, 120), at: new Date().toISOString()
-      }));
-    }
+    let ref = '';
+    try { ref = document.referrer && new URL(document.referrer).hostname !== window.location.hostname ? new URL(document.referrer).hostname : ''; } catch (_) {}
+    // Facebook / Instagram / TikTok apps open links in their own browser and often hide the referrer.
+    const ua = navigator.userAgent || '';
+    const inApp = /Instagram/i.test(ua) ? 'instagram-app' : /FBAN|FBAV|FB_IAB/i.test(ua) ? 'facebook-app' : /musical_ly|TikTok|BytedanceWebview/i.test(ua) ? 'tiktok-app' : '';
+    const source = q.get('utm_source') || (q.get('gclid') ? 'google-ads' : q.get('fbclid') ? 'facebook' : '') || inApp || ref || 'direct';
+    const touch = {
+      source: source.slice(0, 60), medium: (q.get('utm_medium') || (q.get('gclid') ? 'cpc' : '')).slice(0, 40),
+      campaign: (q.get('utm_campaign') || '').slice(0, 80), ref: ref.slice(0, 80), landing: window.location.pathname.slice(0, 120), at: new Date().toISOString()
+    };
+    if (!localStorage.getItem(FIRST_TOUCH_KEY)) localStorage.setItem(FIRST_TOUCH_KEY, JSON.stringify(touch));
+    if (touch.source !== 'direct') localStorage.setItem(LAST_TOUCH_KEY, JSON.stringify(touch));
   } catch (_) { /* tracking must never break the page */ }
-  const readFirstTouch = () => { try { return JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || 'null'); } catch (_) { return null; } };
+  const readFirstTouch = () => {
+    try {
+      const first = JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || 'null');
+      const last = JSON.parse(localStorage.getItem(LAST_TOUCH_KEY) || 'null');
+      if (!first && !last) return null;
+      return { ...(first || last), ...(last && first && last.at !== first.at ? { last } : {}) };
+    } catch (_) { return null; }
+  };
   const recordNewSignup = async (user, accessToken) => {
     try {
       if (!user?.id || !user.created_at || Date.now() - Date.parse(user.created_at) > 30 * 60 * 1000) return;

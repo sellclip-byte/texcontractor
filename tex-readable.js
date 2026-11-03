@@ -44,3 +44,22 @@
   const start = () => { run(document); try { new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'open', 'aria-expanded'] }); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
+
+// Where visitors come from (same keys as tex-auth.js), so a later sign-up knows its source
+// even when the visitor first landed on a service, city or guide page.
+(function () {
+  try {
+    const q = new URLSearchParams(location.search);
+    let ref = '';
+    try { ref = document.referrer && new URL(document.referrer).hostname !== location.hostname ? new URL(document.referrer).hostname : ''; } catch (_) {}
+    const ua = navigator.userAgent || '';
+    const inApp = /Instagram/i.test(ua) ? 'instagram-app' : /FBAN|FBAV|FB_IAB/i.test(ua) ? 'facebook-app' : /musical_ly|TikTok|BytedanceWebview/i.test(ua) ? 'tiktok-app' : '';
+    const source = q.get('utm_source') || (q.get('gclid') ? 'google-ads' : q.get('fbclid') ? 'facebook' : '') || inApp || ref || 'direct';
+    const touch = {
+      source: source.slice(0, 60), medium: (q.get('utm_medium') || (q.get('gclid') ? 'cpc' : '')).slice(0, 40),
+      campaign: (q.get('utm_campaign') || '').slice(0, 80), ref: ref.slice(0, 80), landing: location.pathname.slice(0, 120), at: new Date().toISOString()
+    };
+    if (!localStorage.getItem('texcontractor-first-touch')) localStorage.setItem('texcontractor-first-touch', JSON.stringify(touch));
+    if (touch.source !== 'direct') localStorage.setItem('texcontractor-last-touch', JSON.stringify(touch));
+  } catch (_) { /* tracking must never break the page */ }
+})();
