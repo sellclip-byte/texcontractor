@@ -43,6 +43,7 @@
     'Contractors near you': 'Contratistas cerca de ti',
     'Local contractors who can help': 'Contratistas locales que pueden ayudar',
     'Local service': 'Servicio local',
+    'You already have a service listed on TexContractor — customers find you there and text you directly. This form is for customers who need a technician. To get jobs, close this form and send offers on the open requests.': 'Ya tienes un servicio publicado en TexContractor — los clientes te encuentran ahí y te escriben directo. Este formulario es para clientes que necesitan un técnico. Para conseguir trabajos, cierra este formulario y envía ofertas a las solicitudes abiertas.',
     'Individuals and independent pros only — companies and organizations are not allowed.': 'Solo personas y profesionales independientes — no se permiten compañías ni empresas.',
     'No calls or long forms. Tap “Text this contractor” and send the details from your phone.': 'Sin llamadas ni formularios largos. Toca “Enviar mensaje a este contratista” y envía los detalles desde tu teléfono.',
     'Review the provider profiles.': 'Revisa los perfiles de los proveedores.',

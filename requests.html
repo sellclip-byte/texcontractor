@@ -180,6 +180,7 @@
   <dialog id="post-dlg" aria-labelledby="post-title">
     <form class="dlg" id="post-form" method="dialog" novalidate>
       <div class="dlg-head"><div><h2 id="post-title">Post your request</h2><p class="sub">Takes about one minute.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <div id="pro-note" hidden style="margin:0 0 12px;padding:10px 12px;border:2px solid #f0b44c;background:#fff8ec;border-radius:10px;color:#7c2d12;font-weight:600;font-size:.92rem">You already have a service listed on TexContractor — customers find you there and text you directly. This form is for customers who need a technician. To get jobs, close this form and send offers on the open requests.</div>
       <label class="f" for="p-service">Service</label>
       <select id="p-service" required><option value="">Choose a service</option></select>
       <div class="row2">
@@ -384,6 +385,8 @@
       fillCities($('p-state'), $('p-city-list'));
       if (wantService && !$('p-service').value && [...$('p-service').options].some((o) => o.value === wantService)) $('p-service').value = wantService;
       renderSlots(); syncPhone();
+      $('pro-note').hidden = true;
+      C.rpc('texcontractor_my_listing_services', {}, true).then((a) => { $('pro-note').hidden = !(Array.isArray(a) && a.length); }).catch(() => {});
       $('post-dlg').showModal();
     }
     $('open-post').addEventListener('click', openPost);
@@ -593,6 +596,6 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261103labor"></script>
+  <script src="tex-language.js?v=20261103pronote"></script>
 </body>
 </html>
