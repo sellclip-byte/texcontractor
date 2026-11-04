@@ -41,6 +41,11 @@ h1{font-size:clamp(2.1rem,9.4vw,3.2rem);line-height:1.05;letter-spacing:-.03em;m
 .rot::after{content:"";display:inline-block;width:3px;height:.9em;background:var(--y);margin-left:3px;vertical-align:-.08em;animation:bl .8s steps(2,start) infinite}
 .lead{font-size:clamp(1.05rem,4.4vw,1.3rem);line-height:1.4;margin:0;color:#e7f3ef;font-weight:600;text-shadow:0 1px 10px rgba(0,0,0,.5)}
 .lead b{color:#fff}
+.chips{margin:14px -20px 0;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.chips div{display:flex;gap:8px;width:max-content;animation:mq 90s linear infinite;padding:3px 0}
+.chips div+div{animation-duration:110s;animation-direction:reverse;margin-top:6px}
+.chips span{background:rgba(255,255,255,.95);color:#064e3b;font-weight:800;font-size:.82rem;padding:7px 12px;border-radius:99px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+@keyframes mq{to{transform:translateX(-50%)}}
 .box{background:#fff;border-radius:22px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.45);color:var(--ink)}
 .box label{display:block;font-weight:900;font-size:1rem;margin:2px 4px 10px}
 .row{display:flex;gap:8px;align-items:stretch}
@@ -50,6 +55,7 @@ h1{font-size:clamp(2.1rem,9.4vw,3.2rem);line-height:1.05;letter-spacing:-.03em;m
 #go{border:0;border-radius:14px;background:var(--g);color:#fff;font:inherit;font-weight:900;font-size:1.5rem;padding:0 15px;cursor:pointer;box-shadow:0 6px 16px rgba(7,92,75,.35)}
 #go:disabled{opacity:.4;box-shadow:none}
 .fine{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:12px 0 0;font-size:.8rem;font-weight:800;color:#0a7a63}
+@media(max-width:400px){#ph{font-size:1.05rem;padding:14px 10px;letter-spacing:0}.cc{padding:0 7px;font-size:.95rem}#go{padding:0 12px}}
 .err{color:#b42318;font-weight:700;font-size:.85rem;margin:8px 4px 0;min-height:1em}
 .ai{position:fixed;right:10px;bottom:6px;z-index:4;font-size:.62rem;color:rgba(255,255,255,.55)}
 </style>
@@ -67,6 +73,7 @@ h1{font-size:clamp(2.1rem,9.4vw,3.2rem);line-height:1.05;letter-spacing:-.03em;m
     <span class="kick"><i></i><span data-t="kick"></span></span>
     <h1><span data-t="are"></span><br><span class="rot" id="rot"></span></h1>
     <p class="lead" data-t="lead" data-html="1"></p>
+    <div class="chips" aria-hidden="true"><div id="ch1"></div><div id="ch2"></div></div>
   </div>
   <form class="box" id="f" autocomplete="on" novalidate>
     <label for="ph" data-t="label"></label>
@@ -84,12 +91,12 @@ h1{font-size:clamp(2.1rem,9.4vw,3.2rem);line-height:1.05;letter-spacing:-.03em;m
 (function(){
 'use strict';
 const T={
- en:{kick:'Free for pros · 1-minute sign-up',are:'Are you',lead:'Enter your phone number — <b>it\'s free</b> — and start getting these requests.',label:'Enter your phone number',
+ en:{kick:'63 trades · Free for pros',are:'Are you',lead:'Enter your phone number — <b>it\'s free</b> — and start getting these requests.',label:'Enter your phone number',
   f1:'✓ Free',f2:'✓ No lead fees',f3:'✓ No commission',err:'Enter a 10-digit U.S. mobile number.',ai:'Images AI-generated',
-  trades:['a plumber?','an electrician?','a handyman?','a house cleaner?','a painter?','a landscaper?','a roofer?','a mechanic?','a mover?','a pro?']},
- es:{kick:'Gratis · regístrate en 1 minuto',are:'¿Eres',lead:'Escribe tu número de teléfono — <b>es gratis</b> — y empieza a recibir estos pedidos.',label:'Escribe tu número de teléfono',
+  trades:['a plumber?','an electrician?','a handyman?','a house cleaner?','a painter?','a landscaper?','a roofer?','a mechanic?','a mover?','a welder?','a locksmith?','a pool cleaner?','a dog groomer?','a barber?','a DJ?','a photographer?','a tutor?','a notary?','a babysitter?','a pro?']},
+ es:{kick:'63 oficios · Gratis',are:'¿Eres',lead:'Escribe tu número de teléfono — <b>es gratis</b> — y empieza a recibir estos pedidos.',label:'Escribe tu número de teléfono',
   f1:'✓ Gratis',f2:'✓ Sin pagar por cliente',f3:'✓ Sin comisión',err:'Escribe un número de celular de EE. UU. de 10 dígitos.',ai:'Imágenes creadas con IA',
-  trades:['plomero?','electricista?','handyman?','de limpieza?','pintor?','jardinero?','techador?','mecánico?','de mudanzas?','técnico?']}
+  trades:['plomero?','electricista?','handyman?','de limpieza?','pintor?','jardinero?','techador?','mecánico?','de mudanzas?','soldador?','cerrajero?','de albercas?','peluquero?','barbero?','DJ?','fotógrafo?','tutor?','notario?','niñera?','técnico?']}
 };
 const $=s=>document.querySelector(s);
 let L=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='es'||q==='en')return q;const v=localStorage.getItem('texcontractor-language');if(v==='es'||v==='en')return v;return /^es/i.test(navigator.language||'')?'es':'en'}catch(_){return 'en'}})();
@@ -98,11 +105,13 @@ const ev=(n,p)=>{try{if(typeof gtag==='function')gtag('event',n,p||{})}catch(_){
 const IMGS='069f7430dc62283e 15e5b518293a6f0d 1a57bc6c2a550ffc 1d7880b1f7cc4a97 2531c18af707a760 2a6cff22a3d3096b 370a36b16e14a844 3e2728b4a169e8a1 41c6fdd548fb7e0c 429347c54d44faf4 47beecb13de3728d 488c391d28046099 4bdc9e30bd918933 557f9ac499c88c4f 5851c4d94d520413 5c6b851899f29325 62d3a83557173a13 6ad88b6bcd342352 6ae2f86a9d0b8335 71543b0f03b43866 761209465a696f45 76e0085f66d7a39f 78d2fd185f657a43 7ab5f09a80134d22 8b345eccbc25c558 8d5fa64a39d67893 8f4ca9b92c014783 9131a50c8292b672 98d2c8f81847aa2d a78160bc9259cc61 general-labor'.split(' ');
 [...document.querySelectorAll('.col')].forEach((c,i)=>{const list=IMGS.filter((_,k)=>k%3===i);const html=list.map(n=>'<img src="images/home/catalog-'+n+'.jpg" alt="" loading="'+(i<2?'eager':'lazy')+'">').join('');c.innerHTML=html+html});
 // texts
+const CH={en:["AC & heating", "Electrical", "Plumbing", "Handyman", "House cleaning", "Painting", "Roofing", "Landscaping", "Tree trimming", "Moving", "Junk removal", "Garage doors", "Locksmith", "Flooring", "Concrete", "Fences", "Drywall", "Pest control", "Pressure washing", "Carpet cleaning", "Pool cleaning", "Appliance repair", "Auto mechanic", "Auto detailing", "Towing & tires", "Welding & metalwork", "Windows", "Doors", "Lighting", "Gutters", "TV mounting", "Furniture assembly", "Bathroom remodel", "Decks & porches", "Foundation repair", "General contracting", "Home inspection", "Interior design", "Architecture", "Computer repair", "Notary", "Dog grooming", "Dog training", "Personal training", "DJ", "Photography", "Event makeup", "Event planning", "Wedding officiant", "Tutoring", "Babysitting", "In-home nursing", "Meal prep", "Barber & hair", "Private taxi", "Mower repair", "General labor", "Window tinting", "Upholstery cleaning", "Heating", "Drain repair", "Furniture moving", "Horse riding lessons"],es:["Aire y calefacción", "Electricidad", "Plomería", "Handyman", "Limpieza de casas", "Pintura", "Techos", "Jardinería", "Poda de árboles", "Mudanzas", "Retiro de basura", "Puertas de garaje", "Cerrajería", "Pisos", "Concreto", "Cercas", "Drywall", "Control de plagas", "Lavado a presión", "Limpieza de alfombras", "Limpieza de albercas", "Reparación de electrodomésticos", "Mecánico", "Detallado de autos", "Grúa y llantas", "Soldadura", "Ventanas", "Puertas", "Iluminación", "Canaletas", "Montaje de TV", "Armado de muebles", "Remodelación de baños", "Terrazas y porches", "Cimientos", "Contratista general", "Inspección de casas", "Diseño de interiores", "Arquitectura", "Reparación de computadoras", "Notario", "Peluquería canina", "Entrenamiento de perros", "Entrenador personal", "DJ", "Fotografía", "Maquillaje para eventos", "Planeación de eventos", "Oficiante de bodas", "Tutorías", "Niñera", "Enfermería en casa", "Comida especial", "Barbería", "Taxi privado", "Reparación de podadoras", "Ayudante general", "Polarizado", "Limpieza de muebles", "Calefacción", "Destapado de drenajes", "Movimiento de muebles", "Clases de equitación"]};
 let rotTimer;
 function render(){
   document.documentElement.lang=L;
   document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===L));
   document.querySelectorAll('[data-t]').forEach(e=>{const v=T[L][e.dataset.t];if(e.dataset.html)e.innerHTML=v;else e.textContent=v});
+  const ch=CH[L],h=Math.ceil(ch.length/2),mk=a=>{const x=a.map(t=>'<span>'+t+'</span>').join('');return x+x};document.getElementById('ch1').innerHTML=mk(ch.slice(0,h));document.getElementById('ch2').innerHTML=mk(ch.slice(h));
   clearTimeout(rotTimer);let i=0,j=0,del=false;const el=$('#rot');
   (function step(){const w=T[L].trades[i];if(!del){j++;el.textContent=w.slice(0,j);if(j===w.length){del=true;rotTimer=setTimeout(step,1300);return}}
     else{j--;el.textContent=w.slice(0,j);if(j===0){del=false;i=(i+1)%T[L].trades.length}}rotTimer=setTimeout(step,del?35:75)})();

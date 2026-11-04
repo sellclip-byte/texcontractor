@@ -82,6 +82,9 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 .small a{color:var(--g);font-weight:700}
 .link{background:none;border:0;color:var(--g);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
 
+.all{margin-top:14px}.all input{margin-bottom:10px}.alist{display:grid;gap:8px;max-height:58vh;overflow:auto;padding:2px}
+.alist button{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-weight:700;font-size:.95rem;color:var(--ink);cursor:pointer}
+.alist button:hover{border-color:var(--g2)}
 .tipbg{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;animation:in .3s ease}
 .tip{background:#fff;border-radius:22px;max-width:520px;width:100%;padding:22px 20px 18px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
 .tip h2{margin:6px 0 8px;font-size:1.35rem}.tip p{margin:0 0 6px;color:#334155;line-height:1.45}
@@ -102,6 +105,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
     <h1 data-t="h1"></h1>
     <p class="sub" data-t="s1"></p>
     <div class="grid" id="trades"></div>
+    <div class="all" id="allbox" hidden><input class="field" id="allq" type="search" autocomplete="off"><div class="alist" id="alist"></div></div>
   </section>
   <section class="step" data-s="2">
     <span class="kick" data-t="st2"></span>
@@ -170,7 +174,7 @@ const T={
   st4:'Last step',h4:'Enter the code we texted you',s4:'We sent a 6-digit code to {phone}.',verify:'Publish my free profile',verifying:'Publishing…',resend:'Send a new code',edit:'Change number',resent:'New code sent.',
   h5:'You are live, {name}!',s5:'Customers in {city} can now find you under {trade} and text you directly at {phone}.',seeProf:'See my profile',
   more:'Add a photo, hours and details (optional)',
-  tipH:'💡 Did you know?',tipP:'Customers choose and trust the pros who show their real photo, photos of their work and a short description of what they do. It takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
+  allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tipH:'💡 Did you know?',tipP:'Customers choose and trust the pros who show their real photo, photos of their work and a short description of what they do. It takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos, menos de un minuto. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
@@ -181,7 +185,7 @@ const T={
   st4:'Último paso',h4:'Escribe el código que te mandamos',s4:'Mandamos un código de 6 dígitos al {phone}.',verify:'Publicar mi perfil gratis',verifying:'Publicando…',resend:'Mandar otro código',edit:'Cambiar número',resent:'Código nuevo enviado.',
   h5:'¡Ya estás publicado, {name}!',s5:'Los clientes en {city} ya te pueden encontrar en {trade} y escribirte directo al {phone}.',seeProf:'Ver mi perfil',
   more:'Agregar foto, horario y detalles (opcional)',
-  tipH:'💡 ¿Sabías que…?',tipP:'Los clientes eligen y confían más en los técnicos que ponen su foto real, fotos de sus trabajos y una descripción de lo que hacen. Te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
+  allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tipH:'💡 ¿Sabías que…?',tipP:'Los clientes eligen y confían más en los técnicos que ponen su foto real, fotos de sus trabajos y una descripción de lo que hacen. Te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
   errPhone:'Escribe un número de celular de EE. UU. de 10 dígitos.',errName:'Escribe tu nombre.',errGeneric:'Algo salió mal. Intenta de nuevo.'}
 };
 const TRADES=[
@@ -204,17 +208,23 @@ const st={step:1,trade:null,zip:'',city:'',state:'',name:'',phone:'',e164:''};
 const t=k=>T[L][k]||'';
 const fmt=s=>s.replace('{name}',st.name).replace('{city}',st.city||st.zip).replace('{trade}',st.trade?(L==='es'?st.trade.es:st.trade.en):'').replace('{phone}',st.phone);
 const ev=(n,p)=>{try{if(typeof gtag==='function')gtag('event',n,p||{})}catch(_){}};
+const ALL=[["Central Air Conditioning Repair or Maintenance", "Reparación o mantenimiento de aire acondicionado central"], ["Electrical and Wiring Repair", "Reparación eléctrica y de cableado"], ["TV Mounting", "Instalación de televisores"], ["Tree Trimming and Removal", "Poda y eliminación de árboles"], ["Furniture Assembly", "Montaje de muebles"], ["Furniture Moving and Heavy Lifting", "Mudanza de muebles y carga pesada"], ["Mobile Auto Mechanic", "Mecánico de autos móvil"], ["Handyman", "Mantenimiento general del hogar"], ["Outdoor Landscaping and Design", "Paisajismo y diseño exterior"], ["Interior Painting", "Pintura interior"], ["Junk Removal", "Retiro de objetos y basura"], ["General Labor and Helpers", "Ayudantes y trabajo general"], ["Roof Repair or Maintenance", "Reparación o mantenimiento de techos"], ["Appliance Repair or Maintenance", "Reparación o mantenimiento de electrodomésticos"], ["Floor Installation or Replacement", "Instalación o reemplazo de pisos"], ["Lock Installation and Repair", "Instalación y reparación de cerraduras"], ["Garage Door Repair", "Reparación de puertas de garaje"], ["Concrete Installation", "Instalación de concreto"], ["Bathroom Remodel", "Remodelación de baños"], ["Metalwork", "Trabajo de metal"], ["Window Repair", "Reparación de ventanas"], ["Plumbing Drain Repair", "Reparación de desagües"], ["Plumbing Pipe Repair", "Reparación de tuberías"], ["Heating System Repair or Maintenance", "Reparación o mantenimiento de calefacción"], ["House Cleaning", "Limpieza del hogar"], ["Carpet Cleaning", "Limpieza de alfombras"], ["Pressure Washing", "Lavado a presión"], ["Upholstery and Furniture Cleaning", "Limpieza de tapicería y muebles"], ["Mobile Auto Detailing", "Detallado móvil de autos"], ["Local Moving (under 50 miles)", "Mudanza local (menos de 50 millas)"], ["Computer Repair", "Reparación de computadoras"], ["Notarization", "Servicios notariales"], ["Dog Grooming", "Peluquería canina"], ["DJ Services", "Servicios de DJ"], ["Wedding and Event Makeup", "Maquillaje para bodas y eventos"], ["Dog Training", "Adiestramiento de perros"], ["Personal Training", "Entrenamiento personal"], ["Wedding and Event Photography", "Fotografía de bodas y eventos"], ["Pest Control Services", "Control de plagas"], ["Fence and Gate Installation", "Instalación de cercas y portones"], ["Drywall Repair and Texturing", "Reparación y texturizado de paneles de yeso"], ["Deck or Porch Remodel or Addition", "Remodelación o ampliación de terraza o porche"], ["Swimming Pool Cleaning & Maintenance", "Limpieza y mantenimiento de piscinas"], ["Lighting Installation", "Instalación de iluminación"], ["General Contracting", "Contratación general"], ["Gutter Cleaning and Maintenance", "Limpieza y mantenimiento de canaletas"], ["Door Installation", "Instalación de puertas"], ["Window Tinting", "Polarizado de ventanas"], ["Wedding Officiant", "Oficiante de bodas"], ["Event Planning", "Organización de eventos"], ["Interior Design", "Diseño de interiores"], ["Architectural Services", "Servicios de arquitectura"], ["Home Inspection Consulting", "Consultoría de inspección del hogar"], ["Home Foundation Repair", "Reparación de cimientos"], ["In-Home Nursing Care", "Cuidados de enfermería en el hogar"], ["Private Taxi & Transportation Services", "Taxi privado y transporte"], ["Lawn Mower, Water Pump & Outdoor Equipment Repair", "Reparación de cortadoras, bombas de agua y equipos exteriores"], ["Tutoring & Education Services", "Servicios de tutoría y educación"], ["Specialty Meal Preparation & Dietary Cooking", "Preparación de comidas especiales y cocina dietética"], ["Dog Training & Horse Riding Lessons", "Adiestramiento de perros y clases de equitación"], ["Barber & Hair Styling Services", "Servicios de barbería y peinado"], ["General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services", "Servicios automotrices: grúa, programación de llaves, polarizado y llantas"], ["Babysitting & Childcare Services", "Servicios de niñera y cuidado infantil"]];
+const norm=x=>x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function drawAll(){const q=norm($('#allq').value.trim());const box=$('#alist');box.innerHTML='';
+ ALL.map(([en,es])=>({s:en,i:'',en,es})).sort((a,b)=>(L==='es'?a.es:a.en).localeCompare(L==='es'?b.es:b.en)).filter(x=>!q||norm(x.en+' '+x.es).includes(q)).forEach(tr=>{
+  const b=document.createElement('button');b.type='button';b.textContent=L==='es'?tr.es:tr.en;b.onclick=()=>{st.trade=TRADES.find(x=>x.s===tr.s)||tr;ev('quick_trade',{trade:tr.s,from:'all'});$('#allbox').hidden=true;go(2)};box.appendChild(b)})}
 function render(){
  document.documentElement.lang=L;
  $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===L));
  $$('[data-t]').forEach(e=>{const k=e.dataset.t;if(k==='agree')e.innerHTML=t(k);else e.textContent=t(k)});
  const g=$('#trades');g.innerHTML='';
  TRADES.forEach(tr=>{const b=document.createElement('button');b.className='tile'+(st.trade===tr?' sel':'');b.innerHTML='<img src="trade-icons/'+tr.i+'.webp" alt="">'+(L==='es'?tr.es:tr.en);b.onclick=()=>{st.trade=tr;ev('quick_trade',{trade:tr.s});go(2)};g.appendChild(b)});
- const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+(L==='es'?'Otro oficio':'Other trade');m.onclick=()=>{location.href='contractor-register.html'};g.appendChild(m);
+ const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+t('moreT');m.onclick=()=>{$('#allbox').hidden=false;$('#allq').focus();drawAll();$('#allbox').scrollIntoView({behavior:'smooth',block:'start'})};g.appendChild(m);$('#allq').placeholder=t('allQ');if(!$('#allbox').hidden)drawAll();
  $('#s4').textContent=fmt(t('s4'));$('#h5').textContent=fmt(t('h5'));$('#s5').textContent=fmt(t('s5'));
 }
 function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
  if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===3)setTimeout(()=>$('#name').focus(),200);if(n===4)setTimeout(()=>$('#code').focus(),200);render()}
+$('#allq').addEventListener('input',drawAll);
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
 // step 2
@@ -270,13 +280,13 @@ $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textConten
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
 $('#tipno').onclick=()=>{$('#tip').hidden=true};$('#tipgo').addEventListener('click',()=>ev('quick_tip_add_photo'));
 // phone typed first on the pro banner (pro.html): keep it for step 3
-try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir.'}}catch(_){}
+try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you. Not here? Tap “All 63 trades”.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir. ¿No está tu oficio? Toca “Los 63 oficios”.'}}catch(_){}
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
  if(u){try{$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
    const n=document.createElement('p');n.className='small';n.textContent=(L==='es'?'Ya entraste como ':'Signed in as ')+(u.email||u.phone||'');$('#google').after(n)}catch(_){}}
  const d=q.get('resume')?readDraft():null;
- if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||null;st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;
+ if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||(ALL.find(x=>x[0]===d.trade)?{s:d.trade,i:'',en:d.trade,es:(ALL.find(x=>x[0]===d.trade)||[])[1]}:null);st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;
   if(st.trade){go(3);$('#name').value=st.name;$('#phone').value=st.phone;$('#agree').checked=true;can3();
    try{$('#google').disabled=true;$('#google').lastChild.textContent=t('publishing');await publish(u)}catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');$('#google').disabled=false;$('#google').lastChild.textContent=t('googleIn')}}}
 })();
