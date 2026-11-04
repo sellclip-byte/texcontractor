@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TexContractor phone banner · all sizes</title>
+<meta name="robots" content="noindex">
+<style>
+body{margin:0;background:#f4f7f6;color:#0f172a;font-family:Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:20px 16px 60px}
+h1{font-size:1.4rem;margin:0 0 6px}p{color:#475569;margin:0 0 18px;max-width:760px;line-height:1.45}
+.g{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+figure{margin:0}figcaption{font-weight:800;font-size:.85rem;margin:0 0 6px}
+iframe{border:0;display:block;border-radius:4px;box-shadow:0 4px 14px rgba(15,23,42,.15);max-width:100%}
+code{display:block;background:#0f172a;color:#e2e8f0;font-size:.72rem;padding:8px 10px;border-radius:8px;margin-top:6px;max-width:min(100%,560px);overflow:auto;white-space:nowrap}
+</style>
+</head>
+<body>
+<h1>Phone banner — all sizes</h1>
+<p>Type a number inside any banner and press Enter: it opens the TexContractor sign-up with the number already filled. Copy the code under a size to place it on any website.</p>
+<div class="g" id="g"></div>
+<script>
+const S=[[300,250],[336,280],[728,90],[970,250],[300,600],[160,600],[320,100],[320,50],[468,60]];
+const g=document.getElementById('g');
+S.forEach(([w,h])=>{const f=document.createElement('figure');const u='https://texcontractor.com/ad/banner.html?src=embed-'+w+'x'+h;
+ f.innerHTML='<figcaption>'+w+' × '+h+'</figcaption><iframe src="banner.html?src=preview-'+w+'x'+h+'" width="'+w+'" height="'+h+'" title="TexContractor banner" loading="lazy"></iframe><code></code>';
+ f.querySelector('code').textContent='<iframe src="'+u+'" width="'+w+'" height="'+h+'" style="border:0" title="TexContractor"></iframe>';g.appendChild(f)});
+</script>
+</body>
+</html>

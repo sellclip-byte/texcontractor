@@ -280,6 +280,7 @@ $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textConten
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
 $('#tipno').onclick=()=>{$('#tip').hidden=true};$('#tipgo').addEventListener('click',()=>ev('quick_tip_add_photo'));
 // phone typed first on the pro banner (pro.html): keep it for step 3
+try{const hm=/^#ph=(\d{10})$/.exec(location.hash);if(hm){try{sessionStorage.setItem('texcontractor-pro-phone',hm[1])}catch(_){}history.replaceState(null,'',location.pathname+location.search)}}catch(_){}
 try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you. Not here? Tap “All 63 trades”.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir. ¿No está tu oficio? Toca “Los 63 oficios”.'}}catch(_){}
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TexContractor · Enter your phone to get customers</title>
+<meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;font-family:Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#06231d;color:#fff}
+.bg{position:absolute;inset:0;display:flex;gap:6px;opacity:.9}
+.bg div{flex:1;display:flex;flex-direction:column;gap:6px;animation:up 40s linear infinite}
+.bg div:nth-child(2n){animation-direction:reverse;animation-duration:52s}
+.bg img{width:100%;aspect-ratio:5/3;object-fit:cover;border-radius:8px;display:block}
+@keyframes up{to{transform:translateY(-50%)}}
+.sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,30,25,.55),rgba(4,30,25,.82))}
+.fly{position:absolute;z-index:2;width:24px;height:20px;pointer-events:none;filter:drop-shadow(0 0 6px rgba(10,132,255,.9));animation:fl 1.8s cubic-bezier(.5,0,.3,1) forwards}
+.fly.call{width:22px;height:22px;filter:drop-shadow(0 0 6px rgba(22,163,74,.9))}
+@keyframes fl{0%{opacity:0;transform:translate(var(--x0),var(--y0)) scale(.5)}15%{opacity:1;transform:translate(var(--x0),var(--y0)) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(var(--x1),var(--y1)) scale(.6)}}
+.in{position:relative;z-index:3;height:100%;display:flex;gap:10px;padding:10px 12px}
+.txt{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.logo{height:22px;background:#fff;border-radius:6px;padding:2px 5px;align-self:flex-start;margin-bottom:6px}
+.k{display:inline-block;align-self:flex-start;background:#F2B731;color:#1b1300;font-weight:900;font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-bottom:5px;white-space:nowrap}
+h1{font-size:22px;line-height:1.05;font-weight:900;letter-spacing:-.02em;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+h1 b{color:#F2B731}
+.lead{font-size:12px;font-weight:600;color:#e7f3ef;margin-top:4px;line-height:1.3}
+form{background:#fff;border-radius:12px;padding:7px;display:flex;gap:6px;align-items:stretch;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.cc{display:flex;align-items:center;padding:0 6px;border:2px solid #e2e8f0;border-radius:9px;font-weight:800;font-size:13px;color:#0f172a;background:#f8fafc;white-space:nowrap}
+input{flex:1;min-width:0;width:100%;font:inherit;font-size:16px;font-weight:800;padding:9px 9px;border:2px solid #075c4b;border-radius:9px;outline:none;color:#0f172a}
+input::placeholder{color:#94a3b8;font-weight:700}
+button{border:0;border-radius:9px;background:#075c4b;color:#fff;font:inherit;font-weight:900;font-size:18px;padding:0 12px;cursor:pointer}
+.lab{font-size:11px;font-weight:900;color:#0f172a;margin:0 2px 5px;display:block}
+.fbox{background:#fff;border-radius:12px;padding:7px 7px 6px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.fbox form{box-shadow:none;padding:0}
+.fine{font-size:10px;font-weight:800;color:#0a7a63;margin-top:5px;text-align:center;white-space:nowrap;overflow:hidden}
+.ai{position:absolute;right:5px;bottom:2px;z-index:4;font-size:8px;color:rgba(255,255,255,.6)}
+.lg{position:absolute;top:6px;right:6px;z-index:5;display:flex;gap:2px;background:rgba(255,255,255,.15);border-radius:99px;padding:2px}
+.lg a{font-size:10px;font-weight:800;color:#fff;text-decoration:none;padding:2px 6px;border-radius:99px;cursor:pointer}
+.lg a.on{background:#fff;color:#075c4b}
+/* layouts */
+.tall .in,.sq .in{flex-direction:column;justify-content:space-between}
+.sq h1{font-size:23px}.sq .logo{display:none}
+.tall h1{font-size:30px}.tall .lead{font-size:14px}.tall .txt{justify-content:flex-start;padding-top:8px}
+.wide .in{align-items:center}.wide .txt{flex:1}.wide .fbox{flex:0 0 46%}
+.wide.short .logo,.wide.short .lead,.wide.short .k{display:none}.wide.short h1{font-size:15px}
+.wide.short .lab,.wide.short .fine{display:none}.wide.short .fbox{padding:4px}.wide.short input{padding:5px 7px;font-size:14px}.wide.short .cc{font-size:11px}
+.wide.mid h1{font-size:19px}.wide.mid .logo{display:none}.wide.mid .lead{display:none}
+.mini .in{padding:4px 6px;align-items:center}.mini .txt{flex:0 0 38%}.mini h1{font-size:12px}.mini .logo,.mini .k,.mini .lead,.mini .lab,.mini .fine,.mini .cc,.mini .lg{display:none}
+.mini .fbox{flex:1;padding:3px}.mini input{padding:4px 6px;font-size:13px}.mini button{padding:0 8px;font-size:14px}
+.narrow h1{font-size:21px}.narrow .cc{display:none}.narrow .k{white-space:normal;font-size:9px}.narrow .lead{font-size:12px}.narrow .fine{white-space:normal}.narrow input{font-size:14px;padding:8px 6px}
+.mob .in{flex-direction:column;justify-content:center;gap:6px;padding:6px 8px}.mob .logo,.mob .lead,.mob .k,.mob .lab,.mob .fine{display:none}.mob h1{font-size:15px}.mob .fbox{padding:4px}.mob input{padding:6px 8px;font-size:15px}
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div><div class="sh"></div>
+<div class="lg"><a data-l="en">EN</a><a data-l="es">ES</a></div>
+<div class="in">
+  <div class="txt">
+    <img class="logo" src="../texcontractor-logo.png" alt="TexContractor">
+    <span class="k" data-t="k"></span>
+    <h1 data-t="h" data-html="1"></h1>
+    <p class="lead" data-t="lead"></p>
+  </div>
+  <div class="fbox">
+    <span class="lab" data-t="lab"></span>
+    <form id="f" novalidate>
+      <span class="cc">🇺🇸 +1</span>
+      <input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16" aria-label="Phone number">
+      <button type="submit" aria-label="Continue">→</button>
+    </form>
+    <div class="fine" data-t="fine"></div>
+  </div>
+</div>
+<div class="ai" data-t="ai"></div>
+<script>
+(function(){
+'use strict';
+const T={
+ en:{k:'63 trades · Free for pros',h:'Enter your phone.<br><b>Get customers.</b>',lead:'Customers text you directly. No lead fees, no commission.',lab:'Enter your phone number',fine:'✓ Free  ✓ No lead fees  ✓ No commission',ai:'Images AI-generated'},
+ es:{k:'63 oficios · Gratis',h:'Escribe tu teléfono.<br><b>Recibe clientes.</b>',lead:'Los clientes te escriben directo. Sin pagar por cliente ni comisión.',lab:'Escribe tu número de teléfono',fine:'✓ Gratis  ✓ Sin pagar por cliente',ai:'Imágenes creadas con IA'}
+};
+const q=new URLSearchParams(location.search);
+let L=q.get('lang')==='es'||q.get('lang')==='en'?q.get('lang'):(()=>{try{const v=localStorage.getItem('texcontractor-language');if(v==='es'||v==='en')return v}catch(_){}return /^es/i.test(navigator.language||'')?'es':'en'})();
+addEventListener('storage',e=>{if(e.key==='texcontractor-language'&&(e.newValue==='es'||e.newValue==='en')){L=e.newValue;render()}});
+const src=(q.get('src')||'banner').replace(/[^a-z0-9_-]/gi,'').slice(0,30);
+// layout from the size of the frame
+function layout(){const w=innerWidth,h=innerHeight,r=w/h,c=document.body.classList;c.remove('tall','sq','wide','short','mid','mini','mob','narrow');if(w<220)c.add('narrow');
+  if(h<=60)c.add('mini');else if(r>=2.2&&h<=110&&w<=360)c.add('mob');else if(r>=2.2){c.add('wide');if(h<=110)c.add('short');else if(h<=200)c.add('mid')}else if(r<0.75)c.add('tall');else c.add('sq')}
+addEventListener('resize',layout);layout();
+function render(){document.documentElement.lang=L;document.querySelectorAll('[data-t]').forEach(e=>{const v=T[L][e.dataset.t];if(e.dataset.html)e.innerHTML=v;else e.textContent=v});
+  document.querySelectorAll('.lg a').forEach(a=>a.classList.toggle('on',a.dataset.l===L));document.getElementById('ph').placeholder=L==='es'?'Tu número':'(214) 555-0123'}
+document.querySelectorAll('.lg a').forEach(a=>a.onclick=()=>{L=a.dataset.l;render()});
+// background catalog wall
+const IM='069f7430dc62283e 15e5b518293a6f0d 1a57bc6c2a550ffc 1d7880b1f7cc4a97 2531c18af707a760 2a6cff22a3d3096b 370a36b16e14a844 3e2728b4a169e8a1 41c6fdd548fb7e0c 429347c54d44faf4 47beecb13de3728d 488c391d28046099 4bdc9e30bd918933 557f9ac499c88c4f 5851c4d94d520413 5c6b851899f29325 62d3a83557173a13 6ad88b6bcd342352 general-labor'.split(' ');
+const cols=Math.max(2,Math.min(6,Math.round(innerWidth/130)));const bg=document.getElementById('bg');
+for(let i=0;i<cols;i++){const d=document.createElement('div');const l=IM.filter((_,k)=>k%cols===i).concat(IM.filter((_,k)=>k%cols===(i+1)%cols)).slice(0,6);const h=l.map(n=>'<img src="../images/home/catalog-'+n+'.jpg" alt="">').join('');d.innerHTML=h+h;bg.appendChild(d)}
+// flying messages and calls
+const MSG='<svg viewBox="0 0 22 18" width="24" height="20"><path d="M3 1h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4v-4H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" fill="#0a84ff" stroke="#fff" stroke-width="1.5"/><circle cx="7" cy="7" r="1.3" fill="#fff"/><circle cx="11" cy="7" r="1.3" fill="#fff"/><circle cx="15" cy="7" r="1.3" fill="#fff"/></svg>';
+const CALL='<svg viewBox="0 0 22 22" width="22" height="22"><circle cx="11" cy="11" r="10" fill="#16a34a" stroke="#fff" stroke-width="1.5"/><path d="M7.4 5.8c.4-.4 1-.4 1.3 0l1.3 1.6c.3.4.3.9 0 1.2l-.8.8c.6 1.3 1.7 2.4 3 3l.8-.8c.3-.3.8-.3 1.2 0l1.6 1.3c.4.3.4.9 0 1.3l-.9.9c-.6.6-1.5.8-2.3.5-2.8-1-5-3.2-6-6-.3-.8-.1-1.7.5-2.3z" fill="#fff"/></svg>';
+let n=0;function fly(){if(document.hidden||innerHeight<70)return;const W=innerWidth,H=innerHeight,m=document.createElement('div'),c=++n%4===0;m.className='fly'+(c?' call':'');m.innerHTML=c?CALL:MSG;m.style.left=0;m.style.top=0;
+  m.style.setProperty('--x0',W*(.05+Math.random()*.9)+'px');m.style.setProperty('--y0',H*(.05+Math.random()*.3)+'px');m.style.setProperty('--x1',W*(.05+Math.random()*.9)+'px');m.style.setProperty('--y1',H*(.2+Math.random()*.4)+'px');document.body.appendChild(m);setTimeout(()=>m.remove(),1900)}
+if(!(matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))setInterval(fly,1300);
+// the one field: type, press Enter, continue on TexContractor
+const digits=v=>String(v||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'');
+const pretty=d=>d.length<4?d:d.length<7?'('+d.slice(0,3)+') '+d.slice(3):'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6,10);
+const ph=document.getElementById('ph');
+ph.addEventListener('input',()=>{ph.value=pretty(digits(ph.value).slice(0,10));ph.style.borderColor=''});
+document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();const d=digits(ph.value);
+  if(d.length!==10){ph.style.borderColor='#b42318';ph.focus();return}
+  // the number travels only in the #fragment (never sent to any server) and the sign-up page clears it right away
+  const url='https://texcontractor.com/start.html?src='+encodeURIComponent(src)+'&lang='+L+'#ph='+d;
+  try{window.top.location.href=url}catch(_){window.open(url,'_blank','noopener')}
+});
+render();
+})();
+</script>
+</body>
+</html>
