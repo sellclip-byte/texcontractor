@@ -90,6 +90,8 @@ const TR={en:['an electrician','a plumber','a handyman','a house cleaner','a pai
  es:['electricista','plomero','handyman','de limpieza','pintor','techador','jardinero','mecánico','de mudanzas','soldador','cerrajero','barbero','técnico']};
 let CITY='';try{const lo=JSON.parse(localStorage.getItem('texcontractor-location')||'{}');if(lo.city)CITY=String(lo.city).slice(0,24)}catch(_){}
 const qc=(q.get('city')||'').replace(/[^\p{L} .'-]/gu,'').slice(0,24);if(qc)CITY=qc;
+// follow the site's location search live (same-origin pages fire 'storage' in this frame)
+addEventListener('storage',e=>{if(e.key!=='texcontractor-location')return;let c='';try{const lo=JSON.parse(e.newValue||'{}');if(lo.city)c=String(lo.city).slice(0,24)}catch(_){}CITY=c||qc;head()});
 const CITIES=['Dallas','Houston','San Antonio','Austin','Fort Worth','Arlington','El Paso','Phoenix','Los Angeles','Chicago','Miami','Atlanta'];
 const esc=t=>t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 let hi=0;function head(){const t=T[L],tr=TR[L][hi%TR[L].length],city=CITY||(hi%3===2?t.your:CITIES[Math.floor(hi/1)%CITIES.length]);
