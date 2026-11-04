@@ -43,6 +43,7 @@
     'Contractors near you': 'Contratistas cerca de ti',
     'Local contractors who can help': 'Contratistas locales que pueden ayudar',
     'Local service': 'Servicio local',
+    'Individuals and independent pros only — companies and organizations are not allowed.': 'Solo personas y profesionales independientes — no se permiten compañías ni empresas.',
     'No calls or long forms. Tap “Text this contractor” and send the details from your phone.': 'Sin llamadas ni formularios largos. Toca “Enviar mensaje a este contratista” y envía los detalles desde tu teléfono.',
     'Review the provider profiles.': 'Revisa los perfiles de los proveedores.',
     'Send a direct text describing the problem.': 'Envía un mensaje directo describiendo el problema.',
