@@ -102,10 +102,10 @@
     if (!document.body.animate) return then();
     const dx = tx - x, dy = ty - y, mx = x + dx * 0.55, my = Math.min(y, ty) - Math.min(140, Math.abs(dx) * 0.18 + 40);
     const kf = [{ transform: `translate(${x}px,${y}px) scale(.6)`, opacity: 0 }, { transform: `translate(${x}px,${y}px) scale(1)`, opacity: 1, offset: 0.08 }, { transform: `translate(${mx}px,${my}px) scale(1.15)`, offset: 0.5 }, { transform: `translate(${tx}px,${ty}px) scale(.9)`, opacity: 1, offset: 0.92 }, { transform: `translate(${tx}px,${ty}px) scale(.3)`, opacity: 0 }];
-    const D = Math.min(650, 380 + Math.hypot(dx, dy) * 0.18);
+    const D = Math.min(1700, 1100 + Math.hypot(dx, dy) * 0.5);
     const icon = pickIcon(), isCall = icon === CALL;
     const els = [0, 1, 2].map(i => { const m = document.createElement('div'); m.className = 'tcp-msg' + (isCall ? ' call' : '') + (i ? ' ghost' : ''); m.innerHTML = icon; document.body.appendChild(m); return m; });
-    els.forEach((m, i) => { const a = m.animate(kf, { duration: D, delay: i * 45, easing: 'cubic-bezier(.55,0,.25,1)', fill: 'forwards' }); a.onfinish = () => m.remove(); });
+    els.forEach((m, i) => { const a = m.animate(kf, { duration: D, delay: i * 80, easing: 'cubic-bezier(.55,0,.25,1)', fill: 'forwards' }); a.onfinish = () => m.remove(); });
     setTimeout(then, D * 0.9);
   }
 
