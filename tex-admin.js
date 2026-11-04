@@ -394,6 +394,8 @@
 
   // A technician's own services (max 2): list, change the service, delete.
   const myServices = () => rpc('texcontractor_my_services', {});
+  // Is this phone already listed for this service? (prevents duplicate listings from the quick sign-up)
+  const listingForPhone = async (phone, service) => { const r = await rpc('texcontractor_listing_for_phone', { p_phone: phone, p_service: service }); return Array.isArray(r) ? (r[0] || null) : (r || null); };
   const setMyHours = (from, to) => rpc('texcontractor_my_hours', { p_from: from, p_to: to });
   const setMySpanish = (value) => rpc('texcontractor_my_spanish', { p_value: !!value });
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
@@ -404,5 +406,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();

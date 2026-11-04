@@ -159,7 +159,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
   </div>
 </main>
 <script src="tex-auth.js?v=20261102src"></script>
-<script src="tex-admin.js?v=20261102phone"></script>
+<script src="tex-admin.js?v=20261104dup"></script>
 <script src="tex-quick-signup.js?v=20261102phone"></script>
 <script>
 (function(){
@@ -174,7 +174,7 @@ const T={
   st4:'Last step',h4:'Enter the code we texted you',s4:'We sent a 6-digit code to {phone}.',verify:'Publish my free profile',verifying:'Publishing…',resend:'Send a new code',edit:'Change number',resent:'New code sent.',
   h5:'You are live, {name}!',s5:'Customers in {city} can now find you under {trade} and text you directly at {phone}.',seeProf:'See my profile',
   more:'Add a photo, hours and details (optional)',
-  allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tipH:'💡 Did you know?',tipP:'Customers choose and trust the pros who show their real photo, photos of their work and a short description of what they do. It takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
+  dupH:'You are already listed ✅',dupS:'Your number {phone} is already listed under {trade}, so customers can text you now. No need to sign up again.',allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tipH:'💡 Did you know?',tipP:'Customers choose and trust the pros who show their real photo, photos of their work and a short description of what they do. It takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos, menos de un minuto. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
@@ -185,7 +185,7 @@ const T={
   st4:'Último paso',h4:'Escribe el código que te mandamos',s4:'Mandamos un código de 6 dígitos al {phone}.',verify:'Publicar mi perfil gratis',verifying:'Publicando…',resend:'Mandar otro código',edit:'Cambiar número',resent:'Código nuevo enviado.',
   h5:'¡Ya estás publicado, {name}!',s5:'Los clientes en {city} ya te pueden encontrar en {trade} y escribirte directo al {phone}.',seeProf:'Ver mi perfil',
   more:'Agregar foto, horario y detalles (opcional)',
-  allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tipH:'💡 ¿Sabías que…?',tipP:'Los clientes eligen y confían más en los técnicos que ponen su foto real, fotos de sus trabajos y una descripción de lo que hacen. Te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
+  dupH:'Ya estás publicado ✅',dupS:'Tu número {phone} ya está publicado en {trade}, así que los clientes ya te pueden escribir. No necesitas registrarte otra vez.',allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tipH:'💡 ¿Sabías que…?',tipP:'Los clientes eligen y confían más en los técnicos que ponen su foto real, fotos de sus trabajos y una descripción de lo que hacen. Te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
   errPhone:'Escribe un número de celular de EE. UU. de 10 dígitos.',errName:'Escribe tu nombre.',errGeneric:'Algo salió mal. Intenta de nuevo.'}
 };
 const TRADES=[
@@ -249,6 +249,13 @@ async function publish(user){
   const data={realName:st.name,displayName:st.name,phone:st.phone,email:String(user.email||''),years:'',city:st.city,state:st.state||'TX',service:svc,
    about:(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'. Manda un mensaje para pedir un presupuesto.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'. Send a text to get a quote.'),
    speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:''};
+  // never create a second listing for the same phone + trade (imported directory listing or an earlier sign-up)
+  let dup=null;try{dup=await TexAdminApi.listingForPhone(st.phone,svc)}catch(_){dup=null}
+  if(dup&&dup.id){try{localStorage.removeItem(DRAFT)}catch(_){}
+    ev('quick_duplicate',{trade:svc,mine:!!dup.mine});
+    $('#seeprof').href='profile.html?contractor='+encodeURIComponent(dup.id);
+    go(5);$('#h5').textContent=t('dupH');$('#s5').textContent=fmt(t('dupS'));
+    setTimeout(()=>{$('#tip').hidden=false},1400);return;}
   const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:'',workPhotos:[]}});
   try{localStorage.removeItem(DRAFT)}catch(_){}
   ev('quick_published',{trade:svc});
