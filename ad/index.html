@@ -21,9 +21,9 @@ code{display:block;background:#0f172a;color:#e2e8f0;font-size:.72rem;padding:8px
 <script>
 const S=[[300,250],[336,280],[728,90],[970,250],[300,600],[160,600],[320,100],[320,50],[468,60]];
 const g=document.getElementById('g');
-S.forEach(([w,h])=>{const f=document.createElement('figure');const u='https://texcontractor.com/ad/banner.html?src=embed-'+w+'x'+h;
- f.innerHTML='<figcaption>'+w+' × '+h+'</figcaption><iframe src="banner.html?src=preview-'+w+'x'+h+'" width="'+w+'" height="'+h+'" title="TexContractor banner" loading="lazy"></iframe><code></code>';
- f.querySelector('code').textContent='<iframe src="'+u+'" width="'+w+'" height="'+h+'" style="border:0" title="TexContractor"></iframe>';g.appendChild(f)});
+['gold','light'].forEach(th=>S.forEach(([w,h])=>{const f=document.createElement('figure');const u='https://texcontractor.com/ad/banner.html?theme='+th+'&src=embed-'+w+'x'+h;
+ f.innerHTML='<figcaption>'+w+' × '+h+' · '+th+'</figcaption><iframe src="banner.html?theme='+th+'&src=preview-'+w+'x'+h+'" width="'+w+'" height="'+h+'" title="TexContractor banner" loading="lazy"></iframe><code></code>';
+ f.querySelector('code').textContent='<iframe src="'+u+'" width="'+w+'" height="'+h+'" style="border:0" title="TexContractor"></iframe>';g.appendChild(f)}));
 </script>
 </body>
 </html>
