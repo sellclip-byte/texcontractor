@@ -1,13 +1,8 @@
-// Compact "How it works" strip on the home page: English and Spanish side by side,
-// with a link to every video on the About & Media page.
+// Small "watch videos" button on the home page; the videos themselves live on /videos/.
 (function () {
-  const ITEMS = [
-    ['entrevista-tecnicos-es', 'Español', '¿Por qué todos hablan de TexContractor? Entrevista'],
-    ['four-languages-couples-en', 'English', "4 wives, 4 languages, 1 answer"]
-  ];
   const TEXT = {
-    en: { title: 'Watch how it works', more: 'See all videos' },
-    es: { title: 'Mira cómo funciona', more: 'Ver todos los videos' }
+    en: { label: 'Watch how it works', sub: 'Short videos · English & Español' },
+    es: { label: 'Mira cómo funciona', sub: 'Videos cortos · Español e inglés' }
   };
 
   function lang() {
@@ -21,46 +16,23 @@
     if (box.dataset.lang === l) return;
     box.dataset.lang = l;
     const t = TEXT[l];
-    const wrap = document.createElement('div');
-    wrap.className = 'tex-videos-inner';
-    const head = document.createElement('div');
-    head.className = 'tex-videos-head';
-    const h = document.createElement('h2');
-    h.textContent = t.title;
-    const more = document.createElement('a');
-    more.href = 'videos/';
-    more.textContent = t.more + ' →';
-    head.append(h, more);
-    const row = document.createElement('div');
-    row.className = 'tex-videos-row';
-    ITEMS.forEach(([file, tag, label]) => {
-      const fig = document.createElement('figure');
-      const v = document.createElement('video');
-      v.src = 'videos/' + file + '.mp4';
-      v.poster = 'videos/' + file + '.jpg';
-      v.preload = 'none';
-      v.controls = true;
-      v.playsInline = true;
-      v.setAttribute('aria-label', label);
-      const cap = document.createElement('figcaption');
-      const badge = document.createElement('span');
-      badge.className = 'tex-videos-lang';
-      badge.textContent = tag;
-      const link = document.createElement('a');
-      link.href = 'videos/' + file + '.html';
-      link.textContent = label;
-      cap.append(badge, link);
-      fig.append(v, cap);
-      row.append(fig);
-    });
-    wrap.append(head, row);
-    box.replaceChildren(wrap);
+    const a = document.createElement('a');
+    a.className = 'tex-videos-btn';
+    a.href = 'videos/';
+    const icon = document.createElement('span');
+    icon.className = 'tex-videos-play';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = '▶';
+    const txt = document.createElement('span');
+    const b = document.createElement('b');
+    b.textContent = t.label;
+    const s = document.createElement('small');
+    s.textContent = t.sub;
+    txt.append(b, s);
+    a.append(icon, txt);
+    box.replaceChildren(a);
   }
 
-  document.addEventListener('play', (e) => {
-    if (!e.target.closest || !e.target.closest('#tex-videos')) return;
-    document.querySelectorAll('#tex-videos video').forEach((v) => { if (v !== e.target) v.pause(); });
-  }, true);
   document.addEventListener('change', (e) => {
     if (e.target && e.target.id === 'tex-language-picker') setTimeout(render, 0);
   });
