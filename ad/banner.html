@@ -97,7 +97,10 @@ let hi=0;function head(){const t=T[L],tr=TR[L][hi%TR[L].length],city=CITY||(hi%3
 setInterval(()=>{hi++;head()},2200);
 const src=(q.get('src')||'banner').replace(/[^a-z0-9_-]/gi,'').slice(0,30);
 // layout from the size of the frame
-function layout(){const w=innerWidth,h=innerHeight,r=w/h,c=document.body.classList;c.remove('tall','sq','wide','short','mid','mini','mob','narrow');if(w<220)c.add('narrow');
+function layout(){const W0=innerWidth,H0=innerHeight,r0=W0/H0;let k=1;
+  if(r0>=2.2)k=Math.max(1,Math.min(W0/970,H0/250));else if(W0>=340)k=Math.max(1,Math.min(W0/340,H0/(r0<0.75?600:290)));
+  const box=document.querySelector('.in');box.style.width=(100/k)+'%';box.style.height=(100/k)+'%';box.style.transform=k>1?'scale('+k+')':'';box.style.transformOrigin='0 0';
+  const w=W0/k,h=H0/k,r=w/h,c=document.body.classList;c.remove('tall','sq','wide','short','mid','mini','mob','narrow');if(w<220)c.add('narrow');
   if(h<=60)c.add('mini');else if(r>=2.2&&h<=110&&w<=360)c.add('mob');else if(r>=2.2){c.add('wide');if(h<=110)c.add('short');else if(h<=200)c.add('mid')}else if(r<0.75)c.add('tall');else c.add('sq')}
 addEventListener('resize',layout);layout();if(q.get('theme')==='light')document.body.classList.add('light');
 function render(){document.documentElement.lang=L;document.querySelectorAll('[data-t]').forEach(e=>{const v=T[L][e.dataset.t];if(e.dataset.html)e.innerHTML=v;else e.textContent=v});
