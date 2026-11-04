@@ -16,7 +16,10 @@
   .tcp-sig{position:absolute;top:8px;right:8px;z-index:5;pointer-events:none;width:26px;height:22px}
   .tcp-sig i{position:absolute;right:0;bottom:0;border:2.5px solid #e11d2e;border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(45deg);opacity:0;animation:tcpBars 1.2s ease-out forwards}
   .tcp-sig i:nth-child(1){width:8px;height:8px}.tcp-sig i:nth-child(2){width:15px;height:15px;animation-delay:.12s}.tcp-sig i:nth-child(3){width:22px;height:22px;animation-delay:.24s}
-  @keyframes tcpBars{30%{opacity:1}100%{opacity:0}}`;
+  @keyframes tcpBars{30%{opacity:1}100%{opacity:0}}
+  .tcp-msg{position:fixed;left:0;top:0;width:30px;height:25px;z-index:61;pointer-events:none;margin:-12px 0 0 -15px;filter:drop-shadow(0 0 5px rgba(10,132,255,.9))}
+  .tcp-msg.call{width:28px;height:28px;margin:-14px 0 0 -14px;filter:drop-shadow(0 0 4px rgba(22,163,74,.9))}
+  .tcp-msg.ghost{opacity:.35;filter:blur(1px)}`;
   const style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
 
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -84,6 +87,28 @@
   }
   function pickCard(exclude) { const c = [...document.querySelectorAll('.services-grid .service-card')].filter(el => visible(el) && !exclude.includes(el)); return c.length ? c[Math.floor(Math.random() * c.length)] : null; }
 
+  // A tiny message bubble shoots like a spark from the light to the service card.
+  const MSG = '<svg viewBox="0 0 22 18" width="30" height="25"><path d="M3 1h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4v-4H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" fill="#0a84ff" stroke="#fff" stroke-width="1.5"/><circle cx="7" cy="7" r="1.3" fill="#fff"/><circle cx="11" cy="7" r="1.3" fill="#fff"/><circle cx="15" cy="7" r="1.3" fill="#fff"/></svg>';
+  const CALL = '<svg viewBox="0 0 22 22" width="28" height="28"><circle cx="11" cy="11" r="10" fill="#16a34a" stroke="#fff" stroke-width="1.5"/><path d="M7.4 5.8c.4-.4 1-.4 1.3 0l1.3 1.6c.3.4.3.9 0 1.2l-.8.8c.6 1.3 1.7 2.4 3 3l.8-.8c.3-.3.8-.3 1.2 0l1.6 1.3c.4.3.4.9 0 1.3l-.9.9c-.6.6-1.5.8-2.3.5-2.8-1-5-3.2-6-6-.3-.8-.1-1.7.5-2.3z" fill="#fff"/></svg>';
+  // Mostly messages; a call about every 7-8 messages, and only in the day (8 AM - 8 PM local) when people pick up.
+  let sinceCall = 0, nextCall = 6 + Math.floor(Math.random() * 4);
+  const pickIcon = () => {
+    const h = new Date().getHours();
+    if (h >= 8 && h < 20 && sinceCall >= nextCall) { sinceCall = 0; nextCall = 6 + Math.floor(Math.random() * 4); return CALL; }
+    sinceCall++; return MSG;
+  };
+  function fly(x, y, card, then) {
+    const r = card.getBoundingClientRect(), tx = r.right - 22, ty = r.top + 20;
+    if (!document.body.animate) return then();
+    const dx = tx - x, dy = ty - y, mx = x + dx * 0.55, my = Math.min(y, ty) - Math.min(140, Math.abs(dx) * 0.18 + 40);
+    const kf = [{ transform: `translate(${x}px,${y}px) scale(.6)`, opacity: 0 }, { transform: `translate(${x}px,${y}px) scale(1)`, opacity: 1, offset: 0.08 }, { transform: `translate(${mx}px,${my}px) scale(1.15)`, offset: 0.5 }, { transform: `translate(${tx}px,${ty}px) scale(.9)`, opacity: 1, offset: 0.92 }, { transform: `translate(${tx}px,${ty}px) scale(.3)`, opacity: 0 }];
+    const D = Math.min(650, 380 + Math.hypot(dx, dy) * 0.18);
+    const icon = pickIcon(), isCall = icon === CALL;
+    const els = [0, 1, 2].map(i => { const m = document.createElement('div'); m.className = 'tcp-msg' + (isCall ? ' call' : '') + (i ? ' ghost' : ''); m.innerHTML = icon; document.body.appendChild(m); return m; });
+    els.forEach((m, i) => { const a = m.animate(kf, { duration: D, delay: i * 45, easing: 'cubic-bezier(.55,0,.25,1)', fill: 'forwards' }); a.onfinish = () => m.remove(); });
+    setTimeout(then, D * 0.9);
+  }
+
   const busyStates = [], busyCards = [];
   function fire(stateEl, wantCard) {
     if (!stateEl || running >= 3) return;
@@ -105,11 +130,13 @@
         setTimeout(() => {
           const card = (wantCard && visible(wantCard) && !busyCards.includes(wantCard)) ? wantCard : pickCard(busyCards); if (!card) return;
           busyCards.push(card);
-          if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
-          card.classList.remove('tcp-hit'); void card.offsetWidth; card.classList.add('tcp-hit');
-          const sig = document.createElement('span'); sig.className = 'tcp-sig'; sig.innerHTML = '<i></i><i></i><i></i>'; card.appendChild(sig);
-          setTimeout(() => { sig.remove(); busyCards.splice(busyCards.indexOf(card), 1); }, 1500);
-        }, rnd(250, 1100));
+          fly(x, y, card, () => {
+            if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+            card.classList.remove('tcp-hit'); void card.offsetWidth; card.classList.add('tcp-hit');
+            const sig = document.createElement('span'); sig.className = 'tcp-sig'; sig.innerHTML = '<i></i><i></i><i></i>'; card.appendChild(sig);
+            setTimeout(() => { sig.remove(); busyCards.splice(busyCards.indexOf(card), 1); }, 1500);
+          });
+        }, rnd(120, 350));
       }, rnd(900, 2100));
     }, 650);
   }
