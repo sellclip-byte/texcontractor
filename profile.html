@@ -112,7 +112,7 @@
       </aside>
     </div>
   </main>
-  <script src="tex-state-avatar.js?v=20261031-trade25"></script>
+  <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script src="tex-auth.js?v=20261102src"></script>
   <script src="tex-notices.js?v=20261025" defer></script><script src="tex-quick-signup.js?v=20261102phone"></script><script src="tex-sms-message.js?v=20261031"></script>
   <script>
@@ -264,7 +264,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
   <script src="tex-share-profile.js?v=20261021b"></script>
   <script src="tex-chat.js?v=20261022b"></script>
   <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id);});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
-  <script src="tex-language.js?v=20261103indiv"></script>
+  <script src="tex-language.js?v=20261103labor"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 </body>
 </html>

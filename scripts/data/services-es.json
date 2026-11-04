@@ -1858,5 +1858,35 @@
     "Explora los perfiles de TexContractor disponibles a continuación. Los listados y la disponibilidad varían según la ubicación; revisa la información de cada contratista y comunícate con ellos directamente por mensaje de texto."
    ]
   ]
+ },
+ "general-labor-and-helpers": {
+  "name": "Ayudantes y trabajo general",
+  "h1": "Ayudantes y trabajo general cerca de ti",
+  "parts": [
+   [
+    "p",
+    "Encuentra trabajadores independientes para tareas generales: cargar y descargar camiones o tráilers, mover cajas y materiales, limpiar después de un trabajo, despejar un garaje o un patio, y otra ayuda sencilla por hora o por trabajo. Solo personas y trabajadores independientes — no compañías."
+   ],
+   [
+    "h2",
+    "Detalles para incluir en tu solicitud"
+   ],
+   [
+    "p",
+    "Describe la tarea, cuántos ayudantes necesitas, cuántas horas calculas, la ubicación, si hay escaleras y si hay objetos pesados. Las fotos ayudan a que el trabajador te dé un precio justo."
+   ],
+   [
+    "h2",
+    "Planificación y seguridad"
+   ],
+   [
+    "p",
+    "Esta categoría es para trabajo general, no especializado. Los trabajos que necesitan licencia o un especialista — electricidad, plomería, techos, subir a árboles — van en su propio servicio. Acuerden el precio y las horas antes de empezar."
+   ],
+   [
+    "p",
+    "Explora los perfiles de TexContractor disponibles a continuación. Los listados y la disponibilidad varían según la ubicación; revisa la información de cada trabajador y comunícate con él directamente por mensaje de texto."
+   ]
+  ]
  }
 }

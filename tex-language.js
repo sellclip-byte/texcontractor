@@ -355,6 +355,7 @@
     'Outdoor Landscaping and Design': 'Paisajismo y diseño exterior',
     'Interior Painting': 'Pintura interior',
     'Junk Removal': 'Retiro de objetos y basura',
+    'General Labor and Helpers': 'Ayudantes y trabajo general',
     'Roof Repair or Maintenance': 'Reparación o mantenimiento de techos',
     'Appliance Repair or Maintenance': 'Reparación o mantenimiento de electrodomésticos',
     'Floor Installation or Replacement': 'Instalación o reemplazo de pisos',

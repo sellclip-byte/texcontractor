@@ -19,7 +19,7 @@
     'Electrical and Wiring Repair': [EL, EM], 'Lighting Installation': [EL, EM],
     'Plumbing Pipe Repair': [PL], 'Plumbing Drain Repair': [PL], 'Bathroom Remodel': [TI, PL, CA],
     'Central Air Conditioning Repair or Maintenance': [AC], 'Heating System Repair or Maintenance': [AC], 'Appliance Repair or Maintenance': [AP],
-    'Deck or Porch Remodel or Addition': [CA], 'Concrete Installation': [CO], 'Home Foundation Repair': [CO], 'Metalwork': [WE], 'Junk Removal': [JU], 'Furniture Moving and Heavy Lifting': [MO, JU], 'Local Moving (under 50 miles)': [MO], 'Garage Door Repair': [LO], 'Lock Installation and Repair': [LO], 'Window Repair': [WI], 'Door Installation': [CA, HA, WI], 'Fence and Gate Installation': [FE, WE], 'General Contracting': [CA, HA],
+    'Deck or Porch Remodel or Addition': [CA], 'Concrete Installation': [CO], 'Home Foundation Repair': [CO], 'Metalwork': [WE], 'Junk Removal': [JU], 'General Labor and Helpers': [MO, JU], 'Furniture Moving and Heavy Lifting': [MO, JU], 'Local Moving (under 50 miles)': [MO], 'Garage Door Repair': [LO], 'Lock Installation and Repair': [LO], 'Window Repair': [WI], 'Door Installation': [CA, HA, WI], 'Fence and Gate Installation': [FE, WE], 'General Contracting': [CA, HA],
     'Floor Installation or Replacement': [FL, CA, TI], 'Furniture Assembly': [HA, CA, TV], 'Handyman': [HA, CA, TV],
     'Mobile Auto Mechanic': [ME], 'Mobile Auto Detailing': [DE], 'Window Tinting': [DE], 'Pressure Washing': [PW], 'General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services': [ME],
     'Lawn Mower, Water Pump & Outdoor Equipment Repair': [ME, SP],
