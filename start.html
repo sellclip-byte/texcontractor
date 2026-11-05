@@ -297,7 +297,7 @@ try{const hm=/^#ph=(\d{10})$/.exec(location.hash);if(hm){try{sessionStorage.setI
 try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you. Not here? Tap “All 63 trades”.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir. ¿No está tu oficio? Toca “Los 63 oficios”.'}}catch(_){}
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
- const NEW_SIGNUP_FIRST=false; // turn on after owner approves the one-screen sign-up
+ const NEW_SIGNUP_FIRST=q.get('src')!=='home'; // owner 11-04: home-page banner keeps the old flow
  if(NEW_SIGNUP_FIRST&&!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);p.set('role','pro');if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
   location.replace('signup.html?'+p.toString()+h);return}
  $('#app').style.visibility='';

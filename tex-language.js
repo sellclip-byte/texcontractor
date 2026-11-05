@@ -7,6 +7,7 @@
     'Español': 'Español',
     'Search': 'Buscar',
     'Sign in': 'Iniciar sesión',
+    'Sign in or join with your phone': 'Entra o únete con tu teléfono',
     'Account': 'Cuenta',
     'Share': 'Compartir',
     'Media': 'Redes',

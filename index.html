@@ -680,7 +680,7 @@
           <button class="header-tool" id="media-toggle" type="button" title="Share on media"><span class="header-tool-icon">◉</span><span class="header-tool-label">Media</span></button>
           <div class="header-menu" id="account-menu" hidden>
             <p id="account-status">Sign in to post a service or contact a contractor.</p>
-            <a class="menu-primary" id="account-login" href="auth.html?return_to=index.html">Sign in with email</a>
+            <a class="menu-primary" id="account-login" href="signup.html">Sign in or join with your phone</a>
             <button id="account-logout" type="button" hidden>Sign out</button>
           </div>
           <div class="header-menu media-menu-panel" id="media-menu" hidden>
@@ -731,7 +731,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 <img src="auth-pro-640.jpg" alt="A local technician with his tool bag reading a customer's text message" loading="lazy" width="640" height="960">
 <span class="pop-text"><span class="pop-tag">For technicians</span><strong>Get local customers by text</strong><span class="pop-sub">Add your service and customers in your area text you directly. No fees per lead.</span><span class="pop-cta">Add my service →</span></span>
 </a>
-<a class="pop-panel cust" href="auth.html?mode=signup&amp;intent=customer&amp;return_to=index.html">
+<a class="pop-panel cust" href="signup.html?role=customer">
 <img src="auth-customer-640.jpg" alt="A smiling couple finding a local pro on their phone" loading="lazy" width="640" height="960">
 <span class="pop-text"><span class="pop-tag">For customers</span><strong>Find a local pro near you</strong><span class="pop-sub">Search by service and city, then text the technician directly.</span><span class="pop-cta">Find a service →</span></span>
 </a>
@@ -1460,7 +1460,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       accountLabel.textContent = signedIn ? 'Account' : 'Sign in';
       accountStatus.textContent = signedIn ? `Signed in as ${email}` : 'Sign in to post a service or contact a contractor.';
       accountLogin.hidden = false;
-      accountLogin.href = signedIn ? 'account.html' : 'auth.html';
+      accountLogin.href = signedIn ? 'account.html' : 'signup.html';
       accountLogin.textContent = signedIn ? 'My profile' : 'Sign in';
       accountLogout.hidden = !signedIn;
     }
@@ -1550,7 +1550,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 
   </script>
 
-  <script src="tex-language.js?v=20261104cats"></script>
+  <script src="tex-language.js?v=20261105join"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 <script src="tex-chat.js?v=20261022b"></script>
 <script>
