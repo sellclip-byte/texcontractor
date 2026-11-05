@@ -660,7 +660,19 @@
  window.addEventListener('storage',near);window.crNear=near;
 })();
 </script>
-<script src="/tex-readable.js?v=1" defer></script></head>
+<script src="/tex-readable.js?v=1" defer></script><style id="mobile-header-tools">
+@media (max-width:700px){
+  .header-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px!important;width:100%!important;flex:1 1 100%!important}
+  .header-tools>.header-tool{position:relative;width:auto!important;min-height:58px!important;flex-direction:column!important;gap:3px!important;padding:6px 2px!important;border-radius:14px!important;font-size:.76rem!important;font-weight:800!important;line-height:1.1}
+  .header-tools .header-tool-label,.header-tools .req-tool-label{display:block!important;white-space:normal;text-align:center;max-width:100%;font-size:.72rem;line-height:1.05}
+  .header-tools .header-tool-icon{font-size:1.35rem!important}
+  .header-tools .req-tool-n{position:absolute;top:4px;right:6px;padding:0 6px;font-size:.7rem}
+  #account-toggle{background:#075c4b!important;border-color:#075c4b!important;color:#fff!important}
+  #account-toggle *{color:#fff!important}
+  #share-site,#media-toggle{background:#fff!important;border:2px solid #d4a017!important;color:#111!important}
+}
+</style>
+</head>
 <body>
 
   <header>
@@ -675,7 +687,7 @@
         </form>
         <div class="header-tools">
           <a class="header-tool req-tool" href="requests.html" title="Customer requests"><span class="header-tool-icon" aria-hidden="true">📋</span><span class="req-tool-label">Requests</span><span class="req-tool-n" id="req-open-count" hidden></span></a>
-          <button class="header-tool" id="account-toggle" type="button" title="Sign in or sign out"><span class="header-tool-icon">♙</span><span class="header-tool-label" id="account-label">Sign in</span></button>
+          <button class="header-tool" id="account-toggle" type="button" title="Sign in or sign out"><span class="header-tool-icon">👤</span><span class="header-tool-label" id="account-label">Sign in</span></button>
           <button class="header-tool" id="share-site" type="button" title="Share TexContractor"><span class="header-tool-icon">↗</span><span class="header-tool-label">Share</span></button>
           <button class="header-tool" id="media-toggle" type="button" title="Share on media"><span class="header-tool-icon">◉</span><span class="header-tool-label">Media</span></button>
           <div class="header-menu" id="account-menu" hidden>
