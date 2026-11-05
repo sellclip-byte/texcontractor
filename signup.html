@@ -55,19 +55,22 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
  .note{font-size:.9rem}.code{font-size:2.2rem;padding:18px}.btn{font-size:1.15rem;padding:18px}
  .ok{width:74px;height:74px;font-size:2.3rem}.box{font-size:1rem}
 }
-/* photo role cards */
-.role{position:relative;padding:0;overflow:hidden;aspect-ratio:3/4.9;border-width:2px;background:#ddd;display:block;width:100%}
-.role img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:transform .3s}
-.role:hover img{transform:scale(1.04)}
-.role .i{position:absolute;top:10px;left:10px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:1.3rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.role .lbl{position:absolute;left:0;right:0;bottom:0;padding:48px 46px 12px 12px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.82));color:#fff;text-align:left}
-.role .lbl b{display:block;margin:0;font-size:1.15rem;color:#fff}
-.role.cust .lbl b{color:#b9f3df}.role.tech .lbl b{color:#ffd877}
-.role .lbl small{display:block;color:#f3f3f3;font-size:.82rem;margin-top:2px}
-.role .go{position:absolute;right:12px;bottom:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:#fff;color:#111}
-.role.cust .go{background:#0a7a63;color:#fff}.role.tech .go{background:#e3b03f;color:#2b1d00}
-.role.one{aspect-ratio:16/10}
-@media(min-width:700px){.role{aspect-ratio:4/4.3}.role .lbl b{font-size:1.45rem}.role .lbl small{font-size:1rem}.role .i{width:48px;height:48px;font-size:1.6rem}}
+/* role panels, same look as the old join popup: tall photo, transparent text, button */
+.roles{gap:10px}
+.role.tech,.role.cust{background:#2b2b2b}
+.role{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:0!important;border-radius:16px;height:max(330px,calc(100dvh - 380px));max-height:560px;background:#2b2b2b;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.14)}
+.role img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+.role .lbl{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:5px;padding:12px;text-align:left;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 2px 14px rgba(0,0,0,.75)}
+.role .tag{align-self:flex-start;padding:4px 9px;border-radius:999px;font-size:.62rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
+.role.tech .tag{background:#f2ce78;color:#0b1f3a}.role.cust .tag{background:#dbeafe;color:#1d4ed8}
+.role .lbl b{display:block;margin:0;font-size:1.2rem;line-height:1.1;color:#fff}
+.role .lbl small{display:block;color:#fff;font-size:.82rem;line-height:1.3}
+.role .cta{display:flex;align-items:center;justify-content:center;min-height:42px;margin-top:4px;border-radius:10px;font-weight:900;font-size:.9rem;text-shadow:none;box-shadow:0 8px 20px rgba(0,0,0,.28);text-align:center;padding:6px 8px;line-height:1.15}
+.role.tech .cta{background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106;border:1px solid #c18a13}
+.role.cust .cta{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff}
+.role:hover .cta{filter:brightness(1.06)}
+.role.one{height:max(300px,calc(100dvh - 420px))}
+@media(min-width:700px){.roles{gap:14px}.role{height:min(470px,calc(100dvh - 330px));min-height:340px;border-radius:20px}.role .lbl{padding:18px;gap:6px}.role .lbl b{font-size:1.5rem}.role .lbl small{font-size:.95rem}.role .cta{min-height:46px;font-size:1rem}}
 </style>
 <script src="/tex-readable.js?v=1" defer></script>
 </head>
@@ -82,8 +85,8 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
     <div class="ph"><div class="cc">🇺🇸 +1</div><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16" aria-label="Phone number"></div>
     <div class="q" data-t="iam"></div>
     <div class="roles" id="roles">
-      <button class="role cust" type="button" data-r="customer"><img src="auth-customer-640.jpg" alt="" width="640" height="960"><span class="i">🔍</span><span class="lbl"><b data-t="cust"></b><small data-t="custS"></small><span class="go">→</span></span></button>
-      <button class="role tech" type="button" data-r="provider"><img src="auth-pro-640.jpg" alt="" width="640" height="960"><span class="i">🛠️</span><span class="lbl"><b data-t="tech"></b><small data-t="techS"></small><span class="go">→</span></span></button>
+      <button class="role tech" type="button" data-r="provider"><img src="auth-pro-640.jpg" alt="" width="640" height="960"><span class="lbl"><span class="tag" data-t="tagT"></span><b data-t="tech"></b><small data-t="techS"></small><span class="cta" data-t="ctaT"></span></span></button>
+      <button class="role cust" type="button" data-r="customer"><img src="auth-customer-640.jpg" alt="" width="640" height="960"><span class="lbl"><span class="tag" data-t="tagC"></span><b data-t="cust"></b><small data-t="custS"></small><span class="cta" data-t="ctaC"></span></span></button>
     </div>
     <p class="err" id="e1" role="alert"></p>
     <p class="note" id="n1"></p>
@@ -109,12 +112,12 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 (function(){
 'use strict';
 const T={
- en:{h1:'Join TexContractor, free',s1:'One number. No password, no email.',iam:'I am a…',cust:'Customer',custS:'Looking for a service',tech:'Technician',techS:'Adding my service',
+ en:{h1:'Join TexContractor, free',s1:'One number. No password, no email.',iam:'I am a…',cust:'Customer',custS:'Looking for a service',tech:'Technician',techS:'Adding my service',tagT:'For technicians',tagC:'For customers',ctaT:'Add my service →',ctaC:'Find a service →',
   n1:'We text you a 6-digit code to confirm your number. Already joined? Same box, your code signs you in. By continuing you agree to the <a href="site-guide.html#terms">Terms</a> and <a href="site-guide.html#privacy">Privacy Policy</a>. Msg &amp; data rates may apply.',
   sending:'Sending your code…',st2:'Confirm your number',h2:'Enter the code',s2:'We texted a 6-digit code to {phone}.',verify:'Confirm',verifying:'Checking…',edit:'Change number',resend:'Send a new code',resent:'New code sent.',
   h3:"You're in!",s3:'Search any of 63 services and text the pro directly.',find:'Find a service near me →',lockH:'🔒 Your info stays private',lockP:'Your name, city or email (optional) are only visible to you. We save them so next time is faster.',addInfo:'Add my name & city (optional)',
   signedH:"You're signed in",signedS:'What would you like to do?',errPhone:'Enter a 10-digit U.S. mobile number.',errGeneric:'Something went wrong. Please try again.'},
- es:{h1:'Únete a TexContractor gratis',s1:'Un solo número. Sin contraseña ni email.',iam:'Soy…',cust:'Cliente',custS:'Busco un servicio',tech:'Técnico',techS:'Quiero publicar mi servicio',
+ es:{h1:'Únete a TexContractor gratis',s1:'Un solo número. Sin contraseña ni email.',iam:'Soy…',cust:'Cliente',custS:'Busco un servicio',tech:'Técnico',techS:'Quiero publicar mi servicio',tagT:'Para técnicos',tagC:'Para clientes',ctaT:'Publicar mi servicio →',ctaC:'Buscar un servicio →',
   n1:'Te mandamos un código de 6 dígitos para confirmar tu número. ¿Ya tienes cuenta? Usa el mismo número, el código te da acceso. Al continuar aceptas los <a href="site-guide.html#terms">Términos</a> y la <a href="site-guide.html#privacy">Política de privacidad</a>. Pueden aplicar cargos de mensajes.',
   sending:'Enviando tu código…',st2:'Confirma tu número',h2:'Escribe el código',s2:'Mandamos un código de 6 dígitos al {phone}.',verify:'Confirmar',verifying:'Revisando…',edit:'Cambiar número',resend:'Mandar otro código',resent:'Código nuevo enviado.',
   h3:'¡Ya entraste!',s3:'Busca cualquiera de los 63 servicios y escríbele directo al técnico.',find:'Buscar un servicio cerca de mí →',lockH:'🔒 Tu información es privada',lockP:'Tu nombre, ciudad o email (opcional) solo los ves tú. Los guardamos para que la próxima vez sea más rápido.',addInfo:'Agregar mi nombre y ciudad (opcional)',
