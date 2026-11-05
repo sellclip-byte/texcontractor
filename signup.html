@@ -55,6 +55,19 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
  .note{font-size:.9rem}.code{font-size:2.2rem;padding:18px}.btn{font-size:1.15rem;padding:18px}
  .ok{width:74px;height:74px;font-size:2.3rem}.box{font-size:1rem}
 }
+/* photo role cards */
+.role{position:relative;padding:0;overflow:hidden;aspect-ratio:3/4.9;border-width:2px;background:#ddd;display:block;width:100%}
+.role img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:transform .3s}
+.role:hover img{transform:scale(1.04)}
+.role .i{position:absolute;top:10px;left:10px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:1.3rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.role .lbl{position:absolute;left:0;right:0;bottom:0;padding:48px 46px 12px 12px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.82));color:#fff;text-align:left}
+.role .lbl b{display:block;margin:0;font-size:1.15rem;color:#fff}
+.role.cust .lbl b{color:#b9f3df}.role.tech .lbl b{color:#ffd877}
+.role .lbl small{display:block;color:#f3f3f3;font-size:.82rem;margin-top:2px}
+.role .go{position:absolute;right:12px;bottom:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:#fff;color:#111}
+.role.cust .go{background:#0a7a63;color:#fff}.role.tech .go{background:#e3b03f;color:#2b1d00}
+.role.one{aspect-ratio:16/10}
+@media(min-width:700px){.role{aspect-ratio:4/4.3}.role .lbl b{font-size:1.45rem}.role .lbl small{font-size:1rem}.role .i{width:48px;height:48px;font-size:1.6rem}}
 </style>
 <script src="/tex-readable.js?v=1" defer></script>
 </head>
@@ -69,8 +82,8 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
     <div class="ph"><div class="cc">🇺🇸 +1</div><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16" aria-label="Phone number"></div>
     <div class="q" data-t="iam"></div>
     <div class="roles" id="roles">
-      <button class="role cust" type="button" data-r="customer"><span class="i">🔍</span><b data-t="cust"></b><small data-t="custS"></small></button>
-      <button class="role tech" type="button" data-r="provider"><span class="i">🛠️</span><b data-t="tech"></b><small data-t="techS"></small></button>
+      <button class="role cust" type="button" data-r="customer"><img src="auth-customer-640.jpg" alt="" width="640" height="960"><span class="i">🔍</span><span class="lbl"><b data-t="cust"></b><small data-t="custS"></small><span class="go">→</span></span></button>
+      <button class="role tech" type="button" data-r="provider"><img src="auth-pro-640.jpg" alt="" width="640" height="960"><span class="i">🛠️</span><span class="lbl"><b data-t="tech"></b><small data-t="techS"></small><span class="go">→</span></span></button>
     </div>
     <p class="err" id="e1" role="alert"></p>
     <p class="note" id="n1"></p>
