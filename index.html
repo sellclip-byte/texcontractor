@@ -1170,6 +1170,32 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 #tex-videos b{display:block;font-size:.92rem;line-height:1.2}
 #tex-videos small{display:block;font-size:.72rem;color:#8a6a2a;line-height:1.2}
 </style>
+<style>
+#tex-app{max-width:760px;margin:10px auto 16px;padding:14px 16px;background:#fffaf0;border:1px solid #e6d3a8;border-radius:16px;text-align:center}
+#tex-app h2{margin:0 0 10px;font-size:1.05rem;line-height:1.35;color:#3d2f12}
+#tex-app .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:420px;margin:0 auto}
+#tex-app figure{margin:0}#tex-app img{display:block;width:100%;max-width:120px;height:auto;margin:0 auto;border-radius:14px}
+#tex-app figcaption{margin-top:6px;font-weight:800;font-size:.8rem;color:#3d2f12;line-height:1.25}
+#tex-app figcaption b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#c99a3a;color:#fff;margin-right:4px;font-size:.8rem}
+#tex-app a{display:inline-block;margin-top:10px;font-weight:800;color:#075c4b}
+</style>
+  <section id="tex-app" aria-label="Get the app"><h2 id="tex-app-h"></h2><div class="st" id="tex-app-st"></div><a href="app.html" id="tex-app-more"></a></section>
+<script>
+(function(){
+  var T={en:{h:'📱 No app store needed — TexContractor works like an app. Just do these 3 steps:',ios:['Tap Share','Add to Home Screen','Done!'],android:['Tap ⋮','Add to Home screen','Done!'],m:'See it step by step →'},
+         es:{h:'📱 Sin descargar nada — TexContractor funciona como una app. Solo haz estos 3 pasos:',ios:['Toca Compartir','Agregar a inicio','¡Listo!'],android:['Toca ⋮','Agregar a inicio','¡Listo!'],m:'Ver paso a paso →'}};
+  var os=/android/i.test(navigator.userAgent)?'android':'ios';
+  function lang(){try{return localStorage.getItem('texcontractor-language')==='es'?'es':'en'}catch(e){return 'en'}}
+  function draw(){var l=lang(),t=T[l],st=document.getElementById('tex-app-st');if(!st)return;
+    if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches){document.getElementById('tex-app').hidden=true;return}
+    document.getElementById('tex-app-h').textContent=t.h;document.getElementById('tex-app-more').textContent=t.m;st.innerHTML='';
+    t[os].forEach(function(c,i){var f=document.createElement('figure');var im=document.createElement('img');im.src='images/app/'+os+'-'+l+'-'+(i+1)+'.webp';im.alt='';im.loading='lazy';im.width=120;im.height=220;
+      var cap=document.createElement('figcaption');var b=document.createElement('b');b.textContent=i+1;cap.appendChild(b);cap.appendChild(document.createTextNode(c));f.appendChild(im);f.appendChild(cap);st.appendChild(f)});}
+  document.addEventListener('change',function(e){if(e.target&&e.target.id==='tex-language-picker')setTimeout(draw,0)});
+  document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('[data-language],[data-lang],.language-toggle button'))setTimeout(draw,50)});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',draw);else draw();
+})();
+</script>
   <section id="tex-videos" aria-label="How it works videos"></section>
   <script src="tex-videos.js?v=20261104btn" defer></script>
 
