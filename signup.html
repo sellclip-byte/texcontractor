@@ -14,7 +14,7 @@ body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);bac
 .card{width:100%;max-width:440px;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 30px rgba(60,40,0,.08);padding:22px 20px 18px}
 .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.top a{display:block}.top img{height:40px;display:block}
 .lg{display:flex;gap:4px}.lg button{font:800 11px Arial;padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--mut);cursor:pointer}.lg button[aria-pressed=true]{background:#fff4dc;border-color:var(--gold);color:#7a5a00}
-.lg button[aria-pressed=false]{border:1px solid var(--line)!important;outline:0!important;box-shadow:none!important;color:var(--mut)!important;background:#fff!important}
+html body #lgsw button[aria-pressed=false],html body #lgsw button[aria-pressed=false]:hover{border:1px solid var(--line)!important;outline:0!important;box-shadow:none!important;color:var(--mut)!important;background:#fff!important}
 h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);margin:0 0 16px;font-size:.95rem}
 .ph{display:flex;gap:8px;margin-bottom:14px}.cc{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:14px;padding:0 12px;font-weight:800}
 .ph input{flex:1;min-width:0;border:2px solid var(--gold);border-radius:14px;padding:15px 14px;font-size:1.15rem;font-weight:700;outline:none;font-family:inherit}
@@ -45,7 +45,7 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 <body>
 <main class="card">
   <div class="top"><a href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor"></a>
-    <div class="lg"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></div>
+    <div class="lg" id="lgsw"><button data-l="en" aria-pressed="true" data-tex-readable="1">EN</button><button data-l="es" aria-pressed="false" data-tex-readable="1">ES</button></div></div>
 
   <section class="v on" id="v1">
     <h1 data-t="h1"></h1><p class="sub" data-t="s1"></p>
