@@ -127,7 +127,7 @@ ph.addEventListener('input',()=>{ph.value=pretty(digits(ph.value).slice(0,10));p
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();const d=digits(ph.value);
   if(d.length!==10){ph.style.borderColor='#b42318';ph.focus();return}
   // the number travels only in the #fragment (never sent to any server) and the sign-up page clears it right away
-  const url='https://texcontractor.com/start.html?src='+encodeURIComponent(src)+'&lang='+L+'#ph='+d;
+  const url='https://texcontractor.com/signup.html?src='+encodeURIComponent(src)+'&lang='+L+'#ph='+d;
   try{window.top.location.href=url}catch(_){window.open(url,'_blank','noopener')}
 });
 render();

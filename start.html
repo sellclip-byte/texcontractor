@@ -99,7 +99,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
   <div class="lang"><button data-l="en" aria-pressed="true">🇺🇸 EN</button><button data-l="es" aria-pressed="false">🇲🇽 ES</button></div>
 </div><div class="prog"><i id="prog"></i></div></div>
 
-<main id="app">
+<main id="app" style="visibility:hidden">
   <section class="step on" data-s="1">
     <span class="kick" data-t="k1"></span>
     <h1 data-t="h1"></h1>
@@ -114,6 +114,8 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
     <input class="field" id="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="75001">
     <p class="sub" id="zipcity" style="margin:10px 2px 0;font-weight:700;color:#075c4b"></p>
     <div id="cityfb" hidden><label class="lb" for="cityin" data-t="cityL"></label><input class="field" id="cityin" autocomplete="address-level2"></div>
+    <div id="namebox" hidden><label class="lb" for="name2" data-t="nameL"></label><input class="field" id="name2" autocomplete="name" maxlength="40"></div>
+    <p class="err" id="err2" role="alert"></p>
     <button class="cta" id="zipgo" disabled data-t="next"></button>
   </section>
   <section class="step" data-s="3">
@@ -228,12 +230,16 @@ $('#allq').addEventListener('input',drawAll);
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
 // step 2
-const zipOk=()=>{$('#zipgo').disabled=!(st.zip.length===5&&(st.city||($('#cityin').value.trim().length>1)))};
+let phoneUser=null;
+const zipOk=()=>{$('#zipgo').disabled=!(st.zip.length===5&&(st.city||($('#cityin').value.trim().length>1))&&(!phoneUser||$('#name2').value.trim().length>1))};
 $('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#cityfb').hidden=true;zipOk();
  if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state}}}catch(_){}
   if(!st.city&&z===st.zip)$('#cityfb').hidden=false;zipOk()}});
-$('#cityin').addEventListener('input',zipOk);
-$('#zipgo').onclick=()=>{if(!st.city){st.city=$('#cityin').value.trim();st.state=st.state||'TX'}ev('quick_zip',{state:st.state});go(3)};
+$('#cityin').addEventListener('input',zipOk);$('#name2').addEventListener('input',zipOk);
+$('#zipgo').onclick=async()=>{if(!st.city){st.city=$('#cityin').value.trim();st.state=st.state||'TX'}ev('quick_zip',{state:st.state});
+ if(!phoneUser){go(3);return}
+ const b=$('#zipgo');st.name=$('#name2').value.trim().replace(/\s+/g,' ');$('#err2').textContent='';b.disabled=true;b.textContent=t('publishing');
+ try{await publish(phoneUser)}catch(e){$('#err2').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('googleIn')}};
 // step 3
 const digits=v=>String(v||'').replace(/\D/g,'');
 const pretty=d=>{d=d.replace(/^1(?=\d{10}$)/,'');return d.length===10?'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6):d};
@@ -291,6 +297,13 @@ try{const hm=/^#ph=(\d{10})$/.exec(location.hash);if(hm){try{sessionStorage.setI
 try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you. Not here? Tap “All 63 trades”.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir. ¿No está tu oficio? Toca “Los 63 oficios”.'}}catch(_){}
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
+ if(!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);p.set('role','pro');if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
+  location.replace('signup.html?'+p.toString()+h);return}
+ $('#app').style.visibility='';
+ if(u&&u.phone&&digits(u.phone).replace(/^1(?=\d{10}$)/,'').length===10){phoneUser=u;st.phone=pretty(digits(u.phone));$('#namebox').hidden=false;
+  T.en.k1='✓ '+st.phone+' confirmed';T.en.h1='What is your trade?';T.en.s1='Pick your trade, then your ZIP and you are live.';T.en.st2='Step 2 of 2';T.en.h2='Where do you work?';T.en.next='Publish my free profile';
+  T.es.k1='✓ '+st.phone+' confirmado';T.es.h1='¿Cuál es tu oficio?';T.es.s1='Escoge tu oficio, luego tu código postal y listo.';T.es.st2='Paso 2 de 2';T.es.h2='¿Dónde trabajas?';T.es.next='Publicar mi perfil gratis';
+  render();zipOk()}
  if(u){try{$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
    const n=document.createElement('p');n.className='small';n.textContent=(L==='es'?'Ya entraste como ':'Signed in as ')+(u.email||u.phone||'');$('#google').after(n)}catch(_){}}
  const d=q.get('resume')?readDraft():null;
