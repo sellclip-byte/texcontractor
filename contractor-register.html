@@ -126,8 +126,8 @@
         <h2>Profile photo</h2>
         <p class="hint">Upload one clear photo of yourself. This is the photo customers see beside your name; it is separate from your work photos.</p>
         <fieldset class="avatar-picker"><legend>Choose your profile picture</legend><div class="avatar-options">
-          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials" checked> State flag with your initials</label>
-          <label class="avatar-option"><input type="radio" name="avatarChoice" value="upload"> Upload from my device or phone</label>
+          <label class="avatar-option"><input type="radio" name="avatarChoice" value="upload" checked> 📷 Take a photo or choose from my phone (recommended)</label>
+          <label class="avatar-option"><input type="radio" name="avatarChoice" value="initials"> State flag with your initials</label>
           <label class="avatar-option"><input type="radio" name="avatarChoice" value="library"> Choose a TexContractor picture</label>
         </div></fieldset>
         <div id="avatar-library" hidden style="display:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0"></div>
@@ -149,7 +149,7 @@
   </main>
   <script src="tex-auth.js?v=20261102src"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261101-hrs"></script>
+  <script src="tex-admin.js?v=20261105media"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script>
@@ -592,7 +592,8 @@
           try { await TexAdminApi.deleteMyService(row.id); myStatus.style.color = '#14532d'; myStatus.textContent = `${row.service} was deleted.`; await loadMyServices(); }
           catch (error) { myStatus.style.color = '#991b1b'; myStatus.textContent = error.message; del.disabled = false; }
         });
-        item.append(info, view, change, del, editor);
+        const photos = document.createElement('a'); photos.textContent = '📷 Photos & work'; photos.href = `my-photos.html?id=${encodeURIComponent(row.id)}`; photos.style.cssText = 'min-height:38px;padding:7px 12px;border-radius:9px;font-weight:800;text-decoration:none;background:#f4c75a;color:#2b1d00;display:inline-flex;align-items:center';
+        item.append(info, view, photos, change, del, editor);
         return item;
       }));
     };
@@ -691,7 +692,7 @@
       success.scrollIntoView({ behavior:'smooth', block:'center' });
     });
   </script>
-  <script src="tex-language.js?v=20261103pronote"></script>
+  <script src="tex-language.js?v=20261105photos"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 </body>
 </html>

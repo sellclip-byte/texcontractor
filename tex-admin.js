@@ -399,6 +399,17 @@
   const setMyHours = (from, to) => rpc('texcontractor_my_hours', { p_from: from, p_to: to });
   const setMySpanish = (value) => rpc('texcontractor_my_spanish', { p_value: !!value });
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
+  const myMedia = (id) => rpc('texcontractor_my_media', { p_id: id || null });
+  const myMediaUpdate = (id, { profile = null, work = null, about = null } = {}) => rpc('texcontractor_my_media_update', { p_id: id, p_profile: profile, p_work: work, p_about: about });
+  // Upload one compressed image (data URL) into the signed-in owner's own folder; returns its storage path.
+  const uploadMyPhoto = async (listingId, dataUrl, kind) => {
+    const user = await TexAuth.getUser();
+    const token = await TexAuth.getAccessToken();
+    if (!user?.id || !token) throw new Error('Your sign-in session expired. Please sign in again.');
+    const path = `${user.id}/${listingId}/${kind}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
+    await uploadDataUrl(token, path, dataUrl);
+    return path;
+  };
   const deleteMyService = async (id) => {
     const result = await rpc('texcontractor_my_service_delete', { p_id: id });
     const token = await TexAuth.getAccessToken();
@@ -406,5 +417,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, myMedia, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();

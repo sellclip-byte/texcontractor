@@ -170,8 +170,8 @@ $('#edit').onclick=()=>{$('#code').value='';show('v1');$('#phone').focus()};
 $('#resend').onclick=async()=>{$('#e2').className='err';$('#e2').textContent='';try{await TexAuth.sendPhoneCode(st.phone,st.role);$('#e2').className='err okc';$('#e2').textContent=t('resent')}catch(e){$('#e2').textContent=(e&&e.message)||t('errGeneric')}};
 
 function done(){
-  if(st.role==='provider'){location.href=proNext();return}
   if(safeReturn){location.href=safeReturn;return}
+  if(st.role==='provider'){location.href=proNext();return}
   render();show('v3');
 }
 
