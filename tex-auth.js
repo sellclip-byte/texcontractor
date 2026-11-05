@@ -269,6 +269,13 @@
     if (!result.access_token) throw new Error('That code did not work. Try again.');
     const user = await finalizeUser(result.user, result.access_token, result);
     if (!user) throw new Error('Access to this account is blocked.');
+    // The number is now proven: any directory listing with this number becomes this person's own listing.
+    try {
+      const claim = await requestJson(`${SUPABASE_URL}/rest/v1/rpc/texcontractor_claim_my_phone_listings`, {
+        method: 'POST', headers: authHeaders(result.access_token), body: '{}'
+      });
+      if (claim && (claim.moved || claim.created)) { try { sessionStorage.setItem('tex_claimed', JSON.stringify(claim)); } catch (_) {} }
+    } catch (_) {}
     return user;
   };
 

@@ -107,7 +107,7 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
     <a class="btn ghost" href="account.html" data-t="addInfo"></a>
   </section>
 </main>
-<script src="tex-auth.js?v=20261102src"></script>
+<script src="tex-auth.js?v=20261105claim"></script>
 <script>
 (function(){
 'use strict';
@@ -171,7 +171,9 @@ $('#resend').onclick=async()=>{$('#e2').className='err';$('#e2').textContent='';
 
 function done(){
   if(safeReturn){location.href=safeReturn;return}
-  if(st.role==='provider'){location.href=proNext();return}
+  if(st.role==='provider'){let c=null;try{c=JSON.parse(sessionStorage.getItem('tex_claimed')||'null')}catch(_){}
+   if(c&&(c.moved||c.created)){ev('signup_claimed',{moved:c.moved||0,created:c.created||0});location.href='my-photos.html?claimed=1';return}
+   location.href=proNext();return}
   render();show('v3');
 }
 
