@@ -99,6 +99,10 @@
           <input type="hidden" name="realName">
           <label>Mobile number <span class="hint">A mobile number that can receive texts — not a landline.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <input type="hidden" name="email">
+          <div class="cred-pick" style="display:grid;gap:6px;margin:4px 0"><span style="font-weight:800">Insurance &amp; license <span class="hint">Optional. Shown on your listing as “Info provided by the pro”. You are responsible for this information.</span></span>
+          <label style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" name="insured" value="yes" style="width:22px;height:22px"> I'm insured</label>
+          <label style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" name="licensed" value="yes" style="width:22px;height:22px"> I'm licensed / certified</label>
+          <input name="licenseNumber" maxlength="40" placeholder="License number (optional)" autocomplete="off"></div>
           <label>Do you speak Spanish? <span class="hint" lang="es">¿Hablas español? Customers will see a “Hablo español” badge on your listing.</span><select name="speaksSpanish"><option value="no">No</option><option value="yes">Yes — Sí, hablo español</option></select></label>
           <div class="avail-pick" style="display:grid;gap:6px"><span style="font-weight:800">Hours you are available <span class="hint">Texas time. A green “Available now” badge shows on your listing during these hours and hides by itself after.</span></span><div style="display:flex;gap:10px;flex-wrap:wrap"><label style="flex:1;min-width:130px">From<select name="availFrom"><option value="">Not set</option><option value="0">12 AM</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option></select></label><label style="flex:1;min-width:130px">To<select name="availTo"><option value="">Not set</option><option value="1">1 AM</option><option value="2">2 AM</option><option value="3">3 AM</option><option value="4">4 AM</option><option value="5">5 AM</option><option value="6">6 AM</option><option value="7">7 AM</option><option value="8">8 AM</option><option value="9">9 AM</option><option value="10">10 AM</option><option value="11">11 AM</option><option value="12">12 PM</option><option value="13">1 PM</option><option value="14">2 PM</option><option value="15">3 PM</option><option value="16">4 PM</option><option value="17">5 PM</option><option value="18">6 PM</option><option value="19">7 PM</option><option value="20">8 PM</option><option value="21">9 PM</option><option value="22">10 PM</option><option value="23">11 PM</option><option value="24">12 AM</option></select></label></div></div>
         </div>
@@ -149,7 +153,7 @@
   </main>
   <script src="tex-auth.js?v=20261102src"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261105media"></script>
+  <script src="tex-admin.js?v=20261105creds"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script>
@@ -692,7 +696,7 @@
       success.scrollIntoView({ behavior:'smooth', block:'center' });
     });
   </script>
-  <script src="tex-language.js?v=20261105photos"></script>
+  <script src="tex-language.js?v=20261105creds"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 </body>
 </html>

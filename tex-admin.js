@@ -123,6 +123,9 @@
         speaks_spanish: data.speaksSpanish === 'yes',
         avail_from: data.availFrom === '' || data.availFrom == null ? null : Number(data.availFrom),
         avail_to: data.availTo === '' || data.availTo == null ? null : Number(data.availTo),
+        insured: data.insured === 'yes',
+        licensed: data.licensed === 'yes',
+        license_number: data.licensed === 'yes' && data.licenseNumber ? String(data.licenseNumber).trim().slice(0, 40) : null,
         profile_photo_path: profilePath,
         work_photo_paths: workPaths,
         status: 'approved'
@@ -400,6 +403,19 @@
   const setMySpanish = (value) => rpc('texcontractor_my_spanish', { p_value: !!value });
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
   const myMedia = (id) => rpc('texcontractor_my_media', { p_id: id || null });
+  const myCreds = (id) => rpc('texcontractor_my_creds', { p_id: id || null });
+  const myCredsUpdate = (id, { insured = null, licensed = null, license = null, addProof = null } = {}) => rpc('texcontractor_my_credentials_update', { p_id: id, p_insured: insured, p_licensed: licensed, p_license: license, p_add_proof: addProof });
+  // Private proof (insurance / license photo): goes to a non-public bucket, only the owner and admins can read it.
+  const uploadMyProof = async (listingId, dataUrl) => {
+    const user = await TexAuth.getUser();
+    const token = await TexAuth.getAccessToken();
+    if (!user?.id || !token) throw new Error('Your sign-in session expired. Please sign in again.');
+    const path = `${user.id}/${listingId}/proof-${Date.now()}.jpg`;
+    const blob = await (await fetch(dataUrl)).blob();
+    const response = await fetch(`${SUPABASE_URL}/storage/v1/object/texcontractor-proofs/${encodeObjectPath(path)}`, { method: 'POST', headers: { ...apiHeaders(token, false), 'Content-Type': 'image/jpeg', 'x-upsert': 'false' }, body: blob });
+    if (!response.ok) { const b = await readBody(response); throw new Error(b?.message || 'Upload failed.'); }
+    return path;
+  };
   const myMediaUpdate = (id, { profile = null, work = null, about = null } = {}) => rpc('texcontractor_my_media_update', { p_id: id, p_profile: profile, p_work: work, p_about: about });
   // Upload one compressed image (data URL) into the signed-in owner's own folder; returns its storage path.
   const uploadMyPhoto = async (listingId, dataUrl, kind) => {
@@ -417,5 +433,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, myMedia, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, myMedia, myCreds, myCredsUpdate, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();

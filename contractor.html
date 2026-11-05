@@ -118,7 +118,8 @@
       .share-card-callout { align-items:flex-start; flex-direction:column; }
       .share-card-button { width:100%; }
     }
-  </style>
+  .tc-cred{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}.tc-cred span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#eef7f3;border:1.5px solid #0a7a63;color:#064e3b;font:800 .78rem/1.2 "Segoe UI",Arial,sans-serif}.tc-cred small{flex-basis:100%;color:#64748b;font-size:.72rem}
+</style>
 <link rel="stylesheet" href="tex-gold.css?v=1">
 <script src="/tex-readable.js?v=1" defer></script></head>
 <body>
@@ -313,6 +314,7 @@
       main.append(status, name, rating, trade);
       if (texAvailableNow(provider.avail_from, provider.avail_to)) main.append(availBadge(provider.avail_from, provider.avail_to));
       if (provider.speaks_spanish) main.append(habloBadge());
+      { const cb=credBadgesL(provider,false); if(cb) main.append(cb); }
       const actions = document.createElement('div');
       actions.className = 'provider-actions';
       const textButton = document.createElement('a');
@@ -380,10 +382,11 @@
     const texHourLabel=(h)=>{h=Number(h)%24;return (h%12||12)+(h<12?' AM':' PM');};
     const texAvailableNow=(from,to)=>{if(from==null||to==null||from===to)return false;const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',hourCycle:'h23'}).format(new Date()))%24;from=Number(from);to=Number(to);return from<to?(h>=from&&h<to):(h>=from||h<to);};
     const availBadge=(from,to)=>{const s=document.createElement('span');s.className='avail-now';s.title='Usually available '+texHourLabel(from)+' – '+texHourLabel(to)+' (Texas time)';s.innerHTML='<i aria-hidden="true"></i>Available now';return s;};
+    const credBadgesL=(p,full)=>{if(!p||!(p.insured||p.licensed))return null;const d=document.createElement('div');d.className='tc-cred';const es=(()=>{try{return localStorage.getItem('texcontractor-language')==='es'}catch(_){return false}})();if(p.insured){const s=document.createElement('span');s.textContent='🛡️ '+(es?'Asegurado':'Insured')+(p.has_proof&&full?(es?' · comprobante':' · proof on file'):'');d.append(s)}if(p.licensed){const s=document.createElement('span');s.textContent='📜 '+(es?'Con licencia':'Licensed')+(full&&p.license_number?' #'+p.license_number:'');d.append(s)}const n=document.createElement('small');n.textContent=es?'Información del técnico':'Info provided by the pro';d.append(n);return d};
     const habloBadge=()=>{const s=document.createElement('span');s.className='hablo';s.setAttribute('lang','es');s.title='This provider speaks Spanish';s.innerHTML='<svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em>';return s;};
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish,avail_from,avail_to', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish,avail_from,avail_to,insured,licensed', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
         // The public submissions endpoint must not prevent approved imports from loading.
