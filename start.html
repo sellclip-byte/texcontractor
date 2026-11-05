@@ -298,7 +298,7 @@ try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
  const NEW_SIGNUP_FIRST=q.get('src')!=='home'; // owner 11-04: home-page banner keeps the old flow
- if(NEW_SIGNUP_FIRST&&!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);p.set('role','pro');if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
+ if(NEW_SIGNUP_FIRST&&!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
   location.replace('signup.html?'+p.toString()+h);return}
  $('#app').style.visibility='';
  if(u&&u.phone&&digits(u.phone).replace(/^1(?=\d{10}$)/,'').length===10){phoneUser=u;st.phone=pretty(digits(u.phone));$('#namebox').hidden=false;
