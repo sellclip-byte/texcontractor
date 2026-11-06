@@ -7,3 +7,4 @@ Sitemap: https://texcontractor.com/sitemap-videos.xml
 Sitemap: https://texcontractor.com/sitemap-es.xml
 Sitemap: https://texcontractor.com/sitemap-guides.xml
 Sitemap: https://texcontractor.com/sitemap-es-local.xml
+Sitemap: https://texcontractor.com/sitemap-compare.xml
