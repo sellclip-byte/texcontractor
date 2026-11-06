@@ -194,9 +194,11 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
     document.getElementById('service-label').textContent = profile.service;
     document.getElementById('about-copy').textContent = profile.about || 'Contact this business for service details.';
     // Years is optional: hide the Experience box when it was not given.
-    if (profile.years && profile.years !== '—') document.querySelector('.fact:nth-child(3) dd').textContent = `${profile.years} year${profile.years === '1' ? '' : 's'}`;
+    // Only a real number of years is shown ("5", "20+"); placeholders like "Will be added soon" or "0" hide the box.
+    const yrs = String(profile.years || '').trim();
+    if (/^[1-9]\d?\+?$/.test(yrs)) document.querySelector('.fact:nth-child(3) dd').textContent = `${yrs} year${yrs === '1' ? '' : 's'}`;
     else document.querySelector('.fact:nth-child(3)').hidden = true;
-    if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;document.querySelector('.fact:nth-child(3) dd').textContent='Will be added soon';}
+    if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;}
     const textLink = document.getElementById('text-link');
     const messageTemplate = () => TexSmsMessage({
       name: profile.name || '',
