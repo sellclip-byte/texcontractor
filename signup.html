@@ -220,7 +220,7 @@ render();
   function lang(){ return (document.documentElement.lang||'en').slice(0,2)==='es'?'es':'en'; }
   function seen(l){ try{return played[l]||sessionStorage.getItem('tc_signup_voice_'+l)}catch(_){return played[l]} }
   function play(l){ if(seen(l)) return; played[l]=1; try{sessionStorage.setItem('tc_signup_voice_'+l,'1')}catch(_){}
-    if(cur){try{cur.pause()}catch(_){}} cur=new Audio('audio/signup-'+l+'.mp3?v=2'); cur.volume=0.5; cur.play().catch(function(){}); }
+    if(cur){try{cur.pause()}catch(_){}} cur=new Audio('audio/signup-'+l+'.mp3?v=3'); cur.volume=0.5; cur.play().catch(function(){}); }
   var armed=true;
   function first(){ if(!armed) return; armed=false; setTimeout(function(){ play(lang()) },250); }
   document.addEventListener('pointerdown',first,true);
