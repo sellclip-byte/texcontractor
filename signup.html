@@ -57,20 +57,19 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 }
 /* role panels, same look as the old join popup: tall photo, transparent text, button */
 .roles{gap:10px}
-.role.tech,.role.cust{background:#2b2b2b}
-.role{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:0!important;border-radius:16px;height:max(330px,calc(100dvh - 380px));max-height:560px;background:#2b2b2b;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.14)}
-.role img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
-.role .lbl{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:5px;padding:12px;text-align:left;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 2px 14px rgba(0,0,0,.75)}
-.role .tag{align-self:flex-start;padding:4px 9px;border-radius:999px;font-size:.62rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
-.role.tech .tag{background:#f2ce78;color:#0b1f3a}.role.cust .tag{background:#dbeafe;color:#1d4ed8}
-.role .lbl b{display:block;margin:0;font-size:1.2rem;line-height:1.1;color:#fff}
-.role .lbl small{display:block;color:#fff;font-size:.82rem;line-height:1.3}
-.role .cta{display:flex;align-items:center;justify-content:center;min-height:42px;margin-top:4px;border-radius:10px;font-weight:900;font-size:.9rem;text-shadow:none;box-shadow:0 8px 20px rgba(0,0,0,.28);text-align:center;padding:6px 8px;line-height:1.15}
+/* compact one-screen cards (owner 11-06: no big banners, just two choices under the phone box) */
+.role{position:relative;display:block;width:100%;padding:14px 12px;border-radius:16px;text-align:left;cursor:pointer}
+.role img,.role .tag{display:none}
+.role .i{display:block;font-size:1.6rem;line-height:1}
+.role .lbl{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.role .lbl b{display:block;margin:0;font-size:1.05rem;line-height:1.15}
+.role .lbl small{display:block;color:var(--mut);font-size:.8rem;line-height:1.3}
+.role .cta{display:flex;align-items:center;justify-content:center;min-height:38px;margin-top:8px;border-radius:10px;font-weight:900;font-size:.85rem;text-align:center;padding:6px 8px;line-height:1.15}
 .role.tech .cta{background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106;border:1px solid #c18a13}
 .role.cust .cta{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff}
+.role.cust{border-color:#93c5fd;background:#f3f8ff}.role.cust b{color:#1d4ed8}
 .role:hover .cta{filter:brightness(1.06)}
-.role.one{height:max(300px,calc(100dvh - 420px))}
-@media(min-width:700px){.roles{gap:14px}.role{height:min(470px,calc(100dvh - 330px));min-height:340px;border-radius:20px}.role .lbl{padding:18px;gap:6px}.role .lbl b{font-size:1.5rem}.role .lbl small{font-size:.95rem}.role .cta{min-height:46px;font-size:1rem}}
+@media(min-width:700px){.roles{gap:14px}.role{padding:20px 18px}.role .i{font-size:2.1rem}.role .lbl b{font-size:1.3rem}.role .lbl small{font-size:.95rem}.role .cta{min-height:44px;font-size:1rem}}
 </style>
 <script src="/tex-readable.js?v=1" defer></script>
 </head>
@@ -85,8 +84,8 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
     <div class="ph"><div class="cc">🇺🇸 +1</div><input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16" aria-label="Phone number"></div>
     <div class="q" data-t="iam"></div>
     <div class="roles" id="roles">
-      <button class="role tech" type="button" data-r="provider"><img src="auth-pro-640.jpg" alt="" width="640" height="960"><span class="lbl"><span class="tag" data-t="tagT"></span><b data-t="tech"></b><small data-t="techS"></small><span class="cta" data-t="ctaT"></span></span></button>
-      <button class="role cust" type="button" data-r="customer"><img src="auth-customer-640.jpg" alt="" width="640" height="960"><span class="lbl"><span class="tag" data-t="tagC"></span><b data-t="cust"></b><small data-t="custS"></small><span class="cta" data-t="ctaC"></span></span></button>
+      <button class="role tech" type="button" data-r="provider"><span class="i">🛠️</span><span class="lbl"><span class="tag" data-t="tagT"></span><b data-t="tech"></b><small data-t="techS"></small><span class="cta" data-t="ctaT"></span></span></button>
+      <button class="role cust" type="button" data-r="customer"><span class="i">🔍</span><span class="lbl"><span class="tag" data-t="tagC"></span><b data-t="cust"></b><small data-t="custS"></small><span class="cta" data-t="ctaC"></span></span></button>
     </div>
     <p class="err" id="e1" role="alert"></p>
     <p class="note" id="n1"></p>
