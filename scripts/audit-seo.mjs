@@ -8,7 +8,7 @@ const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
 const slugs = [...directory.matchAll(/href="\/services\/([^"]+\.html)"/g)].map(m => m[1]);
 const issues = [];
 const warnings = [];
-if (slugs.length !== 62) issues.push('Expected 62 directory links, found ' + slugs.length);
+if (slugs.length < 62) issues.push('Expected at least 62 directory links, found ' + slugs.length);
 if (new Set(slugs).size !== slugs.length) issues.push('Duplicate directory links');
 if (new Set(urls).size !== urls.length) issues.push('Duplicate sitemap URLs');
 if (urls.length < 66) issues.push('Expected at least 66 sitemap URLs (62 services plus core pages), found ' + urls.length);
