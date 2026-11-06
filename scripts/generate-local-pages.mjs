@@ -83,33 +83,36 @@ h1{font-size:clamp(26px,5vw,38px);line-height:1.15;margin:10px 0 8px;text-wrap:b
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .card h3{margin:0;font-size:18px;line-height:1.3}.card .loc{font-size:13px;color:var(--muted);font-weight:600}.card p{margin:0;color:#34484c;font-size:15px}
-.card a.more{margin-top:auto;font-weight:700;text-decoration:none}.badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px}
+.card a.more{margin-top:auto;font-weight:700;text-decoration:none}.badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;align-self:flex-start}
 h2{font-size:22px;margin:34px 0 10px}.links{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}
 .links a{display:inline-block;background:#fff;border:2px solid #d4a017;border-radius:999px;padding:7px 14px;text-decoration:none;color:#000;font-size:15px;font-weight:700;box-shadow:0 0 0 1px #f7d774 inset,0 1px 4px rgba(212,160,23,.35)}
 .links a:hover{background:#fff8e1;border-color:#f5b800}.links a span{color:#000;font-weight:800}.note{font-size:14px;color:var(--muted);max-width:70ch}
 footer{margin-top:40px;border-top:1px solid var(--line);background:#fff}footer .wrap{padding-block:18px;font-size:14px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}`;
 
-function page({ path, title, description, crumbs, body, jsonld, noindex }) {
+function page({ path, title, description, crumbs, body, jsonld, noindex, lang = 'en', alt = null }) {
   const url = `${SITE}/${path}`;
+  const es = lang === 'es';
+  // alt = { en: 'local/…', es: 'es/local/…' } when both language versions of a page exist.
+  const hreflang = alt ? `<link rel="alternate" hreflang="en" href="${SITE}/${alt.en}"><link rel="alternate" hreflang="es" href="${SITE}/${alt.es}"><link rel="alternate" hreflang="x-default" href="${SITE}/${alt.en}">` : '';
   return `<!doctype html>
-<html lang="en"><head>
+<html lang="${lang}"><head>
 ${gtag}
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}"><link rel="canonical" href="${url}">
+<meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}"><link rel="canonical" href="${url}">${hreflang}
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:type" content="website"><meta property="og:image" content="${SITE}/texcontractor-logo.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
 <script src="/tex-readable.js?v=1" defer></script>
 <style>${css}</style>
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
 </head><body>
-<header class="top"><div class="wrap"><a href="/" aria-label="TexContractor home"><img src="/texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a><a class="cta" href="/auth.html">Sign up</a></div></header>
+<header class="top"><div class="wrap"><a href="/" aria-label="TexContractor home"><img src="/texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a>${alt ? `<span style="display:flex;gap:10px;align-items:center"><a href="/${es ? alt.en : alt.es}" hreflang="${es ? 'en' : 'es'}" lang="${es ? 'en' : 'es'}" style="font-weight:700">${es ? 'English' : 'Español'}</a><a class="cta" href="/auth.html">${es ? 'Regístrate' : 'Sign up'}</a></span>` : '<a class="cta" href="/auth.html">Sign up</a>'}</div></header>
 <main class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb">${crumbs.map(([label, href]) => href ? `<a href="${href}">${esc(label)}</a>` : esc(label)).join(' › ')}</nav>
 ${body}
 </main>
-<footer><div class="wrap"><a href="/">TexContractor home</a><a href="/local/">Browse by city</a><a href="/services/">All services</a><span>Listings come from the TexContractor directory and change over time. Confirm details directly with each provider.</span></div></footer>
+<footer><div class="wrap">${es ? '<a href="/">TexContractor</a><a href="/es/local/tx/">Buscar por ciudad en Texas</a><a href="/es/servicios/">Todos los servicios</a><span>Los perfiles vienen del directorio de TexContractor y cambian con el tiempo. Confirma los detalles directamente con cada proveedor.</span>' : '<a href="/">TexContractor home</a><a href="/local/">Browse by city</a><a href="/services/">All services</a><span>Listings come from the TexContractor directory and change over time. Confirm details directly with each provider.</span>'}</div></footer>
 </body></html>
 `;
 }
@@ -156,6 +159,14 @@ async function main() {
   for (const k of cityMap.keys()) { const st = k.split('|')[0]; if (!stateMap.has(st)) stateMap.set(st, []); stateMap.get(st).push(k); }
   const updated = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
+  // Spanish versions: Texas only, only pages that are indexable in English and whose service has a
+  // Spanish name in scripts/data/services-es.json. Same real listings, same counts, Spanish wording.
+  let esNames = {};
+  try { const d = JSON.parse(readFileSync(join(root, 'scripts/data/services-es.json'), 'utf8')); for (const [k, v] of Object.entries(d)) esNames[k] = v.name; } catch (_) {}
+  const ES_STATES = new Set(['TX']);
+  for (const p of pages) if (ES_STATES.has(p.state) && p.indexable && esNames[slug(p.service)]) { p.esName = esNames[slug(p.service)]; p.esPath = 'es/' + p.path; }
+  rmSync(join(root, 'es', 'local'), { recursive: true, force: true });
+
   // City + service pages.
   for (const p of pages) {
     const stName = STATES[p.state];
@@ -184,11 +195,43 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
       path: p.path,
       title: `${p.service} in ${p.city}, ${p.state} — ${p.list.length} local provider${p.list.length === 1 ? '' : 's'} | TexContractor`,
       description: `Find ${p.list.length} ${p.service.toLowerCase()} providers in ${p.city}, ${stName}. View profiles and text local providers directly for a quote on TexContractor.`,
-      crumbs, body, noindex: !p.indexable,
+      crumbs, body, noindex: !p.indexable, alt: p.esPath ? { en: p.path, es: p.esPath } : null,
       jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
     });
     mkdirSync(join(root, p.path, '..'), { recursive: true });
     writeFileSync(join(root, p.path), html);
+
+    if (p.esPath) {
+      const n = p.list.length, svc = p.esName, low = svc.charAt(0).toLowerCase() + svc.slice(1);
+      const esCityPath = `/es/local/${p.state.toLowerCase()}/${slug(p.city)}/`;
+      const esOthers = others.filter((o) => o.esPath);
+      const esElsewhere = sameServiceElsewhere.filter((o) => o.esPath);
+      const esCards = p.list.map((r) => {
+        const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+        return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`;
+      }).join('\n');
+      const esCount = p.list.filter((r) => r.es).length;
+      const esBody = `<h1>${esc(svc)} en ${esc(p.city)}, ${esc(p.state)}</h1>
+<p class="lead">En TexContractor hay ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${esc(low)} en ${esc(p.city)}, Texas${esCount ? ` (${esCount} ${esCount === 1 ? 'dice' : 'dicen'} que habla${esCount === 1 ? '' : 'n'} español)` : ''}. Abre un perfil, inicia sesión para ver el número y mándale un mensaje directo al proveedor para pedir un precio, sin intermediarios. Actualizado: ${esc(new Date().toLocaleDateString('es-US', { month: 'long', year: 'numeric' }))}.</p>
+<a class="nearest" href="${esc(browse)}"><b>Ver los ${stateSvc.get(`${p.state}|${p.service}`)} proveedores de ${esc(low)} cerca de ${esc(p.city)}</b><span>Primero los más cercanos: ${esc(p.city)}, luego ciudades cercanas y el resto de Texas →</span></a>
+<div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Publicar una solicitud</a><a class="cta alt" href="/start.html">Anuncia tu servicio gratis</a></div>
+<section class="grid" aria-label="${esc(svc)} en ${esc(p.city)}">
+${esCards}
+</section>
+<p class="note">Antes de contratar, describe el trabajo, comparte fotos si ayudan y pregunta por el precio, el tiempo y la licencia o el seguro cuando apliquen. TexContractor no realiza los trabajos ni verifica cada perfil. Las descripciones las escribe cada proveedor.</p>
+${esOthers.length ? `<h2>Otros servicios en ${esc(p.city)}</h2><ul class="links">${esOthers.map((o) => `<li><a href="/${o.esPath}">${esc(o.esName)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
+${esElsewhere.length ? `<h2>${esc(svc)} en otras ciudades de Texas</h2><ul class="links">${esElsewhere.map((o) => `<li><a href="/${o.esPath}">${esc(o.city)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
+${servicePages.has(serviceSlug) ? `<p class="note">Consejos para contratar: <a href="/es/servicios/${serviceSlug}">guía de ${esc(low)}</a>.</p>` : ''}`;
+      const esCrumbs = [['Inicio', '/'], ['Texas', '/es/local/tx/'], [p.city, esCityPath], [svc, null]];
+      mkdirSync(join(root, p.esPath, '..'), { recursive: true });
+      writeFileSync(join(root, p.esPath), page({
+        path: p.esPath, lang: 'es', alt: { en: p.path, es: p.esPath },
+        title: `${svc} en ${p.city}, ${p.state}: ${n} ${n === 1 ? 'proveedor local' : 'proveedores locales'} | TexContractor`,
+        description: `Encuentra ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${low} en ${p.city}, Texas. Mira los perfiles y mándales un mensaje directo para pedir un precio en TexContractor.`,
+        crumbs: esCrumbs, body: esBody,
+        jsonld: [breadcrumbLd(esCrumbs.slice(0, 3).concat([[svc, '/' + p.esPath]])), { '@context': 'https://schema.org', '@type': 'ItemList', inLanguage: 'es', name: `${svc} en ${p.city}, ${p.state}`, numberOfItems: n, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
+      }));
+    }
   }
 
   // City hubs: one button per service; each opens the page listing every provider for it.
@@ -203,7 +246,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <ul class="links">${list.map((p) => `<li><a href="/${p.path}">${esc(p.service)} <span>(${p.list.length})</span></a></li>`).join('')}</ul>
 <div class="ctas" style="margin-top:22px"><a class="cta req" href="/requests.html?post=1">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>`;
     mkdirSync(join(root, path, '..'), { recursive: true });
-    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), noindex: !indexable(k), title: `Local services in ${city}, ${state} — ${total} providers | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${list.slice(0, 4).map((p) => p.service).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
+    writeFileSync(join(root, path), page({ path: path.replace(/index\.html$/, ''), noindex: !indexable(k), alt: list.some((p) => p.esPath) ? { en: path.replace(/index\.html$/, ''), es: 'es/' + path.replace(/index\.html$/, '') } : null, title: `Local services in ${city}, ${state} — ${total} providers | TexContractor`, description: `Find local service providers in ${city}, ${STATES[state]}: ${list.slice(0, 4).map((p) => p.service).join(', ')} and more. Text providers directly on TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 3).concat([[city, '/' + path.replace(/index\.html$/, '')]])) }));
   }
 
   // State hubs.
@@ -215,7 +258,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <p class="lead">Choose your city to see local providers by service.</p>
 <ul class="links">${cities.map((c) => `<li><a href="/local/${st.toLowerCase()}/${slug(c.city)}/">${esc(c.city)} <span>(${c.count})</span></a></li>`).join('')}</ul>`;
     mkdirSync(join(root, path, '..'), { recursive: true });
-    writeFileSync(join(root, path), page({ path: `local/${st.toLowerCase()}/`, title: `Local service providers in ${STATES[st]} by city | TexContractor`, description: `Browse local service providers in ${STATES[st]} by city on TexContractor and text them directly.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 2).concat([[STATES[st], `/local/${st.toLowerCase()}/`]])) }));
+    writeFileSync(join(root, path), page({ path: `local/${st.toLowerCase()}/`, alt: st === 'TX' && pages.some((p) => p.esPath) ? { en: 'local/tx/', es: 'es/local/tx/' } : null, title: `Local service providers in ${STATES[st]} by city | TexContractor`, description: `Browse local service providers in ${STATES[st]} by city on TexContractor and text them directly.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 2).concat([[STATES[st], `/local/${st.toLowerCase()}/`]])) }));
   }
 
   // Root hub.
@@ -230,6 +273,38 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <h2>States</h2><ul class="links">${states.map((st) => `<li><a href="/local/${st.toLowerCase()}/">${esc(STATES[st])}</a></li>`).join('')}</ul>
 <h2>Popular cities</h2><ul class="links">${topCities.map(({ k, count }) => { const [st, c] = k.split('|'); return `<li><a href="/local/${st.toLowerCase()}/${slug(c)}/">${esc(c)}, ${st} <span>(${count})</span></a></li>`; }).join('')}</ul>`,
   }));
+
+  // Spanish Texas hubs (cities that have at least one Spanish city/service page) and their sitemap.
+  const esUrls = [];
+  const esCities = [];
+  for (const [k, list] of cityMap) {
+    const [state, city] = k.split('|');
+    const esList = list.filter((p) => p.esPath);
+    if (!esList.length) continue;
+    const path = `es/local/${state.toLowerCase()}/${slug(city)}/`;
+    const enPath = `local/${state.toLowerCase()}/${slug(city)}/`;
+    const total = esList.reduce((a, p) => a + p.list.length, 0);
+    esCities.push({ city, path, total });
+    const crumbs = [['Inicio', '/'], ['Texas', '/es/local/tx/'], [city, null]];
+    const body = `<h1>Servicios locales en ${esc(city)}, ${esc(state)}</h1>
+<p class="lead">Elige un servicio para ver los proveedores de ${esc(city)}, Texas, que están en TexContractor y mandarles un mensaje directo.</p>
+<ul class="links">${esList.map((p) => `<li><a href="/${p.esPath}">${esc(p.esName)} <span>(${p.list.length})</span></a></li>`).join('')}</ul>
+<div class="ctas" style="margin-top:22px"><a class="cta req" href="/requests.html?post=1">Publicar una solicitud</a><a class="cta alt" href="/start.html">Anuncia tu servicio gratis</a></div>`;
+    mkdirSync(join(root, path), { recursive: true });
+    writeFileSync(join(root, path, 'index.html'), page({ path, lang: 'es', alt: { en: enPath, es: path }, title: `Servicios locales en ${city}, ${state} | TexContractor`, description: `Encuentra proveedores locales en ${city}, Texas: ${esList.slice(0, 4).map((p) => p.esName.toLowerCase()).join(', ')} y más. Mándales un mensaje directo en TexContractor.`, crumbs, body, jsonld: breadcrumbLd(crumbs.slice(0, 2).concat([[city, '/' + path]])) }));
+    esUrls.push(path, ...esList.map((p) => p.esPath));
+  }
+  if (esCities.length) {
+    esCities.sort((a, b) => b.total - a.total || a.city.localeCompare(b.city));
+    const crumbs = [['Inicio', '/'], ['Texas', null]];
+    writeFileSync(join(root, 'es/local/tx/index.html'), page({ path: 'es/local/tx/', lang: 'es', alt: { en: 'local/tx/', es: 'es/local/tx/' }, title: 'Proveedores de servicios en Texas por ciudad | TexContractor', description: 'Busca plomeros, electricistas, técnicos de aire acondicionado, limpieza, jardinería y más en tu ciudad de Texas. Mándales un mensaje directo en TexContractor.', crumbs,
+      body: `<h1>Proveedores de servicios en Texas</h1>\n<p class="lead">Elige tu ciudad para ver los proveedores locales por servicio.</p>\n<ul class="links">${esCities.map((c) => `<li><a href="/${c.path}">${esc(c.city)}</a></li>`).join('')}</ul>`,
+      jsonld: breadcrumbLd([['Inicio', '/'], ['Texas', '/es/local/tx/']]) }));
+    esUrls.unshift('es/local/tx/');
+  }
+  const esToday = new Date().toISOString().slice(0, 10);
+  writeFileSync(join(root, 'sitemap-es-local.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${esUrls.map((u) => `  <url><loc>${SITE}/${u}</loc><lastmod>${esToday}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+  console.log(`Spanish pages: ${esUrls.length} URLs (${esCities.length} Texas cities).`);
 
   // Small city list for the home page sidebar ("Nearby cities", "Cities by state").
   let coords = {};

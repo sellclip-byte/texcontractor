@@ -33,12 +33,12 @@ jobs:
           count="$(find local -name '*.html' | wc -l)"
           echo "Local pages: $count"
           test "$count" -gt 20
-          if grep -rEl '\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}' local/ ; then echo 'Phone number leaked into a page'; exit 1; fi
+          if grep -rEl '\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}' local/ es/local/ ; then echo 'Phone number leaked into a page'; exit 1; fi
       - name: Commit generated pages
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add local sitemap-local.xml
+          git add local sitemap-local.xml es/local sitemap-es-local.xml
           if ! git diff --cached --quiet; then
             git commit -m "Refresh city service pages from live directory"
             git pull --rebase origin seo-safe-review-20261011
@@ -52,7 +52,7 @@ jobs:
           python3 - <<'PY'
           import json, re, urllib.request
           key = '1fcf50d9e46b4178a64e2d1ade1e6a5e'
-          urls = re.findall(r'<loc>([^<]+)</loc>', open('sitemap-local.xml').read())[:10000]
+          urls = (re.findall(r'<loc>([^<]+)</loc>', open('sitemap-local.xml').read()) + re.findall(r'<loc>([^<]+)</loc>', open('sitemap-es-local.xml').read()))[:10000]
           body = json.dumps({'host': 'texcontractor.com', 'key': key, 'keyLocation': f'https://texcontractor.com/{key}.txt', 'urlList': urls}).encode()
           req = urllib.request.Request('https://api.indexnow.org/indexnow', data=body, headers={'Content-Type': 'application/json; charset=utf-8'})
           try:
