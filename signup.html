@@ -211,18 +211,21 @@ render();
 })();
 </script>
 <script>
-/* Short welcome voice on phones (owner 11-06): plays once per visit, on the visitor's first touch
-   (phones block sound before a touch), medium volume, English line then Spanish line. */
+/* Short welcome voice on phones (owner 11-06): one language only, the one the visitor has selected
+   (English by default, Spanish if ES is on). Plays on the first touch (phones block sound before a touch),
+   medium volume, once per language per visit. Switching EN/ES plays that language's line once. */
 (function(){
-  try{
-    if(!matchMedia('(max-width:699px)').matches) return;
-    if(sessionStorage.getItem('tc_signup_voice')) return;
-  }catch(_){return}
-  var files=['audio/signup-en.mp3?v=2','audio/signup-es.mp3?v=2'],i=0,started=false;
-  function next(){ if(i>=files.length) return; var a=new Audio(files[i++]); a.volume=0.5; a.onended=next; a.onerror=next; a.play().catch(function(){}); }
-  function go(){ if(started) return; started=true; try{sessionStorage.setItem('tc_signup_voice','1')}catch(_){}
-    document.removeEventListener('pointerdown',go,true); document.removeEventListener('touchstart',go,true); next(); }
-  document.addEventListener('pointerdown',go,true); document.addEventListener('touchstart',go,{capture:true,passive:true});
+  try{ if(!matchMedia('(max-width:699px)').matches) return; }catch(_){return}
+  var played={},cur=null;
+  function lang(){ return (document.documentElement.lang||'en').slice(0,2)==='es'?'es':'en'; }
+  function seen(l){ try{return played[l]||sessionStorage.getItem('tc_signup_voice_'+l)}catch(_){return played[l]} }
+  function play(l){ if(seen(l)) return; played[l]=1; try{sessionStorage.setItem('tc_signup_voice_'+l,'1')}catch(_){}
+    if(cur){try{cur.pause()}catch(_){}} cur=new Audio('audio/signup-'+l+'.mp3?v=2'); cur.volume=0.5; cur.play().catch(function(){}); }
+  var armed=true;
+  function first(){ if(!armed) return; armed=false; setTimeout(function(){ play(lang()) },250); }
+  document.addEventListener('pointerdown',first,true);
+  document.addEventListener('touchstart',first,{capture:true,passive:true});
+  document.querySelectorAll('#lgsw button').forEach(function(b){ b.addEventListener('click',function(){ if(!armed) setTimeout(function(){ play(lang()) },150) }) });
 })();
 </script>
 </body>
