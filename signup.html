@@ -73,6 +73,24 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 .role:hover .cta{filter:brightness(1.06)}
 @media(max-width:380px){.role{gap:8px;padding:12px 10px}.role .i{font-size:1.4rem}.role .lbl{grid-template-columns:minmax(0,1fr) 92px;column-gap:6px}.role .lbl b{font-size:.92rem}.role .lbl small{font-size:.75rem}.role .cta{font-size:.78rem;padding:6px 4px}}
 @media(min-width:700px){.roles{gap:14px}.role{padding:18px 20px}.role .i{font-size:2.2rem}.role .lbl b{font-size:1.3rem}.role .lbl small{font-size:.95rem}.role .lbl{grid-template-columns:minmax(0,1fr) 190px}.role .cta{min-height:46px;font-size:1rem}}
+/* phones: fill the whole screen (owner 11-06) */
+@media(max-width:699px){
+ body{padding:10px 10px;min-height:100dvh}
+ .card{min-height:calc(100dvh - 20px);display:flex;flex-direction:column;padding:20px 18px 16px}
+ #v1.on{flex:1;display:flex;flex-direction:column}
+ .top img{height:46px}
+ h1{font-size:1.75rem}.sub{font-size:1.02rem;margin-bottom:18px}
+ .ph input{padding:17px 14px;font-size:1.25rem}.cc{font-size:1.05rem}
+ .q{font-size:1rem;margin:6px 0 10px}
+ .roles{flex:1;gap:12px}
+ .role{flex:1;min-height:110px;padding:16px 14px}
+ .role .i{font-size:2.1rem}
+ .role .lbl b{font-size:1.3rem}.role .lbl small{font-size:.92rem}
+ .role .lbl{grid-template-columns:minmax(0,1fr) 132px}
+ .role .cta{min-height:50px;font-size:.95rem}
+ .note{font-size:.8rem;margin-top:16px}
+}
+@media(max-width:380px){h1{font-size:1.45rem}.role .lbl{grid-template-columns:minmax(0,1fr) 100px}.role .lbl b{font-size:1.05rem}.role .lbl small{font-size:.8rem}.role .cta{font-size:.8rem;min-height:44px}.role .i{font-size:1.6rem}}
 </style>
 <script src="/tex-readable.js?v=1" defer></script>
 </head>
