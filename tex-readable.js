@@ -63,3 +63,29 @@
     if (touch.source !== 'direct') localStorage.setItem('texcontractor-last-touch', JSON.stringify(touch));
   } catch (_) { /* tracking must never break the page */ }
 })();
+
+// Always show the latest version of the page (owner 11-06): if the phone opened an old saved copy
+// (from the browser cache or a restored old tab), check the server and reload once when the page changed.
+(function () {
+  try {
+    var loadedAt = Date.now(), key = 'tc_fresh_' + location.pathname;
+    function newer(cb) {
+      fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+        var lm = r.headers.get('last-modified');
+        if (lm && new Date(lm).getTime() > new Date(document.lastModified).getTime() + 1000) cb();
+      }).catch(function () {});
+    }
+    function reloadOnce() {
+      try { if (sessionStorage.getItem(key) === document.lastModified) return; sessionStorage.setItem(key, document.lastModified); } catch (_) {}
+      location.reload();
+    }
+    var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+    if (nav && nav.transferSize === 0 && nav.decodedBodySize > 0) newer(reloadOnce);       // opened from cache
+    window.addEventListener('pageshow', function (e) {                                     // old tab brought back
+      if (e.persisted && Date.now() - loadedAt > 5 * 60 * 1000) newer(reloadOnce);
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && Date.now() - loadedAt > 30 * 60 * 1000) newer(reloadOnce);
+    });
+  } catch (_) {}
+})();
