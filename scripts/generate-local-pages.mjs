@@ -163,6 +163,9 @@ async function main() {
   // Spanish name in scripts/data/services-es.json. Same real listings, same counts, Spanish wording.
   let esNames = {};
   try { const d = JSON.parse(readFileSync(join(root, 'scripts/data/services-es.json'), 'utf8')); for (const [k, v] of Object.entries(d)) esNames[k] = v.name; } catch (_) {}
+  let terms = {};
+  try { terms = JSON.parse(readFileSync(join(root, 'scripts/data/service-search-terms.json'), 'utf8')); } catch (_) {}
+  for (const p of pages) { const t = terms[slug(p.service)]; p.term = t ? t[0] : p.service; p.esTerm = t ? t[1] : null; }
   const ES_STATES = new Set(['TX']);
   for (const p of pages) if (ES_STATES.has(p.state) && p.indexable && esNames[slug(p.service)]) { p.esName = esNames[slug(p.service)]; p.esPath = 'es/' + p.path; }
   rmSync(join(root, 'es', 'local'), { recursive: true, force: true });
@@ -179,7 +182,7 @@ async function main() {
       const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
-    const body = `<h1>${esc(p.service)} in ${esc(p.city)}, ${esc(p.state)}</h1>
+    const body = `<h1>${esc(p.term)} in ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
 <a class="nearest" href="${esc(browse)}"><b>See all ${stateSvc.get(`${p.state}|${p.service}`)} ${esc(p.service.toLowerCase())} providers near ${esc(p.city)}</b><span>Nearest first: ${esc(p.city)}, then nearby cities, then the rest of ${esc(stName)} →</span></a>
 <div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
@@ -193,8 +196,8 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [stName, `/local/${p.state.toLowerCase()}/`], [p.city, cityPath], [p.service, null]];
     const html = page({
       path: p.path,
-      title: `${p.service} in ${p.city}, ${p.state} — ${p.list.length} local provider${p.list.length === 1 ? '' : 's'} | TexContractor`,
-      description: `Find ${p.list.length} ${p.service.toLowerCase()} providers in ${p.city}, ${stName}. View profiles and text local providers directly for a quote on TexContractor.`,
+      title: `${p.term} in ${p.city}, ${p.state}: ${p.list.length} Local ${p.list.length === 1 ? 'Pro' : 'Pros'} to Text | TexContractor`,
+      description: `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${p.list.length} local ${p.service.toLowerCase()} ${p.list.length === 1 ? 'pro' : 'pros'} on TexContractor, see their profiles and text them directly for a quote. No middleman.`,
       crumbs, body, noindex: !p.indexable, alt: p.esPath ? { en: p.path, es: p.esPath } : null,
       jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
     });
@@ -211,7 +214,8 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
         return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`;
       }).join('\n');
       const esCount = p.list.filter((r) => r.es).length;
-      const esBody = `<h1>${esc(svc)} en ${esc(p.city)}, ${esc(p.state)}</h1>
+      const esH = p.esTerm || svc;
+      const esBody = `<h1>${esc(esH)} en ${esc(p.city)}, ${esc(p.state)}</h1>
 <p class="lead">En TexContractor hay ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${esc(low)} en ${esc(p.city)}, Texas${esCount ? ` (${esCount} ${esCount === 1 ? 'dice' : 'dicen'} que habla${esCount === 1 ? '' : 'n'} español)` : ''}. Abre un perfil, inicia sesión para ver el número y mándale un mensaje directo al proveedor para pedir un precio, sin intermediarios. Actualizado: ${esc(new Date().toLocaleDateString('es-US', { month: 'long', year: 'numeric' }))}.</p>
 <a class="nearest" href="${esc(browse)}"><b>Ver los ${stateSvc.get(`${p.state}|${p.service}`)} proveedores de ${esc(low)} cerca de ${esc(p.city)}</b><span>Primero los más cercanos: ${esc(p.city)}, luego ciudades cercanas y el resto de Texas →</span></a>
 <div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Publicar una solicitud</a><a class="cta alt" href="/start.html">Anuncia tu servicio gratis</a></div>
@@ -226,8 +230,8 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Consejos para contratar: <a h
       mkdirSync(join(root, p.esPath, '..'), { recursive: true });
       writeFileSync(join(root, p.esPath), page({
         path: p.esPath, lang: 'es', alt: { en: p.path, es: p.esPath },
-        title: `${svc} en ${p.city}, ${p.state}: ${n} ${n === 1 ? 'proveedor local' : 'proveedores locales'} | TexContractor`,
-        description: `Encuentra ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${low} en ${p.city}, Texas. Mira los perfiles y mándales un mensaje directo para pedir un precio en TexContractor.`,
+        title: `${esH} en ${p.city}, ${p.state}: ${n} ${n === 1 ? 'proveedor local' : 'proveedores locales'} | TexContractor`,
+        description: `¿Buscas ${esH.toLowerCase()} en ${p.city}? Encuentra ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${low} en ${p.city}, Texas. Mira los perfiles y mándales un mensaje directo para pedir un precio en TexContractor.`,
         crumbs: esCrumbs, body: esBody,
         jsonld: [breadcrumbLd(esCrumbs.slice(0, 3).concat([[svc, '/' + p.esPath]])), { '@context': 'https://schema.org', '@type': 'ItemList', inLanguage: 'es', name: `${svc} en ${p.city}, ${p.state}`, numberOfItems: n, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
       }));
