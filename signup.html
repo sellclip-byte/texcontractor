@@ -218,7 +218,7 @@ render();
     if(!matchMedia('(max-width:699px)').matches) return;
     if(sessionStorage.getItem('tc_signup_voice')) return;
   }catch(_){return}
-  var files=['audio/signup-en.mp3?v=1','audio/signup-es.mp3?v=1'],i=0,started=false;
+  var files=['audio/signup-en.mp3?v=2','audio/signup-es.mp3?v=2'],i=0,started=false;
   function next(){ if(i>=files.length) return; var a=new Audio(files[i++]); a.volume=0.5; a.onended=next; a.onerror=next; a.play().catch(function(){}); }
   function go(){ if(started) return; started=true; try{sessionStorage.setItem('tc_signup_voice','1')}catch(_){}
     document.removeEventListener('pointerdown',go,true); document.removeEventListener('touchstart',go,true); next(); }
