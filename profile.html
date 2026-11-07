@@ -126,7 +126,7 @@
     let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
-      const query = new URLSearchParams({ select:'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
       const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, ...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {}) } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
@@ -137,7 +137,7 @@
         ratingLabel:'Quote',
         rating:'Text directly — no middleman',
         location:[row.city, row.state].filter(Boolean).join(', ') || 'Texas',
-        id:row.id,
+        id:row.id, ownerId:row.owner_id,
         about:row.about || 'This contractor has added a service profile and is ready to receive direct messages.',
         profilePhoto:mediaUrl(row.profile_photo_path),
         work:(Array.isArray(row.work_photo_paths) ? row.work_photo_paths : []).map(mediaUrl),
@@ -171,15 +171,16 @@
     } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
-    const texCardGo = () => { try { if (window.TexBusinessCard && params.get('contractor') && profile.id && !document.getElementById('pro-card')) {
+    const texCardGo = async () => { try { if (window.TexBusinessCard && params.get('contractor') && profile.id && !document.getElementById('pro-card')) {
+      let mine = false; try { const me = window.TexAuth && await TexAuth.getUser(); mine = !!(me && profile.ownerId && me.id === profile.ownerId); } catch (_) {}
       const holder = document.createElement('section'); holder.id = 'pro-card'; holder.style.cssText = 'max-width:520px;margin:18px auto;padding:0 12px';
       (document.querySelector('main') || document.body).appendChild(holder);
       const loc = String(profile.location || '').split(',').map(x => x.trim());
       TexBusinessCard.render(holder, { name: profile.name, service: profile.service, city: loc[0] || '', state: loc[1] || '', photoUrl: profile.profilePhoto || '',
         shareUrl: 'https://texcontractor.com/p/' + profile.id + '/?utm_source=share&utm_medium=profile_card',
         profileUrl: location.href.split('#')[0],
-        title: 'Share ' + String(profile.name).split(/\s+/)[0] + '\u2019s card',
-        note: 'Know someone who needs ' + String(profile.service || 'this service').toLowerCase() + '? Send them this card. They can text ' + String(profile.name).split(/\s+/)[0] + ' directly.' });
+        title: mine ? 'Share my business card' : 'Share ' + String(profile.name).split(/\s+/)[0] + '\u2019s card',
+        note: mine ? undefined : 'Know someone who needs ' + String(profile.service || 'this service').toLowerCase() + '? Send them this card. They can text ' + String(profile.name).split(/\s+/)[0] + ' directly.' });
     } } catch (_) {} };
     if (window.TexBusinessCard) texCardGo(); else window.addEventListener('load', texCardGo);
 const texHourLabel=(h)=>{h=Number(h)%24;return (h%12||12)+(h<12?' AM':' PM');};
