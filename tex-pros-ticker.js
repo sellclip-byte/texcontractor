@@ -3,7 +3,7 @@
    Usage: <div id="pros-ticker" data-state="TX"></div> + this script. */
 (function () {
   const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
-  const SKIP_OWNERS = ['6d83440a-820a-4309-b666-cba8e24a8290', '31948bfc-fb9f-490e-af1f-0f3d42dca767']; // bulk directory account, owner's own account
+  const SKIP_OWNERS = ['6d83440a-820a-4309-b666-cba8e24a8290', '31948bfc-fb9f-490e-af1f-0f3d42dca767', '6e632781-16c6-4b59-8690-3d78d59d2850']; // bulk directory account, owner's own + test accounts
   const box = document.getElementById('pros-ticker');
   if (!box) return;
   const es = (document.documentElement.lang || '').startsWith('es');
@@ -43,10 +43,20 @@
       photo: r.profile_photo_path ? `${SB}/storage/v1/object/public/texcontractor-media/${String(r.profile_photo_path).split('/').map(encodeURIComponent).join('/')}` : '' }))
       .concat(dir.slice(0, 18).map((d) => ({ name: d.business_name, service: d.service, city: d.city, href: `profile.html?imported=${d.id}&service=${encodeURIComponent(d.service || '')}`, photo: '' })));
     if (!items.length) return;
-    box.innerHTML = `<div class="pt-box"><div class="pt-top">${es ? 'Miles de técnicos locales · Escríbeles gratis' : 'Thousands of local pros · Text them free'}</div><div class="pt-win"></div></div>`;
+    const tile = box.dataset.variant === 'tile';
+    if (tile) {
+      const tcss = document.createElement('style');
+      tcss.textContent = '.pt-tile{height:100%;box-sizing:border-box;border-radius:16px;border:2px solid #e8c766;background:linear-gradient(135deg,#fffaf0,#fff3d6);padding:12px 10px;text-align:center;color:#111827;box-shadow:0 6px 18px rgba(15,23,42,.08);display:flex;flex-direction:column}' +
+        '.pt-tile .pt-top{color:#1b2f63;font-size:13px;letter-spacing:.02em}.pt-tile .pt-sub{color:#374151;font:600 11.5px system-ui,sans-serif;margin-top:2px}.pt-tile .pt-win{flex:1;min-height:150px;margin-top:8px}' +
+        '.pt-tile .pt-item{flex-direction:column;justify-content:center;gap:6px;background:linear-gradient(135deg,#0f1b3d,#1b2f63);color:#fff;border:2px solid #d9a92b;padding:8px 8px}' +
+        '.pt-tile .pt-ic{width:58px;height:58px;font-size:28px;border:3px solid #f2c14e}.pt-tile .pt-t1{color:#f2c14e;font-size:11.5px}' +
+        '.pt-tile .pt-t2{color:#fff;font-size:15px;max-width:100%;white-space:normal;line-height:1.15}.pt-tile .pt-go{display:inline-block;margin-top:2px;color:#c7d2fe;font:700 11px system-ui,sans-serif}';
+      document.head.appendChild(tcss);
+    }
+    box.innerHTML = tile ? `<div class="pt-box pt-tile">` + `<div class="pt-top">${es ? '🛠️ TÉCNICOS EN TEXCONTRACTOR' : '🛠️ PROS ON TEXCONTRACTOR'}</div><div class="pt-sub">${es ? 'Únete y aparece aquí con tu foto' : 'Join and show up here with your photo'}</div><div class="pt-win"></div></div>` : `<div class="pt-box"><div class="pt-top">${es ? 'Miles de técnicos locales · Escríbeles gratis' : 'Thousands of local pros · Text them free'}</div><div class="pt-win"></div></div>`;
     const win = box.querySelector('.pt-win');
     win.innerHTML = items.map((it) => { const [ic, lab] = label(it.service);
-      return `<a class="pt-item" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span></a>`; }).join('');
+      return `<a class="pt-item" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span>${tile ? `<br><span class="pt-go">${es ? 'Ver perfil →' : 'View profile →'}</span>` : ''}</span></a>`; }).join('');
     const els = [...win.children]; let i = 0;
     const show = () => { els.forEach((e, k) => { e.style.transform = k === i ? 'translateY(0)' : (k === (i - 1 + els.length) % els.length ? 'translateY(-100%)' : 'translateY(100%)'); e.style.opacity = k === i ? 1 : 0; }); };
     show(); setInterval(() => { if (document.hidden) return; i = (i + 1) % els.length; show(); }, 2400);
