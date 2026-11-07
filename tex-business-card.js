@@ -76,42 +76,70 @@
     ctx.textAlign = 'left'; ctx.fillStyle = '#f2c14e'; ctx.fillText(a, x0, H - 98); ctx.fillStyle = '#ffffff'; ctx.fillText(b, x0 + wa, H - 98);
     return c;
   }
+  var IC = {
+    wa: '<svg viewBox="0 0 24 24" fill="#25D366"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>',
+    fb: '<svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>',
+    ig: '<svg viewBox="0 0 24 24"><defs><linearGradient id="tbcig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".4" stop-color="#d62976"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#tbcig)"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.3" fill="#fff"/></svg>',
+    sms: '<svg viewBox="0 0 24 24" fill="none" stroke="#0b7a63" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.3A8 8 0 1 1 21 12z"/></svg>',
+    dl: '<svg viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>'
+  };
   function css() {
     if (document.getElementById('tbc-css')) return;
     var s = document.createElement('style'); s.id = 'tbc-css';
     s.textContent = '.tbc{margin:16px 0;padding:16px;border:2px solid #e8c766;border-radius:16px;background:#fffaf0;text-align:center}' +
       '.tbc h3{margin:0 0 6px;font-size:1.2rem;color:#111827}.tbc p{margin:0 0 12px;color:#374151;font-size:.95rem;line-height:1.35}' +
-      '.tbc img{display:block;width:min(340px,100%);margin:0 auto 12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}' +
-      '.tbc-b{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tbc-b button,.tbc-b a{min-height:48px;border-radius:12px;font:800 .95rem system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none}' +
-      '.tbc-share{grid-column:1/-1;background:linear-gradient(135deg,#0b7a63,#075c4b);color:#fff;border:0}.tbc-b .tbc-sec{background:#fff;color:#111827;border:1px solid #d1d5db}' +
+      '.tbc-img img{display:block;width:min(340px,100%);margin:0 auto 12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}' +
+      '.tbc-share{display:flex;width:100%;min-height:52px;margin:0 0 10px;align-items:center;justify-content:center;border:0;border-radius:14px;background:linear-gradient(135deg,#0b7a63,#075c4b);color:#fff;font:800 1.05rem system-ui,sans-serif;cursor:pointer}' +
+      '.tbc-g{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.tbc-g a,.tbc-g button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:4px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;color:#111827;font:700 .72rem system-ui,sans-serif;text-decoration:none;cursor:pointer}' +
+      '.tbc-g svg{width:26px;height:26px}.tbc-copy{margin-top:10px;background:none;border:0;color:#0b7a63;font:700 .9rem system-ui,sans-serif;text-decoration:underline;cursor:pointer}' +
       '.tbc small{display:block;margin-top:10px;color:#92400e;font-weight:700}.tbc-ok{min-height:1em;margin-top:6px;color:#0b7a63;font-weight:700}';
     document.head.appendChild(s);
   }
   async function render(el, o) {
     if (!el) return; css();
-    var t = T[o.lang === 'es' ? 'es' : 'en'];
-    el.innerHTML = '<div class="tbc"><h3>' + t.h + '</h3><p>' + t.p + '</p><div class="tbc-img">…</div><div class="tbc-b">' +
-      '<button type="button" class="tbc-share">' + t.share + '</button><a class="tbc-sec tbc-dl" download="texcontractor-card.png">' + t.dl + '</a>' +
-      '<button type="button" class="tbc-sec tbc-link">' + t.link + '</button></div><div class="tbc-ok" aria-live="polite"></div><small>' + t.partner + '</small></div>';
+    var t = T[o.lang === 'es' ? 'es' : 'en'], es = o.lang === 'es';
+    var link = o.shareUrl || o.profileUrl, text = t.shareText(o.name, o.service) + link, e = encodeURIComponent;
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    el.innerHTML = '<div class="tbc"><h3>' + (o.title || t.h) + '</h3><p>' + (o.note || t.p) + '</p><div class="tbc-img">…</div>' +
+      '<button type="button" class="tbc-share">' + t.share + '</button><div class="tbc-g">' +
+      '<a data-ch="facebook" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=' + e(link) + '">' + IC.fb + 'Facebook</a>' +
+      '<a data-ch="whatsapp" target="_blank" rel="noopener" href="https://wa.me/?text=' + e(text) + '">' + IC.wa + 'WhatsApp</a>' +
+      '<a data-ch="text" href="sms:' + (ios ? '&' : '?') + 'body=' + e(text) + '">' + IC.sms + (es ? 'Texto' : 'Text') + '</a>' +
+      '<button type="button" data-ch="instagram">' + IC.ig + 'Instagram</button>' +
+      '<a data-ch="download" class="tbc-dl" download="texcontractor-card.png">' + IC.dl + t.dl + '</a>' +
+      '</div><button type="button" class="tbc-copy">' + t.link + '</button><div class="tbc-ok" aria-live="polite"></div>' + (o.note ? '' : '<small>' + t.partner + '</small>') + '</div>';
     var canvas = await draw(o), blob = await new Promise(function (ok) { canvas.toBlob(ok, 'image/png'); });
     var url = URL.createObjectURL(blob), im = new Image(); im.src = url; im.alt = 'Business card for ' + (o.name || 'technician');
     var box = el.querySelector('.tbc-img'); box.textContent = ''; box.appendChild(im);
     el.querySelector('.tbc-dl').href = url;
-    var file = new File([blob], 'texcontractor-card.png', { type: 'image/png' }), text = t.shareText(o.name, o.service) + o.profileUrl;
+    var file = new File([blob], 'texcontractor-card.png', { type: 'image/png' });
+    var ok = el.querySelector('.tbc-ok');
     function ev(ch) { try { window.gtag && gtag('event', 'business_card', { action: ch }); } catch (_) {} }
+    async function shareFile() {
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: text }); return true; }
+      } catch (er) { if (er && er.name === 'AbortError') return true; }
+      return false;
+    }
     el.querySelector('.tbc-share').onclick = async function () {
       ev('share');
-      try {
-        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: text }); return; }
-        if (navigator.share) { await navigator.share({ title: 'TexContractor', text: text, url: o.profileUrl }); return; }
-      } catch (e) { if (e && e.name === 'AbortError') return; }
+      if (await shareFile()) return;
+      try { if (navigator.share) { await navigator.share({ title: 'TexContractor', text: text, url: link }); return; } } catch (er) { if (er && er.name === 'AbortError') return; }
       el.querySelector('.tbc-dl').click();
     };
-    el.querySelector('.tbc-dl').addEventListener('click', function () { ev('download'); });
-    el.querySelector('.tbc-link').onclick = function () {
+    el.addEventListener('click', async function (x) {
+      var b = x.target.closest('[data-ch]'); if (!b) return; var ch = b.getAttribute('data-ch'); ev(ch);
+      if (ch === 'instagram') {
+        x.preventDefault();
+        if (await shareFile()) return;
+        el.querySelector('.tbc-dl').click();
+        ok.textContent = es ? 'Tarjeta descargada: súbela a tu historia de Instagram.' : 'Card saved: post it to your Instagram story.';
+      }
+    });
+    el.querySelector('.tbc-copy').onclick = function () {
       ev('copy');
-      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { el.querySelector('.tbc-ok').textContent = t.copied; })
-        .catch(function () { window.prompt(t.link, o.profileUrl); });
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { ok.textContent = t.copied; })
+        .catch(function () { window.prompt(t.link, link); });
     };
   }
   window.TexBusinessCard = { render: render, draw: draw };

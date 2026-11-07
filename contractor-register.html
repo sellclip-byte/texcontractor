@@ -687,7 +687,7 @@
           const purl = saved && saved.id ? 'https://texcontractor.com/profile.html?contractor=' + encodeURIComponent(saved.id) + '&service=' + encodeURIComponent(data.service || '') + '&utm_source=share&utm_medium=pro' : 'https://texcontractor.com/join/?utm_source=share&utm_medium=pro';
           const lg = (document.documentElement.lang || '').startsWith('es') ? 'es' : 'en';
           TexShareFriends.render(sf, { kind: 'pro', url: purl, service: data.service, name: data.displayName, lang: lg });
-          TexBusinessCard.render(bc, { name: data.displayName, service: data.service, city: data.city, state: data.state, photoUrl: (typeof media.profilePhoto === 'string' ? media.profilePhoto : '') || '', profileUrl: purl, lang: lg });
+          TexBusinessCard.render(bc, { shareUrl: saved && saved.id ? 'https://texcontractor.com/p/' + saved.id + '/?utm_source=share&utm_medium=card' : purl, name: data.displayName, service: data.service, city: data.city, state: data.state, photoUrl: (typeof media.profilePhoto === 'string' ? media.profilePhoto : '') || '', profileUrl: purl, lang: lg });
         } catch (_) {}
         clearDraft();
         clearPostingForm(); resetServiceSearch();
@@ -707,7 +707,7 @@
     });
   </script>
   <script src="tex-share-friends.js?v=1"></script>
-  <script src="tex-business-card.js?v=1"></script>
+  <script src="tex-business-card.js?v=2"></script>
   <script src="tex-language.js?v=20261105creds"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 </body>

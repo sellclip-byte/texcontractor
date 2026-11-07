@@ -171,6 +171,17 @@
     } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
+    const texCardGo = () => { try { if (window.TexBusinessCard && params.get('contractor') && profile.id && !document.getElementById('pro-card')) {
+      const holder = document.createElement('section'); holder.id = 'pro-card'; holder.style.cssText = 'max-width:520px;margin:18px auto;padding:0 12px';
+      (document.querySelector('main') || document.body).appendChild(holder);
+      const loc = String(profile.location || '').split(',').map(x => x.trim());
+      TexBusinessCard.render(holder, { name: profile.name, service: profile.service, city: loc[0] || '', state: loc[1] || '', photoUrl: profile.profilePhoto || '',
+        shareUrl: 'https://texcontractor.com/p/' + profile.id + '/?utm_source=share&utm_medium=profile_card',
+        profileUrl: location.href.split('#')[0],
+        title: 'Share ' + String(profile.name).split(/\s+/)[0] + '\u2019s card',
+        note: 'Know someone who needs ' + String(profile.service || 'this service').toLowerCase() + '? Send them this card. They can text ' + String(profile.name).split(/\s+/)[0] + ' directly.' });
+    } } catch (_) {} };
+    if (window.TexBusinessCard) texCardGo(); else window.addEventListener('load', texCardGo);
 const texHourLabel=(h)=>{h=Number(h)%24;return (h%12||12)+(h<12?' AM':' PM');};
 const texAvailableNow=(from,to)=>{if(from==null||to==null||from===to)return false;const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',hourCycle:'h23'}).format(new Date()))%24;from=Number(from);to=Number(to);return from<to?(h>=from&&h<to):(h>=from||h<to);};
 const availBadge=(from,to)=>{const s=document.createElement('span');s.className='avail-now';s.title='Usually available '+texHourLabel(from)+' – '+texHourLabel(to)+' (Texas time)';s.innerHTML='<i aria-hidden="true"></i>Available now';return s;};
@@ -268,6 +279,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
     renderProfile();
   </script>
   <script src="tex-share-profile.js?v=20261021b"></script>
+  <script src="tex-business-card.js?v=2"></script>
   <script src="tex-chat.js?v=20261022b"></script>
   <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id);});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
   <script src="tex-language.js?v=20261103pronote"></script>

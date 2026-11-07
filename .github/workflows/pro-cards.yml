@@ -1,0 +1,40 @@
+name: Build technician share cards
+on:
+  push:
+    branches:
+      - seo-safe-review-20261011
+    paths:
+      - 'scripts/generate-pro-cards.py'
+      - '.github/workflows/pro-cards.yml'
+  schedule:
+    - cron: '*/15 * * * *'   # new pros get their card within ~15-30 min
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: pro-cards
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: seo-safe-review-20261011
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow "opencv-python-headless<5"
+      - name: Draw cards from the live directory
+        run: python scripts/generate-pro-cards.py
+      - name: No phone numbers in pages
+        run: |
+          if grep -rEl '\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}' p/ --include=index.html ; then echo 'Phone number leaked'; exit 1; fi
+      - name: Commit cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A p
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Update technician share cards"
+          for i in 1 2 3; do git pull --rebase origin seo-safe-review-20261011 && git push origin HEAD:seo-safe-review-20261011 && break; sleep 5; done
