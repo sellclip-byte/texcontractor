@@ -107,12 +107,18 @@
 
   const renderMembers = () => {
     const query = String(memberSearch.value || '').trim().toLowerCase();
-    const rows = members.filter((row) => [row.email, row.display_name, row.provider].some((value) => String(value || '').toLowerCase().includes(query)));
+    // Phone sign-ups have no name/email: show their business name + service so the owner knows who is who (owner 11-06).
+    const byOwner = new Map();
+    (submissions || []).forEach((s) => { if (!s.owner_id) return; const a = byOwner.get(s.owner_id) || []; a.push(s); byOwner.set(s.owner_id, a); });
+    const svcOf = (id) => { const a = byOwner.get(id) || []; return a.length > 20 ? [] : a; };
+    const rows = members.filter((row) => [row.email, row.display_name, row.provider, ...svcOf(row.user_id).map((x) => `${x.display_name} ${x.service}`)].some((value) => String(value || '').toLowerCase().includes(query)));
     membersList.innerHTML = '';
     $('#members-count').textContent = `${rows.length} shown · ${members.length} total`;
     membersEmpty.hidden = rows.length > 0;
     rows.forEach((row) => {
-      const name = row.display_name || 'No profile name';
+      const svc = svcOf(row.user_id);
+      const name = row.display_name || svc[0]?.display_name || (row.provider === 'phone' ? 'New member (phone)' : 'No profile name');
+      const roleLabel = svc.length ? `Technician · ${[...new Set(svc.map((x) => x.service))].join(', ')}` : 'Customer (no service listed)';
       const isCurrentAdmin = row.user_id === currentUser?.id;
       const blocked = row.status === 'blocked';
       const card = document.createElement('article');
@@ -121,7 +127,7 @@
         <div class="member-avatar"><span>${escapeHtml(initials(name))}</span></div>
         <div>
           <h2 class="member-name">${escapeHtml(name)}</h2>
-          <p class="member-email">${escapeHtml(row.email)}</p>
+          <p class="member-email">${escapeHtml(row.email || '')}</p><p class="member-email" style="font-weight:800;color:${svc.length ? '#075c4b' : '#92400e'}">${escapeHtml(roleLabel)}</p>
           <div class="member-meta"><span class="member-badge">${escapeHtml(formatProvider(row.provider))}</span>${isCurrentAdmin ? '<span class="member-role">Admin</span>' : ''}<span>Joined ${escapeHtml(displayDate(row.created_at, 'Unknown'))}</span></div>
         </div>
         <div class="member-side"><span class="member-state${blocked ? ' blocked' : ''}">${blocked ? 'Blocked' : 'Active'}</span><span>Last sign-in</span><strong>${escapeHtml(displayDate(row.last_sign_in_at))}</strong>${row.status_note ? `<span class="member-note">${escapeHtml(row.status_note)}</span>` : ''}<div class="member-actions">${isCurrentAdmin ? '' : `<button class="member-action ${blocked ? 'allow' : 'block'}" data-member-action type="button">${blocked ? 'Allow' : 'Block'}</button>`}</div></div>`;
@@ -139,7 +145,7 @@
         const chat = document.createElement('a');
         chat.className = 'member-action allow';
         chat.href = `messages.html?member=${encodeURIComponent(row.user_id)}`;
-        chat.textContent = 'Chat';
+        chat.textContent = svc.length ? '💬 Message / 🎁 Card' : '💬 Message';
         chat.title = 'Open the private TexContractor conversation';
         actions.prepend(chat);
       }
