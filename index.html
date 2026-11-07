@@ -1508,6 +1508,35 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
     const siteLink = window.location.href;
     const shareText = 'Find a local professional quickly with TexContractor.';
 
+    // Owner 11-06: show the member's own photo on the Account button (account picture, else the photo on his service listing).
+    async function showAccountPhoto(user) {
+      const icon = accountToggle.querySelector('.header-tool-icon');
+      if (!icon) return;
+      if (!user) { icon.textContent = '👤'; return; }
+      let url = '';
+      try { url = sessionStorage.getItem('tex_acct_photo_' + user.id) || ''; } catch (_) {}
+      if (!url) {
+        const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+        try {
+          const token = await TexAuth.getAccessToken();
+          const r = await fetch(`${SB}/rest/v1/texcontractor_members?select=avatar_url&user_id=eq.${user.id}&limit=1`, { headers: { apikey: K, Authorization: `Bearer ${token}` } });
+          if (r.ok) url = ((await r.json())[0] || {}).avatar_url || '';
+          if (!url) {
+            const r2 = await fetch(`${SB}/rest/v1/texcontractor_public_services?select=profile_photo_path&owner_id=eq.${user.id}&profile_photo_path=not.is.null&limit=1`, { headers: { apikey: K } });
+            const p = r2.ok ? ((await r2.json())[0] || {}).profile_photo_path : '';
+            if (p) url = `${SB}/storage/v1/object/public/texcontractor-media/${String(p).split('/').map(encodeURIComponent).join('/')}`;
+          }
+          if (!url) url = user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+          try { if (url) sessionStorage.setItem('tex_acct_photo_' + user.id, url); } catch (_) {}
+        } catch (_) {}
+      }
+      if (!url) { icon.textContent = '👤'; return; }
+      const img = new Image(); img.alt = ''; img.referrerPolicy = 'no-referrer';
+      img.style.cssText = 'width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 2px #edb72d;display:block';
+      img.onload = () => icon.replaceChildren(img); img.onerror = () => { icon.textContent = '👤'; };
+      img.src = url;
+    }
+
     async function updateAccountMenu() {
       const user = await TexAuth.getUser();
       const signedIn = Boolean(user);
@@ -1520,6 +1549,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       const accountEmail = document.getElementById('account-email');
       if (accountEmail) accountEmail.hidden = signedIn;
       accountLogout.hidden = !signedIn;
+      showAccountPhoto(signedIn ? user : null);
     }
 
     accountToggle.addEventListener('click', () => {
