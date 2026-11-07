@@ -74,6 +74,7 @@
         const user = await TexAuth.getUser();
         const token = await TexAuth.getAccessToken();
         if (!user || !token) return;
+        if (user.id === '6d83440a-820a-4309-b666-cba8e24a8290') return; // admin account owns the bulk directory listings
         const query = new URLSearchParams({ select: 'id,display_name,service', owner_id: `eq.${user.id}`, status: 'eq.approved', order: 'created_at.asc' });
         const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_submissions?${query.toString()}`, {
           headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` }
