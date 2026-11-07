@@ -46,17 +46,18 @@
     const tile = box.dataset.variant === 'tile';
     if (tile) {
       const tcss = document.createElement('style');
-      tcss.textContent = '.pt-tile{height:100%;box-sizing:border-box;border-radius:16px;border:2px solid #e8c766;background:linear-gradient(135deg,#fffaf0,#fff3d6);padding:12px 10px;text-align:center;color:#111827;box-shadow:0 6px 18px rgba(15,23,42,.08);display:flex;flex-direction:column}' +
-        '.pt-tile .pt-top{color:#1b2f63;font-size:13px;letter-spacing:.02em}.pt-tile .pt-sub{color:#374151;font:600 11.5px system-ui,sans-serif;margin-top:2px}.pt-tile .pt-win{flex:1;min-height:150px;margin-top:8px}' +
-        '.pt-tile .pt-item{flex-direction:column;justify-content:center;gap:6px;background:linear-gradient(135deg,#0f1b3d,#1b2f63);color:#fff;border:2px solid #d9a92b;padding:8px 8px}' +
-        '.pt-tile .pt-ic{width:58px;height:58px;font-size:28px;border:3px solid #f2c14e}.pt-tile .pt-t1{color:#f2c14e;font-size:11.5px}' +
-        '.pt-tile .pt-t2{color:#fff;font-size:15px;max-width:100%;white-space:normal;line-height:1.15}.pt-tile .pt-go{display:inline-block;margin-top:2px;color:#c7d2fe;font:700 11px system-ui,sans-serif}';
+      tcss.textContent = '.pt-tile{height:100%;box-sizing:border-box;border-radius:16px;border:2px solid #e8c766;background:linear-gradient(135deg,#fffaf0,#fff3d6);padding:10px;color:#111827;box-shadow:0 6px 18px rgba(15,23,42,.08);display:flex;flex-direction:column;justify-content:center}' +
+        '.pt-tile .pt-top{color:#1b2f63;font-size:13px;text-align:left}.pt-tile .pt-sub{color:#374151;font:600 11.5px system-ui,sans-serif;margin-top:1px}.pt-tile .pt-win{height:70px;margin-top:8px}' +
+        '.pt-tile .pt-item{gap:10px;background:linear-gradient(135deg,#0f1b3d,#1b2f63);color:#fff;border:2px solid #d9a92b;padding:0 10px}' +
+        '.pt-tile .pt-ic{width:46px;height:46px;font-size:22px;border:2px solid #f2c14e}.pt-tile .pt-t1{color:#f2c14e;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}' +
+        '.pt-tile .pt-t2{color:#fff;font-size:15px;max-width:none;display:block}.pt-tile .pt-txt{min-width:0;flex:1}.pt-tile .pt-txt br{display:none}' +
+        '@media(max-width:760px){.pt-tile{padding:8px}.pt-tile .pt-top{font-size:11px}.pt-tile .pt-sub{display:none}.pt-tile .pt-win{height:96px;margin-top:6px}.pt-tile .pt-item{flex-direction:column;justify-content:center;gap:3px;padding:4px 6px;text-align:center}.pt-tile .pt-ic{width:38px;height:38px;font-size:19px}.pt-tile .pt-t1{font-size:10.5px;white-space:normal;line-height:1.2}.pt-tile .pt-t2{font-size:13px}.pt-tile .pt-txt{flex:none;max-width:100%}}';
       document.head.appendChild(tcss);
     }
     box.innerHTML = tile ? `<div class="pt-box pt-tile">` + `<div class="pt-top">${es ? '🛠️ TÉCNICOS EN TEXCONTRACTOR' : '🛠️ PROS ON TEXCONTRACTOR'}</div><div class="pt-sub">${es ? 'Únete y aparece aquí con tu foto' : 'Join and show up here with your photo'}</div><div class="pt-win"></div></div>` : `<div class="pt-box"><div class="pt-top">${es ? 'Miles de técnicos locales · Escríbeles gratis' : 'Thousands of local pros · Text them free'}</div><div class="pt-win"></div></div>`;
     const win = box.querySelector('.pt-win');
     win.innerHTML = items.map((it) => { const [ic, lab] = label(it.service);
-      return `<a class="pt-item" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span>${tile ? `<br><span class="pt-go">${es ? 'Ver perfil →' : 'View profile →'}</span>` : ''}</span></a>`; }).join('');
+      return `<a class="pt-item" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span class="pt-txt"><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span></a>`; }).join('');
     const els = [...win.children]; let i = 0;
     const show = () => { els.forEach((e, k) => { e.style.transform = k === i ? 'translateY(0)' : (k === (i - 1 + els.length) % els.length ? 'translateY(-100%)' : 'translateY(100%)'); e.style.opacity = k === i ? 1 : 0; }); };
     show(); setInterval(() => { if (document.hidden) return; i = (i + 1) % els.length; show(); }, 2400);
