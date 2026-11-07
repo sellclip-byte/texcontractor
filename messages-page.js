@@ -132,6 +132,16 @@
   const selectConversation = async (conversation) => {
     selectedConversation = conversation;
     cardButton.hidden = !isAdmin;
+    if (isAdmin && conversation.member_id) {
+      // show who this is: business name + service (phone sign-ups have no name on the account)
+      const q = new URLSearchParams({ select: 'display_name,service', owner_id: `eq.${conversation.member_id}`, is_published: 'eq.true', limit: '3' });
+      fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?${q}`, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r' } })
+        .then((r) => r.ok ? r.json() : []).then((rows) => {
+          if (selectedConversation !== conversation) return;
+          if (rows.length) { $('#chat-title').textContent = rows[0].display_name; $('#chat-subtitle').textContent = 'Technician · ' + [...new Set(rows.map((x) => x.service))].join(', '); }
+          else { $('#chat-subtitle').textContent = 'Customer (no service listed)'; }
+        }).catch(() => {});
+    }
     chatEmpty.hidden = true;
     chatWindow.hidden = false;
     $('#chat-title').textContent = conversationTitle(conversation);
