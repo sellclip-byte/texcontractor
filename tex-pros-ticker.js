@@ -25,11 +25,11 @@
   const css = document.createElement('style');
   css.textContent = '.pt-box{margin:14px 0;border-radius:18px;background:linear-gradient(135deg,#0f1b3d,#1b2f63);padding:12px 14px 14px;color:#fff;box-shadow:0 10px 24px rgba(15,27,61,.22);border:2px solid #d9a92b;overflow:hidden}' +
     '.pt-top{font:800 14px system-ui,sans-serif;color:#f2c14e;text-align:center}.pt-win{position:relative;height:66px;margin-top:10px;overflow:hidden}' +
-    '.pt-item{position:absolute;inset:0;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.08);border-radius:14px;padding:0 12px;text-decoration:none;color:#fff;transition:transform .5s ease,opacity .5s ease}' +
+    '.pt-item{position:absolute;inset:0;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.08);border-radius:14px;padding:0 12px;text-decoration:none;color:#fff;transition:opacity .8s ease}' +
     '.pt-ic{width:44px;height:44px;border-radius:50%;background:#f2c14e;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;overflow:hidden}.pt-ic img{width:100%;height:100%;object-fit:cover}' +
     '.pt-t1{font:700 12px system-ui,sans-serif;color:#c7d2fe}.pt-t1 i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f2c14e;margin-right:6px}' +
     '@keyframes ptPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.9)}50%{box-shadow:0 0 0 7px rgba(34,197,94,0)}}@keyframes ptBlink{0%,100%{opacity:1}50%{opacity:.25}}' +
-    '.pt-item.pt-star .pt-ic{border-color:#22c55e!important;border-width:3px;border-style:solid;animation:ptPulse 1s ease-in-out infinite}.pt-item.pt-star .pt-t1 i{background:#22c55e!important;animation:ptBlink .8s ease-in-out infinite}.pt-item.pt-star{border-color:#22c55e!important}' +
+    '.pt-item.pt-star .pt-ic{border-color:#22c55e!important;border-width:3px;border-style:solid;box-shadow:0 0 0 3px rgba(34,197,94,.25)}.pt-item.pt-star .pt-t1 i{background:#22c55e!important}.pt-item.pt-star{border-color:#22c55e!important}' +
     '.pt-t2{font:900 17px system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 150px)}';
   document.head.appendChild(css);
 
@@ -93,15 +93,15 @@
     const win = box.querySelector('.pt-win');
     // Only two cards exist at a time (current + leaving), so hundreds of names stay light.
     const make = (it) => { const [ic, lab] = label(it.service); const a = document.createElement('a');
-      a.className = 'pt-item' + (it.star ? ' pt-star' : ''); a.href = it.href; a.style.transform = 'translateY(100%)'; a.style.opacity = '0';
+      a.className = 'pt-item' + (it.star ? ' pt-star' : ''); a.href = it.href; a.style.opacity = '0';
       a.innerHTML = `<span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="">` : ic}</span><span class="pt-txt"><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span>`;
       return a; };
     let i = 0, cur = null;
     const show = () => { const el = make(items[i]); win.appendChild(el); const old = cur; cur = el;
-      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1';
-        if (old) { old.style.transform = 'translateY(-100%)'; old.style.opacity = '0'; setTimeout(() => old.remove(), 600); } })); };
-    // Pros who signed up themselves stay 4 seconds with a green flash; the others 2.4 seconds.
-    const next = () => { timer = setTimeout(() => { if (!document.hidden) { i = (i + 1) % items.length; show(); } next(); }, items[i].star ? 4000 : 2400); };
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity = '1';
+        if (old) { old.style.opacity = '0'; setTimeout(() => old.remove(), 900); } })); };
+    // Owner 11-07 (calmer): soft fade; pros who signed up stay 6 s in a steady green frame, the others 4 s.
+    const next = () => { timer = setTimeout(() => { if (!document.hidden) { i = (i + 1) % items.length; show(); } next(); }, items[i].star ? 6000 : 4000); };
     win.innerHTML = ''; clearTimeout(timer); show(); next();
   };
   window.texProsTickerReload = load;

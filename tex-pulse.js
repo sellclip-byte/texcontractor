@@ -193,14 +193,14 @@
       const act = activity();
       if (!playReal()) fire(pickNext());
       // Daytime bursts: sometimes 1-2 more states light up within a few seconds.
-      if (act > 0.15 && Math.random() < (act > 0.5 ? 0.35 : 0.15)) {
+      if (false) { // owner 11-07: no bursts (calmer homepage)
         const extra = Math.random() < 0.3 ? 2 : 1;
         for (let i = 0; i < extra; i++) setTimeout(() => fire(pickVisible(busyStates)), rnd(400, 3000));
       }
     }
     const act = activity();
-    const mean = act > 0.5 ? 5200 : act > 0.15 ? 11000 : 50000;
-    setTimeout(tick, Math.max(act > 0.5 ? 1800 : 5000, Math.min(expo(mean), act > 0.5 ? 16000 : act > 0.15 ? 30000 : 110000)));
+    const mean = act > 0.5 ? 13000 : act > 0.15 ? 20000 : 60000; // owner 11-07: calmer, about one every 10-15 s in the day
+    setTimeout(tick, Math.max(act > 0.5 ? 9000 : 12000, Math.min(expo(mean), act > 0.5 ? 16000 : act > 0.15 ? 30000 : 110000)));
   }
   document.addEventListener('pointerover', (e) => { if (e.target.closest && e.target.closest('.cr-side')) sideBusy = Date.now() + 10000; }, { passive: true });
   document.addEventListener('wheel', (e) => { if (e.target.closest && e.target.closest('.cr-side')) sideBusy = Date.now() + 10000; }, { passive: true });
