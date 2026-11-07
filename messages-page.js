@@ -120,7 +120,7 @@
         if (!rows.length) { showMessage('This member has no published service yet, so there is no card to send.'); return; }
         const first = String(rows[0].display_name || '').trim().split(/\s+/)[0] || 'there';
         const links = rows.map((row) => (rows.length > 1 ? `${row.service}: ` : '') + `https://texcontractor.com/p/${row.id}/`).join('\n');
-        messageInput.value = `Thank you, ${first}, for joining TexContractor free! 🎁\n\nHere is your business card. Open it and tap Share to send it to your friends and family on WhatsApp, Facebook, Instagram or text. Every share spreads your name in your city, and customers text you directly.\n\n${links}\n\nWishing you lots of new jobs!\nTexContractor`;
+        messageInput.value = `Hi ${first}! 🎁\n\nThis is a gift from TexContractor to you: your own business card, to help you spread everywhere in your city.\n\nShare your card with your friends and family on WhatsApp, Facebook, Instagram or text. Every share brings your name to more people, and customers text you directly.\n\n${links}\n\nThank you for joining us. We'll keep pushing you forward as much as we can. We truly appreciate you!\nTexContractor`;
         messageInput.focus();
         showMessage('Card message ready. Check it and press Send.', 'ok');
       } catch (error) { showMessage(error.message); }
