@@ -544,6 +544,18 @@
       editProfile.className = 'save';
       editProfile.addEventListener('click', () => editTechnician(row,false));
       card.querySelector('.review').prepend(editProfile);
+      // Owner 11-06: message the technician / send his business card / view his card, right from his listing.
+      try {
+        const ownerCount = row.owner_id ? (submissions || []).filter((x) => x.owner_id === row.owner_id).length : 0;
+        if (row.owner_id && ownerCount <= 20 && row.owner_id !== currentUser?.id) {
+          const bar = document.createElement('div'); bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px;width:100%';
+          const msg = document.createElement('a'); msg.className = 'member-action allow'; msg.href = `messages.html?member=${encodeURIComponent(row.owner_id)}`;
+          msg.textContent = '💬 Message / 🎁 Send card'; msg.style.cssText = 'display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:10px;background:#075c4b;color:#fff;font-weight:800;text-decoration:none';
+          const view = document.createElement('a'); view.href = `profile.html?contractor=${encodeURIComponent(row.id)}#pro-card`; view.target = '_blank'; view.rel = 'noopener';
+          view.textContent = '🪪 View his card'; view.style.cssText = 'display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:10px;border:1px solid #e8c766;background:#fffaf0;color:#2d2106;font-weight:800;text-decoration:none';
+          bar.append(msg, view); card.querySelector('.review').prepend(bar);
+        }
+      } catch (_) {}
       const statusSelect = card.querySelector('[data-status]');
       const notes = card.querySelector('[data-notes]');
       const save = card.querySelector('.review > button.save:last-of-type');
