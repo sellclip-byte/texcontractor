@@ -34,7 +34,7 @@
   document.head.appendChild(css);
 
   const get = (path) => fetch(`${SB}/rest/v1/${path}`, { headers: { apikey: K } }).then((r) => (r.ok ? r.json() : [])).catch(() => []);
-  let timer = null, cssDone = false;
+  let timer = null, cssDone = false, cities = null;
   const savedLoc = () => { try { return JSON.parse(localStorage.getItem('texcontractor-location') || '{}') || {}; } catch (_) { return {}; } };
   const load = async () => {
     const q = new URLSearchParams(location.search), loc = savedLoc();
@@ -49,7 +49,26 @@
     const pages = await Promise.all([0, 400, 400, 400].map((m) => get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * m)}`)));
     const seenSvc = new Set(), seenId = new Set(); const dir = [];
     const take = (list) => list.sort(() => Math.random() - 0.5).forEach((d) => { if (!seenId.has(d.id) && !seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); seenId.add(d.id); dir.push(d); } });
-    take(cityRows); take(pages.flat());
+    take(cityRows);
+    // Not enough in the city itself: fill from the nearest cities (owner 11-07: Arlington -> Mansfield, Kennedale, Grand Prairie...).
+    if (city && dir.length < 18) {
+      try {
+        cities = cities || await fetch('/local/cities.json').then((r) => (r.ok ? r.json() : { cities: [] })).then((j) => j.cities || []);
+        const st = state.toLowerCase() + '/';
+        const me = cities.find((c) => c[0].startsWith(st) && c[1].toLowerCase() === city.toLowerCase());
+        if (me) {
+          const d2 = (c) => { const x = (c[3] - me[3]) * Math.cos(me[2] * Math.PI / 180), y = c[2] - me[2]; return Math.sqrt(x * x + y * y) * 69; };
+          const near = cities.filter((c) => c !== me && c[0].startsWith(st)).map((c) => [c, d2(c)]).filter((x) => x[1] <= 45).sort((a, b) => a[1] - b[1]).slice(0, 14);
+          if (near.length) {
+            const rank = new Map(near.map((x, k) => [x[0][1].toLowerCase(), k]));
+            const rows = await get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&city=in.(${near.map((x) => '"' + encodeURIComponent(x[0][1]) + '"').join(',')})&limit=300`);
+            rows.sort(() => Math.random() - 0.5).sort((a, b) => (rank.get(String(a.city).toLowerCase()) ?? 99) - (rank.get(String(b.city).toLowerCase()) ?? 99));
+            rows.forEach((d) => { if (!seenId.has(d.id) && !seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); seenId.add(d.id); dir.push(d); } });
+          }
+        }
+      } catch (_) {}
+    }
+    take(pages.flat());
     const items = registered.map((r) => ({ star: !NO_STAR.includes(r.id), name: r.display_name, service: r.service, city: [r.city, r.state].filter(Boolean).join(', '),
       href: `profile.html?contractor=${r.id}&service=${encodeURIComponent(r.service || '')}`,
       photo: r.profile_photo_path ? `${SB}/storage/v1/object/public/texcontractor-media/${String(r.profile_photo_path).split('/').map(encodeURIComponent).join('/')}` : '' }))
