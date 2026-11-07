@@ -133,6 +133,7 @@
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
     <div id="contractor-notice-image-area" style="display:none;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:160px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"><p class="tc-indiv-only" style="margin:8px 0 0;font-weight:700;color:#7c2d12;font-size:.95rem">Individuals and independent pros only — companies and organizations are not allowed.</p></div>
+    <div id="pros-ticker"></div>
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors in your state</h2><p id="results-scope">Showing matching contractors in your state. Your city appears first; contact providers to confirm travel availability and fees.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
@@ -595,6 +596,7 @@
  if(area&&image){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
 })();
 </script>
+<script src="tex-pros-ticker.js?v=1"></script>
 </body>
 </html>
 
