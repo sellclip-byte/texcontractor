@@ -383,7 +383,8 @@
     const q = ($('#submission-search')?.value || '').trim().toLowerCase();
     const hit = (...values) => !q || values.join(' ').toLowerCase().includes(q);
     const ownerCounts = new Map(); submissions.forEach((row) => { if (row.owner_id) ownerCounts.set(row.owner_id, (ownerCounts.get(row.owner_id) || 0) + 1); });
-    const signedUp = (row) => row.owner_id && ownerCounts.get(row.owner_id) <= 20 && row.owner_id !== currentUser?.id;
+    const OWNER_OWN = ['31948bfc-fb9f-490e-af1f-0f3d42dca767']; // owner's own account (sellclip): not a customer pro (owner 11-06)
+    const signedUp = (row) => row.owner_id && ownerCounts.get(row.owner_id) <= 20 && row.owner_id !== currentUser?.id && !OWNER_OWN.includes(row.owner_id);
     const allRows = submissions.filter((row) => (filter === 'all' || (filter === 'signedup' ? signedUp(row) : row.status === filter)) && hit(row.display_name, row.real_name, row.phone, row.email, row.service, row.city));
     const allImported = filter === 'signedup' ? [] : importedBusinesses.filter((entry) => (filter === 'all' || entry.review_status === filter) && hit(entry.business_name, entry.phone, entry.service, entry.city));
     const rows = allRows.slice(0, shownLimit);
@@ -549,7 +550,7 @@
       // Owner 11-06: message the technician / send his business card / view his card, right from his listing.
       try {
         const ownerCount = row.owner_id ? (submissions || []).filter((x) => x.owner_id === row.owner_id).length : 0;
-        if (row.owner_id && ownerCount <= 20 && row.owner_id !== currentUser?.id) {
+        if (row.owner_id && ownerCount <= 20 && row.owner_id !== currentUser?.id && row.owner_id !== '31948bfc-fb9f-490e-af1f-0f3d42dca767') {
           const bar = document.createElement('div'); bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px';
           const msg = document.createElement('a'); msg.className = 'member-action allow'; msg.href = `messages.html?member=${encodeURIComponent(row.owner_id)}&card=1`;
           msg.textContent = '💬 Message / 🎁 Send card'; msg.style.cssText = 'display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:10px;background:#075c4b;color:#fff;font-weight:800;text-decoration:none';
