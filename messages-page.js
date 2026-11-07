@@ -134,6 +134,10 @@
         const first = String(rows[0].display_name || '').trim().split(/\s+/)[0] || 'there';
         const links = rows.map((row) => (rows.length > 1 ? `${row.service}: ` : '') + `https://texcontractor.com/p/${row.id}/`).join('\n');
         messageInput.value = `Hi ${first}! 🎁\n\nThis is a gift from TexContractor to you: your own business card, to help you spread everywhere in your city.\n\nShare your card with your friends and family on WhatsApp, Facebook, Instagram or text. Every share brings your name to more people, and customers text you directly.\n\n${links}\n\nThank you for joining us. We'll keep pushing you forward as much as we can. We truly appreciate you!\nTexContractor`;
+        let pv = document.getElementById('card-preview');
+        if (!pv) { pv = document.createElement('div'); pv.id = 'card-preview'; b.after(pv); }
+        pv.innerHTML = '<p style="margin:10px 16px 4px;font-weight:800;color:#075c4b">Preview: this is the card ' + first + ' will see in the message</p>' +
+          rows.map((row) => `<img src="/p/${row.id}/card.jpg" alt="Business card" style="display:block;width:min(360px,calc(100% - 32px));margin:0 16px 8px;border-radius:12px;border:1px solid #e8c766">`).join('');
         messageInput.focus();
         showMessage('Card message ready. Check it and press Send.', 'ok');
       } catch (error) { showMessage(error.message); }
@@ -199,6 +203,7 @@
     try {
       await TexMessages.sendMessage(selectedConversation.id, currentUser.id, body);
       messageInput.value = '';
+      document.getElementById('card-preview')?.remove();
       await loadConversations();
       const fresh = conversations.find((row) => row.id === selectedConversation.id) || selectedConversation;
       await selectConversation(fresh);
@@ -227,7 +232,14 @@
       await loadConversations();
       if (memberId && isAdmin) {
         const selected = conversations.find((row) => row.member_id === memberId);
+        // Owner 11-06: opened from one member's button -> show only that member, no other conversations.
+        document.querySelector('.conversations').hidden = true;
+        document.querySelector('.messaging-grid').style.gridTemplateColumns = '1fr';
+        const back = document.createElement('a'); back.href = 'messages.html'; back.textContent = '← All conversations';
+        back.style.cssText = 'display:inline-block;margin:0 0 10px;font-weight:800;color:#075c4b';
+        document.getElementById('messages-app').before(back);
         if (selected) await selectConversation(selected);
+        if (selected && new URLSearchParams(window.location.search).get('card') === '1') cardButton.click();
       }
     } catch (error) {
       showMessage(`Could not load messages: ${error.message}`);
