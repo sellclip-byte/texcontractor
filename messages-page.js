@@ -206,7 +206,21 @@
     try {
       await TexMessages.sendMessage(selectedConversation.id, currentUser.id, body);
       messageInput.value = '';
+      const wasCard = !!document.getElementById('card-preview');
       document.getElementById('card-preview')?.remove();
+      // Owner 11-06: after sending from one member's page, offer to go straight back to the list at the next technician.
+      const focusId = new URLSearchParams(window.location.search).get('member');
+      if (isAdmin && focusId) {
+        if (wasCard) { try { const sent = JSON.parse(localStorage.getItem('tex_card_sent') || '[]'); if (!sent.includes(focusId)) sent.push(focusId); localStorage.setItem('tex_card_sent', JSON.stringify(sent)); } catch (_) {} }
+        let nx = document.getElementById('next-tech');
+        if (!nx) {
+          nx = document.createElement('a'); nx.id = 'next-tech';
+          nx.style.cssText = 'display:block;margin:12px 16px;padding:14px;border-radius:12px;background:#075c4b;color:#fff;text-align:center;font-weight:900;font-size:1.05rem;text-decoration:none';
+          document.getElementById('message-form').after(nx);
+        }
+        nx.href = `contractor-admin.html?filter=signedup#after=${encodeURIComponent(focusId)}`;
+        nx.textContent = '✓ Sent. Back to the list → next technician';
+      }
       await loadConversations();
       const fresh = conversations.find((row) => row.id === selectedConversation.id) || selectedConversation;
       await selectConversation(fresh);
@@ -238,7 +252,7 @@
         // Owner 11-06: opened from one member's button -> show only that member, no other conversations.
         document.querySelector('.conversations').hidden = true;
         document.querySelector('.messaging-grid').style.gridTemplateColumns = '1fr';
-        const back = document.createElement('a'); back.href = 'messages.html'; back.textContent = '← All conversations';
+        const back = document.createElement('a'); back.href = `contractor-admin.html?filter=signedup#after=${encodeURIComponent(memberId)}`; back.textContent = '← Back to technicians list';
         back.style.cssText = 'display:inline-block;margin:0 0 10px;font-weight:800;color:#075c4b';
         document.getElementById('messages-app').before(back);
         if (selected) await selectConversation(selected);

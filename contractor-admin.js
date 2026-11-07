@@ -556,6 +556,9 @@
           msg.textContent = '💬 Message / 🎁 Send card'; msg.style.cssText = 'display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:10px;background:#075c4b;color:#fff;font-weight:800;text-decoration:none';
           const view = document.createElement('a'); view.href = `profile.html?contractor=${encodeURIComponent(row.id)}#pro-card`; view.target = '_blank'; view.rel = 'noopener';
           view.textContent = '🪪 View his card'; view.style.cssText = 'display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border-radius:10px;border:1px solid #e8c766;background:#fffaf0;color:#2d2106;font-weight:800;text-decoration:none';
+          card.dataset.owner = row.owner_id;
+          let sentList = []; try { sentList = JSON.parse(localStorage.getItem('tex_card_sent') || '[]'); } catch (_) {}
+          if (sentList.includes(row.owner_id)) { const ok = document.createElement('span'); ok.textContent = '✓ Card sent'; ok.style.cssText = 'display:inline-flex;align-items:center;padding:8px 12px;border-radius:10px;background:#dcfce7;color:#14532d;font-weight:900'; bar.append(ok); }
           bar.append(msg, view); card.querySelector('.review').before(bar);
         }
       } catch (_) {}
@@ -926,6 +929,7 @@
       renderMembers();
       renderSubmissions();
       renderReports();
+      window.texAdminReturn && window.texAdminReturn();
       membersLoading.hidden = true;
       submissionsLoading.hidden = true;
       reportsLoading.hidden = true;
@@ -971,7 +975,23 @@
   try { savedTab = sessionStorage.getItem(ADMIN_TAB_KEY) || ''; } catch (error) {}
   selectAdminTab(requestedTab || savedTab || 'submissions');
   memberSearch.addEventListener('input', renderMembers);
-  statusFilter.addEventListener('change', () => { shownLimit = PAGE; renderSubmissions(); });
+  statusFilter.addEventListener('change', () => { shownLimit = PAGE; try { sessionStorage.setItem('tex_admin_filter', statusFilter.value); } catch (_) {} renderSubmissions(); });
+  // Owner 11-06: come back from a chat to the same list, scrolled to the next technician.
+  window.texAdminReturn = () => {
+    try {
+      const qp = new URLSearchParams(location.search), after = (/#after=([0-9a-f-]+)/i.exec(location.hash) || [])[1];
+      const f = qp.get('filter') || sessionStorage.getItem('tex_admin_filter');
+      if (!f && !after) return;
+      if (f && [...statusFilter.options].some((o) => o.value === f)) { statusFilter.value = f; shownLimit = PAGE; renderSubmissions(); }
+      document.querySelector('[data-tab="submissions"]')?.click();
+      if (after) {
+        const cards = [...document.querySelectorAll('[data-owner]')];
+        const i = cards.findIndex((c) => c.dataset.owner === after);
+        const target = cards.slice(i + 1).find((c) => c.dataset.owner !== after) || cards[i];
+        if (target) setTimeout(() => { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); target.style.outline = '4px solid #edb72d'; target.style.outlineOffset = '4px'; }, 300);
+      }
+    } catch (_) {}
+  };
   let searchTimer;
   $('#submission-search')?.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { shownLimit = PAGE; renderSubmissions(); }, 250); });
   bindSideAd('left');

@@ -128,3 +128,62 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   } catch (_) {}
 })();
+
+// Owner 11-06: a signed-in member (pro or customer) who opens the site / home-screen icon sees a clear blinking
+// red/green alert at the top when a message is waiting (support messages + customer chats). Also sets the app-icon badge.
+(function () {
+  try {
+    if (window.top !== window.self) return;
+    var SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+    function session() { try { return JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); } catch (_) { return null; } }
+    async function tok() {
+      try { if (window.TexAuth && TexAuth.getAccessToken) { var t = await TexAuth.getAccessToken(); if (t) return t; } } catch (_) {}
+      var s = session(); if (!s || !s.access_token) return null;
+      try { var p = JSON.parse(atob(s.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); if (p.exp && p.exp * 1000 < Date.now()) return null; } catch (_) {}
+      return s.access_token;
+    }
+    function uid() { var s = session(); return s && s.user && s.user.id; }
+    async function count() {
+      var t = await tok(), me = uid(); if (!t || !me) return null;
+      var h = { apikey: K, Authorization: 'Bearer ' + t };
+      var support = 0, chats = 0;
+      try {
+        var r = await fetch(SB + '/rest/v1/texcontractor_messages?select=id&read_at=is.null&sender_id=neq.' + me + '&limit=50', { headers: h });
+        if (r.ok) support = (await r.json()).length;
+      } catch (_) {}
+      try {
+        var r2 = await fetch(SB + '/rest/v1/rpc/texcontractor_chat_unread', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, h), body: '{}' });
+        if (r2.ok) chats = Number(await r2.text()) || 0;
+      } catch (_) {}
+      return { support: support, chats: chats };
+    }
+    function css() {
+      if (document.getElementById('tex-msg-alert-css')) return;
+      var s = document.createElement('style'); s.id = 'tex-msg-alert-css';
+      s.textContent = '@keyframes texMsgBlink{0%,100%{background:#d92d20}50%{background:#0b7a63}}' +
+        '.tex-msg-alert{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:2147482000;display:flex;align-items:center;gap:10px;max-width:calc(100% - 20px);padding:12px 18px;border-radius:999px;color:#fff;font:800 1rem/1.2 system-ui,-apple-system,sans-serif;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:texMsgBlink 1.2s ease-in-out infinite}' +
+        '.tex-msg-alert b{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;border-radius:999px;background:#fff;color:#d92d20}' +
+        '.tex-msg-alert span.x{margin-left:4px;opacity:.85;font-size:1.2rem}';
+      document.head.appendChild(s);
+    }
+    async function check() {
+      if (/\/(messages|chat)(\.html)?$/.test(location.pathname)) { try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch (_) {} return; }
+      var c = await count(); if (!c) return;
+      var n = c.support + c.chats, old = document.getElementById('tex-msg-alert');
+      try { if (n && navigator.setAppBadge) navigator.setAppBadge(n); else if (!n && navigator.clearAppBadge) navigator.clearAppBadge(); } catch (_) {}
+      if (!n) { if (old) old.remove(); return; }
+      try { if (sessionStorage.getItem('tex_msg_alert_closed') === String(n)) return; } catch (_) {}
+      css();
+      var es = (document.documentElement.lang || '').indexOf('es') === 0;
+      var a = old || document.createElement('a');
+      a.id = 'tex-msg-alert'; a.className = 'tex-msg-alert'; a.href = c.chats ? '/chat.html' : '/messages.html';
+      a.innerHTML = '🔔 ' + (es ? (n === 1 ? 'Tienes un mensaje nuevo' : 'Tienes mensajes nuevos') : (n === 1 ? 'You have a new message' : 'You have new messages')) +
+        ' <b>' + (n > 99 ? '99+' : n) + '</b><span class="x" role="button" aria-label="Close">×</span>';
+      a.querySelector('.x').onclick = function (e) { e.preventDefault(); e.stopPropagation(); try { sessionStorage.setItem('tex_msg_alert_closed', String(n)); } catch (_) {} a.remove(); };
+      if (!old) document.body.appendChild(a);
+    }
+    function start() { if (!session()) return; setTimeout(check, 1500); setInterval(check, 60000);
+      document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); }); }
+    if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
+  } catch (_) {}
+})();
