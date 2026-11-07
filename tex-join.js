@@ -91,6 +91,7 @@
         const profile = document.getElementById('account-login');
         if (profile) { profile.href = 'account.html'; profile.textContent = 'My profile'; profile.hidden = false; }
       }
+      else if (isDialog) { /* owner 11-06: the old two-picture popup is retired everywhere; the sign-up panel (signup.html) replaces it */ }
       else if (isDialog && sessionStorage.getItem('texcontractor-join-dismissed') !== '1') {
         // Let visitors browse first: open after 30 seconds or after scrolling about 1.5 screens.
         let shown = false;
