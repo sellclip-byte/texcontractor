@@ -45,13 +45,13 @@
     const regAll = reg.filter((r) => r.owner_id && !SKIP_OWNERS.includes(r.owner_id));
     const sameCity = (r) => city && String(r.city || '').toLowerCase() === city.toLowerCase();
     const registered = regAll.filter(sameCity).concat(regAll.filter((r) => !sameCity(r) && String(r.state || '').toUpperCase() === state)).slice(0, 20);
-    const cityRows = city ? await get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&city=ilike.${encodeURIComponent(city)}&limit=80`) : [];
-    const pages = await Promise.all([0, 400, 400, 400].map((m) => get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * m)}`)));
-    const seenSvc = new Set(), seenId = new Set(); const dir = [];
-    const take = (list) => list.sort(() => Math.random() - 0.5).forEach((d) => { if (!seenId.has(d.id) && !seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); seenId.add(d.id); dir.push(d); } });
-    take(cityRows);
-    // Not enough in the city itself: fill from the nearest cities (owner 11-07: Arlington -> Mansfield, Kennedale, Grand Prairie...).
-    if (city && dir.length < 18) {
+    // Owner 11-07: go through EVERY pro in the visitor's city (not a sample). Small city -> add the nearest cities; still small -> the state.
+    const DIR = 'texcontractor_approved_imported_directory?select=id,business_name,service,city,state';
+    const shuffle = (a) => { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
+    const seenId = new Set(); const dir = [];
+    const add = (list) => list.forEach((d) => { if (d && d.id && !seenId.has(d.id)) { seenId.add(d.id); dir.push(d); } });
+    if (city) add(shuffle(await get(`${DIR}&state=eq.${encodeURIComponent(state)}&city=ilike.${encodeURIComponent(city)}&limit=1000`)));
+    if (city && dir.length < 40) {
       try {
         cities = cities || await fetch('/local/cities.json').then((r) => (r.ok ? r.json() : { cities: [] })).then((j) => j.cities || []);
         const st = state.toLowerCase() + '/';
@@ -61,18 +61,22 @@
           const near = cities.filter((c) => c !== me && c[0].startsWith(st)).map((c) => [c, d2(c)]).filter((x) => x[1] <= 45).sort((a, b) => a[1] - b[1]).slice(0, 14);
           if (near.length) {
             const rank = new Map(near.map((x, k) => [x[0][1].toLowerCase(), k]));
-            const rows = await get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&city=in.(${near.map((x) => '"' + encodeURIComponent(x[0][1]) + '"').join(',')})&limit=300`);
-            rows.sort(() => Math.random() - 0.5).sort((a, b) => (rank.get(String(a.city).toLowerCase()) ?? 99) - (rank.get(String(b.city).toLowerCase()) ?? 99));
-            rows.forEach((d) => { if (!seenId.has(d.id) && !seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); seenId.add(d.id); dir.push(d); } });
+            const rows = shuffle(await get(`${DIR}&state=eq.${encodeURIComponent(state)}&city=in.(${near.map((x) => '"' + encodeURIComponent(x[0][1]) + '"').join(',')})&limit=600`));
+            rows.sort((a, b) => (rank.get(String(a.city).toLowerCase()) ?? 99) - (rank.get(String(b.city).toLowerCase()) ?? 99));
+            add(rows);
           }
         }
       } catch (_) {}
     }
-    take(pages.flat());
+    if (dir.length < 40) add(shuffle((await Promise.all([0, 400, 400].map((m) => get(`${DIR}&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * m)}`)))).flat()));
     const items = registered.map((r) => ({ star: !NO_STAR.includes(r.id), name: r.display_name, service: r.service, city: [r.city, r.state].filter(Boolean).join(', '),
       href: `profile.html?contractor=${r.id}&service=${encodeURIComponent(r.service || '')}`,
       photo: r.profile_photo_path ? `${SB}/storage/v1/object/public/texcontractor-media/${String(r.profile_photo_path).split('/').map(encodeURIComponent).join('/')}` : '' }))
-      .concat(dir.map((d) => ({ name: d.business_name, service: d.service, city: [d.city, d.state].filter(Boolean).join(', '), href: `profile.html?imported=${d.id}&service=${encodeURIComponent(d.service || '')}`, photo: '' })));
+      ;
+    const dirItems = dir.map((d) => ({ name: d.business_name, service: d.service, city: [d.city, d.state].filter(Boolean).join(', '), href: `profile.html?imported=${d.id}&service=${encodeURIComponent(d.service || '')}`, photo: '' }));
+    const stars = items.filter((x) => x.star);
+    // After the opening run of signed-up pros, bring one green pro back after every 6 directory names (owner 11-07).
+    dirItems.forEach((d, k) => { items.push(d); if (stars.length && k % 6 === 5) items.push(stars[Math.floor(k / 6) % stars.length]); });
     if (!items.length) return;
     const tile = box.dataset.variant === 'tile';
     if (tile && !cssDone) { cssDone = true;
@@ -87,13 +91,18 @@
     }
     box.innerHTML = tile ? `<div class="pt-box pt-tile">` + `<div class="pt-top">${es ? '🛠️ TÉCNICOS EN TEXCONTRACTOR' : '🛠️ PROS ON TEXCONTRACTOR'}</div><div class="pt-sub">${es ? 'Únete y aparece aquí con tu foto' : 'Join and show up here with your photo'}</div><div class="pt-win"></div></div>` : `<div class="pt-box"><div class="pt-top">${es ? 'Miles de técnicos locales · Escríbeles gratis' : 'Thousands of local pros · Text them free'}</div><div class="pt-win"></div></div>`;
     const win = box.querySelector('.pt-win');
-    win.innerHTML = items.map((it) => { const [ic, lab] = label(it.service);
-      return `<a class="pt-item${it.star ? ' pt-star' : ''}" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span class="pt-txt"><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span></a>`; }).join('');
-    const els = [...win.children]; let i = 0;
-    const show = () => { els.forEach((e, k) => { e.style.transform = k === i ? 'translateY(0)' : (k === (i - 1 + els.length) % els.length ? 'translateY(-100%)' : 'translateY(100%)'); e.style.opacity = k === i ? 1 : 0; }); };
+    // Only two cards exist at a time (current + leaving), so hundreds of names stay light.
+    const make = (it) => { const [ic, lab] = label(it.service); const a = document.createElement('a');
+      a.className = 'pt-item' + (it.star ? ' pt-star' : ''); a.href = it.href; a.style.transform = 'translateY(100%)'; a.style.opacity = '0';
+      a.innerHTML = `<span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="">` : ic}</span><span class="pt-txt"><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span>`;
+      return a; };
+    let i = 0, cur = null;
+    const show = () => { const el = make(items[i]); win.appendChild(el); const old = cur; cur = el;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1';
+        if (old) { old.style.transform = 'translateY(-100%)'; old.style.opacity = '0'; setTimeout(() => old.remove(), 600); } })); };
     // Pros who signed up themselves stay 4 seconds with a green flash; the others 2.4 seconds.
-    const next = () => { timer = setTimeout(() => { if (!document.hidden) { i = (i + 1) % els.length; show(); } next(); }, els[i].classList.contains('pt-star') ? 4000 : 2400); };
-    show(); clearTimeout(timer); next();
+    const next = () => { timer = setTimeout(() => { if (!document.hidden) { i = (i + 1) % items.length; show(); } next(); }, items[i].star ? 4000 : 2400); };
+    win.innerHTML = ''; clearTimeout(timer); show(); next();
   };
   window.texProsTickerReload = load;
   load();
