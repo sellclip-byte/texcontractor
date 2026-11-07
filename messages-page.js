@@ -42,8 +42,19 @@
     return member?.email || 'Member account';
   };
 
-  const renderConversations = (unreadById = new Map()) => {
+  // Owner 11-06: Inbox / Archived (nothing is deleted). A chat is archived until the member writes again.
+  let showArchived = false; let lastUnread = new Map();
+  const isArchived = (c) => !!c.admin_archived_at && (!c.last_message_at || new Date(c.last_message_at) <= new Date(c.admin_archived_at));
+  const renderConversations = (unreadById = lastUnread) => {
+    lastUnread = unreadById;
     conversationList.innerHTML = '';
+    if (isAdmin) {
+      const nArch = conversations.filter(isArchived).length, nUnread = conversations.filter((c) => !isArchived(c) && unreadById.get(c.id)).length;
+      const bar = document.createElement('div'); bar.className = 'conv-tabs';
+      bar.innerHTML = `<button type="button" data-v="in" class="${showArchived ? '' : 'on'}">📥 Inbox${nUnread ? ` <b>${nUnread} new</b>` : ''}</button><button type="button" data-v="ar" class="${showArchived ? 'on' : ''}">🗄 Archived (${nArch})</button>`;
+      bar.querySelectorAll('button').forEach((b) => b.onclick = () => { showArchived = b.dataset.v === 'ar'; renderConversations(); });
+      conversationList.appendChild(bar);
+    }
     if (!conversations.length) {
       const empty = document.createElement('div');
       empty.className = 'chat-empty';
@@ -51,11 +62,14 @@
       conversationList.appendChild(empty);
       return;
     }
-    conversations.forEach((conversation) => {
+    const visible = !isAdmin ? conversations : conversations.filter((c) => showArchived ? isArchived(c) : !isArchived(c))
+      .slice().sort((a, b) => (unreadById.get(b.id) ? 1 : 0) - (unreadById.get(a.id) ? 1 : 0));
+    if (isAdmin && !visible.length) { const e = document.createElement('div'); e.className = 'chat-empty'; e.textContent = showArchived ? 'No archived conversations.' : 'Inbox is empty. 🎉'; conversationList.appendChild(e); }
+    visible.forEach((conversation) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = `conversation${selectedConversation?.id === conversation.id ? ' active' : ''}`;
       const unread = unreadById.get(conversation.id) || 0;
+      button.className = `conversation${selectedConversation?.id === conversation.id ? ' active' : ''}${unread ? ' has-new' : ''}`;
       button.innerHTML = `<span class="conversation-title">${escapeHtml(conversationTitle(conversation))}</span><span class="conversation-preview">${escapeHtml(conversation.last_message_preview || 'No messages yet')}</span><span class="conversation-meta"><span>${escapeHtml(displayShortDate(conversation.last_message_at || conversation.updated_at))}</span>${unread ? `<span class="unread">${unread} unread</span>` : ''}</span>`;
       button.addEventListener('click', () => selectConversation(conversation));
       conversationList.appendChild(button);
@@ -132,7 +146,8 @@
         const rows = r.ok ? await r.json() : [];
         if (!rows.length) { showMessage('This member has no published service yet, so there is no card to send.'); return; }
         // Greeting: a person's first name ("Don"), the whole business name ("TEXAS MOBILE"), or a plain "Hi!" for several businesses.
-        const nm = String(rows[0].display_name || '').trim();
+        const memberName = String(memberMap().get(selectedConversation.member_id)?.display_name || '').trim();
+        const nm = /^[A-Z][a-z'\-]+( [A-Za-z][a-z'\-.]*)?$/.test(memberName) ? memberName : String(rows[0].display_name || '').trim();
         const personal = /^[A-Z][a-z'\-]+( [A-Z][a-z'\-.]*)?$/.test(nm);
         const first = rows.length > 1 ? '' : (personal ? nm.split(/\s+/)[0] : nm);
         const links = rows.map((row) => (rows.length > 1 ? `${row.service}: ` : '') + `https://texcontractor.com/p/${row.id}/`).join('\n');
@@ -149,9 +164,32 @@
     return b;
   })();
 
+  const archiveButton = (() => {
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'archive-chat'; b.hidden = true; b.className = 'archive-btn';
+    document.querySelector('.chat-head').appendChild(b);
+    b.addEventListener('click', async () => {
+      if (!selectedConversation) return;
+      const arch = isArchived(selectedConversation);
+      b.disabled = true;
+      try {
+        const token = await TexAuth.getAccessToken();
+        const r = await fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_conversations?id=eq.${encodeURIComponent(selectedConversation.id)}`, {
+          method: 'PATCH', headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify({ admin_archived_at: arch ? null : new Date().toISOString() }) });
+        if (!r.ok) throw new Error('Could not update this conversation.');
+        showMessage(arch ? 'Moved back to the Inbox.' : 'Archived. Nothing was deleted; it comes back to the Inbox if they write again.', 'ok');
+        selectedConversation = null; chatWindow.hidden = true; chatEmpty.hidden = false;
+        await loadConversations();
+      } catch (error) { showMessage(error.message); } finally { b.disabled = false; }
+    });
+    return b;
+  })();
+
   const selectConversation = async (conversation) => {
     selectedConversation = conversation;
     cardButton.hidden = !isAdmin;
+    archiveButton.hidden = !isAdmin;
+    archiveButton.textContent = isArchived(conversation) ? '↩ Move to Inbox' : '🗄 Archive';
     if (isAdmin && conversation.member_id) {
       // show who this is: business name + service (phone sign-ups have no name on the account)
       const q = new URLSearchParams({ select: 'display_name,service', owner_id: `eq.${conversation.member_id}`, is_published: 'eq.true', limit: '3' });
