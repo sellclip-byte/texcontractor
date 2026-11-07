@@ -131,12 +131,15 @@
         const r = await fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?${q}`, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r' } });
         const rows = r.ok ? await r.json() : [];
         if (!rows.length) { showMessage('This member has no published service yet, so there is no card to send.'); return; }
-        const first = String(rows[0].display_name || '').trim().split(/\s+/)[0] || 'there';
+        // Greeting: a person's first name ("Don"), the whole business name ("TEXAS MOBILE"), or a plain "Hi!" for several businesses.
+        const nm = String(rows[0].display_name || '').trim();
+        const personal = /^[A-Z][a-z'\-]+( [A-Z][a-z'\-.]*)?$/.test(nm);
+        const first = rows.length > 1 ? '' : (personal ? nm.split(/\s+/)[0] : nm);
         const links = rows.map((row) => (rows.length > 1 ? `${row.service}: ` : '') + `https://texcontractor.com/p/${row.id}/`).join('\n');
-        messageInput.value = `Hi ${first}! 🎁\n\nThis is a gift from TexContractor to you: your own business card, to help you spread everywhere in your city.\n\nShare your card with your friends and family on WhatsApp, Facebook, Instagram or text. Every share brings your name to more people, and customers text you directly.\n\n${links}\n\nThank you for joining us. We'll keep pushing you forward as much as we can. We truly appreciate you!\nTexContractor`;
+        messageInput.value = `Hi${first ? ' ' + first : ''}! 🎁\n\nThis is a gift from TexContractor to you: ${rows.length > 1 ? 'a business card for each of your services' : 'your own business card'}, to help you spread everywhere in your city.\n\nShare ${rows.length > 1 ? 'your cards' : 'your card'} with your friends and family on WhatsApp, Facebook, Instagram or text. Every share brings your name to more people, and customers text you directly.\n\n${links}\n\nThank you for joining us. We'll keep pushing you forward as much as we can. We truly appreciate you!\nTexContractor`;
         let pv = document.getElementById('card-preview');
         if (!pv) { pv = document.createElement('div'); pv.id = 'card-preview'; b.after(pv); }
-        pv.innerHTML = '<p style="margin:10px 16px 4px;font-weight:800;color:#075c4b">Preview: this is the card ' + first + ' will see in the message</p>' +
+        pv.innerHTML = '<p style="margin:10px 16px 4px;font-weight:800;color:#075c4b">Preview: ' + (rows.length > 1 ? 'these are the cards' : 'this is the card') + ' ' + (first || 'he') + ' will see in the message</p>' +
           rows.map((row) => `<img src="/p/${row.id}/card.jpg" alt="Business card" style="display:block;width:min(360px,calc(100% - 32px));margin:0 16px 8px;border-radius:12px;border:1px solid #e8c766">`).join('');
         messageInput.focus();
         showMessage('Card message ready. Check it and press Send.', 'ok');
