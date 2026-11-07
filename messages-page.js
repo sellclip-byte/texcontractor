@@ -19,10 +19,22 @@
   const displayShortDate = (value) => { const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-US', { month:'short', day:'numeric' }); };
   const showMessage = (text, kind = 'error') => { message.textContent = text; message.className = `message show ${kind}`; };
   const memberMap = () => new Map(members.map((member) => [member.user_id, member]));
+  // business name + service for members who signed up by phone (owner 11-06)
+  const bizNames = new Map();
+  const loadBizNames = async () => {
+    try {
+      const ids = [...new Set(conversations.map((c) => c.member_id).filter(Boolean))].filter((id) => !bizNames.has(id));
+      if (!ids.length) return;
+      const q = new URLSearchParams({ select: 'owner_id,display_name,service', owner_id: `in.(${ids.join(',')})`, is_published: 'eq.true' });
+      const r = await fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?${q}`, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r' } });
+      if (!r.ok) return;
+      (await r.json()).forEach((row) => { if (!bizNames.has(row.owner_id)) bizNames.set(row.owner_id, `${row.display_name} · ${row.service}`); });
+    } catch (_) {}
+  };
   const conversationTitle = (conversation) => {
     if (!isAdmin) return 'TexContractor Support';
     const member = memberMap().get(conversation.member_id);
-    return member?.display_name || member?.email || 'TexContractor member';
+    return member?.display_name || bizNames.get(conversation.member_id) || member?.email || 'New member (phone)';
   };
   const conversationSubtitle = (conversation) => {
     if (!isAdmin) return 'Private conversation with the administration';
@@ -101,6 +113,7 @@
 
   const loadConversations = async () => {
     conversations = await TexMessages.listConversations();
+    if (isAdmin) await loadBizNames();
     const unread = await readUnreadCounts();
     renderConversations(unread);
   };
