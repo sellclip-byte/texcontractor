@@ -31,20 +31,29 @@
   document.head.appendChild(css);
 
   const get = (path) => fetch(`${SB}/rest/v1/${path}`, { headers: { apikey: K } }).then((r) => (r.ok ? r.json() : [])).catch(() => []);
-  (async () => {
-    const state = (box.dataset.state || new URLSearchParams(location.search).get('state') || 'TX').toUpperCase();
+  let timer = null, cssDone = false;
+  const savedLoc = () => { try { return JSON.parse(localStorage.getItem('texcontractor-location') || '{}') || {}; } catch (_) { return {}; } };
+  const load = async () => {
+    const q = new URLSearchParams(location.search), loc = savedLoc();
+    const state = (box.dataset.state || q.get('state') || loc.state || 'TX').toUpperCase();
+    const city = String(q.get('city') || loc.city || '').trim();
     const reg = await get(`texcontractor_public_services?select=id,owner_id,display_name,service,city,state,profile_photo_path&is_published=eq.true&owner_id=not.in.(${SKIP_OWNERS.join(',')})&order=created_at.desc&limit=30`);
-    const registered = reg.filter((r) => r.owner_id && !SKIP_OWNERS.includes(r.owner_id)).slice(0, 20);
-    const pages = await Promise.all([0, 1, 2, 3].map(() => get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * 1500)}`)));
-    const seenSvc = new Set(); const dir = [];
-    pages.flat().sort(() => Math.random() - 0.5).forEach((d) => { if (!seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); dir.push(d); } });
+    // Pros who signed up themselves: same city first, then same state. Elsewhere in the country they are not shown.
+    const regAll = reg.filter((r) => r.owner_id && !SKIP_OWNERS.includes(r.owner_id));
+    const sameCity = (r) => city && String(r.city || '').toLowerCase() === city.toLowerCase();
+    const registered = regAll.filter(sameCity).concat(regAll.filter((r) => !sameCity(r) && String(r.state || '').toUpperCase() === state)).slice(0, 20);
+    const cityRows = city ? await get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&city=ilike.${encodeURIComponent(city)}&limit=80`) : [];
+    const pages = await Promise.all([0, 400, 400, 400].map((m) => get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * m)}`)));
+    const seenSvc = new Set(), seenId = new Set(); const dir = [];
+    const take = (list) => list.sort(() => Math.random() - 0.5).forEach((d) => { if (!seenId.has(d.id) && !seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); seenId.add(d.id); dir.push(d); } });
+    take(cityRows); take(pages.flat());
     const items = registered.map((r) => ({ name: r.display_name, service: r.service, city: [r.city, r.state].filter(Boolean).join(', '),
       href: `profile.html?contractor=${r.id}&service=${encodeURIComponent(r.service || '')}`,
       photo: r.profile_photo_path ? `${SB}/storage/v1/object/public/texcontractor-media/${String(r.profile_photo_path).split('/').map(encodeURIComponent).join('/')}` : '' }))
-      .concat(dir.slice(0, 18).map((d) => ({ name: d.business_name, service: d.service, city: d.city, href: `profile.html?imported=${d.id}&service=${encodeURIComponent(d.service || '')}`, photo: '' })));
+      .concat(dir.map((d) => ({ name: d.business_name, service: d.service, city: [d.city, d.state].filter(Boolean).join(', '), href: `profile.html?imported=${d.id}&service=${encodeURIComponent(d.service || '')}`, photo: '' })));
     if (!items.length) return;
     const tile = box.dataset.variant === 'tile';
-    if (tile) {
+    if (tile && !cssDone) { cssDone = true;
       const tcss = document.createElement('style');
       tcss.textContent = '.pt-tile{height:100%;box-sizing:border-box;border-radius:16px;border:2px solid #e8c766;background:linear-gradient(135deg,#fffaf0,#fff3d6);padding:10px;color:#111827;box-shadow:0 6px 18px rgba(15,23,42,.08);display:flex;flex-direction:column;justify-content:center}' +
         '.pt-tile .pt-top{color:#1b2f63;font-size:13px;text-align:left}.pt-tile .pt-sub{color:#374151;font:600 11.5px system-ui,sans-serif;margin-top:1px}.pt-tile .pt-win{height:70px;margin-top:8px}' +
@@ -60,6 +69,8 @@
       return `<a class="pt-item" href="${esc(it.href)}" style="transform:translateY(100%);opacity:0"><span class="pt-ic">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ic}</span><span class="pt-txt"><span class="pt-t1"><i></i>${esc(lab)} ${es ? 'en' : 'in'} ${esc(it.city)}</span><br><span class="pt-t2">${esc(it.name)}</span></span></a>`; }).join('');
     const els = [...win.children]; let i = 0;
     const show = () => { els.forEach((e, k) => { e.style.transform = k === i ? 'translateY(0)' : (k === (i - 1 + els.length) % els.length ? 'translateY(-100%)' : 'translateY(100%)'); e.style.opacity = k === i ? 1 : 0; }); };
-    show(); setInterval(() => { if (document.hidden) return; i = (i + 1) % els.length; show(); }, 2400);
-  })();
+    show(); clearInterval(timer); timer = setInterval(() => { if (document.hidden) return; i = (i + 1) % els.length; show(); }, 2400);
+  };
+  window.texProsTickerReload = load;
+  load();
 })();

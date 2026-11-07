@@ -1360,7 +1360,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       const cityState = cityText ? [cityText, stateText].filter(Boolean).join(', ') : titleCase(stateName || stateText);
       const label = cityState ? `${cityState}${zipText ? ` · ZIP ${zipText}` : ''}` : (zipText ? `ZIP ${zipText}` : 'Choose a city or ZIP code');
       locationBars.forEach((bar) => { bar.textContent = `📍 ${label}`; });
-      localStorage.setItem('texcontractor-location', JSON.stringify({ city: cityText, state: stateText, zip: zipText })); if (window.crNear) window.crNear();
+      localStorage.setItem('texcontractor-location', JSON.stringify({ city: cityText, state: stateText, zip: zipText })); if (window.crNear) window.crNear(); if (window.texProsTickerReload) window.texProsTickerReload();
       updateServiceLinks();
     }
 
@@ -1650,6 +1650,6 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 })();
 </script>
   <script src="tex-pulse.js?v=20261103slow" defer></script>
-<script src="tex-pros-ticker.js?v=4" defer></script>
+<script src="tex-pros-ticker.js?v=5" defer></script>
 </body>
 </html>
