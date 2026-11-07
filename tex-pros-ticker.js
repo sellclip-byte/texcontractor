@@ -35,7 +35,9 @@
     const state = (box.dataset.state || new URLSearchParams(location.search).get('state') || 'TX').toUpperCase();
     const reg = await get('texcontractor_public_services?select=id,owner_id,display_name,service,city,state,profile_photo_path&is_published=eq.true&order=created_at.desc&limit=80');
     const registered = reg.filter((r) => r.owner_id && !SKIP_OWNERS.includes(r.owner_id)).slice(0, 12);
-    const dir = await get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=40&offset=${Math.floor(Math.random() * 400)}`);
+    const pages = await Promise.all([0, 1, 2, 3].map(() => get(`texcontractor_approved_imported_directory?select=id,business_name,service,city,state&state=eq.${encodeURIComponent(state)}&limit=60&offset=${Math.floor(Math.random() * 1500)}`)));
+    const seenSvc = new Set(); const dir = [];
+    pages.flat().sort(() => Math.random() - 0.5).forEach((d) => { if (!seenSvc.has(d.service) && dir.length < 18) { seenSvc.add(d.service); dir.push(d); } });
     const items = registered.map((r) => ({ name: r.display_name, service: r.service, city: [r.city, r.state].filter(Boolean).join(', '),
       href: `profile.html?contractor=${r.id}&service=${encodeURIComponent(r.service || '')}`,
       photo: r.profile_photo_path ? `${SB}/storage/v1/object/public/texcontractor-media/${String(r.profile_photo_path).split('/').map(encodeURIComponent).join('/')}` : '' }))
