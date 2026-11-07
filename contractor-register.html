@@ -679,6 +679,12 @@
           ? `Your ${data.service} profile is saved. It will be published as soon as you confirm your mobile number with the 6-digit code we text you (see below).`
           : `Your ${data.service} profile is now published on TexContractor.`;
         if (waiting) document.getElementById('phone-verify-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try {
+          let sf = document.getElementById('share-friends');
+          if (!sf) { sf = document.createElement('div'); sf.id = 'share-friends'; success.insertAdjacentElement('afterend', sf); }
+          const purl = saved && saved.id ? 'https://texcontractor.com/profile.html?contractor=' + encodeURIComponent(saved.id) + '&service=' + encodeURIComponent(data.service || '') + '&utm_source=share&utm_medium=pro' : 'https://texcontractor.com/join/?utm_source=share&utm_medium=pro';
+          TexShareFriends.render(sf, { kind: 'pro', url: purl, service: data.service, name: data.displayName, lang: (document.documentElement.lang || '').startsWith('es') ? 'es' : 'en' });
+        } catch (_) {}
         clearDraft();
         clearPostingForm(); resetServiceSearch();
         prefillFromProfile(signedInUser);
@@ -696,6 +702,7 @@
       success.scrollIntoView({ behavior:'smooth', block:'center' });
     });
   </script>
+  <script src="tex-share-friends.js?v=1"></script>
   <script src="tex-language.js?v=20261105creds"></script>
   <script src="tex-side-ads.js?v=20261101-alt"></script>
 </body>

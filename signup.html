@@ -134,11 +134,13 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
   <section class="v" id="v3">
     <div class="ok">✓</div><h1 class="center" data-t="h3"></h1><p class="sub center" data-t="s3"></p>
     <a class="btn green" href="index.html#service-catalog" data-t="find"></a>
+    <div id="share-friends"></div>
     <div class="box lock"><b data-t="lockH"></b><span data-t="lockP"></span></div>
     <a class="btn ghost" href="account.html" data-t="addInfo"></a>
   </section>
 </main>
 <script src="tex-auth.js?v=20261105claim"></script>
+<script src="tex-share-friends.js?v=1"></script>
 <script>
 (function(){
 'use strict';
@@ -210,6 +212,7 @@ function done(){
    if(c&&(c.moved||c.created)){ev('signup_claimed',{moved:c.moved||0,created:c.created||0});go('my-photos.html?claimed=1');return}
    go(proNext());return}
   render();show('v3');
+  try{TexShareFriends.render(document.getElementById('share-friends'),{kind:'customer',lang:L,url:'https://texcontractor.com/join/?utm_source=share&utm_medium=customer'})}catch(_){}
 }
 
 // phone typed on the banner / pro page
