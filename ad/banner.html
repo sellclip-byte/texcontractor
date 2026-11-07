@@ -94,11 +94,11 @@ const qc=(q.get('city')||'').replace(/[^\p{L} .'-]/gu,'').slice(0,24);if(qc)CITY
 addEventListener('storage',e=>{if(e.key!=='texcontractor-location')return;let c='';try{const lo=JSON.parse(e.newValue||'{}');if(lo.city)c=String(lo.city).slice(0,24)}catch(_){}CITY=c||qc;head()});
 const CITIES=['Dallas','Houston','San Antonio','Austin','Fort Worth','Arlington','El Paso','Phoenix','Los Angeles','Chicago','Miami','Atlanta'];
 const esc=t=>t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const CALM=q.get('calm')==='1'; // owner 11-07: homepage banner stays still (no rotating headline, no flying icons)
-let hi=0;function head(){const t=T[L],tr=CALM?TR[L][TR[L].length-1]:TR[L][hi%TR[L].length],city=CITY||(CALM?t.your:(hi%3===2?t.your:CITIES[Math.floor(hi/1)%CITIES.length]));
+const CALM=q.get('calm')==='1'; // owner 11-07: homepage: no flying icons; headline rotates only until the visitor sets a city, then it stays on that city
+let hi=0;function head(){const t=T[L],lock=CALM&&!!CITY,tr=lock?TR[L][TR[L].length-1]:TR[L][hi%TR[L].length],city=CITY||(hi%3===2?t.your:CITIES[Math.floor(hi/1)%CITIES.length]);
   document.getElementById('h').innerHTML=t.let+' <b>'+esc(city)+'</b> '+t.know+' <i>'+esc(tr)+'</i>'+(L==='en'?'.':'.');}
 function syncCity(){let c='';try{const lo=JSON.parse(localStorage.getItem('texcontractor-location')||'{}');if(lo.city)c=String(lo.city).slice(0,24)}catch(_){}const n=c||qc;if(n!==CITY){CITY=n;return true}return false}
-if(!CALM)setInterval(()=>{hi++;syncCity();head()},2200);setInterval(()=>{if(syncCity())head()},700);
+setInterval(()=>{if(CALM&&CITY){syncCity();return}hi++;syncCity();head()},2200);setInterval(()=>{if(syncCity())head()},700);
 const src=(q.get('src')||'banner').replace(/[^a-z0-9_-]/gi,'').slice(0,30);
 // layout from the size of the frame
 function layout(){const W0=innerWidth,H0=innerHeight,r0=W0/H0;let k=1;
