@@ -89,3 +89,42 @@
     });
   } catch (_) {}
 })();
+
+// Owner 11-06: visitors browsing without signing in see the NEW sign-up panel (phone + customer/technician)
+// after 30 seconds or after scrolling about 1.5 screens. Once per visit; closing it hides it for the visit.
+(function () {
+  try {
+    if (window.top !== window.self) return;
+    if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
+    var p = location.pathname;
+    if (/(signup|auth|start|account|admin|my-photos|messages|chat|contractor-register|remove-number|privacy|terms)/i.test(p)) return;
+    if (/^\/(ad|join)\//.test(p)) return;
+    if (sessionStorage.getItem('tex_panel_closed')) return;
+    var a = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); if (a && a.access_token) return;
+    var shown = false, timer;
+    function open() {
+      if (shown || document.querySelector('dialog[open]')) return;
+      shown = true; clearTimeout(timer); window.removeEventListener('scroll', onScroll);
+      var es = (document.documentElement.lang || '').indexOf('es') === 0 || /\/es\//.test(p);
+      var back = (p.replace(/^\//, '') || 'index.html') + location.search;
+      var src = '/signup.html?embed=1&utm_source=site&utm_medium=panel' + (es ? '&lang=es' : '') +
+        (/\.html$/.test(p.replace(/^\//, '') || 'index.html') ? '&return_to=' + encodeURIComponent(back) : '');
+      var st = document.createElement('style');
+      st.textContent = '.tex-panel{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:10px}' +
+        '.tex-panel-box{position:relative;width:min(460px,100%);height:min(760px,calc(100dvh - 70px));margin-top:44px;border-radius:22px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.35)}' +
+        '.tex-panel iframe{width:100%;height:100%;border:0;display:block;border-radius:22px}' +
+        '.tex-panel-x{position:absolute;top:-46px;right:0;border:2px solid #fff!important;width:38px;height:38px;border-radius:50%;border:0;background:#0f172a;color:#fff;font-size:22px;line-height:38px;cursor:pointer;z-index:2}';
+      document.head.appendChild(st);
+      var w = document.createElement('div'); w.className = 'tex-panel'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-label', 'Join TexContractor');
+      w.innerHTML = '<div class="tex-panel-box"><button class="tex-panel-x" type="button" aria-label="Close">×</button><iframe title="Join TexContractor" src="' + src + '"></iframe></div>';
+      function close() { try { sessionStorage.setItem('tex_panel_closed', '1'); } catch (_) {} w.remove(); document.documentElement.style.overflow = ''; }
+      w.querySelector('.tex-panel-x').onclick = close;
+      w.addEventListener('click', function (e) { if (e.target === w) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+      document.body.appendChild(w); document.documentElement.style.overflow = 'hidden';
+    }
+    function onScroll() { if (window.scrollY > window.innerHeight * 1.5) open(); }
+    timer = setTimeout(open, 30000);
+    window.addEventListener('scroll', onScroll, { passive: true });
+  } catch (_) {}
+})();

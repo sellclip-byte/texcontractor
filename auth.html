@@ -10,7 +10,11 @@
     gtag('config', 'AW-18516159223');
   </script>
 
-  <meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}</script>
+  <script>/* owner 11-06: one sign-up screen everywhere -> the phone panel */
+try{(function(){var q=new URLSearchParams(location.search),r=q.get('return_to')||'';
+if(q.get('classic')==='1'||/admin/i.test(r))return;
+var o=new URLSearchParams();if(r)o.set('return_to',r);var i=q.get('intent');if(i==='provider')o.set('role','pro');else if(i==='customer')o.set('role','customer');
+var l=q.get('lang');if(l)o.set('lang',l);location.replace('/signup.html'+(o.toString()?'?'+o:''));})()}catch(e){}</script><meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#0f172a">

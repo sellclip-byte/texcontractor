@@ -200,11 +200,15 @@ $('#verify').onclick=async()=>{const b=$('#verify');if(b.dataset.busy)return;b.d
 $('#edit').onclick=()=>{$('#code').value='';show('v1');$('#phone').focus()};
 $('#resend').onclick=async()=>{$('#e2').className='err';$('#e2').textContent='';try{await TexAuth.sendPhoneCode(st.phone,st.role);$('#e2').className='err okc';$('#e2').textContent=t('resent')}catch(e){$('#e2').textContent=(e&&e.message)||t('errGeneric')}};
 
+const EMBED=q.get('embed')==='1'&&window.top!==window.self;
+if(EMBED){document.documentElement.classList.add('embed');document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(a)a.target='_top'},true)}
+function go(u){(EMBED?window.top:window).location.href=u}
 function done(){
-  if(safeReturn){location.href=safeReturn;return}
+  if(EMBED&&!safeReturn&&st.role!=='provider'){window.top.location.reload();return}
+  if(safeReturn){go(safeReturn);return}
   if(st.role==='provider'){let c=null;try{c=JSON.parse(sessionStorage.getItem('tex_claimed')||'null')}catch(_){}
-   if(c&&(c.moved||c.created)){ev('signup_claimed',{moved:c.moved||0,created:c.created||0});location.href='my-photos.html?claimed=1';return}
-   location.href=proNext();return}
+   if(c&&(c.moved||c.created)){ev('signup_claimed',{moved:c.moved||0,created:c.created||0});go('my-photos.html?claimed=1');return}
+   go(proNext());return}
   render();show('v3');
 }
 
