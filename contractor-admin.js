@@ -382,8 +382,10 @@
     const filter = statusFilter.value;
     const q = ($('#submission-search')?.value || '').trim().toLowerCase();
     const hit = (...values) => !q || values.join(' ').toLowerCase().includes(q);
-    const allRows = submissions.filter((row) => (filter === 'all' || row.status === filter) && hit(row.display_name, row.real_name, row.phone, row.email, row.service, row.city));
-    const allImported = importedBusinesses.filter((entry) => (filter === 'all' || entry.review_status === filter) && hit(entry.business_name, entry.phone, entry.service, entry.city));
+    const ownerCounts = new Map(); submissions.forEach((row) => { if (row.owner_id) ownerCounts.set(row.owner_id, (ownerCounts.get(row.owner_id) || 0) + 1); });
+    const signedUp = (row) => row.owner_id && ownerCounts.get(row.owner_id) <= 20 && row.owner_id !== currentUser?.id;
+    const allRows = submissions.filter((row) => (filter === 'all' || (filter === 'signedup' ? signedUp(row) : row.status === filter)) && hit(row.display_name, row.real_name, row.phone, row.email, row.service, row.city));
+    const allImported = filter === 'signedup' ? [] : importedBusinesses.filter((entry) => (filter === 'all' || entry.review_status === filter) && hit(entry.business_name, entry.phone, entry.service, entry.city));
     const rows = allRows.slice(0, shownLimit);
     const imported = allImported.slice(0, Math.max(0, shownLimit - rows.length));
     const matching = allRows.length + allImported.length;
