@@ -89,7 +89,7 @@
     const body = await response.json().catch(() => ({}));
     if (!response.ok) {
       const message = body.msg || body.message || body.error_description || body.error || 'Authentication request failed.';
-      throw new Error(message);
+      const err = new Error(message); err.status = response.status; throw err;
     }
     return body;
   };
@@ -159,20 +159,39 @@
     return target;
   };
 
-  const refreshSession = async (session) => {
-    if (!session?.refresh_token) return null;
+  // Owner 11-06: stay signed in until the member signs out.
+  // - one refresh at a time (several scripts ask at once; a used refresh token must not log the member out)
+  // - if another tab already refreshed, use its new session
+  // - a network hiccup never signs anyone out; only a refresh token the server truly rejects does
+  let refreshing = null;
+  const refreshSession = (session) => {
+    if (!session?.refresh_token) return Promise.resolve(null);
+    if (refreshing) return refreshing;
+    refreshing = (async () => {
+      try {
+        const refreshed = await requestJson(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ refresh_token: session.refresh_token })
+        });
+        saveSession(refreshed);
+        return refreshed;
+      } catch (error) {
+        const latest = readSession();
+        if (latest?.refresh_token && latest.refresh_token !== session.refresh_token) return latest; // another tab won
+        if (error && (error.status === 400 || error.status === 401 || error.status === 403)) { clearSession(); return null; }
+        return session; // offline or server busy: keep the member signed in and try again later
+      } finally { setTimeout(() => { refreshing = null; }, 0); }
+    })();
+    return refreshing;
+  };
+
+  // user from the saved token while offline (so the member is not shown as signed out)
+  const cachedUser = (session) => {
     try {
-      const refreshed = await requestJson(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({ refresh_token: session.refresh_token })
-      });
-      saveSession(refreshed);
-      return refreshed;
-    } catch (error) {
-      clearSession();
-      return null;
-    }
+      const p = JSON.parse(atob(String(session.access_token).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return p && p.sub ? { id: p.sub, email: p.email || '', phone: p.phone || '', app_metadata: p.app_metadata || {}, user_metadata: p.user_metadata || {} } : null;
+    } catch (_) { return null; }
   };
 
   const getUser = async () => {
@@ -189,6 +208,7 @@
       const current = readSession() || {};
       return finalizeUser(user, session.access_token, current);
     } catch (error) {
+      if (error && !error.status) return cachedUser(session); // offline: stay signed in
       const refreshed = await refreshSession(session);
       if (!refreshed?.access_token) return null;
       try {
@@ -197,8 +217,8 @@
         });
         return finalizeUser(user, refreshed.access_token, refreshed);
       } catch (retryError) {
-        clearSession();
-        return null;
+        if (retryError && (retryError.status === 401 || retryError.status === 403)) { clearSession(); return null; }
+        return cachedUser(refreshed);
       }
     }
   };

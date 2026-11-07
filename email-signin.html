@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Sign in with email · TexContractor</title>
+<link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
+<style>
+  :root{--g:#0b7a63;--gd:#075c4b;--b:#1d4ed8;--ink:#111827;--mute:#4b5563}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100dvh;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:#f6f7f4;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+  main{width:min(440px,100%);background:#fff;border:1px solid #e7e2d2;border-radius:22px;padding:22px 20px 18px;box-shadow:0 10px 30px rgba(15,23,42,.08)}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .top img{height:46px;width:auto}
+  .lang{display:flex;gap:6px}.lang button{border:1px solid #e5d7b0;background:#fff;border-radius:999px;padding:6px 10px;font-weight:800;cursor:pointer}
+  .lang button[aria-pressed=true]{background:#fff3d6;border-color:#c9971c}
+  h1{font-size:1.6rem;margin:6px 0 4px}
+  .sub{margin:0 0 16px;color:var(--mute)}
+  .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border-radius:14px;background:#eef2f7;margin-bottom:14px}
+  .tabs button{min-height:44px;border:0;border-radius:10px;background:transparent;font:800 1rem system-ui,sans-serif;color:#334155;cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--b);color:#fff}
+  label{display:block;font-weight:800;margin:10px 0 6px}
+  input{width:100%;min-height:50px;padding:12px 14px;border:2px solid #d6dbe4;border-radius:12px;font:500 1.05rem system-ui,sans-serif}
+  input:focus{outline:none;border-color:var(--b)}
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .roles button{min-height:46px;border:2px solid #d6dbe4;border-radius:12px;background:#fff;font:800 .95rem system-ui,sans-serif;cursor:pointer}
+  .roles button[aria-pressed=true]{border-color:var(--g);background:#f0faf6;color:var(--gd)}
+  .go{display:block;width:100%;min-height:54px;margin-top:16px;border:0;border-radius:14px;background:var(--b);color:#fff;font:900 1.08rem system-ui,sans-serif;cursor:pointer}
+  .go[disabled]{opacity:.6}
+  .msg{min-height:1.2em;margin:10px 0 0;font-weight:700}.msg.err{color:#b42318}.msg.ok{color:var(--gd)}
+  .links{display:flex;flex-direction:column;gap:10px;margin-top:16px;text-align:center}
+  .links a,.links button{color:var(--gd);font-weight:800;background:none;border:0;cursor:pointer;font-size:.98rem;text-decoration:underline}
+  .links a.phone{display:block;font-weight:900;margin-top:6px;padding:12px;border-radius:12px;background:var(--gd);color:#fff!important;text-decoration:none!important;text-align:center}
+  .hint{font-size:.85rem;color:var(--mute);margin:6px 0 0}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a href="/" aria-label="TexContractor home"><img src="/texcontractor-logo.png" alt="TexContractor"></a>
+    <div class="lang"><button type="button" data-l="en" aria-pressed="true">🇺🇸 EN</button><button type="button" data-l="es" aria-pressed="false">🇲🇽 ES</button></div>
+  </div>
+  <h1 data-t="h1">Sign in with email</h1>
+  <p class="sub" data-t="sub">Use the email and password you saved with TexContractor.</p>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="t-in" aria-selected="true" data-t="tIn">Sign in</button>
+    <button type="button" role="tab" id="t-up" aria-selected="false" data-t="tUp">Create account</button>
+  </div>
+  <form id="f" novalidate>
+    <div id="role-box" hidden>
+      <label data-t="iam">I am a…</label>
+      <div class="roles"><button type="button" data-role="customer" aria-pressed="true" data-t="cust">🔍 Customer</button><button type="button" data-role="provider" aria-pressed="false" data-t="tech">🛠️ Technician</button></div>
+    </div>
+    <label for="email" data-t="email">Email</label>
+    <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="name@gmail.com" required>
+    <label for="pw" data-t="pw">Password</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <p class="hint" id="pw-hint" hidden data-t="pwHint">At least 6 characters, with a letter and a number.</p>
+    <button class="go" id="go" type="submit" data-t="goIn">Sign in</button>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </form>
+  <div class="links">
+    <button type="button" id="forgot" data-t="forgot">Forgot your password? Email me a sign-in link</button>
+    <a class="phone" href="/signup.html" data-t="phone">📱 Use my phone number instead</a>
+  </div>
+</main>
+<script src="/tex-auth.js?v=20261106stay"></script>
+<script>
+(function () {
+  var T = {
+    en: { h1: 'Sign in with email', sub: 'Use the email and password you saved with TexContractor.', tIn: 'Sign in', tUp: 'Create account', iam: 'I am a…', cust: '🔍 Customer', tech: '🛠️ Technician',
+      email: 'Email', pw: 'Password', pwHint: 'At least 6 characters, with a letter and a number.', goIn: 'Sign in', goUp: 'Create my account', wait: 'Please wait…',
+      forgot: 'Forgot your password? Email me a sign-in link', phone: '📱 Use my phone number instead', needEmail: 'Enter your email first.', linkSent: 'We sent a sign-in link to your email. Open it on this phone.',
+      checkEmail: 'Account created. Check your email to confirm, then sign in.', h1Up: 'Create account with email', subUp: 'Create a free account with your email and a password.' },
+    es: { h1: 'Entrar con email', sub: 'Usa el email y la contraseña que guardaste en TexContractor.', tIn: 'Entrar', tUp: 'Crear cuenta', iam: 'Soy…', cust: '🔍 Cliente', tech: '🛠️ Técnico',
+      email: 'Email', pw: 'Contraseña', pwHint: 'Mínimo 6 caracteres, con una letra y un número.', goIn: 'Entrar', goUp: 'Crear mi cuenta', wait: 'Un momento…',
+      forgot: '¿Olvidaste tu contraseña? Mándame un enlace para entrar', phone: '📱 Usar mi número de teléfono', needEmail: 'Escribe tu email primero.', linkSent: 'Te mandamos un enlace a tu email. Ábrelo en este teléfono.',
+      checkEmail: 'Cuenta creada. Revisa tu email para confirmar y luego entra.', h1Up: 'Crear cuenta con email', subUp: 'Crea una cuenta gratis con tu email y una contraseña.' }
+  };
+  var q = new URLSearchParams(location.search), L = q.get('lang') === 'es' ? 'es' : 'en', mode = q.get('mode') === 'signup' ? 'up' : 'in', role = 'customer';
+  var ret = (TexAuth.safeReturnTo && TexAuth.safeReturnTo(q.get('return_to') || '')) || '';
+  var $ = function (s) { return document.querySelector(s); };
+  function t(k) { return T[L][k]; }
+  function paint() {
+    document.documentElement.lang = L;
+    document.querySelectorAll('[data-t]').forEach(function (el) { var k = el.getAttribute('data-t'); if (T[L][k]) el.textContent = T[L][k]; });
+    document.querySelectorAll('[data-l]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-l') === L); });
+    $('#t-in').setAttribute('aria-selected', mode === 'in'); $('#t-up').setAttribute('aria-selected', mode === 'up');
+    $('#role-box').hidden = mode !== 'up'; $('#pw-hint').hidden = mode !== 'up';
+    $('#pw').autocomplete = mode === 'up' ? 'new-password' : 'current-password';
+    $('#go').textContent = mode === 'up' ? t('goUp') : t('goIn');
+    $('.sub').textContent = mode === 'up' ? t('subUp') : t('sub');
+    $('h1').textContent = mode === 'up' ? t('h1Up') : t('h1');
+    $('.phone').href = '/signup.html' + (L === 'es' ? '?lang=es' : '');
+  }
+  function say(text, ok) { var m = $('#msg'); m.textContent = text || ''; m.className = 'msg ' + (ok ? 'ok' : 'err'); }
+  document.querySelectorAll('[data-l]').forEach(function (b) { b.onclick = function () { L = b.getAttribute('data-l'); paint(); }; });
+  $('#t-in').onclick = function () { mode = 'in'; say(''); paint(); };
+  $('#t-up').onclick = function () { mode = 'up'; say(''); paint(); };
+  document.querySelectorAll('[data-role]').forEach(function (b) { b.onclick = function () { role = b.getAttribute('data-role'); document.querySelectorAll('[data-role]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); }; });
+  $('#f').addEventListener('submit', async function (e) {
+    e.preventDefault(); var go = $('#go'); go.disabled = true; go.textContent = t('wait'); say('');
+    try {
+      var r = await TexAuth.passwordRequest($('#email').value, $('#pw').value, mode === 'up' ? role : null, ret || (role === 'provider' ? 'start.html' : ''));
+      if (r && r.signedIn) { location.href = await TexAuth.postLoginDestination(ret, mode === 'up'); return; }
+      say(t('checkEmail'), true);
+    } catch (err) { say((err && err.message) || 'Error'); }
+    finally { go.disabled = false; go.textContent = mode === 'up' ? t('goUp') : t('goIn'); }
+  });
+  $('#forgot').onclick = async function () {
+    var em = $('#email').value.trim(); if (!em) { say(t('needEmail')); $('#email').focus(); return; }
+    try { await TexAuth.sendMagicLink(em, ret); say(t('linkSent'), true); } catch (err) { say((err && err.message) || 'Error'); }
+  };
+  paint();
+})();
+</script>
+</body>
+</html>

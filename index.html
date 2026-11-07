@@ -701,8 +701,10 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
           <button class="header-tool" id="media-toggle" type="button" title="Share on media"><span class="header-tool-icon">◉</span><span class="header-tool-label">Media</span></button>
           <div class="header-menu" id="account-menu" hidden>
             <p id="account-status">Sign in to post a service or contact a contractor.</p>
-            <a class="menu-primary" id="account-login" href="signup.html">Sign in or join with your phone</a>
+            <a class="menu-primary" id="account-login" href="signup.html">📱 Sign in with phone</a>
+            <a class="menu-email" id="account-email" href="email-signin.html">✉️ Sign in with email</a>
             <button id="account-logout" type="button" hidden>Sign out</button>
+            <style>#account-menu [hidden]{display:none!important}#account-menu .menu-primary{background:#075c4b!important;color:#fff!important;font-weight:800!important}#account-menu .menu-email{display:block;margin-top:8px;padding:11px 14px;border-radius:10px;background:#1d4ed8;color:#fff!important;font-weight:800;text-align:center;text-decoration:none}#account-menu #account-logout{margin-top:8px;background:#fff1f2!important;color:#b42318!important;border:1px solid #fecdd3!important;font-weight:800}</style>
           </div>
           <div class="header-menu media-menu-panel" id="media-menu" hidden>
             <p class="media-menu-title">Share TexContractor</p>
@@ -1259,7 +1261,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 
 
   <script src="tex-site-settings.js?v=20261024-legal"></script>
-  <script src="tex-auth.js?v=20261105claim"></script>
+  <script src="tex-auth.js?v=20261106stay"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
   <script src="tex-join.js?v=20261106-nopop"></script>
   <script>
@@ -1509,12 +1511,14 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
     async function updateAccountMenu() {
       const user = await TexAuth.getUser();
       const signedIn = Boolean(user);
-      const email = user?.email || 'your email';
+      const email = user?.email || '';
       accountLabel.textContent = signedIn ? 'Account' : 'Sign in';
-      accountStatus.textContent = signedIn ? `Signed in as ${email}` : 'Sign in to post a service or contact a contractor.';
+      accountStatus.textContent = signedIn ? (email ? `Signed in as ${email}` : 'You are signed in.') : 'Sign in to post a service or contact a contractor.';
       accountLogin.hidden = false;
       accountLogin.href = signedIn ? 'account.html' : 'signup.html';
-      accountLogin.textContent = signedIn ? 'My profile' : 'Sign in';
+      accountLogin.textContent = signedIn ? '👤 My profile' : '📱 Sign in with phone';
+      const accountEmail = document.getElementById('account-email');
+      if (accountEmail) accountEmail.hidden = signedIn;
       accountLogout.hidden = !signedIn;
     }
 
