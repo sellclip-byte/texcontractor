@@ -68,7 +68,7 @@
     ctx.font = '46px TCM, sans-serif'; ctx.fillStyle = '#0b7a63';
     var lines = wrap(ctx, o.service || '', W - 220); lines.forEach(function (l, i) { ctx.fillText(l, cx, 886 + i * 56); });
     var place = [o.city, o.state].filter(Boolean).join(', ');
-    if (place) { ctx.font = '40px TCM, sans-serif'; ctx.fillStyle = '#4b5563'; ctx.fillText('● ' + place, cx, 886 + lines.length * 56 + 14); }
+    if (place) { ctx.font = '40px TCM, sans-serif'; ctx.fillStyle = '#4b5563'; var py = 886 + lines.length * 56 + 14; var pw2 = ctx.measureText(place).width; ctx.fillText(place, cx + 16, py); ctx.beginPath(); ctx.arc(cx + 16 - pw2 / 2 - 22, py - 13, 9, 0, Math.PI * 2); ctx.fillStyle = '#c9971c'; ctx.fill(); }
     // footer band
     rr(ctx, 52, H - 262, W - 104, 210, 24); ctx.fillStyle = '#075c4b'; ctx.fill();
     ctx.fillStyle = '#d1fae5'; ctx.font = '38px TCM, sans-serif'; ctx.fillText(t.foot1, cx, H - 182);
