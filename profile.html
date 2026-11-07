@@ -173,7 +173,7 @@
     document.getElementById('contractor-name').textContent = profile.name;
     const texCardGo = async () => { try { if (window.TexBusinessCard && (params.get('contractor') || params.get('imported')) && profile.id && !document.getElementById('pro-card')) {
       const imp = !!params.get('imported');
-      let mine = false; try { const me = window.TexAuth && await TexAuth.getUser(); mine = !!(me && profile.ownerId && me.id === profile.ownerId); } catch (_) {}
+      let mine = false; try { const me = window.TexAuth && await TexAuth.getUser(); mine = !!(me && profile.ownerId && me.id === profile.ownerId && me.id !== '6d83440a-820a-4309-b666-cba8e24a8290'); } catch (_) {}
       const holder = document.createElement('section'); holder.id = 'pro-card'; holder.style.cssText = 'max-width:520px;margin:18px auto;padding:0 12px';
       (document.querySelector('main') || document.body).appendChild(holder);
       const loc = String(profile.location || '').split(',').map(x => x.trim());

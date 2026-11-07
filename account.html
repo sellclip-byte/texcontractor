@@ -28,7 +28,7 @@
 <script src="tex-auth.js?v=20261106stay"></script>
   <script src="tex-notices.js?v=20261025" defer></script><script src="tex-account.js?v=20261023-optphone"></script><script src="tex-share-profile.js?v=20261021"></script><script src="tex-language.js?v=20261105photos"></script><script src="tex-chat.js?v=20261022b"></script><script src="tex-phone-verify.js?v=20261024"></script><script>TexPhoneVerify.render('phone-verify-box')</script>
 <script src="tex-business-card.js?v=2"></script><script>
-(async()=>{try{const box=document.getElementById('my-business-card');const u=await TexAuth.getUser();if(!u||!box)return;
+(async()=>{try{const box=document.getElementById('my-business-card');const u=await TexAuth.getUser();if(!u||!box)return;if(u.id==='6d83440a-820a-4309-b666-cba8e24a8290')return;/* admin account owns the bulk directory listings: no personal cards */
 const SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
 const q=new URLSearchParams({select:'id,display_name,service,city,state,profile_photo_path',owner_id:'eq.'+u.id,is_published:'eq.true',order:'created_at.asc',limit:'6'});
 const r=await fetch(SB+'/rest/v1/texcontractor_public_services?'+q,{headers:{apikey:K}});if(!r.ok)return;const rows=await r.json();if(!Array.isArray(rows)||!rows.length)return;
