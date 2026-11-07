@@ -66,10 +66,23 @@
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
       const body = document.createElement('p');
-      body.textContent = row.body;
+      // Links in messages are clickable; a business-card link also shows the card picture (owner 11-06).
+      String(row.body || '').split(/(https:\/\/texcontractor\.com\/[^\s]*)/).forEach((part, i) => {
+        if (i % 2) { const a = document.createElement('a'); a.href = part; a.textContent = part; a.target = '_blank'; a.rel = 'noopener'; body.appendChild(a); }
+        else if (part) body.appendChild(document.createTextNode(part));
+      });
       const time = document.createElement('time');
       time.textContent = displayDate(row.created_at);
-      bubble.append(body, time);
+      bubble.append(body);
+      const cardMatch = /https:\/\/texcontractor\.com\/p\/([0-9a-f-]{36})\//i.exec(row.body || '');
+      if (cardMatch) {
+        const cardLink = document.createElement('a');
+        cardLink.href = `profile.html?contractor=${cardMatch[1]}#pro-card`;
+        cardLink.className = 'msg-card';
+        cardLink.innerHTML = `<img src="/p/${cardMatch[1]}/card.jpg" alt="Business card" loading="lazy"><span>🎁 Open my card &amp; share it</span>`;
+        bubble.append(cardLink);
+      }
+      bubble.append(time);
       rowElement.appendChild(bubble);
       chatMessages.appendChild(rowElement);
     });
@@ -92,8 +105,33 @@
     renderConversations(unread);
   };
 
+  // Admin: fill the message box with a thank-you + the member's business card link (owner 11-06).
+  const cardButton = (() => {
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'send-card'; b.hidden = true;
+    b.textContent = '🎁 Send business card'; b.className = 'send card-send';
+    const form = document.getElementById('message-form'); form.parentNode.insertBefore(b, form);
+    b.addEventListener('click', async () => {
+      if (!selectedConversation) return;
+      b.disabled = true;
+      try {
+        const q = new URLSearchParams({ select: 'id,display_name,service', owner_id: `eq.${selectedConversation.member_id}`, is_published: 'eq.true', order: 'created_at.desc', limit: '3' });
+        const r = await fetch(`https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?${q}`, { headers: { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r' } });
+        const rows = r.ok ? await r.json() : [];
+        if (!rows.length) { showMessage('This member has no published service yet, so there is no card to send.'); return; }
+        const first = String(rows[0].display_name || '').trim().split(/\s+/)[0] || 'there';
+        const links = rows.map((row) => (rows.length > 1 ? `${row.service}: ` : '') + `https://texcontractor.com/p/${row.id}/`).join('\n');
+        messageInput.value = `Thank you, ${first}, for joining TexContractor free! 🎁\n\nHere is your business card. Open it and tap Share to send it to your friends and family on WhatsApp, Facebook, Instagram or text. Every share spreads your name in your city, and customers text you directly.\n\n${links}\n\nWishing you lots of new jobs!\nTexContractor`;
+        messageInput.focus();
+        showMessage('Card message ready. Check it and press Send.', 'ok');
+      } catch (error) { showMessage(error.message); }
+      finally { b.disabled = false; }
+    });
+    return b;
+  })();
+
   const selectConversation = async (conversation) => {
     selectedConversation = conversation;
+    cardButton.hidden = !isAdmin;
     chatEmpty.hidden = true;
     chatWindow.hidden = false;
     $('#chat-title').textContent = conversationTitle(conversation);
