@@ -754,6 +754,12 @@ window.TEX_PANEL_DELAY=10000; /* owner 11-07: let phone visitors look around fir
       </div>
     </div>
   </header>
+  <div class="loc-row">
+    <div class="location-share-group">
+      <div class="location-bar" id="location-result" aria-live="polite">📍 Choose a city or ZIP code</div>
+      <a class="search-share-link" href="share-card.html">↗ Share This Card</a>
+    </div>
+  </div>
   <div class="req-strip"><div class="req-strip-in">
     <span class="req-strip-tag">📋 NEW</span>
     <span class="req-strip-text">Need a job done? Post a request with photos and get offers from local technicians.<span class="req-strip-count" id="req-strip-count" hidden></span></span>
@@ -810,6 +816,18 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 </dialog>
 
   <div class="top-message">Find a local service, view the work, and text a contractor directly for a quote.</div>
+<style>
+/* owner 11-08: location result in one horizontal line right under the header search; hero full width edge to edge */
+.loc-row{display:flex;justify-content:center;padding:6px 12px 2px}
+.loc-row .location-share-group{display:flex!important;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 14px;grid-column:auto}
+.loc-row .location-bar{margin:0!important;padding:0!important;font-size:1rem!important;font-weight:800;white-space:nowrap;max-width:none}
+.loc-row #homepage-state-flag{margin:0!important;gap:6px!important;font-size:.9rem!important}
+.loc-row #homepage-state-flag img{width:30px!important;height:20px!important}
+.loc-row .search-share-link{font-size:.82rem}
+.message-bridge{max-width:none!important;grid-template-columns:minmax(0,1fr)!important;padding:0 8px!important}
+.message-bridge #hero-join.hj{max-width:none;grid-template-columns:200px minmax(0,660px);justify-content:center;column-gap:28px}
+@media(max-width:640px){.message-bridge #hero-join.hj{grid-template-columns:96px 1fr;justify-content:stretch;column-gap:12px}.loc-row{padding:6px 10px 0}.loc-row .location-bar{white-space:normal;font-size:.92rem!important}}
+</style>
 <section class="message-bridge">
     <img src="images/home/catalog-15e5b518293a6f0d.jpg" alt="A customer messaging a technician directly">
     <div id="hero-join" class="hj" data-slide="0">
@@ -829,10 +847,6 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
     </div>
     <div id="site-banner-image-frame" hidden><img id="site-banner-image" alt="TexContractor announcement" hidden style="display:block;height:auto;object-fit:contain"></div>
     <div class="site-banner-text" id="site-banner-text" aria-live="polite"></div>
-    <div class="location-share-group">
-      <div class="location-bar" id="location-result" aria-live="polite">📍 Choose a city or ZIP code</div>
-      <a class="search-share-link" href="share-card.html">↗ Share This Card</a>
-    </div>
   </section>
 
   <div class="container">
@@ -1764,7 +1778,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
   </script>
 
   <script src="tex-language.js?v=20261105photos"></script>
-  <script src="tex-side-ads.js?v=20261101-alt"></script>
+  <script src="tex-side-ads.js?v=20261108flag"></script>
 <script src="tex-chat.js?v=20261022b"></script>
 <script>
 (function(){

@@ -285,7 +285,7 @@
     badge.id = 'homepage-state-flag';
     badge.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0;font-size:14px;color:#475569';
     const image = document.createElement('img');
-    image.src = 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent('Flag of ' + (state === 'DC' ? 'the District of Columbia' : name) + '.svg');
+    image.src = 'state-flags/' + state.toLowerCase() + '.svg';
     image.alt = name + ' flag'; image.width = 48; image.height = 32;
     image.style.cssText = 'display:block!important;width:48px;height:32px;object-fit:contain';
     const label = document.createElement('span'); label.textContent = name;
