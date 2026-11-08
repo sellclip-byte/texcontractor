@@ -684,6 +684,11 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
 <style>
 /* owner 11-07: top banner = phone box + slow flip between a customer and a technician */
 #site-banner-image-frame{display:none!important}
+.hj-lab{display:block;margin-top:10px;color:#fff;font:800 14px system-ui,sans-serif}.hj-lab+.hj-form{margin-top:6px}
+@keyframes hjGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,220,88,.0)}50%{box-shadow:0 0 0 5px rgba(255,220,88,.35)}}
+.hj-ph:not(:focus){animation:hjGlow 2.4s ease-in-out infinite}.hj-ph::placeholder{color:#64748b;font-weight:600}
+.hj-go{width:auto!important;padding:0 16px;white-space:nowrap;font-size:18px!important}
+
 .message-bridge #hero-join.hj img{display:block!important;max-height:none!important;width:auto}.message-bridge #hero-join.hj .hj-pic img{width:100%!important;height:100%!important}
 .hj{display:grid;grid-template-columns:190px 1fr;gap:18px;align-items:center;max-width:1000px;width:100%;margin:0 auto;box-sizing:border-box;padding:14px 18px;border-radius:16px;border:2px solid #d9a92b;background:radial-gradient(circle at 80% 20%,#16402f 0,#0c1f17 45%,#07120d 100%);box-shadow:0 8px 22px rgba(0,0,0,.18);text-align:left}
 .hj-pic{position:relative;width:190px;height:190px;perspective:900px}
@@ -700,7 +705,7 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
 .hj-ph:focus{outline:none;border-color:#ffdc58;box-shadow:0 0 0 3px rgba(237,183,45,.35)}
 .hj-go{width:56px;height:50px;border:0;border-radius:12px;background:linear-gradient(110deg,#ba7c0c,#edb72d 40%,#ffdc58);color:#1b1404;font:900 24px system-ui,sans-serif;cursor:pointer}
 .hj-fine{margin-top:6px;color:#a7d8bf;font:700 12px system-ui,sans-serif}
-@media(max-width:640px){.hj{grid-template-columns:96px 1fr;gap:12px;padding:12px}.hj-pic{width:96px;height:96px}.hj-logo{height:26px}.hj-msg{min-height:72px}.hj-form{grid-column:1/-1}.hj-main{display:contents}.hj-logo,.hj-msg{grid-column:2}.hj-pic{grid-row:1/3}.hj-form,.hj-fine{grid-column:1/-1}}
+@media(max-width:640px){.hj{grid-template-columns:96px 1fr;gap:12px;padding:12px}.hj-pic{width:96px;height:96px}.hj-logo{height:26px}.hj-msg{min-height:72px}.hj-form{grid-column:1/-1}.hj-main{display:contents}.hj-logo,.hj-msg{grid-column:2}.hj-pic{grid-row:1/3}.hj-form,.hj-fine,.hj-lab{grid-column:1/-1}.hj-cc{padding:0 8px;font-size:13px}.hj-go{padding:0 12px!important;font-size:16px!important}.hj-ph{font-size:16px;padding:0 10px}}
 </style>
 </head>
 <body>
@@ -807,10 +812,11 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       <div class="hj-main">
         <img class="hj-logo" src="texcontractor-logo.png" alt="TexContractor">
         <div class="hj-msg" aria-live="polite"><b class="hj-t1"></b><span class="hj-t2"></span></div>
+        <label class="hj-lab" for="hj-ph">👇 <span class="hj-lab-t">Start here: type your mobile number</span></label>
         <form class="hj-form" novalidate>
           <span class="hj-cc">🇺🇸 +1</span>
-          <input class="hj-ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" aria-label="Your mobile number">
-          <button type="submit" class="hj-go" aria-label="Continue">→</button>
+          <input id="hj-ph" class="hj-ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" aria-label="Your mobile number">
+          <button type="submit" class="hj-go" aria-label="Start"><span class="hj-go-t">Start</span> →</button>
         </form>
         <div class="hj-fine"></div>
       </div>
@@ -1694,7 +1700,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
   var F={en:['✓ Free for customers  ✓ No calls, no waiting','✓ Free for pros  ✓ No lead fees  ✓ No commission'],es:['✓ Gratis para clientes  ✓ Sin llamadas ni esperas','✓ Gratis para técnicos  ✓ Sin pagar por cliente']};
   var i=0,ph=h.querySelector('.hj-ph'),msg=h.querySelector('.hj-msg');
   function set(el,v){if(el.textContent!==v)el.textContent=v}
-  function paint(){var L=es()?'es':'en';h.dataset.slide=i;set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);var pl=L==='es'?'Tu número de celular':'(214) 555-0123';if(ph.placeholder!==pl)ph.placeholder=pl}
+  function paint(){var L=es()?'es':'en';h.dataset.slide=i;set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);var sm=innerWidth<640,pl=L==='es'?(sm?'Tu número aquí':'Escribe tu número aquí'):(sm?'Your number here':'Type your number here');if(ph.placeholder!==pl)ph.placeholder=pl;set(h.querySelector('.hj-lab-t'),L==='es'?'Empieza aquí: escribe tu número de celular':'Start here: type your mobile number');set(h.querySelector('.hj-go-t'),L==='es'?'Empezar':'Start')}
   var lastL=''; function sync(){var L=es()?'es':'en'; if(L!==lastL){lastL=L;paint()}}
   paint(); lastL=es()?'es':'en'; setInterval(sync,800);
   setInterval(function(){ if(document.hidden||document.activeElement===ph||ph.value) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},600); },6000);
