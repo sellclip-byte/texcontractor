@@ -873,6 +873,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
         <a href="remove-number.html">Remove my number</a>
         <a href="site-guide.html#terms">Terms of use</a>
       </nav>
+      <section id="tex-app" aria-label="Get the app"><h2 id="tex-app-h"></h2><div class="st" id="tex-app-st"></div><a href="app.html" id="tex-app-more"></a></section>
     </aside>
     </div>
     <aside class="cr-side" aria-label="Cities">
@@ -1244,7 +1245,76 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 #tex-app figcaption b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#c99a3a;color:#fff;margin-right:4px;font-size:.8rem}
 #tex-app a{display:inline-block;margin-top:10px;font-weight:800;color:#075c4b}
 </style>
-  <section id="tex-app" aria-label="Get the app"><h2 id="tex-app-h"></h2><div class="st" id="tex-app-st"></div><a href="app.html" id="tex-app-more"></a></section>
+<style>
+.cl-side #tex-app{max-width:none;margin:16px 0 0;padding:10px 8px;border-radius:12px;text-align:center}
+.cl-side #tex-app h2{font-size:.78rem;line-height:1.3;margin:0 0 8px}
+.cl-side #tex-app .st{gap:4px;max-width:none}
+.cl-side #tex-app img{max-width:54px;border-radius:8px}
+.cl-side #tex-app figcaption{font-size:.62rem;margin-top:4px}
+.cl-side #tex-app figcaption b{width:15px;height:15px;font-size:.6rem;margin-right:2px}
+.cl-side #tex-app a{margin-top:6px;font-size:.76rem}
+#tex-find{position:relative;max-width:1180px;margin:18px auto 22px;height:300px;border-radius:18px;overflow:hidden;background:#0f1b3d;box-shadow:0 10px 30px rgba(15,23,42,.18)}
+#tex-find .tf-pics{position:absolute;top:0;right:0;bottom:0;width:62%}
+#tex-find .tf-pics img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+#tex-find .tf-pics img.on{opacity:1}
+#tex-find .tf-pics:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0f1b3d 0%,rgba(15,27,61,.55) 22%,rgba(15,27,61,0) 48%)}
+#tex-find .tf-box{position:absolute;left:34px;top:50%;transform:translateY(-50%);width:min(560px,calc(100% - 68px));padding:22px 26px;border-radius:14px;background:rgba(15,27,61,.78);backdrop-filter:blur(3px);color:#fff;z-index:2}
+#tex-find .tf-chip{display:inline-block;padding:4px 12px;border-radius:999px;background:#f2c14e;color:#0f1b3d;font-weight:800;font-size:.8rem;margin-bottom:10px;transition:opacity .4s}
+#tex-find h2{margin:0 0 14px;font-size:1.75rem;line-height:1.15;font-weight:900;color:#fff}
+#tex-find h2 span{color:#f2c14e}
+#tex-find .tf-form{display:flex;align-items:center;gap:0;background:#fff;border-radius:999px;padding:5px 5px 5px 18px}
+#tex-find .tf-form input{border:0;outline:0;background:none;font:inherit;font-size:.98rem;color:#0f172a;min-width:0}
+#tex-find #tf-q{flex:1.6}
+#tex-find .tf-loc{flex:1;display:flex;align-items:center;gap:6px;border-left:1px solid #cbd5e1;padding-left:12px;margin-left:8px;color:#0f172a}
+#tex-find .tf-loc svg{width:18px;height:18px;flex:none}
+#tex-find .tf-loc input{width:100%}
+#tex-find .tf-form button{flex:none;display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:50%;background:#075c4b;color:#fff;cursor:pointer;padding:0;min-height:0}
+#tex-find .tf-form button:hover{background:#0a7a64}
+#tex-find .tf-form button svg{width:22px;height:22px}
+#tex-find .tf-note{margin:10px 2px 0;font-size:.85rem;color:#dbe4f5}
+@media(max-width:760px){#tex-find{height:auto;margin:14px 10px 18px}#tex-find .tf-pics{position:relative;width:100%;height:150px}#tex-find .tf-pics:after{background:linear-gradient(180deg,rgba(15,27,61,0) 55%,#0f1b3d 100%)}#tex-find .tf-box{position:relative;left:auto;top:auto;transform:none;width:auto;padding:4px 14px 16px;background:#0f1b3d;backdrop-filter:none}#tex-find h2{font-size:1.3rem}#tex-find .tf-form{flex-wrap:wrap;border-radius:14px;padding:8px}#tex-find #tf-q{flex:1 1 100%;padding:6px 4px 8px;border-bottom:1px solid #e2e8f0}#tex-find .tf-loc{border-left:0;margin-left:0;padding:6px 4px 0}#tex-find .tf-form button{width:42px;height:42px;margin-top:4px}}
+</style>
+<script>
+(function(){
+ var P=[['Roof Repair or Maintenance','images/home/catalog-98d2c8f81847aa2d.jpg','Roofing','Techos'],['Plumbing Pipe Repair','images/home/catalog-41c6fdd548fb7e0c.jpg','Plumbing','Plomería'],['Electrical and Wiring Repair','images/home/catalog-6ad88b6bcd342352.jpg','Electrical','Electricidad'],['Central Air Conditioning Repair or Maintenance','images/home/catalog-d62107fb07c7078f.jpg','AC repair','Aire acondicionado'],['Handyman','images/home/catalog-eb3123aa3163fb0b.jpg','Handyman','Handyman'],['Outdoor Landscaping and Design','images/home/catalog-6ae2f86a9d0b8335.jpg','Landscaping','Jardinería'],['Garage Door Repair','images/home/catalog-d8ccd66591b47033.jpg','Garage doors','Puertas de garaje'],['Interior Painting','images/home/catalog-1a57bc6c2a550ffc.jpg','Painting','Pintura']];
+ var T={en:{h:'Find a Texas pro you can trust.<br><span>Text them yourself.</span>',q:'What do you need done?',z:'ZIP or city',n:'Free. No app. No one sells your number.',c:' pros near you'},
+        es:{h:'Encuentra un técnico de confianza en Texas.<br><span>Escríbele tú mismo.</span>',q:'¿Qué necesitas?',z:'ZIP o ciudad',n:'Gratis. Sin app. Nadie vende tu número.',c:' cerca de ti'}};
+ var i=0,es=false,box,pics,chip;
+ function L(){try{return localStorage.getItem('texcontractor-language')==='es'}catch(e){return false}}
+ function text(){es=L();var t=T[es?'es':'en'];document.getElementById('tf-h').innerHTML=t.h;document.getElementById('tf-q').placeholder=t.q;document.getElementById('tf-z').placeholder=t.z;document.getElementById('tf-note').textContent=t.n;chip.textContent=P[i][es?3:2]+t.c;}
+ function show(n){var im=pics.children;im[i].classList.remove('on');i=n%P.length;im[i].classList.add('on');chip.style.opacity=0;setTimeout(function(){chip.textContent=P[i][es?3:2]+T[es?'es':'en'].c;chip.style.opacity=1},350);}
+ function names(){return [].slice.call(document.querySelectorAll('.services-grid .service-title')).map(function(e){return e.textContent.trim()}).filter(Boolean)}
+ function match(q){var N=names();q=q.toLowerCase().trim();if(!q)return P[i][0];var w=q.split(/[^a-z0-9áéíóúñ]+/).filter(function(x){return x.length>2});
+  var ex=N.filter(function(n){return n.toLowerCase()===q})[0];if(ex)return ex;var inc=N.filter(function(n){return n.toLowerCase().indexOf(q)>=0})[0];if(inc)return inc;
+  var best=null,sc=0;N.forEach(function(n){var l=n.toLowerCase(),s=0;w.forEach(function(x){if(l.indexOf(x)>=0)s++;else if(l.indexOf(x.replace(/(ing|er|s)$/,''))>=0)s+=.6});if(s>sc){sc=s;best=n}});return best;}
+ function go(e){e.preventDefault();var q=document.getElementById('tf-q').value,z=document.getElementById('tf-z').value.trim(),svc=match(q);
+  if(!svc){var side=document.getElementById('cl-side-q');if(side){side.value=q;side.dispatchEvent(new Event('input'))}var g=document.getElementById('service-catalog');if(g)g.scrollIntoView({behavior:'smooth'});return}
+  var u='contractor.html?service='+encodeURIComponent(svc);if(/^\d{5}$/.test(z))u+='&zip='+z;else if(z){var p=z.split(',');u+='&city='+encodeURIComponent(p[0].trim());if(p[1])u+='&state='+encodeURIComponent(p[1].trim());}
+  location.href=u+'&src=find_banner';}
+ function init(){box=document.getElementById('tex-find');if(!box)return;pics=box.querySelector('.tf-pics');chip=document.getElementById('tf-chip');
+  P.forEach(function(p,k){var im=document.createElement('img');im.src=p[1];im.alt='';im.loading='lazy';if(!k)im.className='on';pics.appendChild(im)});
+  var dl=document.getElementById('tf-list');names().forEach(function(n){var o=document.createElement('option');o.value=n;dl.appendChild(o)});
+  try{var s=JSON.parse(localStorage.getItem('texcontractor-location')||'{}');document.getElementById('tf-z').value=s.zip||(s.city?s.city+(s.state?', '+s.state:''):'')}catch(e){}
+  text();document.getElementById('tf-form').addEventListener('submit',go);
+  setInterval(function(){if(!document.hidden&&document.activeElement.closest&&!document.activeElement.closest('#tex-find'))show(i+1)},4500);
+  setInterval(function(){if(L()!==es)text()},800);}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+  <section id="tex-find" aria-label="Find a pro">
+    <div class="tf-pics" aria-hidden="true"></div>
+    <div class="tf-box">
+      <span class="tf-chip" id="tf-chip"></span>
+      <h2 id="tf-h">Find a Texas pro you can trust.<br><span>Text them yourself.</span></h2>
+      <form class="tf-form" id="tf-form" role="search">
+        <input id="tf-q" list="tf-list" type="search" autocomplete="off" aria-label="What do you need?" placeholder="What do you need done?">
+        <span class="tf-loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><input id="tf-z" type="text" autocomplete="postal-code" aria-label="ZIP code or city" placeholder="ZIP or city"></span>
+        <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20"/></svg></button>
+        <datalist id="tf-list"></datalist>
+      </form>
+      <p class="tf-note" id="tf-note">Free. No app. No one sells your number.</p>
+    </div>
+  </section>
 <script>
 (function(){
   var T={en:{h:'📱 No app store needed — TexContractor works like an app. Just do these 3 steps:',ios:['Tap Share','Add to Home Screen','Done!'],android:['Tap ⋮','Add to Home screen','Done!'],m:'See it step by step →'},
