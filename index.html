@@ -684,7 +684,8 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
 <style>
 /* owner 11-07: top banner = phone box + slow flip between a customer and a technician */
 #site-banner-image-frame{display:none!important}
-.hj-lab{display:block;margin-top:10px;color:#fff;font:800 14px system-ui,sans-serif}.hj-lab+.hj-form{margin-top:6px}
+.hj-lab-t:after{content:'';display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-2px;background:#ffdc58;animation:hjCaret 1s steps(1) infinite}@keyframes hjCaret{50%{opacity:0}}
+.hj-lab{display:block;min-height:1.3em;margin-top:10px;color:#fff;font:800 14px system-ui,sans-serif}.hj-lab+.hj-form{margin-top:6px}
 @keyframes hjGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,220,88,.0)}50%{box-shadow:0 0 0 5px rgba(255,220,88,.35)}}
 .hj-ph:not(:focus){animation:hjGlow 2.4s ease-in-out infinite}.hj-ph::placeholder{color:#64748b;font-weight:600}
 .hj-go{width:auto!important;padding:0 16px;white-space:nowrap;font-size:18px!important}
@@ -1700,7 +1701,12 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
   var F={en:['✓ Free for customers  ✓ No calls, no waiting','✓ Free for pros  ✓ No lead fees  ✓ No commission'],es:['✓ Gratis para clientes  ✓ Sin llamadas ni esperas','✓ Gratis para técnicos  ✓ Sin pagar por cliente']};
   var i=0,ph=h.querySelector('.hj-ph'),msg=h.querySelector('.hj-msg');
   function set(el,v){if(el.textContent!==v)el.textContent=v}
-  function paint(){var L=es()?'es':'en';h.dataset.slide=i;set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);var sm=innerWidth<640,pl=L==='es'?(sm?'Tu número aquí':'Escribe tu número aquí'):(sm?'Your number here':'Type your number here');if(ph.placeholder!==pl)ph.placeholder=pl;set(h.querySelector('.hj-lab-t'),L==='es'?'Empieza aquí: escribe tu número de celular':'Start here: type your mobile number');set(h.querySelector('.hj-go-t'),L==='es'?'Empezar':'Start')}
+  function paint(){var L=es()?'es':'en';h.dataset.slide=i;set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);var sm=innerWidth<640,pl=L==='es'?(sm?'Tu número aquí':'Escribe tu número aquí'):(sm?'Your number here':'Type your number here');if(ph.placeholder!==pl)ph.placeholder=pl;set(h.querySelector('.hj-go-t'),L==='es'?'Empezar':'Start')}
+  // owner 11-07: label types itself like live typing (EN/ES)
+  var lab=h.querySelector('.hj-lab-t'),tw=0;
+  (function type(){var L=es()?'es':'en',full=L==='es'?'Empieza aquí: escribe tu número de celular':'Start here: type your mobile number';
+    if(tw<=full.length){lab.textContent=full.slice(0,tw);tw++;setTimeout(type,tw===1?400:55);}
+    else{setTimeout(function(){tw=0;type();},4500);} })();
   var lastL=''; function sync(){var L=es()?'es':'en'; if(L!==lastL){lastL=L;paint()}}
   paint(); lastL=es()?'es':'en'; setInterval(sync,800);
   setInterval(function(){ if(document.hidden||document.activeElement===ph||ph.value) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},600); },6000);
