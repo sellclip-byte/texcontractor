@@ -598,10 +598,8 @@ try{(function(){var u=navigator.userAgent||'',l=location,r=document.referrer||''
 if(/bot|crawl|spider|slurp|google|bing|lighthouse|headless|facebookexternalhit|preview/i.test(u))return;
 if(!matchMedia('(max-width:699px)').matches||!matchMedia('(pointer:coarse)').matches)return;
 if(l.hash||(r&&r.indexOf(l.origin)===0))return;
-if(sessionStorage.getItem('tex_home_gate'))return;
 var a=JSON.parse(localStorage.getItem('texcontractor-auth-session')||'null');if(a&&a.access_token)return;
-sessionStorage.setItem('tex_home_gate','1');
-l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "TexContractor", "url": "https://texcontractor.com/", "logo": "https://texcontractor.com/texcontractor-icon-512.png", "email": "texcontractor.help@gmail.com", "areaServed": "Texas", "sameAs": ["https://www.facebook.com/profile.php?id=61595383285520", "https://www.instagram.com/texcontractor/", "https://www.youtube.com/@TexContractor", "https://www.tiktok.com/@texcontractorpros"]}</script>
+window.TEX_PANEL_DELAY=10000; /* owner 11-07: let phone visitors look around first, then show the sign-up panel after 10 s */})()}catch(e){}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "TexContractor", "url": "https://texcontractor.com/", "logo": "https://texcontractor.com/texcontractor-icon-512.png", "email": "texcontractor.help@gmail.com", "areaServed": "Texas", "sameAs": ["https://www.facebook.com/profile.php?id=61595383285520", "https://www.instagram.com/texcontractor/", "https://www.youtube.com/@TexContractor", "https://www.tiktok.com/@texcontractorpros"]}</script>
 <style>
 @media(max-width:1099px){.container{display:flex;flex-direction:column}.container .cl-side{order:99;display:block;margin:10px auto 0;width:min(340px,100%);padding:14px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;text-align:center;color:#0f172a}.cl-side-links{margin-top:18px}}
 @media(min-width:1100px){
@@ -669,7 +667,7 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
  window.addEventListener('storage',near);window.crNear=near;
 })();
 </script>
-<script src="/tex-readable.js?v=1" defer></script><style id="mobile-header-tools">
+<script src="/tex-readable.js?v=20261107p" defer></script><style id="mobile-header-tools">
 @media (max-width:700px){
   .header-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px!important;width:100%!important;flex:1 1 100%!important}
   .header-tools>.header-tool{position:relative;width:auto!important;min-height:58px!important;flex-direction:column!important;gap:3px!important;padding:6px 2px!important;border-radius:14px!important;font-size:.76rem!important;font-weight:800!important;line-height:1.1}
@@ -684,6 +682,8 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
 <style>
 /* owner 11-07: top banner = phone box + slow flip between a customer and a technician */
 #site-banner-image-frame{display:none!important}
+.hj-chips{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.hj-chip{border:2px solid rgba(237,183,45,.55);background:transparent;color:#e8f5ee;border-radius:999px;padding:6px 12px;font:800 13px system-ui,sans-serif;cursor:pointer}.hj-chip[aria-checked=true]{background:#edb72d;color:#1b1404;border-color:#edb72d}
+
 .hj-lab-t:after{content:'';display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-2px;background:#ffdc58;animation:hjCaret 1s steps(1) infinite}@keyframes hjCaret{50%{opacity:0}}
 .hj-lab{display:block;min-height:1.3em;margin-top:10px;color:#fff;font:800 14px system-ui,sans-serif}.hj-lab+.hj-form{margin-top:6px}
 @keyframes hjGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,220,88,.0)}50%{box-shadow:0 0 0 5px rgba(255,220,88,.35)}}
@@ -706,7 +706,7 @@ l.replace('/signup.html'+(l.search?l.search+'&':'?')+'from=home');})()}catch(e){
 .hj-ph:focus{outline:none;border-color:#ffdc58;box-shadow:0 0 0 3px rgba(237,183,45,.35)}
 .hj-go{width:56px;height:50px;border:0;border-radius:12px;background:linear-gradient(110deg,#ba7c0c,#edb72d 40%,#ffdc58);color:#1b1404;font:900 24px system-ui,sans-serif;cursor:pointer}
 .hj-fine{margin-top:6px;color:#a7d8bf;font:700 12px system-ui,sans-serif}
-@media(max-width:640px){.hj{grid-template-columns:96px 1fr;gap:12px;padding:12px}.hj-pic{width:96px;height:96px}.hj-logo{height:26px}.hj-msg{min-height:72px}.hj-form{grid-column:1/-1}.hj-main{display:contents}.hj-logo,.hj-msg{grid-column:2}.hj-pic{grid-row:1/3}.hj-form,.hj-fine,.hj-lab{grid-column:1/-1}.hj-cc{padding:0 8px;font-size:13px}.hj-go{padding:0 12px!important;font-size:16px!important}.hj-ph{font-size:16px;padding:0 10px}}
+@media(max-width:640px){.hj{grid-template-columns:96px 1fr;gap:12px;padding:12px}.hj-pic{width:96px;height:96px}.hj-logo{height:26px}.hj-msg{min-height:72px}.hj-form{grid-column:1/-1}.hj-main{display:contents}.hj-logo,.hj-msg{grid-column:2}.hj-pic{grid-row:1/3}.hj-form,.hj-fine,.hj-lab,.hj-chips{grid-column:1/-1}.hj-cc{padding:0 8px;font-size:13px}.hj-go{padding:0 12px!important;font-size:16px!important}.hj-ph{font-size:16px;padding:0 10px}}
 </style>
 </head>
 <body>
@@ -819,6 +819,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
           <input id="hj-ph" class="hj-ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" aria-label="Your mobile number">
           <button type="submit" class="hj-go" aria-label="Start"><span class="hj-go-t">Start</span> →</button>
         </form>
+        <div class="hj-chips" role="radiogroup"><button type="button" class="hj-chip" data-r="0" role="radio">🔍 <span>I need a pro</span></button><button type="button" class="hj-chip" data-r="1" role="radio">🛠️ <span>I'm a pro</span></button></div>
         <div class="hj-fine"></div>
       </div>
     </div>
@@ -1708,8 +1709,12 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
     if(tw<=full.length){lab.textContent=full.slice(0,tw);tw++;setTimeout(type,tw===1?400:55);}
     else{setTimeout(function(){tw=0;type();},4500);} })();
   var lastL=''; function sync(){var L=es()?'es':'en'; if(L!==lastL){lastL=L;paint()}}
+  var locked=false,chips=[].slice.call(h.querySelectorAll('.hj-chip'));
+  function chipPaint(){var L=es()?'es':'en';chips.forEach(function(c,k){c.setAttribute('aria-checked',String(k===i));set(c.querySelector('span'),k===0?(L==='es'?'Necesito un técnico':'I need a pro'):(L==='es'?'Soy técnico':"I'm a pro"))})}
+  chips.forEach(function(c){c.addEventListener('click',function(){locked=true;i=+c.dataset.r;paint();chipPaint();ph.focus()})});
+  var _paint=paint; paint=function(){_paint();chipPaint()};
   paint(); lastL=es()?'es':'en'; setInterval(sync,800);
-  setInterval(function(){ if(document.hidden||document.activeElement===ph||ph.value) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},600); },6000);
+  setInterval(function(){ if(locked||document.hidden||document.activeElement===ph||ph.value) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},600); },6000);
   var dg=function(v){return String(v||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'')};
   var pr=function(d){return d.length<4?d:d.length<7?'('+d.slice(0,3)+') '+d.slice(3):'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6,10)};
   ph.addEventListener('input',function(){ph.value=pr(dg(ph.value).slice(0,10));ph.style.borderColor=''});

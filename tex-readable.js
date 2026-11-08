@@ -124,7 +124,7 @@
       document.body.appendChild(w); document.documentElement.style.overflow = 'hidden';
     }
     function onScroll() { if (window.scrollY > window.innerHeight * 1.5) open(); }
-    timer = setTimeout(open, 30000);
+    timer = setTimeout(open, window.TEX_PANEL_DELAY || 30000); // homepage on phones: 10 s (owner 11-07)
     window.addEventListener('scroll', onScroll, { passive: true });
   } catch (_) {}
 })();
