@@ -614,7 +614,10 @@
  }
  const src=safe(catalog?.image_url)||safe(general?.notice_image_url);
  const destination=safe(catalog?.image_url?catalog.click_url:general?.notice_image_link_url);
- if(area&&image){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
+ // owner 11-08: catalog banner images hidden to keep the pros higher on the page (images stay in the database; set HIDE_IMG=false to bring them back). The 'individuals only' note stays.
+ const HIDE_IMG=true;
+ if(area&&image&&HIDE_IMG){area.style.display='block';area.style.margin='10px 0 0';image.style.display='none';}
+ if(area&&image&&!HIDE_IMG){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
 })();
 </script>
 <script>
