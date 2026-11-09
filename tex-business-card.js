@@ -98,16 +98,16 @@
   async function render(el, o) {
     if (!el) return; css();
     var t = T[o.lang === 'es' ? 'es' : 'en'], es = o.lang === 'es';
-    var link = o.shareUrl || o.profileUrl, text = t.shareText(o.name, o.service) + link, e = encodeURIComponent;
+    var link = o.shareUrl || o.profileUrl, text = (o.third ? (o.name ? o.name + ' · ' : '') + (o.service || 'Local pro') + (es ? ' en TexContractor. Escríbele directo: ' : ' on TexContractor. Text them directly: ') : t.shareText(o.name, o.service)) + link, e = encodeURIComponent;
     var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     el.innerHTML = '<div class="tbc"><h3>' + (o.title || t.h) + '</h3><p>' + (o.note || t.p) + '</p><div class="tbc-img">…</div>' +
-      '<button type="button" class="tbc-share">' + t.share + '</button><div class="tbc-g">' +
+      '<button type="button" class="tbc-share">' + (o.third ? (es ? 'Compartir esta tarjeta' : 'Share this card') : t.share) + '</button><div class="tbc-g">' +
       '<a data-ch="facebook" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=' + e(link) + '">' + IC.fb + 'Facebook</a>' +
       '<a data-ch="whatsapp" target="_blank" rel="noopener" href="https://wa.me/?text=' + e(text) + '">' + IC.wa + 'WhatsApp</a>' +
       '<a data-ch="text" href="sms:' + (ios ? '&' : '?') + 'body=' + e(text) + '">' + IC.sms + (es ? 'Texto' : 'Text') + '</a>' +
       '<button type="button" data-ch="instagram">' + IC.ig + 'Instagram</button>' +
       '<a data-ch="download" class="tbc-dl" download="texcontractor-card.png">' + IC.dl + t.dl + '</a>' +
-      '</div><button type="button" class="tbc-copy">' + t.link + '</button><div class="tbc-ok" aria-live="polite"></div>' + (o.note ? '' : '<small>' + t.partner + '</small>') + '</div>';
+      '</div><button type="button" class="tbc-copy">' + (o.third ? (es ? 'Copiar enlace' : 'Copy link') : t.link) + '</button><div class="tbc-ok" aria-live="polite"></div>' + (o.note ? '' : '<small>' + t.partner + '</small>') + '</div>';
     var canvas = await draw(o), blob = await new Promise(function (ok) { canvas.toBlob(ok, 'image/png'); });
     var url = URL.createObjectURL(blob), im = new Image(); im.src = url; im.alt = 'Business card for ' + (o.name || 'technician');
     var box = el.querySelector('.tbc-img'); box.textContent = ''; box.appendChild(im);
