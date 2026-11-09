@@ -50,7 +50,7 @@
     box.innerHTML = `<div class="tc-hello-top">${t.top}</div><div class="tc-hello-sub">${t.sub}</div><a class="tc-hello-card"></a><a class="tc-hello-join" href="start.html?src=say_hello">${t.join}</a>`;
     aside.appendChild(box);
     const slot = box.querySelector('.tc-hello-card');
-    let i = offset, d = offset, n = offset, turn = 0;
+    let i = offset, d = offset, n = 0, turn = offset;
     const show = () => {
       const all = readPros(); if (!all.length) return;
       const fresh = all.filter((x) => x.isNew), dir = all.filter((x) => !x.isNew).slice(0, 200);
