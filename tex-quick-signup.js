@@ -37,7 +37,8 @@
         <label for="tqs-phone" id="tqs-phone-l">Mobile number</label>
         <input id="tqs-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16">
         <div id="tqs-codebox" hidden><label for="tqs-code" id="tqs-code-l">Code we texted you</label>
-        <input id="tqs-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456"></div>
+        <input id="tqs-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+        <p class="tqs-switch" style="margin:6px 0 0"><button type="button" id="tqs-resend" style="background:none;border:0;padding:0;color:#0b7a63;font-weight:800;text-decoration:underline;cursor:pointer" disabled></button></p></div>
         <p class="tqs-hint" id="tqs-phint">We text you a one-time code. No password needed. Msg &amp; data rates may apply.</p>
         <button class="tqs-go" type="button" id="tqs-pgo">Text me a code</button>
         <p class="tqs-switch"><a href="#" id="tqs-useemail">Use email instead</a></p>
@@ -63,6 +64,20 @@
       TexAuth.signInWithGoogle(current.returnTo || (location.pathname.replace(/^\//, '') + location.search));
     });
     box.querySelector('#tqs-useemail').addEventListener('click', (e) => { e.preventDefault(); box.querySelector('#tqs-phonebox').hidden = true; box.querySelector('#tqs-emailbox').hidden = false; box.querySelector('#tqs-msg').textContent = ''; setTimeout(() => box.querySelector('#tqs-email').focus(), 30); });
+    // Owner 11-09: on some phones the first text is slow, so offer "send a new code" after 25 s.
+    let resendTimer = null;
+    const startResend = (es) => {
+      const b = box.querySelector('#tqs-resend'); let left = 25; clearInterval(resendTimer); b.disabled = true;
+      const paint = () => { b.textContent = left > 0 ? (es ? `¿No llegó? Puedes pedir otro en ${left} s` : `Didn't get it? You can resend in ${left}s`) : (es ? '¿No llegó? Mandar otro código' : "Didn't get it? Send a new code"); b.disabled = left > 0; b.style.opacity = left > 0 ? '.6' : '1'; };
+      paint(); resendTimer = setInterval(() => { left -= 1; paint(); if (left <= 0) clearInterval(resendTimer); }, 1000);
+    };
+    box.querySelector('#tqs-resend').addEventListener('click', async () => {
+      const es = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
+      const msg = box.querySelector('#tqs-msg');
+      try { await TexAuth.sendPhoneCode(box.querySelector('#tqs-phone').value, current.intent || 'customer'); msg.className = 'tqs-msg'; msg.textContent = es ? 'Te mandamos un código nuevo.' : 'We sent a new code.'; startResend(es); }
+      catch (err) { msg.className = 'tqs-msg err'; msg.textContent = (err && err.message) || 'Something went wrong. Please try again.'; }
+    });
+    box.querySelector('#tqs-code').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); if (e.target.value.length === 6) box.querySelector('#tqs-pgo').click(); });
     box.querySelector('#tqs-pgo').addEventListener('click', async () => {
       const msg = box.querySelector('#tqs-msg'), go = box.querySelector('#tqs-pgo');
       const es = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
@@ -76,6 +91,7 @@
           msg.textContent = es ? 'Te mandamos un código por mensaje.' : 'We texted you a code.';
           if (typeof gtag === 'function') gtag('event', 'quick_code_sent', { source: 'quick_signup' });
           setTimeout(() => box.querySelector('#tqs-code').focus(), 30);
+          startResend(es);
         } else {
           await TexAuth.verifyPhoneCode(phone, box.querySelector('#tqs-code').value);
           if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'phone', source: 'quick_signup' });
