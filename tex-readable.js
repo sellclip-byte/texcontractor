@@ -205,7 +205,9 @@
   try {
     if (window.top !== window.self) return; // the sign-up panel is an iframe on the same visit
     if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
-    if (/(admin|showcase-admin|visits)\.html$/i.test(location.pathname)) return;
+    if (/admin|visits/i.test(location.pathname)) return;
+    // do not count the site owner's own visits
+    try { var se = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); if (se && se.user && se.user.id === '6d83440a-820a-4309-b666-cba8e24a8290') return; } catch (_) {}
     var SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
     var ss = function (k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (_) { return null; } };
     var sid = ss('tex_vsid'); if (!sid) { sid = Math.random().toString(36).slice(2) + Date.now().toString(36); ss('tex_vsid', sid); }
