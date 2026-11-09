@@ -168,7 +168,7 @@
       box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
       box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
       box.dataset.sent = ''; box.querySelector('#tqs-codebox').hidden = true; box.querySelector('#tqs-phone').readOnly = false; box.querySelector('#tqs-code').value = ''; }
-    box.hidden = false;
+    box.hidden = false; try { sessionStorage.setItem('tex_signup_started', '1'); } catch (_) {}
     document.documentElement.style.overflow = 'hidden';
     if (typeof gtag === 'function') gtag('event', 'quick_signup_open', { source: (opts && opts.source) || 'contact' });
     setTimeout(() => box.querySelector('#tqs-phone').focus(), 50);

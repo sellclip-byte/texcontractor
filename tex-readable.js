@@ -102,8 +102,18 @@
     if (sessionStorage.getItem('tex_panel_closed')) return;
     var a = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); if (a && a.access_token) return;
     var shown = false, timer;
+    // Owner 11-09 bug: the panel popped up over the 'Text this contractor' sign-up box while the visitor was
+    // waiting for the SMS code, so the code box vanished. Never open while any sign-up box is open, while the
+    // visitor is typing in a field, or after they have started a sign-up on this visit.
+    function busy() {
+      var q = document.querySelector('.tqs-back'); if (q && !q.hidden) return true;
+      var ae = document.activeElement; if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return true;
+      try { if (sessionStorage.getItem('tex_signup_started')) return true; } catch (_) {}
+      return false;
+    }
     function open() {
       if (shown || document.querySelector('dialog[open]')) return;
+      if (busy()) { clearTimeout(timer); timer = setTimeout(open, 20000); return; }
       shown = true; clearTimeout(timer); window.removeEventListener('scroll', onScroll);
       var es = (document.documentElement.lang || '').indexOf('es') === 0 || /\/es\//.test(p);
       var back = (p.replace(/^\//, '') || 'index.html') + location.search;
