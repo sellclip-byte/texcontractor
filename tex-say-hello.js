@@ -42,7 +42,8 @@
     return { name, city: loc, isNew: !/local provider/i.test(status), href: link ? link.href : '#', avatar: card.querySelector('.avatar') };
   }).filter(Boolean);
 
-  const build = (aside, lang, pros, offset) => {
+  const getPros = () => { const all = readPros(); return [...all.filter((p) => p.isNew), ...all.filter((p) => !p.isNew).slice(0, 200)]; };
+  const build = (aside, lang, offset) => {
     if (!aside || aside.querySelector('.tc-hello')) return;
     const t = T[lang];
     const box = document.createElement('div'); box.className = 'tc-hello'; box.lang = lang;
@@ -51,7 +52,7 @@
     const slot = box.querySelector('.tc-hello-card');
     let i = offset;
     const show = () => {
-      const p = pros[i % pros.length]; i += 1;
+      const pros = getPros(); if (!pros.length) return; const p = pros[i % pros.length]; i += 1;
       slot.style.opacity = '0';
       setTimeout(() => {
         slot.className = 'tc-hello-card ' + (p.isNew ? 'is-new' : 'is-dir');
@@ -73,12 +74,11 @@
   let tries = 0;
   const start = () => {
     const left = document.querySelector('.tc-side-ad-left'), right = document.querySelector('.tc-side-ad-right');
-    const all = readPros();
-    if ((!left && !right) || !all.length) { if (++tries < 40) setTimeout(start, 500); return; }
-    // Signed-up pros first (green), then directory pros; keep the list short so it keeps moving.
-    const pros = [...all.filter((p) => p.isNew), ...all.filter((p) => !p.isNew).slice(0, 200)];
-    build(left, 'en', pros, 0);
-    build(right, 'es', pros, pros.length > 1 ? 1 : 0);
+    if ((!left && !right) || !readPros().length) { if (++tries < 180) setTimeout(start, 500); return; }
+    // Signed-up pros first (green), then directory pros. The list is re-read on every turn,
+    // so pros that finish loading later join the rotation.
+    build(left, 'en', 0);
+    build(right, 'es', 1);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
