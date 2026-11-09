@@ -133,7 +133,25 @@
     <p class="intro">Review provider profiles, then text the contractor directly with a short description of your problem.</p>
     <div class="notice" id="contractor-notice-banner" style="background-color:#ee3e11;border-color:#ffff00;color:#ffffff">💬 <span id="contractor-notice-text" style="color:#ffffff">No calls or long forms. Tap “Text this contractor” and send the details from your phone.</span></div>
     <div id="contractor-notice-image-area" style="display:none;width:100%;margin:14px 0 0;text-align:center"><img id="contractor-notice-public-image" alt="Contractor notice image" style="display:block;width:100%;height:auto;max-height:160px;object-fit:contain;margin:auto;border-radius:12px" loading="lazy"><p class="tc-indiv-only" style="margin:8px 0 0;font-weight:700;color:#7c2d12;font-size:.95rem">Individuals and independent pros only — companies and organizations are not allowed.</p></div>
-    <div id="pros-ticker"></div>
+    <div id="cat-join" class="cj" data-slide="1">
+      <div class="cj-msg"><b class="cj-t1"></b><span class="cj-t2"></span></div>
+      <form class="cj-form" novalidate><span class="cj-cc">🇺🇸 +1</span><input id="cj-ph" class="cj-ph" type="tel" inputmode="tel" autocomplete="tel-national" aria-label="Your mobile number"><button type="submit" class="cj-go"><span class="cj-go-t">Start</span> →</button></form>
+      <div class="cj-row"><div class="cj-chips" role="radiogroup"><button type="button" class="cj-chip" data-r="0" role="radio"></button><button type="button" class="cj-chip" data-r="1" role="radio"></button></div><div class="cj-fine"></div></div>
+    </div>
+    <style>
+    .cj{display:grid;grid-template-columns:1fr minmax(260px,420px);gap:6px 18px;align-items:center;margin:14px 0;padding:14px 18px;border-radius:16px;border:2px solid #d9a92b;background:radial-gradient(circle at 85% 15%,#16402f 0,#0c1f17 50%,#07120d 100%);box-shadow:0 8px 22px rgba(0,0,0,.16)}
+    .cj-msg{transition:opacity .5s ease;min-height:46px}.cj-msg.fade{opacity:0}
+    .cj-t1{display:block;color:#f2c14e;font:800 1.15rem/1.15 system-ui,sans-serif}.cj-t2{display:block;color:#e8f5ee;font:600 .9rem/1.3 system-ui,sans-serif;margin-top:3px}
+    .cj-form{display:flex;gap:6px}.cj-cc{display:flex;align-items:center;padding:0 10px;border-radius:10px;background:#fff;font:800 14px system-ui,sans-serif;color:#111}
+    .cj-ph{flex:1;min-width:0;height:44px;border:3px solid #edb72d;border-radius:10px;padding:0 12px;font:700 16px system-ui,sans-serif;color:#111;background:#fff}
+    .cj-ph:focus{outline:none;border-color:#ffdc58;box-shadow:0 0 0 3px rgba(237,183,45,.35)}.cj-ph::placeholder{color:#64748b;font-weight:600}
+    .cj-go{height:44px;padding:0 14px;border:0;border-radius:10px;background:linear-gradient(110deg,#ba7c0c,#edb72d 40%,#ffdc58);color:#1b1404;font:900 16px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+    .cj-row{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .cj-chips{display:flex;gap:6px}.cj-chip{border:2px solid rgba(237,183,45,.55);background:transparent;color:#e8f5ee;border-radius:999px;padding:4px 11px;font:800 12px system-ui,sans-serif;cursor:pointer}
+    .cj-chip[aria-checked=true]{background:#edb72d;color:#1b1404;border-color:#edb72d}.cj-fine{color:#a7d8bf;font:700 12px system-ui,sans-serif}
+    .cj>*{min-width:0}.cj-t1,.cj-t2{overflow-wrap:anywhere}
+    @media(max-width:700px){.cj{grid-template-columns:minmax(0,1fr);padding:12px}.cj-t1{font-size:1.02rem}.cj-row{justify-content:flex-start}}
+    </style>
     <section aria-labelledby="contractors-heading">
       <div class="results-heading"><div><h2 id="contractors-heading">Contractors in your state</h2><p id="results-scope">Showing matching contractors in your state. Your city appears first; contact providers to confirm travel availability and fees.</p></div></div>
       <div class="share-card-callout"><div><strong>Know someone who needs reliable local help?</strong><span>Share the TexContractor card with any person.</span></div><a class="share-card-button" href="share-card.html">↗ Share This Card</a></div>
@@ -599,7 +617,29 @@
  if(area&&image){if(src){area.style.display='block';if(image.getAttribute('src')!==src)image.src=src;const parent=image.parentElement;if(destination){let a=parent.tagName==='A'?parent:document.createElement('a');a.href=destination;a.target='_blank';a.rel='noopener noreferrer';if(parent!==a){image.replaceWith(a);a.appendChild(image)}}else if(parent.tagName==='A')parent.replaceWith(image)}else{area.style.display='none';image.removeAttribute('src')}}
 })();
 </script>
-<script src="tex-pros-ticker.js?v=10"></script>
+<script>
+(function(){var h=document.getElementById('cat-join');if(!h)return;
+  var es=function(){return (document.documentElement.lang||'').indexOf('es')===0};
+  var svc=function(){var t=(document.getElementById('service-label')||{}).textContent||'';return t&&t!=='Local service'?t:''};
+  var T=function(L,k){var s=svc();var short=s.length>40?'':s;
+    if(L==='es')return k===1?[(short?'¿Eres técnico de '+short+'?':'¿Eres técnico?')+' Los clientes te buscan.','Pon tu teléfono y aparece en esta página. Gratis, sin pagar por cliente.']:['¿Necesitas ayuda en casa?','Pon tu teléfono y escríbele directo a un técnico cerca de ti. Gratis.'];
+    return k===1?[(short?'Do '+short+'? ':'Are you a pro? ')+'Customers here are looking for you.','Add your phone and show up on this page. Free, no lead fees.']:['Something broken at home?','Add your phone and text a local pro directly. Free.']};
+  var F={en:['✓ Free for customers  ✓ No calls, no waiting','✓ Free for pros  ✓ No lead fees  ✓ No commission'],es:['✓ Gratis para clientes  ✓ Sin llamadas ni esperas','✓ Gratis para técnicos  ✓ Sin pagar por cliente']};
+  var i=1,locked=false,ph=h.querySelector('.cj-ph'),msg=h.querySelector('.cj-msg'),chips=[].slice.call(h.querySelectorAll('.cj-chip'));
+  function set(el,v){if(el.textContent!==v)el.textContent=v}
+  function paint(){var L=es()?'es':'en',t=T(L,i);h.dataset.slide=i;set(h.querySelector('.cj-t1'),t[0]);set(h.querySelector('.cj-t2'),t[1]);set(h.querySelector('.cj-fine'),F[L][i]);
+    var pl=L==='es'?'Escribe tu número aquí':'Type your number here';if(ph.placeholder!==pl)ph.placeholder=pl;set(h.querySelector('.cj-go-t'),L==='es'?'Empezar':'Start');
+    chips.forEach(function(c,k){c.setAttribute('aria-checked',String(k===i));set(c,k===0?(L==='es'?'🔍 Necesito un técnico':'🔍 I need a pro'):(L==='es'?'🛠️ Soy técnico':"🛠️ I'm a pro"))})}
+  chips.forEach(function(c){c.addEventListener('click',function(){locked=true;i=+c.dataset.r;paint();ph.focus()})});
+  paint();var lastL=es()?'es':'en',lastS=svc();setInterval(function(){var L=es()?'es':'en',S=svc();if(L!==lastL||S!==lastS){lastL=L;lastS=S;paint()}},800);
+  setInterval(function(){if(locked||document.hidden||document.activeElement===ph||ph.value)return;msg.classList.add('fade');setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},500)},7000);
+  var dg=function(v){return String(v||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'')};
+  var pr=function(d){return d.length<4?d:d.length<7?'('+d.slice(0,3)+') '+d.slice(3):'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6,10)};
+  ph.addEventListener('input',function(){ph.value=pr(dg(ph.value).slice(0,10));ph.style.borderColor=''});
+  h.querySelector('.cj-form').addEventListener('submit',function(e){e.preventDefault();var d=dg(ph.value);if(d.length!==10){ph.style.borderColor='#ef4444';ph.focus();return}
+    location.href='signup.html?role='+(i===1?'pro':'customer')+'&src=catalog_join'+(es()?'&lang=es':'')+'#ph='+d;});
+})();
+</script>
 </body>
 </html>
 
