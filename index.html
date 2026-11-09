@@ -1293,8 +1293,8 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 <script>
 (function(){
  var P=[['Roof Repair or Maintenance','images/home/catalog-98d2c8f81847aa2d.jpg','Roofing','Techos'],['Plumbing Pipe Repair','images/home/catalog-41c6fdd548fb7e0c.jpg','Plumbing','Plomería'],['Electrical and Wiring Repair','images/home/catalog-6ad88b6bcd342352.jpg','Electrical','Electricidad'],['Central Air Conditioning Repair or Maintenance','images/home/catalog-d62107fb07c7078f.jpg','AC repair','Aire acondicionado'],['Handyman','images/home/catalog-eb3123aa3163fb0b.jpg','Handyman','Handyman'],['Outdoor Landscaping and Design','images/home/catalog-6ae2f86a9d0b8335.jpg','Landscaping','Jardinería'],['Garage Door Repair','images/home/catalog-d8ccd66591b47033.jpg','Garage doors','Puertas de garaje'],['Interior Painting','images/home/catalog-1a57bc6c2a550ffc.jpg','Painting','Pintura']];
- var T={en:{h:'Find a Texas pro you can trust.<br><span>Text them yourself.</span>',q:'What do you need done?',z:'ZIP or city',n:'Free. No app. No one sells your number.',c:' pros near you'},
-        es:{h:'Encuentra un técnico de confianza en Texas.<br><span>Escríbele tú mismo.</span>',q:'¿Qué necesitas?',z:'ZIP o ciudad',n:'Gratis. Sin app. Nadie vende tu número.',c:' cerca de ti'}};
+ var T={en:{h:'Find a local pro you can trust.<br><span>Text them yourself.</span>',q:'What do you need done?',z:'ZIP or city',n:'Free. No app. No one sells your number.',c:' pros near you'},
+        es:{h:'Encuentra un técnico de confianza cerca de ti.<br><span>Escríbele tú mismo.</span>',q:'¿Qué necesitas?',z:'ZIP o ciudad',n:'Gratis. Sin app. Nadie vende tu número.',c:' cerca de ti'}};
  var i=0,es=false,box,pics,chip;
  function L(){try{return localStorage.getItem('texcontractor-language')==='es'}catch(e){return false}}
  function text(){es=L();var t=T[es?'es':'en'];document.getElementById('tf-h').innerHTML=t.h;document.getElementById('tf-q').placeholder=t.q;document.getElementById('tf-z').placeholder=t.z;document.getElementById('tf-note').textContent=t.n;chip.textContent=P[i][es?3:2]+t.c;}
@@ -1321,7 +1321,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
     <div class="tf-pics" aria-hidden="true"></div>
     <div class="tf-box">
       <span class="tf-chip" id="tf-chip"></span>
-      <h2 id="tf-h">Find a Texas pro you can trust.<br><span>Text them yourself.</span></h2>
+      <h2 id="tf-h">Find a local pro you can trust.<br><span>Text them yourself.</span></h2>
       <form class="tf-form" id="tf-form" role="search">
         <input id="tf-q" list="tf-list" type="search" autocomplete="off" aria-label="What do you need?" placeholder="What do you need done?">
         <span class="tf-loc"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><input id="tf-z" type="text" autocomplete="postal-code" aria-label="ZIP code or city" placeholder="ZIP or city"></span>
