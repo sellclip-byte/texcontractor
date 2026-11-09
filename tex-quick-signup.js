@@ -89,12 +89,12 @@
           box.dataset.sent = '1'; box.querySelector('#tqs-codebox').hidden = false; box.querySelector('#tqs-phone').readOnly = true;
           go.textContent = es ? 'Confirmar y continuar' : 'Confirm & continue';
           msg.textContent = es ? 'Te mandamos un código por mensaje.' : 'We texted you a code.';
-          if (typeof gtag === 'function') gtag('event', 'quick_code_sent', { source: 'quick_signup' });
+          if (typeof gtag === 'function') gtag('event', 'quick_code_sent', { source: 'quick_signup' }); try { window.texVisit && texVisit('code_sent'); } catch (_) {}
           setTimeout(() => box.querySelector('#tqs-code').focus(), 30);
           startResend(es);
         } else {
           await TexAuth.verifyPhoneCode(phone, box.querySelector('#tqs-code').value);
-          if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'phone', source: 'quick_signup' });
+          if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'phone', source: 'quick_signup' }); try { window.texVisit && texVisit('verified'); } catch (_) {}
           msg.textContent = es ? '¡Listo!' : 'You are in!';
           finish(true);
         }

@@ -198,3 +198,34 @@
     if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
   } catch (_) {}
 })();
+
+// Owner 11-09: hidden visit counter for the admin only (no phone, name or IP is stored).
+// Counts page views and the steps toward signing up, and where the visitor came from.
+(function () {
+  try {
+    if (window.top !== window.self) return; // the sign-up panel is an iframe on the same visit
+    if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
+    if (/(admin|showcase-admin|visits)\.html$/i.test(location.pathname)) return;
+    var SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+    var ss = function (k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (_) { return null; } };
+    var sid = ss('tex_vsid'); if (!sid) { sid = Math.random().toString(36).slice(2) + Date.now().toString(36); ss('tex_vsid', sid); }
+    var q = new URLSearchParams(location.search);
+    var src = q.get('src') || q.get('utm_source') || '';
+    var med = q.get('utm_medium') || '';
+    if (src && med && src.indexOf(med) < 0) src = src + '/' + med;
+    var ref = ''; try { ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (_) {}
+    if (ref === 'texcontractor.com') ref = '';
+    if (!src && ref) src = ref; // e.g. facebook.com, google.com, tiktok.com
+    if (src && !ss('tex_vsrc')) ss('tex_vsrc', src.slice(0, 60)); // first touch for the whole visit
+    var device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent || '') ? 'mobile' : 'desktop';
+    window.texVisit = function (ev) {
+      try {
+        fetch(SB + '/rest/v1/rpc/texcontractor_log_visit', { method: 'POST', keepalive: true,
+          headers: { apikey: K, Authorization: 'Bearer ' + K, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ p_sid: sid, p_path: (location.pathname + (q.get('service') ? '?service=' + q.get('service') : '')).slice(0, 160),
+            p_src: ss('tex_vsrc') || '', p_ev: ev || 'view', p_device: device, p_ref: ref }) }).catch(function () {});
+      } catch (_) {}
+    };
+    window.texVisit('view');
+  } catch (_) {}
+})();

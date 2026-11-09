@@ -187,7 +187,7 @@ async function choose(role){
   const d=digits($('#phone').value);
   if(d.length!==10){$('#e1').textContent=t('errPhone');$('#phone').focus();return}
   st.phone=d;$$('.role').forEach(b=>b.disabled=true);$('#e1').className='err okc';$('#e1').textContent=t('sending');
-  try{await TexAuth.sendPhoneCode(d,role);ev('signup_code_sent',{role});$('#e1').textContent='';render();show('v2')}
+  try{await TexAuth.sendPhoneCode(d,role);ev('signup_code_sent',{role});try{(window.texVisit||(window.parent&&window.parent.texVisit)||function(){})('code_sent')}catch(_){};$('#e1').textContent='';render();show('v2')}
   catch(e){$('#e1').className='err';$('#e1').textContent=(e&&e.message)||t('errGeneric')}
   finally{$$('.role').forEach(b=>b.disabled=false)}
 }
@@ -196,7 +196,7 @@ $('#phone').addEventListener('keydown',e=>{if(e.key==='Enter'&&(onlyPro||onlyCus
 
 $('#code').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6);$('#verify').disabled=e.target.value.length<6;if(e.target.value.length===6)$('#verify').click()});
 $('#verify').onclick=async()=>{const b=$('#verify');if(b.dataset.busy)return;b.dataset.busy='1';b.disabled=true;b.textContent=t('verifying');$('#e2').className='err';$('#e2').textContent='';
-  try{await TexAuth.verifyPhoneCode(st.phone,$('#code').value);ev('signup_verified',{role:st.role});done()}
+  try{await TexAuth.verifyPhoneCode(st.phone,$('#code').value);ev('signup_verified',{role:st.role});try{(window.texVisit||(window.parent&&window.parent.texVisit)||function(){})('verified')}catch(_){};done()}
   catch(e){$('#e2').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}
   finally{delete b.dataset.busy}};
 $('#edit').onclick=()=>{$('#code').value='';show('v1');$('#phone').focus()};

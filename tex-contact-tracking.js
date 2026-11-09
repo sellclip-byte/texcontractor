@@ -5,6 +5,7 @@
   const destination = 'AW-18516159223/3-f9CL3Jvp4dEPfVmP1E';
   const lastContact = new Map();
   function record(channel) {
+    try { if (channel === 'call') window.texVisit && window.texVisit('call_click'); } catch (_) {}
     if (!['sms', 'call'].includes(channel) || typeof window.gtag !== 'function') return false;
     const now = Date.now();
     if (lastContact.has(channel) && now - lastContact.get(channel) < 1500) return false;

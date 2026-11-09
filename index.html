@@ -1817,6 +1817,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
   ph.addEventListener('input',function(){ph.value=pr(dg(ph.value).slice(0,10));ph.style.borderColor=''});
   h.querySelector('.hj-form').addEventListener('submit',function(e){e.preventDefault();var d=dg(ph.value);if(d.length!==10){ph.style.borderColor='#ef4444';ph.focus();return}
     // the number travels only in the #fragment and the sign-up page clears it right away
+    try{window.texVisit&&texVisit('join_banner')}catch(_){}
     location.href='signup.html?role='+(i===1?'pro':'customer')+'&src=home_hero'+(es()?'&lang=es':'')+'#ph='+d;});
 })();
 </script>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>عدّاد الزيارات · TexContractor</title>
+<style>
+:root{--g:#0b7a63;--gold:#d9a92b;--ink:#0f172a;--mut:#64748b;--bg:#f8fafc}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:8px 0 4px}.sub{color:var(--mut);margin:0 0 14px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.bar button{border:2px solid var(--g);background:#fff;color:var(--g);border-radius:999px;padding:6px 14px;font-weight:800;cursor:pointer}
+.bar button[aria-pressed=true]{background:var(--g);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px}.card b{display:block;font-size:1.6rem}.card span{color:var(--mut);font-size:.85rem}
+section{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin-bottom:14px;overflow-x:auto}
+h2{font-size:1.05rem;margin:2px 0 8px}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:7px 8px;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap}th{color:var(--mut);font-weight:700}
+.err{color:#b91c1c;font-weight:700}.ev-view{color:var(--mut)}.ev-text_click,.ev-call_click{color:#b45309;font-weight:800}.ev-code_sent{color:#1d4ed8;font-weight:800}.ev-verified{color:var(--g);font-weight:900}
+</style></head><body><main>
+<h1>📊 عدّاد الزيارات</h1><p class="sub">مخفي، للأدمن بس. ما بنسجّل أي رقم أو اسم أو IP.</p>
+<div class="bar" id="bar"><button data-d="1">اليوم</button><button data-d="7" aria-pressed="true">7 أيام</button><button data-d="30">30 يوم</button></div>
+<p id="msg" class="sub">جاري التحميل…</p>
+<div class="cards" id="cards"></div>
+<section><h2>كل يوم</h2><table id="days"></table></section>
+<section><h2>من وين إجوا</h2><table id="srcs"></table></section>
+<section><h2>أكثر الصفحات زيارة</h2><table id="pages"></table></section>
+<section><h2>آخر الحركات</h2><table id="recent"></table></section>
+</main>
+<script src="tex-auth.js?v=20261106stay"></script>
+<script>
+const SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const EV={view:'زيارة صفحة',text_click:'كبس Text',call_click:'كبس Call',code_sent:'طلب كود',verified:'سجّل ✅',join_banner:'كتب رقمه بالبانر',share:'شير'};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tbl=(id,head,rows)=>{document.getElementById(id).innerHTML='<tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+(rows.length?rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+head.length+'">لسا ما في بيانات</td></tr>')};
+async function load(days){
+  const msg=document.getElementById('msg');msg.className='sub';msg.textContent='جاري التحميل…';
+  let tok=null;try{tok=await TexAuth.getAccessToken()}catch(_){}
+  if(!tok){location.replace('signup.html?return_to=visits.html');return}
+  const r=await fetch(SB+'/rest/v1/rpc/texcontractor_visit_stats',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify({p_days:days})});
+  if(!r.ok){msg.className='err';msg.textContent=r.status===400||r.status===403?'هاي الصفحة للأدمن بس.':'صار خطأ، جرّب كمان مرة.';return}
+  const d=await r.json();msg.textContent='';
+  const sum=k=>d.by_day.reduce((a,x)=>a+(+x[k]||0),0);
+  document.getElementById('cards').innerHTML=[['visitors','زوار'],['mobile','من تلفون'],['text_clicks','كبسوا Text/Call'],['codes_sent','طلبوا كود'],['verified','سجّلوا']].map(([k,l])=>'<div class="card"><b>'+sum(k)+'</b><span>'+l+'</span></div>').join('');
+  tbl('days',['اليوم','زوار','من تلفون','صفحات','كبسوا Text/Call','طلبوا كود','سجّلوا'],d.by_day.map(x=>[x.day,x.visitors,x.mobile,x.views,x.text_clicks,x.codes_sent,x.verified]));
+  tbl('srcs',['المصدر','زوار','كبسوا Text/Call','طلبوا كود','سجّلوا'],d.by_src.map(x=>[esc(x.src),x.visitors,x.text_clicks,x.codes_sent,x.verified]));
+  tbl('pages',['الصفحة','زوار'],d.top_pages.map(x=>['<span dir="ltr">'+esc(x.path)+'</span>',x.visitors]));
+  tbl('recent',['الوقت','الحركة','الصفحة','المصدر','الجهاز'],d.recent.map(x=>['<span dir="ltr">'+esc(x.time)+'</span>','<span class="ev-'+esc(x.ev)+'">'+(EV[x.ev]||esc(x.ev))+'</span>','<span dir="ltr">'+esc(x.path)+'</span>',esc(x.src||'مباشر'),x.device==='mobile'?'📱':'💻']));
+}
+document.querySelectorAll('#bar button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#bar button').forEach(x=>x.setAttribute('aria-pressed',x===b));load(+b.dataset.d)});
+load(7);
+</script></body></html>

@@ -228,6 +228,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
     textLink.href = '#';
     textLink.addEventListener('click', async (event) => {
       event.preventDefault();
+      try { window.texVisit && texVisit('text_click'); } catch (_) {}
       textLink.textContent = 'Preparing message…';
       try {
         let token = await TexAuth.getAccessToken();
