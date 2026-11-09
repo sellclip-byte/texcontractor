@@ -825,12 +825,14 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 .loc-row #homepage-state-flag img{width:30px!important;height:20px!important}
 .loc-row .search-share-link{font-size:.82rem}
 .message-bridge{max-width:none!important;grid-template-columns:minmax(0,1fr)!important;padding:0 8px!important}
+.message-bridge #hero-join.hj{position:relative}.hj-stats{position:absolute;top:22px;left:30px;display:flex;flex-direction:column;gap:14px;color:#fff;z-index:2;pointer-events:none}.hj-stats b{display:block;font-size:1.9rem;line-height:1;font-weight:900;letter-spacing:-.01em}.hj-stats span{display:block;margin-top:6px;font-size:.92rem;font-weight:500;color:#e6eee9}@media(max-width:1180px){.hj-stats{position:static;grid-column:1/-1;grid-row:1;flex-direction:row;gap:28px;justify-content:center;margin:0 0 6px}}@media(max-width:640px){.message-bridge #hero-join .hj-pic{grid-row:2/4}.message-bridge #hero-join .hj-logo{grid-row:2}.message-bridge #hero-join .hj-msg{grid-row:3}.hj-stats{gap:18px}.hj-stats b{font-size:1.45rem}.hj-stats span{font-size:.78rem;margin-top:3px}}
 .message-bridge #hero-join.hj{max-width:none;grid-template-columns:200px minmax(0,660px);justify-content:center;column-gap:28px}
 @media(max-width:640px){.message-bridge #hero-join.hj{grid-template-columns:96px 1fr;justify-content:stretch;column-gap:12px}.loc-row{padding:6px 10px 0}.loc-row .location-bar{white-space:normal;font-size:.92rem!important}}
 </style>
 <section class="message-bridge">
     <img src="images/home/catalog-15e5b518293a6f0d.jpg" alt="A customer messaging a technician directly">
     <div id="hero-join" class="hj" data-slide="0">
+      <div class="hj-stats" aria-label="TexContractor in numbers"><div><b>16K+</b><span>local pros</span></div><div><b>2,900+</b><span>cities</span></div><div><b>63</b><span>services</span></div></div>
       <div class="hj-pic"><img class="hj-a" src="assets/hero-customer.jpg" alt="Homeowner with a leaking ceiling texting a local pro"><img class="hj-b" src="assets/hero-pro.jpg" alt="Technician reading a text from a customer"></div>
       <div class="hj-main">
         <img class="hj-logo" src="texcontractor-logo.png" alt="TexContractor">
