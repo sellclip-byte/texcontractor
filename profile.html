@@ -113,6 +113,7 @@
       </aside>
     </div>
   </main>
+  <script src="tex-price.js?v=1"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script src="tex-auth.js?v=20261106stay"></script>
   <script src="tex-notices.js?v=20261025" defer></script><script src="tex-quick-signup.js?v=20261102phone"></script><script src="tex-sms-message.js?v=20261031"></script>
@@ -126,7 +127,7 @@
     let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
-      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof,price_type,price_amount', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
       const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, ...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {}) } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
@@ -145,6 +146,7 @@
         service:row.service || service,
         spanish:!!row.speaks_spanish,
         insured:!!row.insured, licensed:!!row.licensed, license_number:row.license_number||'', has_proof:!!row.has_proof,
+        price_type:row.price_type||null, price_amount:row.price_amount||null,
         availFrom:row.avail_from, availTo:row.avail_to
       } : null;
     };
@@ -197,6 +199,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
     }
     const credBadges=(p,full)=>{if(!p||!(p.insured||p.licensed))return null;const d=document.createElement('div');d.className='tc-cred';const es=(()=>{try{return localStorage.getItem('texcontractor-language')==='es'}catch(_){return false}})();if(p.insured){const s=document.createElement('span');s.textContent='🛡️ '+(es?'Asegurado':'Insured')+(p.has_proof&&full?(es?' · comprobante':' · proof on file'):'');d.append(s)}if(p.licensed){const s=document.createElement('span');s.textContent='📜 '+(es?'Con licencia':'Licensed')+(full&&p.license_number?' #'+p.license_number:'');d.append(s)}const n=document.createElement('small');n.textContent=es?'Información del técnico':'Info provided by the pro';d.append(n);return d};
     { const cb=credBadges(profile,true); if(cb && !document.getElementById('cred-box')){cb.id='cred-box';document.getElementById('contractor-name').insertAdjacentElement('afterend',cb);} }
+    { const pb=window.texPriceBadge&&texPriceBadge(profile); if(pb&&!document.getElementById('price-box')){const w=document.createElement('div');w.id='price-box';w.append(pb);(document.getElementById('cred-box')||document.getElementById('contractor-name')).insertAdjacentElement('afterend',w);} }
     if (profile.spanish && !document.getElementById('hablo-box')) {
       const box=document.createElement('div');box.id='hablo-box';box.setAttribute('lang','es');
       box.innerHTML='<span class="hablo"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span><span class="hablo-note">Puedes escribirle en español.</span>';

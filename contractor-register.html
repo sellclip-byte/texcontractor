@@ -123,6 +123,14 @@
             <option>Barber &amp; Hair Styling Services</option>
             <option>Central Air Conditioning Repair or Maintenance</option><option>Electrical and Wiring Repair</option><option>TV Mounting</option><option>Tree Trimming and Removal</option><option>Furniture Assembly</option><option>Furniture Moving and Heavy Lifting</option><option>General Labor and Helpers</option><option>Mobile Auto Mechanic</option><option>Handyman</option><option>Outdoor Landscaping and Design</option><option>Interior Painting</option><option>Junk Removal</option><option>Roof Repair or Maintenance</option><option>Appliance Repair or Maintenance</option><option>Floor Installation or Replacement</option><option>Lock Installation and Repair</option><option>Garage Door Repair</option><option>Concrete Installation</option><option>Bathroom Remodel</option><option>Metalwork</option><option>Window Repair</option><option>Plumbing Drain Repair</option><option>Plumbing Pipe Repair</option><option>Heating System Repair or Maintenance</option><option>House Cleaning</option><option>Carpet Cleaning</option><option>Pressure Washing</option><option>Upholstery and Furniture Cleaning</option><option>Mobile Auto Detailing</option><option>Local Moving (under 50 miles)</option><option>Computer Repair</option><option>Notarization</option><option>Dog Grooming</option><option>DJ Services</option><option>Wedding and Event Makeup</option><option>Dog Training</option><option>Personal Training</option><option>Wedding and Event Photography</option><option>Pest Control Services</option><option>Fence and Gate Installation</option><option>Drywall Repair and Texturing</option><option>Deck or Porch Remodel or Addition</option><option>Swimming Pool Cleaning &amp; Maintenance</option><option>Lighting Installation</option><option>General Contracting</option><option>Gutter Cleaning and Maintenance</option><option>Door Installation</option><option>Window Tinting</option><option>Wedding Officiant</option><option>Event Planning</option><option>Interior Design</option><option>Architectural Services</option><option>Home Inspection Consulting</option><option>Home Foundation Repair</option><option>In-Home Nursing Care</option><option>Private Taxi &amp; Transportation Services</option><option>Lawn Mower, Water Pump &amp; Outdoor Equipment Repair</option>
           </select></label>
+          <div class="full price-pick"><span style="font-weight:800">How do you price your work? <span class="hint">Optional. Shown on your listing so customers know what to expect.</span></span>
+            <label class="pp-opt"><input type="radio" name="priceType" value="hourly"> I charge by the hour <span class="pp-amt">$<input name="priceHourly" type="number" min="1" max="100000" inputmode="numeric" placeholder="65"> / hr</span></label>
+            <label class="pp-opt"><input type="radio" name="priceType" value="starting"> Jobs start at <span class="pp-amt">$<input name="priceStarting" type="number" min="1" max="100000" inputmode="numeric" placeholder="150"></span></label>
+            <label class="pp-opt"><input type="radio" name="priceType" value="estimate"> Free estimate</label>
+            <label class="pp-opt"><input type="radio" name="priceType" value="deal"> Contact me, let's make a deal</label>
+            <label class="pp-opt"><input type="radio" name="priceType" value="" checked> Don't show a price</label>
+          </div>
+          <style>.price-pick{display:grid;gap:6px;margin:4px 0}.pp-opt{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-weight:700;border:2px solid #e2e8f0;border-radius:12px;padding:9px 12px;cursor:pointer}.pp-opt:has(input[type=radio]:checked){border-color:#075c4b;background:#f0fdf8}.pp-opt input[type=radio]{width:20px;height:20px;margin:0;flex:none}.pp-amt{margin-left:auto;display:flex;align-items:center;gap:4px;font-weight:800}.pp-amt input{width:90px!important;padding:6px 8px!important;margin:0!important}</style>
           <label class="full">About you and your work <span class="hint">Optional. If you leave it empty, your listing will say: "Contact [your name] directly for [service] in [city]. Send a text to get a quote."</span><textarea name="about" placeholder="Optional — e.g. 10 years of experience, licensed and insured, free estimates."></textarea></label>
         </div>
       </section>
@@ -153,7 +161,7 @@
   </main>
   <script src="tex-auth.js?v=20261106stay"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261105creds"></script>
+  <script src="tex-admin.js?v=20261108price"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script>

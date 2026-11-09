@@ -148,6 +148,7 @@
     <section class="how" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol class="how-steps"><li><span class="step-number">1</span><span>Choose the service you need.</span></li><li><span class="step-number">2</span><span>Review the provider profiles.</span></li><li><span class="step-number">3</span><span>Send a direct text describing the problem.</span></li></ol></section>
   </main>
   <footer>TexContractor · Local help by text</footer>
+  <script src="tex-price.js?v=1"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script src="tex-auth.js?v=20261106stay"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
@@ -313,6 +314,7 @@
       trade.className = 'provider-trade';
       trade.textContent = provider.service;
       main.append(status, name, rating, trade);
+      { const pb = window.texPriceBadge && texPriceBadge(provider); if (pb) main.append(pb); }
       if (texAvailableNow(provider.avail_from, provider.avail_to)) main.append(availBadge(provider.avail_from, provider.avail_to));
       if (provider.speaks_spanish) main.append(habloBadge());
       { const cb=credBadgesL(provider,false); if(cb) main.append(cb); }
@@ -387,7 +389,7 @@
     const habloBadge=()=>{const s=document.createElement('span');s.className='hablo';s.setAttribute('lang','es');s.title='This provider speaks Spanish';s.innerHTML='<svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em>';return s;};
     async function loadProviders() {
       try {
-        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish,avail_from,avail_to,insured,licensed', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
+        const query = new URLSearchParams({ select: 'id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,created_at,speaks_spanish,avail_from,avail_to,insured,licensed,price_type,price_amount', is_published: 'eq.true', order: 'created_at.desc,id.asc' });
         if (service !== 'Local service') query.set('service', `eq.${service}`);
         if (state) query.set('state', `ilike.${state}`);
         // The public submissions endpoint must not prevent approved imports from loading.

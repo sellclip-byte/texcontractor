@@ -126,6 +126,8 @@
         insured: data.insured === 'yes',
         licensed: data.licensed === 'yes',
         license_number: data.licensed === 'yes' && data.licenseNumber ? String(data.licenseNumber).trim().slice(0, 40) : null,
+        price_type: ['hourly','starting','estimate','deal'].includes(data.priceType) ? data.priceType : null,
+        price_amount: (() => { const v = Math.round(Number(data.priceType === 'hourly' ? data.priceHourly : data.priceType === 'starting' ? data.priceStarting : 0)); return v >= 1 && v <= 100000 ? v : null; })(),
         profile_photo_path: profilePath,
         work_photo_paths: workPaths,
         status: 'approved'
@@ -404,6 +406,7 @@
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
   const myMedia = (id) => rpc('texcontractor_my_media', { p_id: id || null });
   const myCreds = (id) => rpc('texcontractor_my_creds', { p_id: id || null });
+  const myPrice = (id, type, amount) => rpc('texcontractor_my_price', { p_id: id, p_type: type || null, p_amount: amount == null || amount === '' ? null : Math.round(Number(amount)) });
   const myCredsUpdate = (id, { insured = null, licensed = null, license = null, addProof = null } = {}) => rpc('texcontractor_my_credentials_update', { p_id: id, p_insured: insured, p_licensed: licensed, p_license: license, p_add_proof: addProof });
   // Private proof (insurance / license photo): goes to a non-public bucket, only the owner and admins can read it.
   const uploadMyProof = async (listingId, dataUrl) => {
@@ -433,5 +436,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, myMedia, myCreds, myCredsUpdate, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, myMedia, myCreds, myCredsUpdate, myPrice, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
