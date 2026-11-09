@@ -50,9 +50,13 @@
     box.innerHTML = `<div class="tc-hello-top">${t.top}</div><div class="tc-hello-sub">${t.sub}</div><a class="tc-hello-card"></a><a class="tc-hello-join" href="start.html?src=say_hello">${t.join}</a>`;
     aside.appendChild(box);
     const slot = box.querySelector('.tc-hello-card');
-    let i = offset;
+    let i = offset, d = offset, n = offset, turn = 0;
     const show = () => {
-      const pros = getPros(); if (!pros.length) return; const p = pros[i % pros.length]; i += 1;
+      const all = readPros(); if (!all.length) return;
+      const fresh = all.filter((x) => x.isNew), dir = all.filter((x) => !x.isNew).slice(0, 200);
+      // Signed-up pros get priority: one of them every other turn, directory pros in between.
+      turn += 1;
+      const p = fresh.length && (turn % 2 === 1 || !dir.length) ? fresh[(n++) % fresh.length] : (dir.length ? dir[(d++) % dir.length] : all[(i++) % all.length]);
       slot.style.opacity = '0';
       setTimeout(() => {
         slot.className = 'tc-hello-card ' + (p.isNew ? 'is-new' : 'is-dir');
