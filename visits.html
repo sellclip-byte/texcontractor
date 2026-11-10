@@ -15,7 +15,7 @@ h2{font-size:1.05rem;margin:2px 0 8px}table{width:100%;border-collapse:collapse;
 .err{color:#b91c1c;font-weight:700}.ev-view{color:var(--mut)}.ev-text_click,.ev-call_click{color:#b45309;font-weight:800}.ev-code_sent{color:#1d4ed8;font-weight:800}.ev-verified{color:var(--g);font-weight:900}
 </style></head><body><main>
 <h1>📊 عدّاد الزيارات</h1><p class="sub">مخفي، للأدمن بس. ما بنسجّل أي رقم أو اسم أو IP.</p><p class="sub">📅 العدّاد بدأ يوم 9 نوفمبر 2026، فلحد ما يمر أسبوع بتطلع أرقام "7 أيام" و"30 يوم" نفس أرقام اليوم تقريبًا. "سجّلوا" = حسابات جديدة بس (اللي بيرجع يدخل بحسابه ما بينعد من 10 نوفمبر).</p>
-<div class="bar" id="bar"><button data-d="1">اليوم</button><button data-d="7" aria-pressed="true">7 أيام</button><button data-d="30">30 يوم</button></div>
+<div class="bar" id="bar"><button data-d="1" aria-pressed="true">اليوم</button><button data-d="7">7 أيام</button><button data-d="30">30 يوم</button></div>
 <p id="msg" class="sub">جاري التحميل…</p>
 <div class="cards" id="cards"></div>
 <section><h2>كل يوم</h2><table id="days"></table></section>
@@ -44,5 +44,5 @@ async function load(days){
   tbl('recent',['الوقت','الحركة','الصفحة','المصدر','الجهاز'],d.recent.map(x=>['<span dir="ltr">'+esc(x.time)+'</span>','<span class="ev-'+esc(x.ev)+'">'+(EV[x.ev]||esc(x.ev))+'</span>','<span dir="ltr">'+esc(x.path)+'</span>',esc(x.src||'مباشر'),x.device==='mobile'?'📱':'💻']));
 }
 document.querySelectorAll('#bar button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#bar button').forEach(x=>x.setAttribute('aria-pressed',x===b));load(+b.dataset.d)});
-load(7);
+load(1);
 </script></body></html>
