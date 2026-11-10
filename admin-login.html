@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Admin sign in · TexContractor</title>
+<link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+<style>
+  :root{--ink:#0f172a;--mut:#64748b;--g:#075c4b;--line:#e2e8f0}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f1f5f9;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:16px}
+  main{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px 22px;box-shadow:0 12px 30px rgba(15,23,42,.08)}
+  .logo{display:block;margin:0 auto 6px;height:46px}
+  h1{font-size:1.25rem;text-align:center;margin:4px 0 2px}
+  .sub{text-align:center;color:var(--mut);font-size:.9rem;margin:0 0 18px}
+  label{display:block;font-weight:700;font-size:.9rem;margin:12px 0 6px}
+  .fld{position:relative}
+  input{width:100%;height:46px;padding:0 46px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;font-size:1rem}
+  input:focus{outline:2px solid #10b981;border-color:#10b981}
+  .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:transparent;cursor:pointer;border-radius:8px;display:grid;place-items:center;color:#475569}
+  .eye:hover{background:#f1f5f9}
+  .btn{width:100%;min-height:46px;margin-top:16px;border:0;border-radius:10px;background:var(--g);color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer}
+  .btn.alt{background:#fff;color:var(--g);border:2px solid var(--g);margin-top:10px}
+  .btn[disabled]{opacity:.6;cursor:wait}
+  .msg{min-height:1.2em;margin:12px 0 0;font-size:.9rem;text-align:center}
+  .msg.err{color:#b91c1c;font-weight:700}.msg.ok{color:var(--g);font-weight:700}
+  .small{font-size:.82rem;color:var(--mut);text-align:center;margin-top:14px}
+  .small a{color:var(--g)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="texcontractor-logo.png" alt="TexContractor" onerror="this.style.display='none'">
+  <h1 id="title">Admin sign in</h1>
+  <p class="sub" id="sub">Sign in with your admin email and password.</p>
+
+  <form id="login">
+    <label for="em">Email</label>
+    <div class="fld"><input id="em" type="email" autocomplete="username" required></div>
+    <label for="pw">Password</label>
+    <div class="fld"><input id="pw" type="password" autocomplete="current-password" required><button class="eye" type="button" data-for="pw" aria-label="Show password" title="Show password"></button></div>
+    <button class="btn" type="submit" id="go">Sign in</button>
+    <button class="btn alt" type="button" id="link">Email me a sign-in link instead</button>
+  </form>
+
+  <form id="setpw" hidden>
+    <label for="np">New password</label>
+    <div class="fld"><input id="np" type="password" autocomplete="new-password" minlength="8" required><button class="eye" type="button" data-for="np" aria-label="Show password" title="Show password"></button></div>
+    <p class="small" style="text-align:left;margin-top:6px">At least 8 characters, with a letter and a number.</p>
+    <button class="btn" type="submit" id="save">Save password</button>
+    <button class="btn alt" type="button" id="toadmin">Go to admin →</button>
+  </form>
+
+  <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  <p class="small"><a href="index.html">← Back to TexContractor</a></p>
+</main>
+
+<script src="tex-auth.js?v=20261106stay"></script>
+<script>
+(function () {
+  const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+  const $ = (id) => document.getElementById(id);
+  const ADMIN = 'contractor-admin.html';
+  const say = (t, kind) => { $('msg').textContent = t || ''; $('msg').className = 'msg' + (kind ? ' ' + kind : ''); };
+  const EYE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYE_OFF = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  // Eye button: show / hide what is typed in the password box.
+  document.querySelectorAll('.eye').forEach((b) => {
+    const inp = $(b.dataset.for); b.innerHTML = EYE;
+    b.addEventListener('click', () => {
+      const show = inp.type === 'password'; inp.type = show ? 'text' : 'password';
+      b.innerHTML = show ? EYE_OFF : EYE; b.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); b.title = b.getAttribute('aria-label');
+      inp.focus();
+    });
+  });
+
+  const showSetPassword = (user) => {
+    $('login').hidden = true; $('setpw').hidden = false;
+    $('title').textContent = 'You are signed in';
+    $('sub').textContent = (user && user.email ? user.email + ' · ' : '') + 'Set a password so next time you can sign in with email + password.';
+  };
+
+  (async () => {
+    try { TexAuth.captureMagicLinkSession(); } catch (_) {}
+    const user = await TexAuth.getUser().catch(() => null);
+    if (user) showSetPassword(user);
+  })();
+
+  $('login').addEventListener('submit', async (e) => {
+    e.preventDefault(); $('go').disabled = true; say('Signing in…');
+    try {
+      const r = await TexAuth.passwordRequest($('em').value, $('pw').value, null, ADMIN);
+      if (!r.signedIn) throw new Error('Wrong email or password.');
+      say('Signed in ✓', 'ok'); location.replace(ADMIN);
+    } catch (err) {
+      say((err && /invalid/i.test(err.message || '') ? 'Wrong email or password. If you never set a password, use “Email me a sign-in link” once, then set one.' : (err && err.message) || 'Could not sign in.'), 'err');
+    }
+    $('go').disabled = false;
+  });
+
+  $('link').addEventListener('click', async () => {
+    const em = $('em').value.trim();
+    if (!em) { say('Type your email first.', 'err'); $('em').focus(); return; }
+    $('link').disabled = true;
+    try {
+      await TexAuth.sendMagicLink(em, 'admin-login.html');
+      say('Check your email and tap “Sign in”. It opens this page.', 'ok');
+    } catch (err) { say(err.message, 'err'); }
+    $('link').disabled = false;
+  });
+
+  $('setpw').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const p = $('np').value;
+    if (p.length < 8 || !/[a-z]/i.test(p) || !/[0-9]/.test(p)) { say('Use at least 8 characters, with a letter and a number.', 'err'); return; }
+    $('save').disabled = true; say('Saving…');
+    try {
+      const token = await TexAuth.getAccessToken();
+      const r = await fetch(SB + '/auth/v1/user', { method: 'PUT', headers: { apikey: K, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: p }) });
+      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.msg || j.error_description || 'Could not save the password.'); }
+      $('np').value = ''; say('Password saved ✓ Next time: email + password.', 'ok');
+    } catch (err) { say(err.message, 'err'); }
+    $('save').disabled = false;
+  });
+  $('toadmin').addEventListener('click', () => location.replace(ADMIN));
+})();
+</script>
+</body>
+</html>
