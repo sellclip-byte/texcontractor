@@ -36,6 +36,12 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 .role.cust{border-color:#9cc8bd;background:#f2faf7}.role.cust b{color:var(--g)}
 .role.tech{border-color:var(--gold);background:#fff8e8}.role.tech b{color:#8a6100}
 .role.one{grid-column:1/-1}
+.zf{margin:16px 0 0;padding:12px;border:1.5px dashed #9cc8bd;border-radius:16px;background:#f7fbfa}
+.zf-h{font:800 .9rem/1.35 Arial;color:var(--g);margin:0 0 8px;text-align:center}
+.zf-row{display:grid;grid-template-columns:92px 1fr;gap:8px}
+.zf-row input,.zf-row select{height:46px;border:1.5px solid #cbd5e1;border-radius:12px;padding:0 10px;font:600 1rem Arial;background:#fff;color:#0f172a;min-width:0}
+.zf-go{display:block;width:100%;margin-top:8px;height:46px;border:0;border-radius:12px;background:var(--g);color:#fff;font:800 1rem Arial;cursor:pointer}
+.zf-err{color:#b42318;font-weight:700;font-size:.82rem;min-height:1em;margin:6px 0 0;text-align:center}
 .note{color:var(--mut);font-size:.78rem;text-align:center;margin:14px 0 0;line-height:1.45}.note a{color:var(--g)}
 .code{width:100%;border:2px solid var(--gold);border-radius:14px;padding:14px;font-size:1.7rem;font-weight:800;letter-spacing:.5em;text-align:center;outline:none;margin:4px 0 14px;font-family:inherit}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:800 1.02rem Arial;text-align:center;text-decoration:none;cursor:pointer}
@@ -118,6 +124,12 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
     <div class="roles" id="roles">
       <button class="role tech" type="button" data-r="provider"><span class="i">🛠️</span><span class="lbl"><span class="tag" data-t="tagT"></span><b data-t="tech"></b><small data-t="techS"></small><span class="cta" data-t="ctaT"></span></span></button>
       <button class="role cust" type="button" data-r="customer"><span class="i">🔍</span><span class="lbl"><span class="tag" data-t="tagC"></span><b data-t="cust"></b><small data-t="custS"></small><span class="cta" data-t="ctaC"></span></span></button>
+    </div>
+    <div class="zf" id="zf">
+      <div class="zf-h" id="zf-h"></div>
+      <div class="zf-row"><input id="zf-zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="ZIP" aria-label="ZIP code"><select id="zf-svc" aria-label="Service"></select></div>
+      <button type="button" class="zf-go" id="zf-go"></button>
+      <p class="zf-err" id="zf-err" role="alert"></p>
     </div>
     <p class="err" id="e1" role="alert"></p>
     <p class="note" id="n1"></p>
@@ -243,6 +255,30 @@ render();
   document.addEventListener('pointerdown',first,true);
   document.addEventListener('touchstart',first,{capture:true,passive:true});
   document.querySelectorAll('#lgsw button').forEach(function(b){ b.addEventListener('click',function(){ if(!armed) setTimeout(function(){ play(lang()) },150) }) });
+})();
+</script>
+<script>
+/* Owner 11-10: a customer who does not want to type a phone yet can still look first:
+   ZIP + the service they need -> that service's list of pros near that ZIP. */
+(function(){
+  var S=[['Central Air Conditioning Repair or Maintenance','AC / heating repair','Reparación de aire / calefacción'],['Plumbing Pipe Repair','Plumber','Plomero'],['Electrical and Wiring Repair','Electrician','Electricista'],['Handyman','Handyman','Handyman (arreglos)'],['House Cleaning','House cleaning','Limpieza de casa'],['Roof Repair or Maintenance','Roof repair','Reparación de techo'],['Tree Trimming and Removal','Tree trimming / removal','Poda / quitar árboles'],['Outdoor Landscaping and Design','Landscaping / yard','Jardinería'],['Appliance Repair or Maintenance','Appliance repair','Reparar electrodomésticos'],['Garage Door Repair','Garage door repair','Puerta de garaje'],['Pest Control Services','Pest control','Control de plagas'],['Fence and Gate Installation','Fence / gate','Cerca / portón'],['Interior Painting','Painting','Pintura'],['Floor Installation or Replacement','Flooring','Pisos'],['Drywall Repair and Texturing','Drywall repair','Reparar drywall'],['Concrete Installation','Concrete','Concreto'],['Lock Installation and Repair','Locksmith','Cerrajero'],['Window Repair','Window repair','Reparar ventanas'],['Junk Removal','Junk removal','Retiro de basura'],['Local Moving (under 50 miles)','Moving','Mudanzas'],['Carpet Cleaning','Carpet cleaning','Limpieza de alfombras'],['Swimming Pool Cleaning & Maintenance','Pool cleaning','Limpieza de alberca']];
+  var TX={en:{h:'Not ready to sign up? Look first 👀 Your ZIP + the service you need',pick:'Choose a service',go:'See pros near me →',ez:'Type your 5-digit ZIP code.',es2:'Choose a service.'},es:{h:'¿Todavía no? Primero mira 👀 Tu código postal + el servicio que necesitas',pick:'Elige un servicio',go:'Ver técnicos cerca →',ez:'Escribe tu código postal de 5 dígitos.',es2:'Elige un servicio.'}};
+  var $=function(i){return document.getElementById(i)}, last='';
+  function lang(){return (document.documentElement.lang||'en').indexOf('es')===0?'es':'en'}
+  function paint(){var l=lang(); if(l===last)return; last=l; var t=TX[l], sel=$('zf-svc'), v=sel.value;
+    $('zf-h').textContent=t.h; $('zf-go').textContent=t.go;
+    sel.innerHTML='<option value="">'+t.pick+'</option>'+S.map(function(x){return '<option value="'+x[0].replace(/"/g,'&quot;')+'">'+(l==='es'?x[2]:x[1])+'</option>'}).join('');
+    sel.value=v; $('zf-err').textContent='';}
+  paint(); new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  try{var st=JSON.parse(localStorage.getItem('texcontractor-location')||'{}'); if(st.zip)$('zf-zip').value=String(st.zip).slice(0,5);}catch(_){}
+  $('zf-zip').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,5)});
+  $('zf-go').onclick=function(){var t=TX[lang()], z=$('zf-zip').value.trim(), s=$('zf-svc').value;
+    if(!/^\d{5}$/.test(z)){$('zf-err').textContent=t.ez;$('zf-zip').focus();return}
+    if(!s){$('zf-err').textContent=t.es2;$('zf-svc').focus();return}
+    try{sessionStorage.setItem('tex_panel_closed','1')}catch(_){}
+    try{localStorage.setItem('texcontractor-location',JSON.stringify({zip:z}))}catch(_){}
+    var u='/contractor.html?'+new URLSearchParams({service:s,zip:z}).toString()+(lang()==='es'?'&lang=es':'')+'&utm_source=site&utm_medium=panel_zip';
+    try{(window.top||window).location.href=u}catch(_){location.href=u}};
 })();
 </script>
 <script src="/tex-nospam.js?v=1" defer></script>
