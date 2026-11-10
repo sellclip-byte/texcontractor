@@ -26,7 +26,7 @@ h2{font-size:1.05rem;margin:2px 0 8px}table{width:100%;border-collapse:collapse;
 <script src="tex-auth.js?v=20261109fin"></script>
 <script>
 const SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
-const EV={view:'زيارة صفحة',text_click:'كبس Text',call_click:'كبس Call',code_sent:'طلب كود',verified:'سجّل ✅',join_banner:'كتب رقمه بالبانر',share:'شير'};
+const EV={view:'زيارة صفحة',text_click:'كبس Text',call_click:'كبس Call',code_sent:'طلب كود',verified:'سجّل ✅',join_banner:'استعمل صندوق الرئيسية',share:'شير',find_go:'اختار خدمة + ZIP',find_pro:'كبس "أنا فني"',phone_box:'طلعتله خانة الرقم',pro_phone_step:'فني وصل آخر خطوة'};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const tbl=(id,head,rows)=>{document.getElementById(id).innerHTML='<tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+(rows.length?rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+head.length+'">لسا ما في بيانات</td></tr>')};
 async function load(days){
