@@ -251,6 +251,8 @@
       ? 'https://texcontractor.com/'
       : window.location.href;
     const redirectTo = new URL(authHref(returnTo), redirectOrigin).href;
+    // Supabase may send the link back to the home page; remember where this person wanted to go.
+    try { localStorage.setItem('tex_magic_return', safeReturnTo(returnTo)); } catch (_) {}
     await requestJson(`${SUPABASE_URL}/auth/v1/otp`, {
       method: 'POST',
       headers: authHeaders(),
@@ -389,6 +391,35 @@
     window.location.assign(authHref(returnTo || `${window.location.pathname.replace(/^\//, '')}${window.location.search}`));
     return null;
   };
+
+  // Owner 11-09: an email sign-in link can land on ANY page (Supabase sends it to the home page).
+  // Pick up the sign-in right here and take the person where they wanted to go, instead of losing it.
+  (() => {
+    const h = window.location.hash || '';
+    if (/error_description=/.test(h)) {
+      const msg = decodeURIComponent((h.match(/error_description=([^&]*)/) || [])[1] || '').replace(/\+/g, ' ');
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+      const show = () => { const d = document.createElement('div'); d.setAttribute('role', 'alert');
+        d.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99999;max-width:92vw;background:#b91c1c;color:#fff;padding:12px 16px;border-radius:12px;font:700 15px system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)';
+        d.textContent = (/expired|invalid|not found/i.test(msg) ? 'This sign-in link expired or was already used. Please ask for a new one.' : (msg || 'Sign-in failed. Please try again.'));
+        document.body.appendChild(d); setTimeout(() => d.remove(), 9000); };
+      if (document.body) show(); else document.addEventListener('DOMContentLoaded', show, { once: true });
+      return;
+    }
+    if (!/access_token=/.test(h) || !/refresh_token=/.test(h)) return;
+    if (/\/auth\.html$/.test(window.location.pathname)) return; // auth.html handles it itself
+    captureMagicLinkSession();
+    (async () => {
+      let want = '';
+      try { want = localStorage.getItem('tex_magic_return') || ''; localStorage.removeItem('tex_magic_return'); } catch (_) {}
+      try {
+        const dest = await postLoginDestination(want || DEFAULT_RETURN);
+        const here = window.location.pathname.replace(/^\//, '') || 'index.html';
+        if (dest && dest.split(/[?#]/)[0] !== here) window.location.replace(dest);
+        else if (dest) window.location.reload();
+      } catch (_) {}
+    })();
+  })();
 
   window.TexAuth = {
     passwordRequest,
