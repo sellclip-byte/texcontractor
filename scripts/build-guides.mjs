@@ -25,6 +25,10 @@ const SRC = {
   tohAc: ['This Old House – Air Conditioner Repair Cost', 'https://www.thisoldhouse.com/heating-cooling/air-conditioner-repair-cost'],
   tohGarage: ['This Old House – Garage Door Repair Cost', 'https://www.thisoldhouse.com/garages/garage-door-repair-cost/'],
   inchGarage: ['Inch Calculator – Cost to Repair a Garage Door', 'https://www.inchcalculator.com/cost-to-repair-garage-door/'],
+  ttClean: ['Thumbtack – How much will your house cleaning cost?', 'https://www.thumbtack.com/p/house-cleaning-prices'],
+  hcpClean: ['Housecall Pro – House Cleaning Prices', 'https://www.housecallpro.com/resources/pricing/house-cleaning-prices/'],
+  fixrWh: ['Fixr – How Much Does It Cost to Install a Water Heater?', 'https://www.fixr.com/costs/install-water-heater'],
+  nerdWh: ['NerdWallet – Water Heater Cost', 'https://www.nerdwallet.com/article/mortgages/water-heater-cost'],
 };
 
 const table = (head, rows) => `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -193,6 +197,104 @@ ${ul(['¿Cuánto es el cargo por visita y se elimina si apruebo la reparación?'
       ctaBrowse: 'Encontrar técnicos de puertas de garaje cerca de ti', ctaReq: 'Publicar una solicitud de puerta de garaje',
       upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
       srcTitle: 'Fuentes', sources: [SRC.tohGarage, SRC.inchGarage],
+    },
+  },
+  {
+    slugEn: 'house-cleaning-cost', slugEs: 'costo-limpieza-de-casa',
+    service: 'House Cleaning', svcSlug: 'house-cleaning',
+    en: {
+      title: 'How Much Does House Cleaning Cost?',
+      desc: 'Typical house cleaning prices per visit, by number of bedrooms and square feet, deep and move-out cleaning, recurring visits and add-ons.',
+      body: `<p>House cleaners usually charge a flat price per visit, based on the size of the home and the type of cleaning, and some charge by the hour. These national figures help you compare quotes from house cleaners near you.</p>
+<h2>Typical price per visit</h2>
+<p>One guide puts the national average at <strong>$185 – $324</strong> per cleaning, with low-end jobs around $124 and high-end jobs around $493. Another reports that a standard one-time cleaning usually costs <strong>$140 – $220</strong>, and that cleaners often charge <strong>$30 – $80 per hour</strong> per cleaner.</p>
+<h2>By type of cleaning</h2>
+${table(['Type', 'Typical range per visit'], [['Standard / regular cleaning', '$146 – $202'], ['Deep cleaning', '$190 – $265'], ['Move-out cleaning', '$200 – $286'], ['Move-in or move-out deep clean (second guide)', '$220 – $400'], ['Post-construction cleaning', '$203 – $285']])}
+<h2>By number of bedrooms</h2>
+${table(['Bedrooms', 'Typical range per visit'], [['1 bedroom', '$133 – $174'], ['2 bedrooms', '$136 – $217'], ['3 bedrooms', '$166 – $250'], ['4 bedrooms', '$191 – $286'], ['5 bedrooms', '$217 – $327']])}
+<h2>By square feet (standard vs. deep)</h2>
+${table(['Home size', 'Standard', 'Deep'], [['1,000 sq ft or less', '$100 – $200', '$120 – $300'], ['1,500 sq ft', '$150 – $300', '$180 – $450'], ['2,000 sq ft', '$200 – $400', '$240 – $600'], ['3,000 sq ft', '$300 – $600', '$360 – $900']])}
+<h2>One-time vs. recurring</h2>
+${table(['How often', 'Average per visit'], [['One-time', '$174 – $256'], ['Monthly', '$162 – $228'], ['Every 2 weeks', '$160 – $220']])}
+<p>Regular visits usually cost a little less per visit, because the home stays cleaner between visits.</p>
+<h2>Common add-ons</h2>
+${table(['Add-on', 'Typical range'], [['Inside the oven', '$30 – $50'], ['Inside the refrigerator', '$31 – $100'], ['Inside the cabinets', '$75 – $230'], ['Each extra bedroom or bathroom', '$30 – $60']])}
+<h2>How to get a clear price</h2>
+${ul(['Tell the cleaner the number of bedrooms, bathrooms and the square feet.', 'Say if it is a standard, deep or move-out cleaning.', 'List any extras (oven, fridge, cabinets, windows) before the visit.', 'Ask what is included and whether they bring their own supplies.', 'Ask for a lower price if you book every week or every 2 weeks.'])}`,
+      ctaBrowse: 'Find house cleaners near you', ctaReq: 'Post a cleaning request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.ttClean, SRC.hcpClean],
+    },
+    es: {
+      title: '¿Cuánto cuesta la limpieza de casa?',
+      desc: 'Precios típicos de limpieza de casa por visita, según el número de recámaras y los pies cuadrados, limpieza profunda y de mudanza, visitas regulares y extras.',
+      body: `<p>Las personas que limpian casas normalmente cobran un precio fijo por visita, según el tamaño de la casa y el tipo de limpieza, y algunas cobran por hora. Estas cifras nacionales te ayudan a comparar presupuestos de limpieza cerca de ti.</p>
+<h2>Precio típico por visita</h2>
+<p>Una guía indica que el promedio nacional es de <strong>$185 – $324</strong> por limpieza; los trabajos más baratos rondan los $124 y los más caros unos $493. Otra guía reporta que una limpieza normal de una sola vez suele costar <strong>$140 – $220</strong>, y que muchas veces se cobra <strong>$30 – $80 por hora</strong> por persona.</p>
+<h2>Según el tipo de limpieza</h2>
+${table(['Tipo', 'Rango típico por visita'], [['Limpieza normal / regular', '$146 – $202'], ['Limpieza profunda', '$190 – $265'], ['Limpieza al mudarte (salida)', '$200 – $286'], ['Limpieza profunda de entrada o salida (segunda guía)', '$220 – $400'], ['Limpieza después de obra', '$203 – $285']])}
+<h2>Según el número de recámaras</h2>
+${table(['Recámaras', 'Rango típico por visita'], [['1 recámara', '$133 – $174'], ['2 recámaras', '$136 – $217'], ['3 recámaras', '$166 – $250'], ['4 recámaras', '$191 – $286'], ['5 recámaras', '$217 – $327']])}
+<h2>Según los pies cuadrados (normal vs. profunda)</h2>
+${table(['Tamaño de la casa', 'Normal', 'Profunda'], [['1,000 pies² o menos', '$100 – $200', '$120 – $300'], ['1,500 pies²', '$150 – $300', '$180 – $450'], ['2,000 pies²', '$200 – $400', '$240 – $600'], ['3,000 pies²', '$300 – $600', '$360 – $900']])}
+<h2>Una sola vez vs. visitas regulares</h2>
+${table(['Frecuencia', 'Promedio por visita'], [['Una sola vez', '$174 – $256'], ['Cada mes', '$162 – $228'], ['Cada 2 semanas', '$160 – $220']])}
+<p>Las visitas regulares suelen costar un poco menos por visita, porque la casa se mantiene más limpia entre una y otra.</p>
+<h2>Extras comunes</h2>
+${table(['Extra', 'Rango típico'], [['Dentro del horno', '$30 – $50'], ['Dentro del refrigerador', '$31 – $100'], ['Dentro de los gabinetes', '$75 – $230'], ['Cada recámara o baño adicional', '$30 – $60']])}
+<h2>Cómo conseguir un precio claro</h2>
+${ul(['Dile el número de recámaras, baños y los pies cuadrados.', 'Aclara si es limpieza normal, profunda o de mudanza.', 'Menciona los extras (horno, refrigerador, gabinetes, ventanas) antes de la visita.', 'Pregunta qué incluye y si traen sus propios productos.', 'Pide un mejor precio si reservas cada semana o cada 2 semanas.'])}`,
+      ctaBrowse: 'Encontrar servicios de limpieza cerca de ti', ctaReq: 'Publicar una solicitud de limpieza',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.ttClean, SRC.hcpClean],
+    },
+  },
+  {
+    slugEn: 'water-heater-replacement-cost', slugEs: 'costo-cambiar-calentador-de-agua',
+    service: 'Plumbing Pipe Repair', svcSlug: 'plumbing-pipe-repair',
+    en: {
+      title: 'How Much Does It Cost to Replace a Water Heater?',
+      desc: 'Typical water heater replacement prices for tank, tankless and heat pump models, by tank size and fuel, plus labor, disposal and permit costs.',
+      body: `<p>The price to replace a water heater depends mostly on the type of unit, its size and fuel, and how much work the installation needs. These national figures help you know what to expect before you call plumbers near you.</p>
+<h2>Typical total cost (unit + installation)</h2>
+<p>One guide puts the average installed cost at about <strong>$1,400</strong>, with most jobs between <strong>$900 and $3,000</strong>. Another reports that a new traditional tank usually costs <strong>$600 – $2,500</strong> installed, and a tankless unit <strong>$1,400 – $3,900</strong>.</p>
+<h2>By type (installed)</h2>
+${table(['Type', 'Typical range'], [['Tank', '$600 – $2,500'], ['Tankless', '$1,000 – $4,000'], ['Heat pump (hybrid)', '$1,200 – $4,600'], ['Indirect (connected to a boiler)', '$1,200 – $4,500'], ['Solar', '$1,700 – $5,500']])}
+<h2>By tank size (installed)</h2>
+${table(['Size', 'Typical range'], [['30 gallons', '$550 – $2,100'], ['40 gallons', '$550 – $2,300'], ['50 gallons', '$700 – $2,500'], ['75 gallons', '$1,100 – $3,400'], ['80 gallons', '$1,200 – $3,600']])}
+<h2>By fuel (installed)</h2>
+${table(['Fuel', 'Typical range'], [['Electric', '$500 – $3,500'], ['Natural gas', '$700 – $2,700'], ['Propane', '$700 – $2,500']])}
+<h2>Labor and other costs</h2>
+${table(['Item', 'Typical range'], [['Labor for a tank', '$150 – $450'], ['Labor for a tankless', '$600 – $1,900'], ['Switching from tank to tankless (labor)', '$150 – $2,500'], ['Plumber hourly rate', '$45 – $200 per hour'], ['Removing and hauling the old unit', '$75 – $500 (if charged separately)'], ['Permit', '$25 – $300 for most jobs; more when gas lines or electrical work are needed'], ['Power venting (fan + electrical)', '$300 – $1,000']])}
+<h2>How long does a water heater last?</h2>
+<p>A tank water heater usually lasts about <strong>10 – 15 years</strong>, and a tankless unit about <strong>20 years</strong>. If your tank is near that age, leaks, or makes rusty water, ask for a replacement quote along with the repair quote.</p>
+<h2>What to ask before you hire</h2>
+${ul(['Is the price for the unit and installation together, in writing?', 'Is removing the old water heater included?', 'Is a permit needed, and who gets it?', 'Will the new unit need new venting, a gas line or electrical work?', 'What warranty covers the unit and the labor?'])}`,
+      ctaBrowse: 'Find plumbers near you', ctaReq: 'Post a water heater request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.fixrWh, SRC.nerdWh],
+    },
+    es: {
+      title: '¿Cuánto cuesta cambiar el calentador de agua?',
+      desc: 'Precios típicos para cambiar el calentador de agua de tanque, sin tanque (tankless) y de bomba de calor, según el tamaño y el combustible, más mano de obra, retiro y permisos.',
+      body: `<p>El precio para cambiar el calentador de agua depende sobre todo del tipo de equipo, su tamaño y combustible, y de cuánto trabajo necesita la instalación. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a plomeros cerca de ti.</p>
+<h2>Costo total típico (equipo + instalación)</h2>
+<p>Una guía indica que el costo promedio ya instalado es de unos <strong>$1,400</strong>, y la mayoría de los trabajos cuesta entre <strong>$900 y $3,000</strong>. Otra guía reporta que un calentador de tanque nuevo normalmente cuesta <strong>$600 – $2,500</strong> instalado, y uno sin tanque <strong>$1,400 – $3,900</strong>.</p>
+<h2>Según el tipo (instalado)</h2>
+${table(['Tipo', 'Rango típico'], [['De tanque', '$600 – $2,500'], ['Sin tanque (tankless)', '$1,000 – $4,000'], ['Bomba de calor (híbrido)', '$1,200 – $4,600'], ['Indirecto (conectado a una caldera)', '$1,200 – $4,500'], ['Solar', '$1,700 – $5,500']])}
+<h2>Según el tamaño del tanque (instalado)</h2>
+${table(['Tamaño', 'Rango típico'], [['30 galones', '$550 – $2,100'], ['40 galones', '$550 – $2,300'], ['50 galones', '$700 – $2,500'], ['75 galones', '$1,100 – $3,400'], ['80 galones', '$1,200 – $3,600']])}
+<h2>Según el combustible (instalado)</h2>
+${table(['Combustible', 'Rango típico'], [['Eléctrico', '$500 – $3,500'], ['Gas natural', '$700 – $2,700'], ['Propano', '$700 – $2,500']])}
+<h2>Mano de obra y otros costos</h2>
+${table(['Concepto', 'Rango típico'], [['Mano de obra para uno de tanque', '$150 – $450'], ['Mano de obra para uno sin tanque', '$600 – $1,900'], ['Cambiar de tanque a sin tanque (mano de obra)', '$150 – $2,500'], ['Tarifa por hora del plomero', '$45 – $200 por hora'], ['Quitar y llevarse el calentador viejo', '$75 – $500 (si se cobra aparte)'], ['Permiso', '$25 – $300 en la mayoría de los casos; más si hay trabajo de gas o electricidad'], ['Ventilación forzada (ventilador + electricidad)', '$300 – $1,000']])}
+<h2>¿Cuánto dura un calentador de agua?</h2>
+<p>Un calentador de tanque normalmente dura unos <strong>10 – 15 años</strong>, y uno sin tanque unos <strong>20 años</strong>. Si el tuyo ya tiene esa edad, tiene fugas o sale agua oxidada, pide también un presupuesto para cambiarlo, además del de la reparación.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿El precio incluye el equipo y la instalación, por escrito?', '¿Incluye quitar el calentador viejo?', '¿Se necesita permiso y quién lo saca?', '¿El equipo nuevo necesita ventilación, línea de gas o trabajo eléctrico nuevo?', '¿Qué garantía tienen el equipo y el trabajo?'])}`,
+      ctaBrowse: 'Encontrar plomeros cerca de ti', ctaReq: 'Publicar una solicitud de calentador de agua',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.fixrWh, SRC.nerdWh],
     },
   },
 ];

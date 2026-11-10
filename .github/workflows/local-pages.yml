@@ -26,6 +26,8 @@ jobs:
           node-version: '22'
       - name: Generate pages from the live directory
         run: node scripts/generate-local-pages.mjs
+      - name: Re-add the pro sign-up banner (the generator does not include it)
+        run: node scripts/add-pro-banner.mjs
       - name: Sanity checks
         run: |
           test -s local/index.html
