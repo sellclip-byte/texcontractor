@@ -121,6 +121,7 @@
         service: data.service,
         about: data.about.trim(),
         speaks_spanish: data.speaksSpanish === 'yes',
+        work_type: data.workRes === 'yes' && data.workCom === 'yes' ? 'both' : data.workRes === 'yes' ? 'residential' : data.workCom === 'yes' ? 'commercial' : null,
         avail_from: data.availFrom === '' || data.availFrom == null ? null : Number(data.availFrom),
         avail_to: data.availTo === '' || data.availTo == null ? null : Number(data.availTo),
         insured: data.insured === 'yes',
@@ -403,6 +404,8 @@
   const listingForPhone = async (phone, service) => { const r = await rpc('texcontractor_listing_for_phone', { p_phone: phone, p_service: service }); return Array.isArray(r) ? (r[0] || null) : (r || null); };
   const setMyHours = (from, to) => rpc('texcontractor_my_hours', { p_from: from, p_to: to });
   const setMySpanish = (value) => rpc('texcontractor_my_spanish', { p_value: !!value });
+  const setMyWorkType = (value) => rpc('texcontractor_my_work_type', { p_value: value || null });
+  const myWorkType = () => rpc('texcontractor_my_work_type_get', {});
   const changeMyService = (id, service) => rpc('texcontractor_my_service_change', { p_id: id, p_service: service });
   const myMedia = (id) => rpc('texcontractor_my_media', { p_id: id || null });
   const myCreds = (id) => rpc('texcontractor_my_creds', { p_id: id || null });
@@ -436,5 +439,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, myMedia, myCreds, myCredsUpdate, myPrice, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { myServices, myMedia, myCreds, myCredsUpdate, myPrice, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyWorkType, myWorkType, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
