@@ -854,17 +854,21 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
   <div class="container">
     
     <div class="cl-col">
-    <div class="cl-ex-box">
-      <a class="cr-ex" href="site-guide.html#badges" aria-label="Example: what the Available now and Hablo español badges mean">
-        <span class="bs-ex">Example</span>
-        <img src="assets/sample-pro.jpg" alt="" width="52" height="52" loading="lazy">
-        <strong>Miguel R.</strong><span class="cr-ex-meta">Plumbing · Houston</span>
-        <span class="bs-avail"><i aria-hidden="true"></i>Available now</span>
-        <span class="bs-hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="20" height="14" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>
-        <small>Blinking = available right now. Text them first.</small>
-        <small lang="es">Si parpadea, está disponible ahora.</small>
-      </a>
-    </div>
+    <style>
+/* owner 11-09: new pros rotate in the left column (desktop), clear and big */
+.cl-pros #pros-ticker .pt-tile{padding:10px 8px}
+.cl-pros #pros-ticker .pt-top{font-size:12px;text-align:center}
+.cl-pros #pros-ticker .pt-sub{text-align:center;font-size:11px}
+.cl-pros #pros-ticker .pt-win{height:170px!important;margin-top:8px}
+.cl-pros #pros-ticker .pt-item{flex-direction:column!important;justify-content:center;text-align:center;gap:6px!important;padding:8px 6px!important}
+.cl-pros #pros-ticker .pt-ic{width:74px!important;height:74px!important}
+.cl-pros #pros-ticker .pt-t1{white-space:normal!important;font-size:11px!important;line-height:1.25}
+.cl-pros #pros-ticker .pt-t2{font-size:14px!important;line-height:1.2}
+@media(max-width:1099px){.cl-ex-box.cl-pros{width:100%;margin:10px 0 4px;grid-column:1/-1}.cl-pros #pros-ticker .pt-win{height:110px!important}.cl-pros #pros-ticker .pt-item{flex-direction:row!important;text-align:left}.cl-pros #pros-ticker .pt-ic{width:58px!important;height:58px!important}}
+.bcard-row.bcard-under{grid-template-columns:1fr;max-width:760px;margin:18px auto 8px}
+</style>
+<div class="cl-ex-box cl-pros"><div id="pros-ticker" data-variant="tile"></div></div><script>/* phones: show the new pros right above the services list (the left column drops to the bottom there) */
+document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max-width:1099px)').matches)return;var b=document.querySelector('.cl-pros'),h=document.querySelector('.catalog-head');if(b&&h&&h.parentNode){h.parentNode.insertBefore(b,h);b.classList.add('cl-pros-top')}}catch(e){}});</script>
     <aside class="cl-side" aria-label="Quick links">
       <a class="cl-side-post" href="start.html"><span aria-hidden="true">&#9998;</span> List your service</a>
       <a class="cl-side-post cl-side-req" href="requests.html?post=1"><span aria-hidden="true">&#128203;</span> Post a request</a>
@@ -901,13 +905,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       <div class="cr-list" id="cr-states"></div>
     </aside>
     <!-- pro-banner removed 11-07: phone box moved into the top hero -->
-    <div class="bcard-row">
-    <a class="bcard-promo" href="business-card.html">
-      <img src="assets/business-card-example.jpg" alt="Example business card for a technician" width="540" height="675" loading="lazy">
-      <span class="bcard-txt"><span class="bcard-tag">🎁 FREE FOR PROS</span><strong>Share your business card. Be our partner.</strong><span>Add your service free and get your own card with your photo, name and city. Give it to your friends and family: everyone shares your card, and you spread with us everywhere. You’re our partner in this.</span><span class="bcard-cta">Get my free card →</span></span>
-    </a>
-      <div id="pros-ticker" data-variant="tile"></div>
-    </div>
+
     <style>.bcard-promo{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;margin:14px 0 6px;padding:16px;border:2px solid #e8c766;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fff3d6);color:#111827;text-decoration:none;box-shadow:0 6px 18px rgba(15,23,42,.08)}.bcard-promo img{width:150px;height:auto;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.18);transform:rotate(-3deg)}.bcard-txt{display:flex;flex-direction:column;gap:6px}.bcard-tag{align-self:flex-start;padding:3px 10px;border-radius:999px;background:#075c4b;color:#fff;font-size:.75rem;font-weight:800;letter-spacing:.04em}.bcard-txt strong{font-size:1.3rem;line-height:1.2}.bcard-txt span{color:#374151;line-height:1.4}.bcard-cta{align-self:flex-start;margin-top:4px;padding:10px 16px;border-radius:12px;background:linear-gradient(110deg,#ba7c0c,#edb72d 30%,#ffdc58 55%,#d99b14);color:#2d2106!important;font-weight:900}@media(max-width:560px){.bcard-promo{grid-template-columns:96px 1fr;gap:12px;padding:12px}.bcard-promo img{width:96px}.bcard-txt strong{font-size:1.08rem}.bcard-txt span{font-size:.88rem}}.pro-banner,.bcard-row{position:relative;z-index:62}.bcard-txt .bcard-tag{color:#fff}.bcard-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin:14px 0 6px}.bcard-row .bcard-promo{margin:0;grid-template-columns:84px 1fr;gap:12px;padding:10px 12px}.bcard-row .bcard-promo img{width:84px}.bcard-row .bcard-txt strong{font-size:1.08rem}.bcard-row .bcard-txt span{font-size:.84rem}.bcard-row .bcard-txt>span:not(.bcard-tag):not(.bcard-cta){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bcard-row #pros-ticker{min-height:100%}.bcard-row #pros-ticker:empty{border:2px solid #e8c766;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fff3d6)}.bcard-row .pt-box{margin:0}@media(max-width:760px){.bcard-row{gap:8px}.bcard-row .bcard-promo{grid-template-columns:52px 1fr;gap:8px;padding:8px}.bcard-row .bcard-promo img{width:52px;transform:rotate(-3deg)}.bcard-row .bcard-tag,.bcard-row .bcard-txt>span:not(.bcard-tag):not(.bcard-cta){display:none}.bcard-row .bcard-txt{gap:6px}.bcard-row .bcard-txt strong{font-size:.86rem;line-height:1.15}.bcard-row .bcard-cta{padding:6px 8px;font-size:.74rem;margin-top:0}}</style>
     <div class="catalog-head">
       <h2 class="section-title" id="service-catalog">All Services (63 Categories)</h2>
@@ -1240,6 +1238,13 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
         <div class="service-title">Babysitting &amp; Childcare Services</div>
       </a>
 
+    </div>
+    <!-- owner 11-09: business-card banner sits under the services list -->
+    <div class="bcard-row bcard-under">
+    <a class="bcard-promo" href="business-card.html">
+      <img src="assets/business-card-example.jpg" alt="Example business card for a technician" width="540" height="675" loading="lazy">
+      <span class="bcard-txt"><span class="bcard-tag">🎁 FREE FOR PROS</span><strong>Share your business card. Be our partner.</strong><span>Add your service free and get your own card with your photo, name and city. Give it to your friends and family: everyone shares your card, and you spread with us everywhere. You’re our partner in this.</span><span class="bcard-cta">Get my free card →</span></span>
+    </a>
     </div>
 
   </div>
