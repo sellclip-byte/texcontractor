@@ -722,6 +722,7 @@ window.TEX_PANEL_DELAY=10000; /* owner 11-07: let phone visitors look around fir
 @media (prefers-reduced-motion:reduce){.pro-list-btn{animation:none}}
 @media(max-width:760px){.req-strip-btns{flex-wrap:wrap}.req-strip-btns .pro-list-btn{order:-1;width:100%}}
 </style>
+<style>/* owner 11-09: open-request count on 'See requests' so pros see there is work */.req-strip-see{position:relative}.req-see-n{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:8px;padding:0 6px;border-radius:999px;background:#dc2626;color:#fff;font-size:.8rem;font-weight:900;line-height:1;animation:reqPulse 2s ease-in-out infinite}@keyframes reqPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 6px rgba(220,38,38,0)}}@media (prefers-reduced-motion:reduce){.req-see-n{animation:none}}</style>
 </head>
 <body>
 
@@ -1799,7 +1800,7 @@ document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max
 <script src="tex-chat.js?v=20261022b"></script>
 <script>
 (function(){
-  function show(n){ if(!n) return; var a=document.getElementById('req-open-count'), b=document.getElementById('req-strip-count'); if(a){a.textContent=n;a.hidden=false;} if(b){b.textContent='· '+n+' open request'+(n===1?'':'s');b.hidden=false;} }
+  function show(n){ if(!n) return; var a=document.getElementById('req-open-count'), b=document.getElementById('req-strip-count'); if(a){a.textContent=n;a.hidden=false;} if(b){b.textContent='· '+n+' open request'+(n===1?'':'s');b.hidden=false;} var c=document.querySelector('.req-strip-see'); if(c&&!c.querySelector('.req-see-n')){var k=document.createElement('span');k.className='req-see-n';k.textContent=n;c.appendChild(k);} }
   window.addEventListener('load', function(){ if(window.TexChat) TexChat.rpc('texcontractor_requests_open_count', {}, false).then(function(n){ show(Number(n)||0); }).catch(function(){}); });
 })();
 </script>
