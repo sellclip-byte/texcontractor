@@ -133,8 +133,11 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
       document.body.appendChild(w); document.documentElement.style.overflow = 'hidden';
     }
-    function onScroll() { if (window.scrollY > window.innerHeight * 1.5) open(); }
-    timer = setTimeout(open, window.TEX_PANEL_DELAY || 30000); // homepage on phones: 10 s (owner 11-07)
+    // Owner 11-10: visitors said the panel popped up before they could look at anything (fast scrolling on phones
+    // opened it at once). Never open in the first 20 s, even when they scroll; after that, scrolling may open it.
+    var t0 = Date.now(), MIN = 20000;
+    function onScroll() { if (Date.now() - t0 >= MIN && window.scrollY > window.innerHeight * 1.5) open(); }
+    timer = setTimeout(open, Math.max(MIN, window.TEX_PANEL_DELAY || 30000)); // homepage on phones: 20 s (owner 11-10)
     window.addEventListener('scroll', onScroll, { passive: true });
   } catch (_) {}
 })();
