@@ -152,12 +152,12 @@
       .tc-side-ad-body.motion-scroll .tc-side-ad-copy { white-space: nowrap; animation: tc-side-ad-scroll 15s linear infinite; }
       @keyframes tc-side-ad-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: .84; } }
       @keyframes tc-side-ad-scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 20px 8px; background: #0c3b2c; border: 0; border-radius: 16px; box-shadow: 0 0 0 2px #d4a72c, 0 12px 28px rgba(15,23,42,.18); }
+      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 20px 8px; background: #fbf6ea; border: 0; border-radius: 16px; box-shadow: 0 0 0 1.5px #e6cf98, 0 8px 20px rgba(15,23,42,.06); /* owner 11-10: calmer cream & gold (was dark green) */ }
       .tc-side-ad-body.ad-vertical .tc-side-ad-copy { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; font-family: 'Courier Prime', 'Courier New', Courier, monospace; text-align: center; overflow-wrap: normal; white-space: nowrap; }
       .tc-side-ad-word { display: block; min-height: 1.1em; }
-      .tc-side-ad-big { font-size: 1.12rem; line-height: 1.1; font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: #f6c445; }
-      .tc-side-ad-small { font-size: .92rem; line-height: 1.15; font-weight: 700; color: #ffffff; }
-      .tc-typing::after { content: '|'; margin-left: 1px; color: #f6c445; font-weight: 400; animation: tc-caret 1s steps(1) infinite; }
+      .tc-side-ad-big { font-size: 1.12rem; line-height: 1.1; font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: #a16d0d; }
+      .tc-side-ad-small { font-size: .92rem; line-height: 1.15; font-weight: 700; color: #3f4a45; }
+      .tc-typing::after { content: '|'; margin-left: 1px; color: #a16d0d; font-weight: 400; animation: tc-caret 1s steps(1) infinite; }
       @keyframes tc-caret { 50% { opacity: 0; } }
       .tc-side-ad-body.motion-shimmer { animation: tc-side-ad-glow 7s ease-in-out infinite; }
       @keyframes tc-side-ad-glow { 0%,100% { box-shadow: 0 0 0 2px #d4a72c, 0 12px 28px rgba(15,23,42,.18); } 50% { box-shadow: 0 0 0 2px #2fbf7a, 0 0 22px rgba(47,191,122,.45); } }
