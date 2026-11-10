@@ -106,6 +106,8 @@
         cardLink.href = `profile.html?contractor=${cardMatch[1]}#pro-card`;
         cardLink.className = 'msg-card';
         cardLink.innerHTML = `<img src="/p/${cardMatch[1]}/card.jpg" alt="Business card" loading="lazy"><span>🎁 Open my card &amp; share it</span>`;
+        // The picture is built within ~30 min of sign-up; until then show just the button (the profile draws the card right away).
+        { const im = cardLink.querySelector('img'); if (im) im.onerror = () => im.remove(); }
         bubble.append(cardLink);
       }
       bubble.append(time);
