@@ -97,7 +97,9 @@
     if (window.top !== window.self) return;
     if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
     var p = location.pathname;
-    if (/(signup|auth|start|account|admin|my-photos|messages|chat|contractor-register|remove-number|privacy|terms)/i.test(p)) return;
+    if (/(signup|auth|start|account|admin|my-photos|messages|chat|contractor-register|remove-number|privacy|terms|find)/i.test(p)) return;
+    // Owner 11-10: a visitor who already picked a ZIP in the panel does not see it again.
+    try { if ((JSON.parse(localStorage.getItem('texcontractor-location') || '{}') || {}).zip) return; } catch (_) {}
     if (/^\/(ad|join)\//.test(p)) return;
     if (sessionStorage.getItem('tex_panel_closed')) return;
     var a = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); if (a && a.access_token) return;
@@ -117,16 +119,16 @@
       shown = true; clearTimeout(timer); window.removeEventListener('scroll', onScroll);
       var es = (document.documentElement.lang || '').indexOf('es') === 0 || /\/es\//.test(p);
       var back = (p.replace(/^\//, '') || 'index.html') + location.search;
-      var src = '/signup.html?embed=1&utm_source=site&utm_medium=panel' + (es ? '&lang=es' : '') +
-        (/\.html$/.test(p.replace(/^\//, '') || 'index.html') ? '&return_to=' + encodeURIComponent(back) : '');
+      // Owner 11-10: the panel asks only for the service + ZIP; the phone is asked later (Text / last step).
+      var src = '/find.html?embed=1' + (es ? '&lang=es' : '');
       var st = document.createElement('style');
       st.textContent = '.tex-panel{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:10px}' +
         '.tex-panel-box{position:relative;width:min(460px,100%);height:min(760px,calc(100dvh - 70px));margin-top:44px;border-radius:22px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.35)}' +
         '.tex-panel iframe{width:100%;height:100%;border:0;display:block;border-radius:22px}' +
         '.tex-panel-x{position:absolute;top:-46px;right:0;border:2px solid #fff!important;width:38px;height:38px;border-radius:50%;border:0;background:#0f172a;color:#fff;font-size:22px;line-height:38px;cursor:pointer;z-index:2}';
       document.head.appendChild(st);
-      var w = document.createElement('div'); w.className = 'tex-panel'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-label', 'Join TexContractor');
-      w.innerHTML = '<div class="tex-panel-box"><button class="tex-panel-x" type="button" aria-label="Close">×</button><iframe title="Join TexContractor" src="' + src + '"></iframe></div>';
+      var w = document.createElement('div'); w.className = 'tex-panel'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-label', 'Find a pro near you');
+      w.innerHTML = '<div class="tex-panel-box"><button class="tex-panel-x" type="button" aria-label="Close">×</button><iframe title="Find a pro near you" src="' + src + '"></iframe></div>';
       function close() { try { sessionStorage.setItem('tex_panel_closed', '1'); } catch (_) {} w.remove(); document.documentElement.style.overflow = ''; }
       w.querySelector('.tex-panel-x').onclick = close;
       w.addEventListener('click', function (e) { if (e.target === w) close(); });

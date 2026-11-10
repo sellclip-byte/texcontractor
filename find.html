@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Find a pro near you · TexContractor</title>
+<meta name="description" content="Pick the service you need and your ZIP code, and see local pros near you on TexContractor.">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="favicon.ico">
+<style>
+:root{--g:#075c4b;--gold:#c99a3a;--ink:#0f172a;--mut:#64748b;--line:#e7dcc4;--bg:#fbf8f1}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:22px 16px}
+.card{width:100%;max-width:460px;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 30px rgba(60,40,0,.08);padding:22px 20px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.top img{height:44px;display:block}
+.lg{display:flex;gap:4px}.lg button{display:inline-flex;align-items:center;gap:5px;font:800 12px Arial;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--mut);cursor:pointer}.lg button[aria-pressed=false]{border-color:var(--line)!important;background:#fff!important;color:var(--mut)!important}.lg button[aria-pressed=true]{background:#fff4dc;border-color:var(--gold);color:#7a5a00}.lg .fl{font-size:16px;line-height:1}
+h1{font-size:1.7rem;line-height:1.2;margin:6px 0 6px;color:var(--g)}
+.sub{color:var(--mut);margin:0 0 18px;font-size:1rem;line-height:1.45}
+label{display:block;font-weight:800;font-size:.92rem;margin:12px 0 6px;color:#1f2937}
+select,input{width:100%;height:54px;border:2px solid #9cc8bd;border-radius:14px;padding:0 14px;font:700 1.08rem Inter,Arial,sans-serif;background:#fff;color:var(--ink);outline:none}
+select:focus,input:focus{border-color:var(--g)}
+.go{display:block;width:100%;margin-top:16px;height:56px;border:0;border-radius:14px;background:linear-gradient(135deg,#0b7a63,#075c4b);color:#fff;font:900 1.1rem Arial;cursor:pointer}
+.err{color:#b42318;font-weight:700;font-size:.88rem;min-height:1.2em;margin:8px 0 0;text-align:center}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:.82rem;margin:16px 0 12px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.pro{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;padding:8px 12px;text-align:center;line-height:1.25;border-radius:14px;border:1px solid #c18a13;background:linear-gradient(110deg,#ba7c0c 0%,#edb72d 22%,#fff2aa 45%,#ffdc58 55%,#d99b14 80%,#f8d56a 100%);color:#2d2106;font:900 .95rem Arial;text-decoration:none;cursor:pointer}
+.note{color:var(--mut);font-size:.8rem;text-align:center;margin:14px 0 0;line-height:1.45}
+@media(max-width:699px){body{padding:8px;min-height:100dvh}.card{min-height:calc(100dvh - 16px);padding:18px 16px 14px}h1{font-size:1.6rem;margin-top:2px}.sub{font-size:.95rem;margin-bottom:10px}label{margin:10px 0 5px}.go{margin-top:12px}.or{margin:10px 0 8px}}
+@media(min-width:700px){body{align-items:center;padding:40px 24px}.card{max-width:560px;padding:32px 34px 26px}h1{font-size:2.2rem}}
+</style>
+<script src="/tex-readable.js?v=5" defer></script>
+</head>
+<body>
+<main class="card">
+  <div class="top">
+    <a href="/" target="_top"><img src="texcontractor-logo.png" alt="TexContractor"></a>
+    <div class="lg"><button data-l="en" aria-pressed="true" aria-label="English"><span class="fl">🇺🇸</span> EN</button><button data-l="es" aria-pressed="false" aria-label="Español"><span class="fl">🇲🇽</span> ES</button></div>
+  </div>
+  <h1 id="h"></h1>
+  <p class="sub" id="s"></p>
+  <label for="svc" id="svcL"></label>
+  <select id="svc"></select>
+  <label for="zip" id="zipL"></label>
+  <input id="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="75001">
+  <button type="button" class="go" id="go"></button>
+  <p class="err" id="err" role="alert"></p>
+  <div class="or" id="or"></div>
+  <a class="pro" id="pro" href="/start.html?utm_source=site&amp;utm_medium=panel_find" target="_top"></a>
+  <p class="note" id="note"></p>
+</main>
+<script>
+/* Owner 11-10: the 20-second panel asks only for the service + ZIP (no phone). The phone is asked later,
+   when the customer taps "Text" on a pro, or at the last step of a pro's listing. */
+(function(){
+  var S=[['Central Air Conditioning Repair or Maintenance','AC / heating repair','Aire acondicionado / calefacción'],['Plumbing Pipe Repair','Plumber','Plomero'],['Electrical and Wiring Repair','Electrician','Electricista'],['Handyman','Handyman','Handyman (arreglos en casa)'],['House Cleaning','House cleaning','Limpieza de casa'],['Roof Repair or Maintenance','Roof repair','Reparación de techo'],['Tree Trimming and Removal','Tree trimming / removal','Poda / quitar árboles'],['Outdoor Landscaping and Design','Landscaping / yard','Jardinería'],['Appliance Repair or Maintenance','Appliance repair','Reparar electrodomésticos'],['Garage Door Repair','Garage door repair','Puerta de garaje'],['Pest Control Services','Pest control','Control de plagas'],['Fence and Gate Installation','Fence / gate','Cerca / portón'],['Interior Painting','Painting','Pintura'],['Floor Installation or Replacement','Flooring','Pisos'],['Drywall Repair and Texturing','Drywall repair','Reparar drywall'],['Concrete Installation','Concrete','Concreto'],['Lock Installation and Repair','Locksmith','Cerrajero'],['Window Repair','Window repair','Reparar ventanas'],['Junk Removal','Junk removal','Retiro de basura'],['Local Moving (under 50 miles)','Moving','Mudanzas'],['Carpet Cleaning','Carpet cleaning','Limpieza de alfombras'],['Swimming Pool Cleaning & Maintenance','Pool cleaning','Limpieza de alberca']];
+  var T={en:{h:'What do you need fixed?',s:'Thousands of local pros. Pick the service and your ZIP, and see the pros near you.',svcL:'Service you need',pick:'Choose a service',zipL:'Your ZIP code',go:'See pros near me →',or:'or',pro:'🛠️ Are you a pro? Add your service free →',note:'No sign-up needed to look.',ez:'Type your 5-digit ZIP code.',es:'Choose a service.'},
+         es:{h:'¿Qué necesitas arreglar?',s:'Miles de técnicos locales. Elige el servicio y tu código postal, y mira los técnicos cerca de ti.',svcL:'Servicio que necesitas',pick:'Elige un servicio',zipL:'Tu código postal (ZIP)',go:'Ver técnicos cerca →',or:'o',pro:'🛠️ ¿Eres técnico? Publica tu servicio gratis →',note:'No necesitas registrarte para ver.',ez:'Escribe tu código postal de 5 dígitos.',es:'Elige un servicio.'}};
+  var $=function(i){return document.getElementById(i)}, q=new URLSearchParams(location.search);
+  var L=(function(){ if(q.get('lang')==='es')return 'es'; try{return localStorage.getItem('texcontractor-language')==='es'?'es':'en'}catch(_){return 'en'} })();
+  function render(){var t=T[L],v=$('svc').value; document.documentElement.lang=L;
+    document.querySelectorAll('.lg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.l===L)});
+    ['h','s','svcL','zipL','go','or','pro','note'].forEach(function(k){$(k).textContent=t[k]});
+    $('svc').innerHTML='<option value="">'+t.pick+'</option>'+S.map(function(x){return '<option value="'+x[0].replace(/"/g,'&quot;')+'">'+(L==='es'?x[2]:x[1])+'</option>'}).join('');
+    $('svc').value=v; $('err').textContent='';
+    $('pro').href='/start.html?utm_source=site&utm_medium=panel_find'+(L==='es'?'&lang=es':'');}
+  document.querySelectorAll('.lg button').forEach(function(b){b.onclick=function(){L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()}});
+  render();
+  try{var st=JSON.parse(localStorage.getItem('texcontractor-location')||'{}'); if(st.zip)$('zip').value=String(st.zip).slice(0,5);}catch(_){}
+  $('zip').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,5)});
+  $('zip').addEventListener('keydown',function(e){if(e.key==='Enter')$('go').click()});
+  var nav=function(u){try{sessionStorage.setItem('tex_panel_closed','1')}catch(_){} try{(window.top||window).location.href=u}catch(_){location.href=u}};
+  $('pro').addEventListener('click',function(e){e.preventDefault(); try{window.texVisit&&texVisit('find_pro')}catch(_){} nav(this.href)});
+  $('go').onclick=function(){var t=T[L], s=$('svc').value, z=$('zip').value.trim();
+    if(!s){$('err').textContent=t.es;$('svc').focus();return}
+    if(!/^\d{5}$/.test(z)){$('err').textContent=t.ez;$('zip').focus();return}
+    try{localStorage.setItem('texcontractor-location',JSON.stringify({zip:z}))}catch(_){}
+    try{window.texVisit&&texVisit('find_go')}catch(_){}
+    nav('/contractor.html?'+new URLSearchParams({service:s,zip:z}).toString()+(L==='es'?'&lang=es':'')+'&utm_source=site&utm_medium=panel_find');};
+})();
+</script>
+</body>
+</html>

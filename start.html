@@ -164,14 +164,14 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 </main>
 <script src="tex-auth.js?v=20261109fin"></script>
 <script src="tex-admin.js?v=20261109wt"></script>
-<script src="tex-quick-signup.js?v=20261109c"></script>
+<script src="tex-quick-signup.js?v=20261110f"></script>
 <script>
 (function(){
 'use strict';
 const T={
  en:{k1:'Free for technicians',h1:'Get customers who text you directly',s1:'3 quick steps, under a minute. No lead fees. What is your trade?',
   st2:'Step 2 of 3',h2:'Where do you work?',s2:'Enter your ZIP code so customers near you can find you.',cityL:'Your city',next:'Continue',
-  st3:'Step 3 of 3',h3:'Where should customers text you?',s3:'We text you a code to confirm your number. No email or password needed.',
+  st3:'Step 3 of 3',h3:'Last step: your number, and you\'re online',s3:'It\'s free. Customers near you text you at this number. We text you a code to confirm it. No email or password.',
   nameL:'Your name or nickname',phoneL:'Mobile number',
   agree:'This is my mobile number and I can reply to customer texts. I agree to receive a one-time verification code by text (msg & data rates may apply) and to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms</a> and <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
   send:'Text me my code →',sending:'Sending…',google:'Or publish with Google',googleIn:'Publish my free profile',useEmail:'No Google? Use email instead',publishing:'Publishing…',
@@ -182,7 +182,7 @@ const T={
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos, menos de un minuto. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
-  st3:'Paso 3 de 3',h3:'¿A qué número te escriben los clientes?',s3:'Te mandamos un código para confirmar tu número. Sin email ni contraseña.',
+  st3:'Paso 3 de 3',h3:'Último paso: tu número, y ya estás en línea',s3:'Es gratis. Los clientes cerca de ti te escriben a este número. Te mandamos un código para confirmarlo. Sin email ni contraseña.',
   nameL:'Tu nombre o apodo',phoneL:'Número de celular',
   agree:'Este es mi celular y puedo responder mensajes de clientes. Acepto recibir un código por mensaje de texto (pueden aplicar cargos) y los <a href="site-guide.html#terms" target="_blank" rel="noopener">Términos</a> y la <a href="site-guide.html#privacy" target="_blank" rel="noopener">Política de privacidad</a>.',
   send:'Mándame mi código →',sending:'Enviando…',google:'O publicar con Google',googleIn:'Publicar mi perfil gratis',useEmail:'¿Sin Google? Usa tu email',publishing:'Publicando…',
@@ -226,7 +226,7 @@ function render(){
  const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+t('moreT');m.onclick=()=>{$('#allbox').hidden=false;$('#allq').focus();drawAll();$('#allbox').scrollIntoView({behavior:'smooth',block:'start'})};g.appendChild(m);$('#allq').placeholder=t('allQ');if(!$('#allbox').hidden)drawAll();
  $('#s4').textContent=fmt(t('s4'));$('#h5').textContent=fmt(t('h5'));$('#s5').textContent=fmt(t('s5'));
 }
-function go(n){st.step=n;$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
+function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_played')){sessionStorage.setItem('tex_last_played','1');var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.6;au.play().catch(function(){})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
  if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===3)setTimeout(()=>$('#name').focus(),200);if(n===4)setTimeout(()=>$('#code').focus(),200);render()}
 $('#allq').addEventListener('input',drawAll);
 $('#back').onclick=()=>go(Math.max(1,st.step-1));

@@ -22,7 +22,11 @@
   .tqs .tqs-switch{margin:12px 0 0;font-size:.9rem;text-align:center}
   .tqs .tqs-switch a{color:#075c4b;font-weight:800}
   .tqs .tqs-perks{margin:0 0 4px;padding-left:18px;color:#334155;font-size:.88rem}
-  .tqs .tqs-perks li{margin:2px 0}`;
+  .tqs .tqs-perks li{margin:2px 0}
+  .tqs .tqs-lg{display:flex;gap:4px;margin:0 0 10px}
+  .tqs .tqs-lg button{font:800 12px Arial;padding:5px 9px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer}
+  .tqs .tqs-lg button[aria-pressed=false]{border-color:#e2e8f0!important;background:#fff!important;color:#64748b!important}
+  .tqs .tqs-lg button[aria-pressed=true]{background:#fff4dc;border-color:#c99a3a;color:#7a5a00}`;
 
   function build() {
     const style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
@@ -30,6 +34,7 @@
     box.className = 'tqs-back'; box.hidden = true;
     box.innerHTML = `<form class="tqs" role="dialog" aria-modal="true" aria-labelledby="tqs-title" novalidate>
       <button class="tqs-x" type="button" aria-label="Close">&times;</button>
+      <div class="tqs-lg"><button type="button" data-l="en">🇺🇸 EN</button><button type="button" data-l="es">🇲🇽 ES</button></div>
       <h2 id="tqs-title"></h2>
       <p class="tqs-sub" id="tqs-sub"></p>
       <ul class="tqs-perks" id="tqs-perks"><li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li></ul>
@@ -56,6 +61,10 @@
       <p class="tqs-msg" id="tqs-msg" role="status"></p>
     </form>`;
     document.body.appendChild(box);
+    box.querySelectorAll('.tqs-lg button').forEach((b) => b.addEventListener('click', () => {
+      try { localStorage.setItem('texcontractor-language', b.dataset.l); } catch (_) {}
+      setMode(login); paintLang(); voice(true);
+    }));
     const form = box.querySelector('form');
     box.querySelector('.tqs-x').addEventListener('click', () => finish(false));
     box.addEventListener('click', (e) => { if (e.target === box) finish(false); });
@@ -123,6 +132,28 @@
   }
 
   let current = { name: '' };
+  const isEs = () => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } };
+  function paintLang() {
+    const es = isEs();
+    box.querySelectorAll('.tqs-lg button').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.l === 'es') === es)));
+    box.querySelector('#tqs-phone-l').textContent = es ? 'Número de celular' : 'Mobile number';
+    box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
+    box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
+    box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
+    if (box.dataset.sent !== '1') box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
+    try { document.querySelectorAll('.tex-nospam').forEach((p) => { p.textContent = es ? '🔒 Solo usamos tu número para que entres. Sin spam.' : '🔒 We only use your number to sign you in. No spam.'; }); } catch (_) {}
+  }
+  // Owner 11-10: a short line in the same warm voice when the customer reaches the number box (once per visit).
+  let audio = null;
+  function voice(force) {
+    if (current.intent === 'provider') return;
+    try {
+      if (!force && sessionStorage.getItem('tex_almost_played')) return;
+      sessionStorage.setItem('tex_almost_played', '1');
+      if (audio) { try { audio.pause(); } catch (_) {} }
+      audio = new Audio('/audio/almost-' + (isEs() ? 'es' : 'en') + '.mp3?v=1'); audio.volume = 0.6; audio.play().catch(() => {});
+    } catch (_) {}
+  }
   const PROVIDER = {
     en: { t: 'Create your free technician account', tl: 'Sign in to finish your profile', s: 'Then add your name, phone and a photo of your work.', sl: 'Welcome back. Sign in and finish your profile.', p: ['Free profile, no lead fees', 'Customers near you text you directly'], go: 'Create account & continue', gol: 'Sign in & continue', sw: 'Already have an account? <a href="#">Sign in</a>', swl: 'New here? <a href="#">Create a free account</a>', h: 'At least 6 characters, with a letter and a number.', pw: 'Password', g: 'Continue with Google' },
     es: { t: 'Crea tu cuenta gratis de técnico', tl: 'Inicia sesión para terminar tu perfil', s: 'Después agrega tu nombre, teléfono y una foto de tu trabajo.', sl: 'Bienvenido de nuevo. Inicia sesión y termina tu perfil.', p: ['Perfil gratis, sin pagar por clientes', 'Los clientes cerca de ti te escriben directo'], go: 'Crear cuenta y continuar', gol: 'Iniciar sesión y continuar', sw: '¿Ya tienes cuenta? <a href="#">Inicia sesión</a>', swl: '¿Eres nuevo? <a href="#">Crea una cuenta gratis</a>', h: 'Mínimo 6 caracteres, con una letra y un número.', pw: 'Contraseña', g: 'Continuar con Google' }
@@ -145,10 +176,12 @@
       sw.querySelector('a').addEventListener('click', (e) => { e.preventDefault(); box.querySelector('#tqs-msg').textContent = ''; setMode(!login); });
       return;
     }
-    const who = current.name ? current.name : 'this technician';
-    box.querySelector('#tqs-title').textContent = login ? 'Sign in to contact ' + who : 'Create a free account to contact ' + who;
-    box.querySelector('#tqs-sub').textContent = login ? 'Welcome back. Sign in and we will open the message for you.' : 'It takes about 20 seconds. Right after, we open the message for you.';
-    const perks = box.querySelector('#tqs-perks'); perks.hidden = login; perks.innerHTML = '<li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li>';
+    // Owner 11-10: the customer reaches this box only when they tap Text/Call on a pro, so tell them they are almost there.
+    const es = isEs();
+    const who = current.name ? current.name : (es ? 'este técnico' : 'this pro');
+    box.querySelector('#tqs-title').textContent = es ? '¡Ya casi! ✓' : "You're almost there ✓";
+    box.querySelector('#tqs-sub').textContent = es ? 'Pon tu número para escribirle a ' + who + ' ahora mismo. Te mandamos un código y abrimos el mensaje.' : 'Add your number to text ' + who + ' right away. We text you a code, then open the message for you.';
+    const perks = box.querySelector('#tqs-perks'); perks.hidden = true; perks.innerHTML = '';
     box.querySelector('#tqs-hint').hidden = login; box.querySelector('#tqs-hint').textContent = 'At least 6 characters, with a letter and a number.';
     box.querySelector('label[for="tqs-pass"]').textContent = 'Password';
     const g = box.querySelector('#tqs-google'); if (g) g.textContent = 'Continue with Google';
@@ -161,6 +194,7 @@
 
   function finish(ok) {
     if (!box) return;
+    try { audio && audio.pause(); } catch (_) {}
     box.hidden = true;
     document.documentElement.style.overflow = '';
     const p = pending; pending = null;
@@ -177,14 +211,10 @@
     setMode(false);
     box.querySelector('#tqs-msg').textContent = '';
     box.querySelector('#tqs-phonebox').hidden = false; box.querySelector('#tqs-emailbox').hidden = true;
-    { const es = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
-      box.querySelector('#tqs-phone-l').textContent = es ? 'Número de celular' : 'Mobile number';
-      box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
-      box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
-      box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
-      box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
-      box.dataset.sent = ''; box.querySelector('#tqs-codebox').hidden = true; box.querySelector('#tqs-phone').readOnly = false; box.querySelector('#tqs-code').value = ''; }
+    paintLang();
+    box.dataset.sent = ''; box.querySelector('#tqs-codebox').hidden = true; box.querySelector('#tqs-phone').readOnly = false; box.querySelector('#tqs-code').value = '';
     box.hidden = false; try { sessionStorage.setItem('tex_signup_started', '1'); } catch (_) {}
+    voice(false); try { window.texVisit && texVisit('phone_box'); } catch (_) {}
     document.documentElement.style.overflow = 'hidden';
     if (typeof gtag === 'function') gtag('event', 'quick_signup_open', { source: (opts && opts.source) || 'contact' });
     setTimeout(() => box.querySelector('#tqs-phone').focus(), 50);
