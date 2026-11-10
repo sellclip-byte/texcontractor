@@ -14,7 +14,7 @@ section{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px
 h2{font-size:1.05rem;margin:2px 0 8px}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:7px 8px;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap}th{color:var(--mut);font-weight:700}
 .err{color:#b91c1c;font-weight:700}.ev-view{color:var(--mut)}.ev-text_click,.ev-call_click{color:#b45309;font-weight:800}.ev-code_sent{color:#1d4ed8;font-weight:800}.ev-verified{color:var(--g);font-weight:900}
 </style></head><body><main>
-<h1>📊 عدّاد الزيارات</h1><p class="sub">مخفي، للأدمن بس. ما بنسجّل أي رقم أو اسم أو IP.</p>
+<h1>📊 عدّاد الزيارات</h1><p class="sub">مخفي، للأدمن بس. ما بنسجّل أي رقم أو اسم أو IP.</p><p class="sub">📅 العدّاد بدأ يوم 9 نوفمبر 2026، فلحد ما يمر أسبوع بتطلع أرقام "7 أيام" و"30 يوم" نفس أرقام اليوم تقريبًا. "سجّلوا" = حسابات جديدة بس (اللي بيرجع يدخل بحسابه ما بينعد من 10 نوفمبر).</p>
 <div class="bar" id="bar"><button data-d="1">اليوم</button><button data-d="7" aria-pressed="true">7 أيام</button><button data-d="30">30 يوم</button></div>
 <p id="msg" class="sub">جاري التحميل…</p>
 <div class="cards" id="cards"></div>
@@ -38,8 +38,8 @@ async function load(days){
   const d=await r.json();msg.textContent='';
   const sum=k=>d.by_day.reduce((a,x)=>a+(+x[k]||0),0);
   document.getElementById('cards').innerHTML=[['visitors','زوار'],['mobile','من تلفون'],['text_clicks','كبسوا Text/Call'],['codes_sent','طلبوا كود'],['verified','سجّلوا']].map(([k,l])=>'<div class="card"><b>'+sum(k)+'</b><span>'+l+'</span></div>').join('');
-  tbl('days',['اليوم','زوار','من تلفون','صفحات','كبسوا Text/Call','طلبوا كود','سجّلوا'],d.by_day.map(x=>[x.day,x.visitors,x.mobile,x.views,x.text_clicks,x.codes_sent,x.verified]));
-  tbl('srcs',['المصدر','زوار','كبسوا Text/Call','طلبوا كود','سجّلوا'],d.by_src.map(x=>[esc(x.src),x.visitors,x.text_clicks,x.codes_sent,x.verified]));
+  tbl('days',['اليوم','زوار','من تلفون','صفحات','كبسوا Text/Call','طلبوا كود','سجّلوا (جدد)'],d.by_day.map(x=>[x.day,x.visitors,x.mobile,x.views,x.text_clicks,x.codes_sent,x.verified]));
+  tbl('srcs',['المصدر','زوار','كبسوا Text/Call','طلبوا كود','سجّلوا (جدد)'],d.by_src.map(x=>[esc(x.src),x.visitors,x.text_clicks,x.codes_sent,x.verified]));
   tbl('pages',['الصفحة','زوار'],d.top_pages.map(x=>['<span dir="ltr">'+esc(x.path)+'</span>',x.visitors]));
   tbl('recent',['الوقت','الحركة','الصفحة','المصدر','الجهاز'],d.recent.map(x=>['<span dir="ltr">'+esc(x.time)+'</span>','<span class="ev-'+esc(x.ev)+'">'+(EV[x.ev]||esc(x.ev))+'</span>','<span dir="ltr">'+esc(x.path)+'</span>',esc(x.src||'مباشر'),x.device==='mobile'?'📱':'💻']));
 }

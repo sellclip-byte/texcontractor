@@ -220,7 +220,22 @@
     if (!src && ref) src = ref; // e.g. facebook.com, google.com, tiktok.com
     if (src && !ss('tex_vsrc')) ss('tex_vsrc', src.slice(0, 60)); // first touch for the whole visit
     var device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent || '') ? 'mobile' : 'desktop';
+    var send;
+    // 'verified' counts NEW accounts only: a returning member who signs in again is not a new sign-up.
     window.texVisit = function (ev) {
+      if (ev === 'verified') {
+        setTimeout(function () {
+          try {
+            var u = (JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null') || {}).user || {};
+            if (u.created_at && Date.now() - new Date(u.created_at).getTime() > 10 * 60 * 1000) return;
+          } catch (_) {}
+          send('verified');
+        }, 1500);
+        return;
+      }
+      send(ev);
+    };
+    send = function (ev) {
       try {
         fetch(SB + '/rest/v1/rpc/texcontractor_log_visit', { method: 'POST', keepalive: true,
           headers: { apikey: K, Authorization: 'Bearer ' + K, 'Content-Type': 'application/json' },
