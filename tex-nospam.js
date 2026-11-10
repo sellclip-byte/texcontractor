@@ -15,9 +15,13 @@
       var inp = document.getElementById(id); if (!inp || inp.dataset.nospam) return;
       inp.dataset.nospam = '1';
       var p = document.createElement('p'); p.className = 'tex-nospam';
-      p.style.cssText = 'margin:6px 2px 4px;font:600 12.5px/1.35 Inter,system-ui,Arial,sans-serif;color:#475569;text-align:left';
-      var anchor = inp.parentElement && /(^|\s)(ph|fld)(\s|$)/.test(inp.parentElement.className) ? inp.parentElement
-        : (inp.parentElement && inp.parentElement.tagName === 'LABEL' ? inp.parentElement : inp);
+      p.style.cssText = 'margin:6px 2px 4px;font:600 12.5px/1.35 Inter,system-ui,Arial,sans-serif;color:' + (inp.id === 'hj-ph' ? 'rgba(255,255,255,.85)' : '#475569') + ';text-align:left;flex-basis:100%;width:100%';
+      // Never inside a row (owner 11-10: on the home hero it squeezed the phone box): put it under the whole row/form.
+      var par = inp.parentElement, anchor = inp;
+      if (par) {
+        var cs = getComputedStyle(par);
+        if (/(^|\s)(ph|fld|hj-form)(\s|$)/.test(par.className) || par.tagName === 'LABEL' || par.tagName === 'FORM' || (/flex|grid/.test(cs.display) && cs.flexDirection !== 'column')) anchor = par;
+      }
       anchor.insertAdjacentElement('afterend', p);
     });
     var t = isEs() ? ES : EN;
