@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>You're signed in · TexContractor</title>
+<link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
+<style>
+  :root{--ink:#0f172a;--mut:#64748b;--g:#075c4b;--line:#e2e8f0}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f1f5f9;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:16px}
+  main{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 20px;box-shadow:0 12px 30px rgba(15,23,42,.08)}
+  .logo{display:block;margin:0 auto 6px;height:44px}
+  h1{font-size:1.25rem;text-align:center;margin:4px 0 2px}
+  .sub{text-align:center;color:var(--mut);font-size:.9rem;margin:0 0 16px}
+  .opt{border:2px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+  .opt h2{font-size:1rem;margin:0 0 4px}.opt p{margin:0 0 8px;color:var(--mut);font-size:.86rem}
+  .fld{position:relative}
+  input{width:100%;height:46px;padding:0 46px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;font-size:1rem;margin-top:6px}
+  input:focus{outline:2px solid #10b981;border-color:#10b981}
+  .eye{position:absolute;right:6px;top:calc(50% + 3px);transform:translateY(-50%);width:36px;height:36px;border:0;background:transparent;cursor:pointer;border-radius:8px;display:grid;place-items:center;color:#475569}
+  .btn{width:100%;min-height:44px;margin-top:10px;border:0;border-radius:10px;background:var(--g);color:#fff;font:inherit;font-weight:800;font-size:.98rem;cursor:pointer}
+  .btn.alt{background:#fff;color:var(--g);border:2px solid var(--g)}
+  .btn[disabled]{opacity:.6;cursor:wait}
+  .msg{min-height:1.1em;margin:8px 0 0;font-size:.88rem}
+  .msg.err{color:#b91c1c;font-weight:700}.msg.ok{color:var(--g);font-weight:700}
+  .skip{display:block;text-align:center;margin-top:6px;color:var(--mut);font-size:.9rem}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="texcontractor-logo.png" alt="TexContractor" onerror="this.style.display='none'">
+  <h1 data-t="h">You're signed in ✓</h1>
+  <p class="sub" id="who" data-t="s">Choose how you want to sign in next time.</p>
+
+  <section class="opt" id="optPw">
+    <h2 data-t="pwH">🔑 Set a password</h2>
+    <p data-t="pwP">Next time: your email + this password.</p>
+    <div class="fld"><input id="np" type="password" autocomplete="new-password" minlength="8" placeholder="New password"><button class="eye" type="button" aria-label="Show password" title="Show password"></button></div>
+    <button class="btn" type="button" id="savePw" data-t="pwB">Save password</button>
+    <p class="msg" id="mPw" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="opt" id="optPh">
+    <h2 data-t="phH">📱 Add your phone number</h2>
+    <p data-t="phP">Next time: type your phone and we text you a code. No password.</p>
+    <input id="ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16">
+    <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" hidden>
+    <button class="btn" type="button" id="sendPh" data-t="phB">Text me a code</button>
+    <p class="msg" id="mPh" role="status" aria-live="polite"></p>
+  </section>
+
+  <button class="btn alt" type="button" id="cont" data-t="go">Continue →</button>
+  <a class="skip" href="#" id="skip" data-t="skip">Skip for now</a>
+</main>
+
+<script src="tex-auth.js?v=20261109fin"></script>
+<script>
+(function () {
+  const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+  const $ = (id) => document.getElementById(id);
+  const ES = (() => { try { return localStorage.getItem('texcontractor-language') === 'es'; } catch (_) { return false; } })();
+  if (ES) {
+    const T = { h: 'Ya entraste ✓', s: 'Elige cómo entrar la próxima vez.', pwH: '🔑 Crea una contraseña', pwP: 'La próxima vez: tu email + esta contraseña.', pwB: 'Guardar contraseña',
+      phH: '📱 Agrega tu teléfono', phP: 'La próxima vez: escribe tu teléfono y te mandamos un código. Sin contraseña.', phB: 'Mándame un código', go: 'Continuar →', skip: 'Ahora no' };
+    document.querySelectorAll('[data-t]').forEach((e) => { if (T[e.dataset.t]) e.textContent = T[e.dataset.t]; });
+    document.documentElement.lang = 'es';
+  }
+  const say = (el, t, k) => { el.textContent = t || ''; el.className = 'msg' + (k ? ' ' + k : ''); };
+  const params = new URLSearchParams(location.search);
+  let next = TexAuth.safeReturnTo(params.get('next') || '');
+  const go = async () => {
+    try { next = await TexAuth.postLoginDestination(next); } catch (_) {}
+    if (!next || /^auth\.html|finish-signin/.test(next)) next = 'index.html';
+    location.replace(next);
+  };
+  $('cont').onclick = go; $('skip').onclick = (e) => { e.preventDefault(); go(); };
+
+  // Eye: show / hide the password.
+  const EYE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const OFF = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  const eye = document.querySelector('.eye'); eye.innerHTML = EYE;
+  eye.onclick = () => { const s = $('np').type === 'password'; $('np').type = s ? 'text' : 'password'; eye.innerHTML = s ? OFF : EYE; $('np').focus(); };
+
+  const call = async (path, method, body) => {
+    const token = await TexAuth.getAccessToken();
+    if (!token) throw new Error(ES ? 'Tu sesión terminó. Entra otra vez.' : 'Your session ended. Please sign in again.');
+    const r = await fetch(SB + path, { method, headers: { apikey: K, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.msg || j.error_description || j.message || 'Error');
+    return j;
+  };
+
+  (async () => {
+    try { TexAuth.captureMagicLinkSession(); } catch (_) {}
+    const user = await TexAuth.getUser().catch(() => null);
+    if (!user) { location.replace(TexAuth.authHref(next || 'index.html')); return; }
+    if (user.email) $('who').textContent = user.email + ' · ' + $('who').textContent;
+    if (user.phone) $('optPh').hidden = true; // already has a phone
+  })();
+
+  $('savePw').onclick = async () => {
+    const p = $('np').value;
+    if (p.length < 8 || !/[a-z]/i.test(p) || !/[0-9]/.test(p)) { say($('mPw'), ES ? 'Mínimo 8 caracteres, con una letra y un número.' : 'Use at least 8 characters, with a letter and a number.', 'err'); return; }
+    $('savePw').disabled = true; say($('mPw'), '…');
+    try { await call('/auth/v1/user', 'PUT', { password: p }); $('np').value = ''; say($('mPw'), ES ? 'Contraseña guardada ✓' : 'Password saved ✓', 'ok'); }
+    catch (e) { say($('mPw'), e.message, 'err'); }
+    $('savePw').disabled = false;
+  };
+
+  const e164 = (v) => { const d = String(v || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''); return d.length === 10 ? '+1' + d : ''; };
+  let sent = '';
+  $('sendPh').onclick = async () => {
+    const b = $('sendPh'); b.disabled = true;
+    try {
+      if (!sent) {
+        const ph = e164($('ph').value);
+        if (!ph) throw new Error(ES ? 'Escribe un celular de 10 dígitos.' : 'Enter a 10-digit mobile number.');
+        await call('/auth/v1/user', 'PUT', { phone: ph });
+        sent = ph; $('code').hidden = false; $('code').focus();
+        b.textContent = ES ? 'Confirmar código' : 'Confirm code';
+        say($('mPh'), ES ? 'Te mandamos un código por mensaje.' : 'We texted you a code.', 'ok');
+      } else {
+        const code = $('code').value.replace(/\D/g, '');
+        if (code.length !== 6) throw new Error(ES ? 'Escribe el código de 6 dígitos.' : 'Enter the 6-digit code.');
+        const r = await fetch(SB + '/auth/v1/verify', { method: 'POST', headers: { apikey: K, Authorization: 'Bearer ' + (await TexAuth.getAccessToken()), 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'phone_change', phone: sent, token: code }) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.msg || j.error_description || (ES ? 'Ese código no funcionó.' : 'That code did not work.'));
+        say($('mPh'), ES ? 'Teléfono agregado ✓ La próxima vez entra con tu teléfono.' : 'Phone added ✓ Next time sign in with your phone.', 'ok');
+        $('code').hidden = true; b.hidden = true;
+      }
+    } catch (e) { say($('mPh'), e.message, 'err'); }
+    b.disabled = false;
+  };
+})();
+</script>
+</body>
+</html>

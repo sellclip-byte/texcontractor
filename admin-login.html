@@ -58,7 +58,7 @@
   <p class="small"><a href="index.html">← Back to TexContractor</a></p>
 </main>
 
-<script src="tex-auth.js?v=20261109link2"></script>
+<script src="tex-auth.js?v=20261109fin"></script>
 <script>
 (function () {
   const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -106,7 +106,7 @@
     if (!em) { say('Type your email first.', 'err'); $('em').focus(); return; }
     $('link').disabled = true;
     try {
-      await TexAuth.sendMagicLink(em, 'admin-login.html');
+      await TexAuth.sendMagicLink(em, 'contractor-admin.html');
       say('Check your email and tap “Sign in”. It opens this page.', 'ok');
     } catch (err) { say(err.message, 'err'); }
     $('link').disabled = false;

@@ -12,7 +12,7 @@
 
   <script>/* owner 11-06: one sign-up screen everywhere -> the phone panel */
 try{(function(){var q=new URLSearchParams(location.search),r=q.get('return_to')||'';
-var h=location.hash||'';if(/admin/i.test(r)){location.replace('/admin-login.html'+(/access_token=|error/.test(h)?h:''));return;}if(/access_token=|error_description=/.test(h))return;if(q.get('classic')==='1')return;
+var h=location.hash||'';if(/access_token=/.test(h)){location.replace('/finish-signin.html?next='+encodeURIComponent(r||'index.html')+h);return;}if(/admin/i.test(r)){location.replace('/admin-login.html'+(/error/.test(h)?h:''));return;}if(/access_token=|error_description=/.test(h))return;if(q.get('classic')==='1')return;
 var o=new URLSearchParams();if(r)o.set('return_to',r);var i=q.get('intent');if(i==='provider')o.set('role','pro');else if(i==='customer')o.set('role','customer');
 var l=q.get('lang');if(l)o.set('lang',l);location.replace('/signup.html'+(o.toString()?'?'+o:''));})()}catch(e){}</script><meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -185,7 +185,7 @@ var l=q.get('lang');if(l)o.set('lang',l);location.replace('/signup.html'+(o.toSt
   });
 })();
 </script>
-<script src="tex-auth.js?v=20261109link2"></script><script src="tex-join.js?v=20261106-nopop"></script>
+<script src="tex-auth.js?v=20261109fin"></script><script src="tex-join.js?v=20261106-nopop"></script>
 <script>
 (function () {
   var box = document.querySelector('[data-join]');

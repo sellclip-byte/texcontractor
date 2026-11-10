@@ -407,22 +407,16 @@
       return;
     }
     if (!/access_token=/.test(h) || !/refresh_token=/.test(h)) return;
-    if (/\/auth\.html$/.test(window.location.pathname)) return; // auth.html handles it itself
+    if (/\/auth\.html$/.test(window.location.pathname)) return; // auth.html sends it to finish-signin.html
     captureMagicLinkSession();
+    // These pages show their own 'you are signed in' screen.
+    if (/\/(finish-signin|admin-login)\.html$/.test(window.location.pathname)) return;
     (async () => {
       let want = '';
       try { want = localStorage.getItem('tex_magic_return') || ''; localStorage.removeItem('tex_magic_return'); } catch (_) {}
-      const here = window.location.pathname.replace(/^\//, '') || 'index.html';
-      for (let attempt = 0; attempt < 3; attempt++) {
-        try {
-          const dest = await postLoginDestination(want || DEFAULT_RETURN);
-          if (dest && !/^auth\.html/.test(dest)) {
-            if (dest.split(/[?#]/)[0] !== here) window.location.replace(dest); else window.location.reload();
-            return;
-          }
-        } catch (_) {}
-        await new Promise((r) => setTimeout(r, 1200));
-      }
+      // Owner 11-09: after an email link, offer 'set a password' or 'add your phone' before going on.
+      window.location.replace('finish-signin.html?next=' + encodeURIComponent(safeReturnTo(want || DEFAULT_RETURN)));
+      return;
     })();
   })();
 
