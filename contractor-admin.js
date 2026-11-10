@@ -1,6 +1,7 @@
 (function () {
   let currentUser = null;
   let members = [];
+  let cardSent = new Map(); // member_id -> date the business card was sent (owner 11-09)
   let submissions = [];
   let importedBusinesses = [];
   const PAGE = 60;
@@ -148,7 +149,16 @@
         const chat = document.createElement('a');
         chat.className = 'member-action allow';
         chat.href = `messages.html?member=${encodeURIComponent(row.user_id)}` + (svcOf(row.user_id).length ? '&card=1' : '');
-        chat.textContent = svc.length ? '💬 Message / 🎁 Card' : '💬 Message';
+        const sentAt = cardSent.get(row.user_id);
+        if (sentAt) chat.href = `messages.html?member=${encodeURIComponent(row.user_id)}`; // card already sent: open the chat only
+        chat.textContent = svc.length && !sentAt ? '💬 Message / 🎁 Card' : '💬 Message';
+        if (svc.length) {
+          const tag = document.createElement('span');
+          tag.className = 'member-badge';
+          tag.style.cssText = sentAt ? 'background:#dcfce7;color:#166534;font-weight:800' : 'background:#fef3c7;color:#92400e;font-weight:800';
+          tag.textContent = sentAt ? '🎁 Card sent ' + displayDate(sentAt) + ' · تم إرسال الكرت' : '🎁 No card yet · لم يُرسل الكرت';
+          card.querySelector('.member-meta')?.appendChild(tag);
+        }
         chat.title = 'Open the private TexContractor conversation';
         actions.prepend(chat);
       }
@@ -926,6 +936,16 @@
       const result = await Promise.all([TexAdminApi.listMembers(), TexAdminApi.listSubmissions('all'), TexAdminApi.listReports()]);
       members = result[0];
       submissions = result[1];
+      try {
+        const tok = await TexAuth.getAccessToken(); const H = { apikey: 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', Authorization: 'Bearer ' + tok };
+        const SBU = 'https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/';
+        const [convs, msgs] = await Promise.all([
+          fetch(SBU + 'texcontractor_conversations?select=id,member_id', { headers: H }).then((r) => r.ok ? r.json() : []),
+          fetch(SBU + 'texcontractor_messages?select=conversation_id,created_at&body=ilike.*texcontractor.com/p/*&order=created_at.asc', { headers: H }).then((r) => r.ok ? r.json() : [])
+        ]);
+        const byConv = new Map(convs.map((c) => [c.id, c.member_id]));
+        cardSent = new Map(); msgs.forEach((m) => { const mid = byConv.get(m.conversation_id); if (mid && !cardSent.has(mid)) cardSent.set(mid, m.created_at); });
+      } catch (_) { cardSent = new Map(); }
       await importsPromise;
       reports = result[2];
       updateSummary();

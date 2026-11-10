@@ -141,6 +141,15 @@
     const form = document.getElementById('message-form'); form.parentNode.insertBefore(b, form);
     b.addEventListener('click', async () => {
       if (!selectedConversation) return;
+      // Owner 11-09: a card goes out automatically at sign-up; never send it twice by mistake.
+      const already = [...chatMessages.querySelectorAll('.msg-card')].length;
+      if (already && b.dataset.confirm !== '1') {
+        b.dataset.confirm = '1'; b.textContent = '⚠️ Card already sent · click again to send anyway';
+        showMessage('This member already got the business card (see the chat). تم إرسال الكرت مسبقاً.');
+        setTimeout(() => { b.dataset.confirm = ''; b.textContent = '🎁 Send business card'; }, 8000);
+        return;
+      }
+      b.dataset.confirm = ''; b.textContent = '🎁 Send business card';
       b.disabled = true;
       try {
         const q = new URLSearchParams({ select: 'id,display_name,service', owner_id: `eq.${selectedConversation.member_id}`, is_published: 'eq.true', order: 'created_at.desc', limit: '3' });
@@ -296,7 +305,7 @@
         back.style.cssText = 'display:inline-block;margin:0 0 10px;font-weight:800;color:#075c4b';
         document.getElementById('messages-app').before(back);
         if (selected) await selectConversation(selected);
-        if (selected && new URLSearchParams(window.location.search).get('card') === '1') cardButton.click();
+        if (selected && new URLSearchParams(window.location.search).get('card') === '1' && !chatMessages.querySelector('.msg-card')) cardButton.click();
       }
     } catch (error) {
       showMessage(`Could not load messages: ${error.message}`);
