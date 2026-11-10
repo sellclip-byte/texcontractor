@@ -34,7 +34,7 @@
     box.className = 'tqs-back'; box.hidden = true;
     box.innerHTML = `<form class="tqs" role="dialog" aria-modal="true" aria-labelledby="tqs-title" novalidate>
       <button class="tqs-x" type="button" aria-label="Close">&times;</button>
-      <div class="tqs-lg"><button type="button" data-l="en">🇺🇸 EN</button><button type="button" data-l="es">🇲🇽 ES</button></div>
+      <div class="tqs-lg"><button type="button" data-l="en" data-tex-readable="1">🇺🇸 EN</button><button type="button" data-l="es" data-tex-readable="1">🇲🇽 ES</button></div>
       <h2 id="tqs-title"></h2>
       <p class="tqs-sub" id="tqs-sub"></p>
       <ul class="tqs-perks" id="tqs-perks"><li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li></ul>
