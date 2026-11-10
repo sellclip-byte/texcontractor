@@ -299,7 +299,7 @@ try{const hm=/^#ph=(\d{10})$/.exec(location.hash);if(hm){try{sessionStorage.setI
 try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp)){st.phone=pretty(pp);$('#phone').value=st.phone;ev('quick_from_pro');T.en.k1='✓ Number saved';T.en.h1='Great! Now pick your trade';T.en.s1='Two more taps and customers can text you. Not here? Tap “All 63 trades”.';T.es.k1='✓ Número guardado';T.es.h1='¡Bien! Ahora escoge tu oficio';T.es.s1='Dos pasos más y los clientes te pueden escribir. ¿No está tu oficio? Toca “Los 63 oficios”.'}}catch(_){}
 if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#google').style.marginTop='10px'}
 (async()=>{const q=new URLSearchParams(location.search);let u=null;try{u=await TexAuth.getUser()}catch(_){}
- const NEW_SIGNUP_FIRST=q.get('src')!=='home'; // owner 11-04: home-page banner keeps the old flow
+ const NEW_SIGNUP_FIRST=q.get('signup_first')==='1'; // owner 11-10: pros pick trade + ZIP first, the phone is the LAST step (was phone-first via signup.html since 11-04)
  if(NEW_SIGNUP_FIRST&&!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
   location.replace('signup.html?'+p.toString()+h);return}
  $('#app').style.visibility='';
@@ -319,5 +319,6 @@ render();go(1);
 </script>
 <script>(function(){try{var es=(document.documentElement.lang||'').indexOf('es')===0||/[?&]lang=es/.test(location.search)||localStorage.getItem('texcontractor-language')==='es';if(!es)return;document.getElementById('wtL').textContent='¿Para quién trabajas? (toca uno o los dos)';document.getElementById('wtR').textContent='Residencial';document.getElementById('wtC').textContent='Comercial';}catch(e){}})();</script>
 <script src="/tex-nospam.js?v=2" defer></script>
+<script>/* owner 11-10: ZIP typed on the home hero / panel carries over */(function(){try{var z=new URLSearchParams(location.search).get('zip');if(!/^\d{5}$/.test(z||''))return;var e=document.getElementById('zip');if(e&&!e.value){e.value=z;e.dispatchEvent(new Event('input',{bubbles:true}))}}catch(_){}})();</script>
 </body>
 </html>

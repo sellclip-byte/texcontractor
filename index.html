@@ -704,7 +704,11 @@ window.TEX_PANEL_DELAY=20000; /* owner 11-10: let phone visitors browse 20 s fir
 .hj-msg{min-height:58px;transition:opacity .6s ease}.hj-msg.fade{opacity:0}
 .hj-t1{display:block;color:#f2c14e;font:800 clamp(1.05rem,2.2vw,1.45rem)/1.15 system-ui,sans-serif}
 .hj-t2{display:block;color:#e8f5ee;font:600 clamp(.85rem,1.5vw,1rem)/1.3 system-ui,sans-serif;margin-top:3px}
-.hj-form{display:flex;gap:8px;margin-top:10px;max-width:520px}
+.hj-svc,.hj-zip{height:50px;border:3px solid #edb72d;border-radius:12px;padding:0 12px;font:700 16px system-ui,sans-serif;color:#111;background:#fff;min-width:0}
+.hj-svc{flex:1}.hj-zip{width:110px;flex:0 0 110px}.hj-svc:focus,.hj-zip:focus{outline:none;border-color:#ffdc58;box-shadow:0 0 0 3px rgba(237,183,45,.35)}
+#hero-join[data-slide="1"] .hj-svc{display:none}#hero-join[data-slide="1"] .hj-zip{flex:1;width:auto}
+@media(max-width:640px){.hj-form{flex-wrap:wrap}.hj-svc{flex:1 1 100%}.hj-zip{flex:1 1 90px}}
+.hj-form{display:flex;gap:8px;margin-top:10px;max-width:560px}
 .hj-cc{display:flex;align-items:center;padding:0 12px;border-radius:12px;background:#fff;font:800 15px system-ui,sans-serif;color:#111}
 .hj-ph{flex:1;min-width:0;height:50px;border:3px solid #edb72d;border-radius:12px;padding:0 14px;font:700 18px system-ui,sans-serif;color:#111;background:#fff}
 .hj-ph:focus{outline:none;border-color:#ffdc58;box-shadow:0 0 0 3px rgba(237,183,45,.35)}
@@ -848,11 +852,11 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
       <div class="hj-main">
         <img class="hj-logo" src="texcontractor-logo.png" alt="TexContractor">
         <div class="hj-msg" aria-live="polite"><b class="hj-t1"></b><span class="hj-t2"></span></div>
-        <label class="hj-lab" for="hj-ph">👇 <span class="hj-lab-t">Start here: type your mobile number</span></label>
+        <label class="hj-lab" for="hj-svc">👇 <span class="hj-lab-t">Start here: what do you need fixed?</span></label>
         <form class="hj-form" novalidate>
-          <span class="hj-cc">🇺🇸 +1</span>
-          <input id="hj-ph" class="hj-ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" aria-label="Your mobile number">
-          <button type="submit" class="hj-go" aria-label="Start"><span class="hj-go-t">Start</span> →</button>
+          <select id="hj-svc" class="hj-svc" aria-label="Service you need"></select>
+          <input id="hj-zip" class="hj-zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="ZIP" aria-label="Your ZIP code">
+          <button type="submit" class="hj-go" aria-label="Start"><span class="hj-go-t">See pros</span> →</button>
         </form>
         <div class="hj-chips" role="radiogroup"><button type="button" class="hj-chip" data-r="0" role="radio">🔍 <span>I need a pro</span></button><button type="button" class="hj-chip" data-r="1" role="radio">🛠️ <span>I'm a pro</span></button></div>
         <div class="hj-fine"></div>
@@ -1807,34 +1811,40 @@ document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max
   <script src="tex-pulse.js?v=20261107calm" defer></script>
 <script src="tex-pros-ticker.js?v=10" defer></script>
 <script>
-(function(){ // owner 11-07 hero: same phone box, slow flip customer <-> technician
+(function(){ // owner 11-10 hero: no phone first. Customer: service + ZIP -> pros near them. Pro: ZIP -> add my service.
   var h=document.getElementById('hero-join'); if(!h) return;
   var es=function(){return (document.documentElement.lang||'').indexOf('es')===0};
-  var T={en:[['Something broken at home?','Add your phone and text a local pro directly. Free.'],['Customers are looking for you.','Add your phone so customers near you can text you. Free.']],
-         es:[['¿Algo se descompuso en casa?','Pon tu teléfono y escríbele directo a un técnico cerca de ti. Gratis.'],['Los clientes te están buscando.','Pon tu teléfono para que los clientes cerca de ti te escriban. Gratis.']]};
-  var F={en:['✓ Free for customers  ✓ No calls, no waiting','✓ Free for pros  ✓ No lead fees  ✓ No commission'],es:['✓ Gratis para clientes  ✓ Sin llamadas ni esperas','✓ Gratis para técnicos  ✓ Sin pagar por cliente']};
-  var i=0,ph=h.querySelector('.hj-ph'),msg=h.querySelector('.hj-msg');
+  var T={en:[['Something broken at home?','Pick the service and your ZIP, and text a local pro directly. Free.'],['Customers are looking for you.','Add your service free so customers near you can text you.']],
+         es:[['¿Algo se descompuso en casa?','Elige el servicio y tu código postal, y escríbele directo a un técnico cerca. Gratis.'],['Los clientes te están buscando.','Publica tu servicio gratis para que los clientes cerca de ti te escriban.']]};
+  var F={en:['✓ Free for customers  ✓ No sign-up needed to look','✓ Free for pros  ✓ No lead fees  ✓ No commission'],es:['✓ Gratis para clientes  ✓ No necesitas registrarte para ver','✓ Gratis para técnicos  ✓ Sin pagar por cliente']};
+  var S=[['Central Air Conditioning Repair or Maintenance','AC / heating repair','Aire acondicionado / calefacción'],['Plumbing Pipe Repair','Plumber','Plomero'],['Electrical and Wiring Repair','Electrician','Electricista'],['Handyman','Handyman','Handyman (arreglos en casa)'],['House Cleaning','House cleaning','Limpieza de casa'],['Roof Repair or Maintenance','Roof repair','Reparación de techo'],['Tree Trimming and Removal','Tree trimming / removal','Poda / quitar árboles'],['Outdoor Landscaping and Design','Landscaping / yard','Jardinería'],['Appliance Repair or Maintenance','Appliance repair','Reparar electrodomésticos'],['Garage Door Repair','Garage door repair','Puerta de garaje'],['Pest Control Services','Pest control','Control de plagas'],['Fence and Gate Installation','Fence / gate','Cerca / portón'],['Interior Painting','Painting','Pintura'],['Floor Installation or Replacement','Flooring','Pisos'],['Drywall Repair and Texturing','Drywall repair','Reparar drywall'],['Concrete Installation','Concrete','Concreto'],['Lock Installation and Repair','Locksmith','Cerrajero'],['Window Repair','Window repair','Reparar ventanas'],['Junk Removal','Junk removal','Retiro de basura'],['Local Moving (under 50 miles)','Moving','Mudanzas'],['Carpet Cleaning','Carpet cleaning','Limpieza de alfombras'],['Swimming Pool Cleaning & Maintenance','Pool cleaning','Limpieza de alberca']];
+  var i=0,sv=h.querySelector('.hj-svc'),zp=h.querySelector('.hj-zip'),msg=h.querySelector('.hj-msg');
+  try{var st=JSON.parse(localStorage.getItem('texcontractor-location')||'{}');if(st.zip)zp.value=String(st.zip).slice(0,5)}catch(_){}
   function set(el,v){if(el.textContent!==v)el.textContent=v}
-  function paint(){var L=es()?'es':'en';h.dataset.slide=i;set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);var sm=innerWidth<640,pl=L==='es'?(sm?'Tu número aquí':'Escribe tu número aquí'):(sm?'Your number here':'Type your number here');if(ph.placeholder!==pl)ph.placeholder=pl;set(h.querySelector('.hj-go-t'),L==='es'?'Empezar':'Start')}
-  // owner 11-07: label types itself like live typing (EN/ES)
+  var svL='';function fillSvc(L){if(svL===L)return;svL=L;var v=sv.value;sv.innerHTML='<option value="">'+(L==='es'?'¿Qué necesitas?':'What do you need?')+'</option>'+S.map(function(x){return '<option value="'+x[0].replace(/"/g,'&quot;')+'">'+(L==='es'?x[2]:x[1])+'</option>'}).join('');sv.value=v}
+  function paint(){var L=es()?'es':'en';h.dataset.slide=i;fillSvc(L);set(h.querySelector('.hj-t1'),T[L][i][0]);set(h.querySelector('.hj-t2'),T[L][i][1]);set(h.querySelector('.hj-fine'),F[L][i]);
+    var pl=L==='es'?'Tu ZIP':'Your ZIP';if(zp.placeholder!==pl)zp.placeholder=pl;set(h.querySelector('.hj-go-t'),i===1?(L==='es'?'Publicar mi servicio':'Add my service'):(L==='es'?'Ver técnicos':'See pros'))}
   var lab=h.querySelector('.hj-lab-t'),tw=0;
-  (function type(){var L=es()?'es':'en',full=L==='es'?'Empieza aquí: escribe tu número de celular':'Start here: type your mobile number';
+  (function type(){var L=es()?'es':'en',full=i===1?(L==='es'?'Empieza aquí: tu código postal':'Start here: your ZIP code'):(L==='es'?'Empieza aquí: ¿qué necesitas arreglar?':'Start here: what do you need fixed?');
     if(tw<=full.length){lab.textContent=full.slice(0,tw);tw++;setTimeout(type,tw===1?400:55);}
     else{setTimeout(function(){tw=0;type();},4500);} })();
   var lastL=''; function sync(){var L=es()?'es':'en'; if(L!==lastL){lastL=L;paint()}}
   var locked=false,chips=[].slice.call(h.querySelectorAll('.hj-chip'));
   function chipPaint(){var L=es()?'es':'en';chips.forEach(function(c,k){c.setAttribute('aria-checked',String(k===i));set(c.querySelector('span'),k===0?(L==='es'?'Necesito un técnico':'I need a pro'):(L==='es'?'Soy técnico':"I'm a pro"))})}
-  chips.forEach(function(c){c.addEventListener('click',function(){locked=true;i=+c.dataset.r;paint();chipPaint();ph.focus()})});
+  chips.forEach(function(c){c.addEventListener('click',function(){locked=true;i=+c.dataset.r;tw=0;paint();chipPaint();(i===1?zp:sv).focus()})});
   var _paint=paint; paint=function(){_paint();chipPaint()};
   paint(); lastL=es()?'es':'en'; setInterval(sync,800);
-  setInterval(function(){ if(locked||document.hidden||document.activeElement===ph||ph.value) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;paint();msg.classList.remove('fade')},600); },6000);
-  var dg=function(v){return String(v||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'')};
-  var pr=function(d){return d.length<4?d:d.length<7?'('+d.slice(0,3)+') '+d.slice(3):'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6,10)};
-  ph.addEventListener('input',function(){ph.value=pr(dg(ph.value).slice(0,10));ph.style.borderColor=''});
-  h.querySelector('.hj-form').addEventListener('submit',function(e){e.preventDefault();var d=dg(ph.value);if(d.length!==10){ph.style.borderColor='#ef4444';ph.focus();return}
-    // the number travels only in the #fragment and the sign-up page clears it right away
+  var busy=function(){return document.activeElement===sv||document.activeElement===zp||sv.value};
+  setInterval(function(){ if(locked||document.hidden||busy()) return; msg.classList.add('fade'); setTimeout(function(){i=1-i;tw=0;paint();msg.classList.remove('fade')},600); },6000);
+  zp.addEventListener('input',function(){zp.value=zp.value.replace(/\D/g,'').slice(0,5);zp.style.borderColor=''});
+  sv.addEventListener('change',function(){sv.style.borderColor='';locked=true});
+  h.querySelector('.hj-form').addEventListener('submit',function(e){e.preventDefault();var z=zp.value.trim(),L=es()?'es':'en';
+    if(i===0&&!sv.value){sv.style.borderColor='#ef4444';sv.focus();return}
+    if(!/^\d{5}$/.test(z)){zp.style.borderColor='#ef4444';zp.focus();return}
+    try{localStorage.setItem('texcontractor-location',JSON.stringify({zip:z}))}catch(_){}
     try{window.texVisit&&texVisit('join_banner')}catch(_){}
-    location.href='signup.html?role='+(i===1?'pro':'customer')+'&src=home_hero'+(es()?'&lang=es':'')+'#ph='+d;});
+    if(i===1){location.href='start.html?src=home_hero&zip='+z+(L==='es'?'&lang=es':'');return}
+    location.href='contractor.html?'+new URLSearchParams({service:sv.value,zip:z}).toString()+(L==='es'?'&lang=es':'')+'&utm_source=site&utm_medium=home_hero';});
 })();
 </script>
 <script src="tex-pw-eye.js?v=1" defer></script>
