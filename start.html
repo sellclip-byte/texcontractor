@@ -115,6 +115,8 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
     <p class="sub" id="zipcity" style="margin:10px 2px 0;font-weight:700;color:#075c4b"></p>
     <div id="cityfb" hidden><label class="lb" for="cityin" data-t="cityL"></label><input class="field" id="cityin" autocomplete="address-level2"></div>
     <div id="namebox" hidden><label class="lb" for="name2" data-t="nameL"></label><input class="field" id="name2" autocomplete="name" maxlength="40"></div>
+    <div class="wt-pick" style="margin:14px 0 4px"><span class="lb" id="wtL" style="display:block;font-weight:800;margin-bottom:6px">Who do you work for? (tap one or both)</span><div class="wt-row"><label class="wt-opt wt-res"><input type="checkbox" id="wtRes"> <b>🏠 <span id="wtR">Residential</span></b></label><label class="wt-opt wt-com"><input type="checkbox" id="wtCom"> <b>🏢 <span id="wtC">Commercial</span></b></label></div></div>
+    <style>.wt-row{display:flex;gap:10px}.wt-opt{flex:1;display:flex;align-items:center;justify-content:center;border:2px solid #e2e8f0;border-radius:12px;padding:12px 8px;cursor:pointer;background:#fff;color:#334155;font-weight:800;position:relative}.wt-opt input{position:absolute;opacity:0;width:1px;height:1px}.wt-res:has(input:checked){border-color:#1d4ed8;background:#1d4ed8;color:#fff}.wt-com:has(input:checked){border-color:#ea580c;background:#ea580c;color:#fff}.wt-opt:has(input:focus-visible){outline:3px solid #93c5fd}</style>
     <p class="err" id="err2" role="alert"></p>
     <button class="cta" id="zipgo" disabled data-t="next"></button>
   </section>
@@ -161,7 +163,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
   </div>
 </main>
 <script src="tex-auth.js?v=20261106stay"></script>
-<script src="tex-admin.js?v=20261108price"></script>
+<script src="tex-admin.js?v=20261109wt"></script>
 <script src="tex-quick-signup.js?v=20261109c"></script>
 <script>
 (function(){
@@ -254,7 +256,7 @@ async function publish(user){
   const svc=st.trade.s;
   const data={realName:st.name,displayName:st.name,phone:st.phone,email:String(user.email||''),years:'',city:st.city,state:st.state||'TX',service:svc,
    about:(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'. Manda un mensaje para pedir un presupuesto.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'. Send a text to get a quote.'),
-   speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:''};
+   speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:'',workRes:($('#wtRes')&&$('#wtRes').checked)?'yes':'',workCom:($('#wtCom')&&$('#wtCom').checked)?'yes':''};
   // never create a second listing for the same phone + trade (imported directory listing or an earlier sign-up)
   let dup=null;try{dup=await TexAdminApi.listingForPhone(st.phone,svc)}catch(_){dup=null}
   if(dup&&dup.id){try{localStorage.removeItem(DRAFT)}catch(_){}
@@ -315,5 +317,6 @@ if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#go
 render();go(1);
 })();
 </script>
+<script>(function(){try{var es=(document.documentElement.lang||'').indexOf('es')===0||/[?&]lang=es/.test(location.search)||localStorage.getItem('texcontractor-language')==='es';if(!es)return;document.getElementById('wtL').textContent='¿Para quién trabajas? (toca uno o los dos)';document.getElementById('wtR').textContent='Residencial';document.getElementById('wtC').textContent='Comercial';}catch(e){}})();</script>
 </body>
 </html>
