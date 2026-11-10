@@ -132,9 +132,12 @@
         </div>
         <div class="member-side"><span class="member-state${blocked ? ' blocked' : ''}">${blocked ? 'Blocked' : 'Active'}</span><span>Last sign-in</span><strong>${escapeHtml(displayDate(row.last_sign_in_at))}</strong>${row.status_note ? `<span class="member-note">${escapeHtml(row.status_note)}</span>` : ''}<div class="member-actions">${isCurrentAdmin ? '' : `<button class="member-action ${blocked ? 'allow' : 'block'}" data-member-action type="button">${blocked ? 'Allow' : 'Block'}</button>`}</div></div>`;
       const avatar = card.querySelector('.member-avatar');
-      if (row.avatar_url) {
+      // Owner 11-09: phone sign-ups have no account photo; show the photo from their listing instead of initials.
+      const listingPhoto = (svc.find((x) => x.profile_photo_path) || {}).profile_photo_path;
+      const photoUrl = row.avatar_url || (listingPhoto && window.TexAdminApi && TexAdminApi.publicUrl ? TexAdminApi.publicUrl(listingPhoto) : '');
+      if (photoUrl) {
         const image = document.createElement('img');
-        image.src = row.avatar_url;
+        image.src = photoUrl;
         image.alt = `${name} profile`;
         image.referrerPolicy = 'no-referrer';
         image.onerror = () => image.remove();
