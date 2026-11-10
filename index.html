@@ -712,6 +712,16 @@ window.TEX_PANEL_DELAY=10000; /* owner 11-07: let phone visitors look around fir
 .hj-fine{margin-top:6px;color:#a7d8bf;font:700 12px system-ui,sans-serif}
 @media(max-width:640px){.hj{grid-template-columns:96px 1fr;gap:12px;padding:12px}.hj-pic{width:96px;height:96px}.hj-logo{height:26px}.hj-msg{min-height:72px}.hj-form{grid-column:1/-1}.hj-main{display:contents}.hj-logo,.hj-msg{grid-column:2}.hj-pic{grid-row:1/3}.hj-form,.hj-fine,.hj-lab,.hj-chips{grid-column:1/-1}.hj-cc{padding:0 8px;font-size:13px}.hj-go{padding:0 12px!important;font-size:16px!important}.hj-ph{font-size:16px;padding:0 10px}}
 </style>
+<style>/* owner 11-09: the pros' button must stand out (pros mixed it up with "Post a request") */
+.pro-list-btn{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;background:linear-gradient(110deg,#ba7c0c,#edb72d 30%,#ffdc58 55%,#d99b14)!important;color:#2d2106!important;border:2px solid #b07a12!important;font-weight:900!important;text-decoration:none;animation:proGlow 2.2s ease-in-out infinite;text-shadow:none!important}
+.pro-list-btn:hover{filter:brightness(1.06)}
+.post-service-button.pro-list-btn{min-height:54px!important;padding:0 26px!important;font-size:1.12rem!important;border-radius:999px}
+.cl-side-post.pro-list-btn{display:flex!important;flex-direction:column;gap:2px;padding:12px 8px!important;font-size:1.02rem!important;line-height:1.2;border-radius:12px;text-align:center}
+.req-strip-btns .pro-list-btn{border-radius:9px;padding:8px 14px;white-space:nowrap}
+@keyframes proGlow{0%,100%{box-shadow:0 0 0 0 rgba(237,183,45,.0),0 6px 16px rgba(15,23,42,.14)}50%{box-shadow:0 0 0 6px rgba(237,183,45,.28),0 0 22px 6px rgba(255,214,88,.55)}}
+@media (prefers-reduced-motion:reduce){.pro-list-btn{animation:none}}
+@media(max-width:760px){.req-strip-btns{flex-wrap:wrap}.req-strip-btns .pro-list-btn{order:-1;width:100%}}
+</style>
 </head>
 <body>
 
@@ -763,7 +773,7 @@ window.TEX_PANEL_DELAY=10000; /* owner 11-07: let phone visitors look around fir
   <div class="req-strip"><div class="req-strip-in">
     <span class="req-strip-tag">📋 NEW</span>
     <span class="req-strip-text">Need a job done? Post a request with photos and get offers from local technicians.<span class="req-strip-count" id="req-strip-count" hidden></span></span>
-    <span class="req-strip-btns"><a class="req-strip-post" href="requests.html?post=1">Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
+    <span class="req-strip-btns"><a class="pro-list-btn" href="start.html?src=strip">🛠️ Pros: list my service FREE</a><a class="req-strip-post" href="requests.html?post=1" title="For customers who need a job done">📋 Post a request</a><a class="req-strip-see" href="requests.html">See requests</a></span>
   </div></div>
 <style>
 dialog.join-box.join-pop{display:block;width:min(820px,calc(100% - 32px))!important;max-height:calc(100dvh - 32px)!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;grid-template-columns:none!important}
@@ -870,7 +880,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 <div class="cl-ex-box cl-pros"><div id="pros-ticker" data-variant="tile"></div></div><script>/* phones: show the new pros right above the services list (the left column drops to the bottom there) */
 document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max-width:1099px)').matches)return;var b=document.querySelector('.cl-pros'),h=document.querySelector('.catalog-head');if(b&&h&&h.parentNode){h.parentNode.insertBefore(b,h);b.classList.add('cl-pros-top')}}catch(e){}});</script>
     <aside class="cl-side" aria-label="Quick links">
-      <a class="cl-side-post" href="start.html"><span aria-hidden="true">&#9998;</span> List your service</a>
+      <a class="cl-side-post pro-list-btn" href="start.html?src=side_btn"><span aria-hidden="true">🛠️</span> Pros: list your service FREE</a>
       <a class="cl-side-post cl-side-req" href="requests.html?post=1"><span aria-hidden="true">&#128203;</span> Post a request</a>
       <form class="cl-side-search" id="cl-side-search" role="search">
         <span aria-hidden="true">&#128269;</span><input id="cl-side-q" type="search" placeholder="Search services" aria-label="Search services">
@@ -909,7 +919,7 @@ document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max
     <style>.bcard-promo{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;margin:14px 0 6px;padding:16px;border:2px solid #e8c766;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fff3d6);color:#111827;text-decoration:none;box-shadow:0 6px 18px rgba(15,23,42,.08)}.bcard-promo img{width:150px;height:auto;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.18);transform:rotate(-3deg)}.bcard-txt{display:flex;flex-direction:column;gap:6px}.bcard-tag{align-self:flex-start;padding:3px 10px;border-radius:999px;background:#075c4b;color:#fff;font-size:.75rem;font-weight:800;letter-spacing:.04em}.bcard-txt strong{font-size:1.3rem;line-height:1.2}.bcard-txt span{color:#374151;line-height:1.4}.bcard-cta{align-self:flex-start;margin-top:4px;padding:10px 16px;border-radius:12px;background:linear-gradient(110deg,#ba7c0c,#edb72d 30%,#ffdc58 55%,#d99b14);color:#2d2106!important;font-weight:900}@media(max-width:560px){.bcard-promo{grid-template-columns:96px 1fr;gap:12px;padding:12px}.bcard-promo img{width:96px}.bcard-txt strong{font-size:1.08rem}.bcard-txt span{font-size:.88rem}}.pro-banner,.bcard-row{position:relative;z-index:62}.bcard-txt .bcard-tag{color:#fff}.bcard-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin:14px 0 6px}.bcard-row .bcard-promo{margin:0;grid-template-columns:84px 1fr;gap:12px;padding:10px 12px}.bcard-row .bcard-promo img{width:84px}.bcard-row .bcard-txt strong{font-size:1.08rem}.bcard-row .bcard-txt span{font-size:.84rem}.bcard-row .bcard-txt>span:not(.bcard-tag):not(.bcard-cta){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bcard-row #pros-ticker{min-height:100%}.bcard-row #pros-ticker:empty{border:2px solid #e8c766;border-radius:16px;background:linear-gradient(135deg,#fffaf0,#fff3d6)}.bcard-row .pt-box{margin:0}@media(max-width:760px){.bcard-row{gap:8px}.bcard-row .bcard-promo{grid-template-columns:52px 1fr;gap:8px;padding:8px}.bcard-row .bcard-promo img{width:52px;transform:rotate(-3deg)}.bcard-row .bcard-tag,.bcard-row .bcard-txt>span:not(.bcard-tag):not(.bcard-cta){display:none}.bcard-row .bcard-txt{gap:6px}.bcard-row .bcard-txt strong{font-size:.86rem;line-height:1.15}.bcard-row .bcard-cta{padding:6px 8px;font-size:.74rem;margin-top:0}}</style>
     <div class="catalog-head">
       <h2 class="section-title" id="service-catalog">All Services (63 Categories)</h2>
-      <a class="post-service-button" aria-label="List your service (for technicians)" href="start.html"><span class="plus" aria-hidden="true">+</span><span>List your service</span></a>
+      <a class="post-service-button pro-list-btn" aria-label="Technicians: list your service free" href="start.html?src=catalog_btn"><span aria-hidden="true">🛠️</span><span>Pros: list your service FREE</span></a>
     </div>
     <div class="services-grid">
       
