@@ -1,0 +1,17 @@
+name: Technician share cards trigger
+# Scheduled workflows only run from the default branch (main). The card builder lives on
+# seo-safe-review-20261011, so this starts it every 30 minutes (owner 11-09: every new pro gets his card automatically).
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+permissions:
+  actions: write
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start "Build technician share cards" on the live branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pro-cards.yml --repo "${{ github.repository }}" --ref seo-safe-review-20261011
