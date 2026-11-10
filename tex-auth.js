@@ -412,12 +412,17 @@
     (async () => {
       let want = '';
       try { want = localStorage.getItem('tex_magic_return') || ''; localStorage.removeItem('tex_magic_return'); } catch (_) {}
-      try {
-        const dest = await postLoginDestination(want || DEFAULT_RETURN);
-        const here = window.location.pathname.replace(/^\//, '') || 'index.html';
-        if (dest && dest.split(/[?#]/)[0] !== here) window.location.replace(dest);
-        else if (dest) window.location.reload();
-      } catch (_) {}
+      const here = window.location.pathname.replace(/^\//, '') || 'index.html';
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const dest = await postLoginDestination(want || DEFAULT_RETURN);
+          if (dest && !/^auth\.html/.test(dest)) {
+            if (dest.split(/[?#]/)[0] !== here) window.location.replace(dest); else window.location.reload();
+            return;
+          }
+        } catch (_) {}
+        await new Promise((r) => setTimeout(r, 1200));
+      }
     })();
   })();
 
