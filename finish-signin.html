@@ -132,7 +132,16 @@
         say($('mPh'), ES ? 'Teléfono agregado ✓ La próxima vez entra con tu teléfono.' : 'Phone added ✓ Next time sign in with your phone.', 'ok');
         $('code').hidden = true; b.hidden = true;
       }
-    } catch (e) { say($('mPh'), e.message, 'err'); }
+    } catch (e) {
+      // Plain-language messages instead of the raw server text (owner test 11-09).
+      const m = String(e.message || '');
+      let t = m;
+      if (/already been registered|already registered|exists/i.test(m)) t = ES ? 'Este número ya tiene su propia cuenta en TexContractor. Para usarlo, sal de esta cuenta y entra con ese número.' : 'This number already has its own TexContractor account. To use it, sign out here and sign in with that number.';
+      else if (/rate|too many|after \d+ seconds/i.test(m)) t = ES ? 'Espera un minuto y vuelve a intentar.' : 'Please wait a minute and try again.';
+      else if (/invalid|expired|token/i.test(m) && sent) t = ES ? 'Ese código no funcionó o ya expiró. Pide uno nuevo.' : 'That code did not work or expired. Ask for a new one.';
+      else if (/phone/i.test(m) && !sent) t = ES ? 'No pudimos mandar el código a ese número. Revisa que sea un celular de EE. UU.' : 'We could not text that number. Check it is a U.S. mobile number.';
+      say($('mPh'), t, 'err');
+    }
     b.disabled = false;
   };
 })();
