@@ -164,6 +164,8 @@ window.addEventListener('beforeunload',e=>{if(st.dirty){e.preventDefault();e.ret
 render();
 (async()=>{let u=null;try{u=await TexAuth.getUser()}catch(_){}
  if(!u){location.replace('signup.html?return_to='+encodeURIComponent('my-photos.html'));return}
+ // 11-10 owner: the admin account owns the whole imported directory; this personal page must never edit other people's listings from it
+ if(u.id==='6d83440a-820a-4309-b666-cba8e24a8290'){document.querySelectorAll('main section.card').forEach((x,i)=>{if(i>0)x.hidden=true});msg(L==='es'?'Esta es la cuenta de administrador. Esta página es solo para técnicos. Para tu propio negocio, entra con tu cuenta de miembro.':'This is the admin account. This page is only for pros. For your own business, sign in with your member account.','err');const s=$('#save');if(s)s.hidden=true;return}
  try{st.rows=await TexAdminApi.myMedia(null)||[]}catch(e){msg((e&&e.message)||t('err'),'err');return}
  if(!st.rows.length){msg(t('noListing'),'err');$('#save').hidden=true;const a=document.createElement('a');a.href='start.html';a.textContent=L==='es'?'Publicar mi servicio →':'List my service →';$('.links').append(a);return}
  try{(await TexAdminApi.myCreds(null)||[]).forEach(c=>{st.creds[c.id]=c})}catch(_){}
