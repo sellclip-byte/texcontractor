@@ -208,7 +208,7 @@
 // Counts page views and the steps toward signing up, and where the visitor came from.
 (function () {
   try {
-    if (window.top !== window.self) return; // the sign-up panel is an iframe on the same visit
+    var inFrame = window.top !== window.self; // the panel is an iframe on the same visit: count its steps, not a second page view (fix 11-10)
     if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
     if (/admin|visits/i.test(location.pathname)) return;
     // do not count the site owner's own visits
@@ -248,6 +248,6 @@
             p_src: ss('tex_vsrc') || '', p_ev: ev || 'view', p_device: device, p_ref: ref }) }).catch(function () {});
       } catch (_) {}
     };
-    window.texVisit('view');
+    if (!inFrame) window.texVisit('view');
   } catch (_) {}
 })();
