@@ -135,6 +135,20 @@
       dialog { width:100vw; max-width:100vw; max-height:100dvh; height:100dvh; border-radius:0; margin:0; }
       .row2 { grid-template-columns:1fr; }
     }
+  
+    /* Owner 11-10: tidy request cards (no thick side stripe) + charcoal & gold instead of dark green, like the business card */
+    :root { --green:#1c1917; --green2:#000; }
+    .card { border-left:1px solid var(--line); border-color:#e6dcc4; }
+    .btn { background:radial-gradient(circle at 30% 20%,#2b2622,#14110f); color:#f4c95d; border:1.5px solid #c99a3a; }
+    .btn:hover { background:#14110f; }
+    .btn.ghost { background:#fff; color:#7a5200; border:1.5px solid #c99a3a; }
+    .svc { background:#fff3d6; color:#7a5200; border:1px solid #e6cf98; }
+    .ways span { border-color:#e6cf98; color:#7a5200; background:#fffaf0; }
+    .ways a { background:radial-gradient(circle at 30% 20%,#2b2622,#14110f); color:#f4c95d; border-color:#c99a3a; }
+    .more, .view-link, footer a { color:#7a5200; }
+    .msgs-link, .edit-btn { border-color:#c99a3a; color:#7a5200; }
+    .status-note { color:#7a5200; background:#fffaf0; }
+    nav a:hover { color:#7a5200; border-color:#e6cf98; background:#fffaf0; }
   </style>
 <script src="/tex-readable.js?v=5" defer></script></head>
 <body>
