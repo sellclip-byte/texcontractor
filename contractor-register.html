@@ -188,12 +188,12 @@
       window.clearTimeout(authFallbackTimer);
       signedInUser = user;
       if (user) document.body.classList.add('auth-ready');
-      // 11-10 owner: no listings on the admin account (it owns the imported directory). His own business uses his member account.
+      // 11-10 owner: on the admin account this form is ONLY for adding a listing for ANOTHER person (it goes into the directory, not the owner's own business).
       if (user && user.id === '6d83440a-820a-4309-b666-cba8e24a8290') {
-        const f = document.getElementById('register-form'); if (f) { f.hidden = true; f.style.setProperty('display', 'none', 'important'); }
+        const f = document.getElementById('register-form');
         const n = document.createElement('p'); n.className = 'notice';
         n.style.cssText = 'margin:16px 0;padding:14px;border-radius:12px;background:#fff3d6;border:1.5px solid #e6cf98;color:#7a5200;font-weight:800;text-align:center';
-        n.textContent = 'This is the admin account: no services are listed from here. To list or edit your own business, sign in with your member account.';
+        n.textContent = 'Admin mode: you are adding a listing for ANOTHER person (it goes into the directory). For your own business, sign in with your member account.';
         (f && f.parentNode ? f.parentNode.insertBefore(n, f) : document.querySelector('.page')?.prepend(n));
       }
     }).catch(() => {
