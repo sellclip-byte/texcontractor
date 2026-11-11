@@ -147,13 +147,15 @@ $('#save').onclick=async()=>{const b=$('#save');if(!st.cur)return;b.disabled=tru
   let addProof=null;if(st.proofData)addProof=await TexAdminApi.uploadMyProof(id,st.proofData);
   const ins=$('#insured').checked,lic=$('#licensed').checked,num=$('#licnum').value.trim();
   await TexAdminApi.myCredsUpdate(id,{insured:ins,licensed:lic,license:lic?num:null,addProof});
-  for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myCredsUpdate(r.id,{insured:ins})}catch(_){}}
+  // 11-10 fix: only copy to the person's OTHER services on a personal account (the admin account owns the whole imported directory)
+  const fewRows=st.rows.length<=20;
+  if(fewRows)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myCredsUpdate(r.id,{insured:ins})}catch(_){}}
   { const pt=($$('input[name=pt]').find(x=>x.checked)||{}).value||'';const pa=pt==='hourly'?$('#pa-hourly').value:pt==='starting'?$('#pa-starting').value:null;
     if((pt==='hourly'||pt==='starting')&&!(Number(pa)>=1)){throw new Error(L==='es'?'Escribe el precio.':'Enter your price.')}
     await TexAdminApi.myPrice(id,pt,pa); }
   const c=st.creds[id]=st.creds[id]||{};c.insured=ins;c.licensed=lic;c.license_number=lic?num:'';if(addProof){c.proof_count=(c.proof_count||0)+1;st.proofData=null;$('#proofst').textContent=t('proofOk')}
   // same person: use the new profile photo on all of their listings
-  if(profile)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myMediaUpdate(r.id,{profile})}catch(_){}}
+  if(profile&&fewRows)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myMediaUpdate(r.id,{profile})}catch(_){}}
   st.profileData=null;if(profile)st.profile=profile;st.work=work.map(p=>({path:p}));st.dirty=false;drawWork();
   msg(t('saved'),'ok');$('#view').hidden=false;try{if(typeof gtag==='function')gtag('event','my_photos_saved')}catch(_){}
  }catch(e){msg((e&&e.message)||t('err'),'err')}
