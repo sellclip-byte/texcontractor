@@ -164,7 +164,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 </main>
 <script src="tex-auth.js?v=20261109fin"></script>
 <script src="tex-admin.js?v=20261111ct"></script>
-<script src="tex-quick-signup.js?v=20261110g"></script>
+<script src="tex-quick-signup.js?v=20261111a"></script>
 <script>
 (function(){
 'use strict';
@@ -226,7 +226,7 @@ function render(){
  const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+t('moreT');m.onclick=()=>{$('#allbox').hidden=false;$('#allq').focus();drawAll();$('#allbox').scrollIntoView({behavior:'smooth',block:'start'})};g.appendChild(m);$('#allq').placeholder=t('allQ');if(!$('#allbox').hidden)drawAll();
  $('#s4').textContent=fmt(t('s4'));$('#h5').textContent=fmt(t('h5'));$('#s5').textContent=fmt(t('s5'));
 }
-function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_played')){sessionStorage.setItem('tex_last_played','1');var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.6;au.play().catch(function(){})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
+function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_played')){var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.8;var ok=function(){try{sessionStorage.setItem('tex_last_played','1')}catch(_){}};/* owner 11-11: iPhone sometimes blocks the voice; if so, play it on the next tap */au.play().then(ok).catch(function(){var t=function(){document.removeEventListener('pointerdown',t,true);document.removeEventListener('keydown',t,true);if(st.step===3)au.play().then(ok).catch(function(){})};document.addEventListener('pointerdown',t,true);document.addEventListener('keydown',t,true)})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
  if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===3)setTimeout(()=>$('#name').focus(),200);if(n===4)setTimeout(()=>$('#code').focus(),200);render()}
 $('#allq').addEventListener('input',drawAll);
 $('#back').onclick=()=>go(Math.max(1,st.step-1));

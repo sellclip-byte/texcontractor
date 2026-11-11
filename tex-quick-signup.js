@@ -149,9 +149,11 @@
     if (current.intent === 'provider') return;
     try {
       if (!force && sessionStorage.getItem('tex_almost_played')) return;
-      sessionStorage.setItem('tex_almost_played', '1');
       if (audio) { try { audio.pause(); } catch (_) {} }
-      audio = new Audio('/audio/almost-' + (isEs() ? 'es' : 'en') + '.mp3?v=1'); audio.volume = 0.6; audio.play().catch(() => {});
+      const a = audio = new Audio('/audio/almost-' + (isEs() ? 'es' : 'en') + '.mp3?v=1'); a.volume = 0.8;
+      const ok = () => { try { sessionStorage.setItem('tex_almost_played', '1'); } catch (_) {} };
+      // owner 11-11: iPhone sometimes blocks the voice; if so, play it on the next tap
+      a.play().then(ok).catch(() => { const t = () => { document.removeEventListener('pointerdown', t, true); if (audio === a) a.play().then(ok).catch(() => {}); }; document.addEventListener('pointerdown', t, true); });
     } catch (_) {}
   }
   const PROVIDER = {
