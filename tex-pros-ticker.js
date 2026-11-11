@@ -41,6 +41,10 @@
     const state = (box.dataset.state || q.get('state') || loc.state || 'TX').toUpperCase();
     const city = String(q.get('city') || loc.city || '').trim();
     const reg = await get(`texcontractor_public_services?select=id,owner_id,display_name,service,city,state,profile_photo_path&is_published=eq.true&owner_id=not.in.(${SKIP_OWNERS.join(',')})&order=created_at.desc&limit=30`);
+    // Owner 11-11: people the admin adds by hand for someone who can't use a computer (from 2026-11-11 on) show like signed-up pros.
+    // The admin account's older listings are the bulk directory and stay out.
+    const adminAdded = await get(`texcontractor_public_services?select=id,owner_id,display_name,service,city,state,profile_photo_path&is_published=eq.true&owner_id=eq.${SKIP_OWNERS[0]}&created_at=gte.2026-11-11T00:00:00Z&order=created_at.desc&limit=20`);
+    adminAdded.forEach((r) => { r.owner_id = 'admin-added'; reg.unshift(r); });
     // Pros who signed up themselves: same city first, then same state. Elsewhere in the country they are not shown.
     const regAll = reg.filter((r) => r.owner_id && !SKIP_OWNERS.includes(r.owner_id));
     const sameCity = (r) => city && String(r.city || '').toLowerCase() === city.toLowerCase();
