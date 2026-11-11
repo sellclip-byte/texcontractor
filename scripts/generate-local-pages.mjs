@@ -18,6 +18,9 @@ const SUPABASE_KEY = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
 const MIN_PER_PAGE = Number(process.env.LOCAL_MIN_PER_PAGE || 5);
 const CITY_MIN = Number(process.env.LOCAL_CITY_MIN || 3); // city hubs with fewer listings are noindex
 const PAGE_INDEX_MIN = Number(process.env.LOCAL_PAGE_INDEX_MIN || 3); // every city+service has a page; smaller ones are noindex
+const NEARBY_MILES = Number(process.env.LOCAL_NEARBY_MILES || 25); // nearby cities used to fill small pages
+const NEARBY_TARGET = Number(process.env.LOCAL_NEARBY_TARGET || 9); // fill a page up to this many pros
+const NEARBY_INDEX_MIN = Number(process.env.LOCAL_NEARBY_INDEX_MIN || 6); // local + nearby needed to index a small page
 const OUT = join(root, 'local');
 
 const STATES = { AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia' };
@@ -145,6 +148,28 @@ async function main() {
     return { state, city, service, list, indexable: list.length >= PAGE_INDEX_MIN, path: `local/${state.toLowerCase()}/${slug(city)}/${slug(service)}.html` };
   });
 
+  // Owner 11-11: like the main search, a small city page also shows the same service from the
+  // nearest cities (within NEARBY_MILES), so it is useful and can be indexed (Thumbtack-style).
+  let geo = {};
+  try { geo = JSON.parse(readFileSync(join(root, 'city-coordinates-2025.json'), 'utf8')); } catch (_) {}
+  const ll = (st, c) => geo[`${st}|${String(c).toLowerCase()}`];
+  const miles = (a, b) => { const R = 3958.8, r = Math.PI / 180, dLa = (b[0] - a[0]) * r, dLo = (b[1] - a[1]) * r; const h = Math.sin(dLa / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLo / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+  const bySvc = new Map(); // "ST|service" -> pages
+  for (const p of pages) { const k = `${p.state}|${p.service}`; if (!bySvc.has(k)) bySvc.set(k, []); bySvc.get(k).push(p); }
+  for (const p of pages) {
+    p.nearby = [];
+    if (p.list.length >= NEARBY_TARGET) continue;
+    const here = ll(p.state, p.city); if (!here) continue;
+    const cand = [];
+    for (const o of bySvc.get(`${p.state}|${p.service}`) || []) {
+      if (o === p) continue; const there = ll(o.state, o.city); if (!there) continue;
+      const d = miles(here, there); if (d <= NEARBY_MILES) for (const r of o.list) cand.push({ r, d: Math.max(1, Math.round(d)) });
+    }
+    cand.sort((x, y) => x.d - y.d || x.r.name.localeCompare(y.r.name));
+    p.nearby = cand.slice(0, NEARBY_TARGET - p.list.length);
+    if (!p.indexable && p.list.length + p.nearby.length >= NEARBY_INDEX_MIN) p.indexable = true;
+  }
+
   rmSync(OUT, { recursive: true, force: true });
   const cityMap = new Map(); // "ST|City" -> service pages (5+ providers)
   for (const p of pages) { const k = `${p.state}|${p.city}`; if (!cityMap.has(k)) cityMap.set(k, []); cityMap.get(k).push(p); }
@@ -178,6 +203,12 @@ async function main() {
     const sameServiceElsewhere = pages.filter((o) => o.state === p.state && o.service === p.service && o.city !== p.city).sort((a, b) => b.list.length - a.list.length).slice(0, 12);
     const browse = `/contractor.html?${new URLSearchParams({ service: p.service, city: p.city, state: p.state })}`;
     const serviceSlug = slug(p.service) + '.html';
+    const cardEn = (r, d) => {
+      const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+      return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}${d ? ` · about ${d} mi from ${esc(p.city)}` : ''}</div>${r.es ? '<span class="hablo" lang="es"><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
+    };
+    const nearbyCards = (p.nearby || []).map((n) => cardEn(n.r, n.d)).join('\n');
+    const total = p.list.length + (p.nearby || []).length;
     const cards = p.list.map((r) => {
       const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
@@ -189,6 +220,7 @@ async function main() {
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
 ${cards}
 </section>
+${nearbyCards ? `<h2>More ${esc(p.service.toLowerCase())} pros near ${esc(p.city)}</h2><p class="lead">From nearby cities, nearest first. They also serve ${esc(p.city)} and the area around it.</p><section class="grid" aria-label="${esc(p.service)} providers near ${esc(p.city)}">\n${nearbyCards}\n</section>` : ''}
 <p class="note">Before you hire, describe the job, share photos if helpful, and ask about price, timing, licensing and insurance where they apply. TexContractor does not perform the work or verify every listing.</p>
 ${others.length ? `<h2>Other services in ${esc(p.city)}</h2><ul class="links">${others.map((o) => `<li><a href="/${o.path}">${esc(o.service)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
 ${sameServiceElsewhere.length ? `<h2>${esc(p.service)} in other ${esc(stName)} cities</h2><ul class="links">${sameServiceElsewhere.map((o) => `<li><a href="/${o.path}">${esc(o.city)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
@@ -196,8 +228,8 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
     const crumbs = [['Home', '/'], ['Browse by city', '/local/'], [stName, `/local/${p.state.toLowerCase()}/`], [p.city, cityPath], [p.service, null]];
     const html = page({
       path: p.path,
-      title: `${p.term} in ${p.city}, ${p.state}: ${p.list.length} Local ${p.list.length === 1 ? 'Pro' : 'Pros'} to Text | TexContractor`,
-      description: `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${p.list.length} local ${p.service.toLowerCase()} ${p.list.length === 1 ? 'pro' : 'pros'} on TexContractor, see their profiles and text them directly for a quote. No middleman.`,
+      title: total > p.list.length ? `${p.term} in ${p.city}, ${p.state}: ${total} Pros In & Near ${p.city} to Text | TexContractor` : `${p.term} in ${p.city}, ${p.state}: ${p.list.length} Local ${p.list.length === 1 ? 'Pro' : 'Pros'} to Text | TexContractor`,
+      description: total > p.list.length ? `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${total} ${p.service.toLowerCase()} pros in and near ${p.city} on TexContractor, see their profiles and text them directly for a quote. No middleman.` : `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${p.list.length} local ${p.service.toLowerCase()} ${p.list.length === 1 ? 'pro' : 'pros'} on TexContractor, see their profiles and text them directly for a quote. No middleman.`,
       crumbs, body, noindex: !p.indexable, alt: p.esPath ? { en: p.path, es: p.esPath } : null,
       jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
     });
@@ -222,6 +254,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <section class="grid" aria-label="${esc(svc)} en ${esc(p.city)}">
 ${esCards}
 </section>
+${(p.nearby || []).length ? `<h2>Más proveedores de ${esc(low)} cerca de ${esc(p.city)}</h2><p class="lead">De ciudades cercanas, primero los más cercanos. También atienden ${esc(p.city)} y sus alrededores.</p><section class="grid" aria-label="${esc(svc)} cerca de ${esc(p.city)}">\n${p.nearby.map((x) => { const r = x.r; const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`; return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)} · a unas ${x.d} millas de ${esc(p.city)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`; }).join('\n')}\n</section>` : ''}
 <p class="note">Antes de contratar, describe el trabajo, comparte fotos si ayudan y pregunta por el precio, el tiempo y la licencia o el seguro cuando apliquen. TexContractor no realiza los trabajos ni verifica cada perfil. Las descripciones las escribe cada proveedor.</p>
 ${esOthers.length ? `<h2>Otros servicios en ${esc(p.city)}</h2><ul class="links">${esOthers.map((o) => `<li><a href="/${o.esPath}">${esc(o.esName)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
 ${esElsewhere.length ? `<h2>${esc(svc)} en otras ciudades de Texas</h2><ul class="links">${esElsewhere.map((o) => `<li><a href="/${o.esPath}">${esc(o.city)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
