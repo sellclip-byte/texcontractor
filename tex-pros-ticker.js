@@ -3,7 +3,7 @@
    Usage: <div id="pros-ticker" data-state="TX"></div> + this script. */
 (function () {
   const SB = 'https://rryehtaskbjnfbodymjj.supabase.co', K = 'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
-  const SKIP_OWNERS = ['6d83440a-820a-4309-b666-cba8e24a8290', '31948bfc-fb9f-490e-af1f-0f3d42dca767', '6e632781-16c6-4b59-8690-3d78d59d2850']; // bulk directory account, owner's own + test accounts
+  const SKIP_OWNERS = ['6d83440a-820a-4309-b666-cba8e24a8290', '6e632781-16c6-4b59-8690-3d78d59d2850']; // admin account (bulk directory) + test account. Owner 11-10: his member account (DFW Mobile Lawnmower, its own business phone) shows like any pro
   const NO_STAR = ['57d13423-6c06-4d75-a0ed-6c9d64692f09']; // owner 11-07: no highlight for ISA
   const box = document.getElementById('pros-ticker');
   if (!box) return;
