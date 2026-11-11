@@ -169,6 +169,25 @@
     };
     el.addEventListener('click', async function (x) {
       var b = x.target.closest('[data-ch]'); if (!b) return; var ch = b.getAttribute('data-ch'); ev(ch);
+      // Owner 11-10: on WhatsApp people should SEE the card, not just a blue link.
+      // Phones: send the card picture itself (+ the link) through the share sheet. Computers: copy the picture so it can be
+      // pasted in the chat (Ctrl+V), and open WhatsApp with the link as before.
+      if (ch === 'whatsapp') {
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          x.preventDefault();
+          if (await shareFile()) return;
+          window.open(b.href, '_blank');
+          return;
+        }
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function () {
+              ok.textContent = es ? 'Tarjeta copiada ✓ En WhatsApp, pégala en el chat (Ctrl+V) para que vean la tarjeta.' : 'Card copied ✓ In WhatsApp, paste it in the chat (Ctrl+V) so they see the card.';
+            }).catch(function () {});
+          }
+        } catch (_) {}
+        return;
+      }
       if (ch === 'instagram') {
         x.preventDefault();
         if (await shareFile()) return;
