@@ -898,68 +898,67 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 #hero-join #pros-ticker.hj-pt .pt-win{height:84px!important}#hero-join #pros-ticker.hj-pt .pt-t1{white-space:normal!important;line-height:1.25}#hero-join #pros-ticker.hj-pt .pt-t2{white-space:normal!important;max-width:none!important;font-size:15px!important;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .cl-pros.cl-pros-empty{display:none}</style>
 <script>(function(){/* move the strip into the banner only when there is room next to the search form; otherwise keep it in the left column */
-function place(){try{var t=document.getElementById('pros-ticker'),h=document.getElementById('hero-join'),col=document.querySelector('.cl-pros'),m=h&&h.querySelector('.hj-main');if(!t||!h||!col||!m)return;
+function place(){try{var t=document.getElementById('pros-ticker'),h=document.getElementById('hero-join'),col=document.querySelector('.cl-pros'),m=h&&h.querySelector('.hj-main');if(!t||!h||!col||!m)return;if(window.texHeroDuo&&texHeroDuo())return;
 var wide=matchMedia('(min-width:1100px)').matches,room=0;if(wide){var hr=h.getBoundingClientRect(),f=(m.querySelector('.hj-form')||m).getBoundingClientRect();room=hr.right-f.right;}
 var pw=Math.min(340,Math.round(room-56));if(wide&&pw>=280){if(t.parentNode!==h){h.appendChild(t);}h.classList.add('hj-has-pt');t.classList.add('hj-pt');t.style.width=pw+'px';t.style.right=Math.min(40,Math.round((room-pw)/2))+'px';col.classList.add('cl-pros-empty');}
 else{if(t.parentNode!==col){col.appendChild(t);}h.classList.remove('hj-has-pt');t.classList.remove('hj-pt');t.style.width='';t.style.right='';col.classList.remove('cl-pros-empty');}}catch(e){}}
 document.addEventListener('DOMContentLoaded',place);addEventListener('load',place);var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(place,150)});})();</script>
-<style>/* owner 11-11: computers: one calm split picture (customer above, pro below) + open requests on the left of the banner */
+<style>/* owner 11-11 v2: banner keeps its old height; on computers: calm split picture, requests tile (left) and pros strip (right) same size, big numbers */
 .hj-split{display:none}
 @media(min-width:1100px){
-.message-bridge #hero-join.hj{grid-template-columns:230px minmax(0,660px)}
-#hero-join .hj-pic{width:230px;height:326px;perspective:none}
+#hero-join .hj-pic{height:250px;perspective:none}
 #hero-join .hj-pic .hj-a,#hero-join .hj-pic .hj-b{display:none!important}
-#hero-join .hj-split{display:block;position:absolute;inset:0;border-radius:16px;overflow:hidden;border:3px solid #edb72d;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+#hero-join .hj-split{display:block;position:absolute;inset:0;border-radius:14px;overflow:hidden;border:3px solid #edb72d;box-shadow:0 8px 20px rgba(0,0,0,.16)}
 #hero-join .hj-split img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;border:0;border-radius:0;transform:none!important}
-.hs-tag{position:absolute;font:800 11px system-ui,sans-serif;border-radius:999px;padding:2px 9px}
-.hs-c{left:8px;top:8px;background:rgba(255,250,240,.93);color:#1c1917}.hs-p{right:8px;bottom:8px;background:#1c1917;color:#f4c95d}
-.hs-b{position:absolute;max-width:98px;font:700 11px/1.25 system-ui,sans-serif;padding:6px 9px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.25);opacity:0;animation:hsB 8s ease-in-out infinite}
-.hs-b1{right:6px;top:56px;background:#fff;color:#1c1917;border-bottom-right-radius:3px}
-.hs-b2{left:6px;top:186px;background:#edb72d;color:#1b1404;border-bottom-left-radius:3px;animation-delay:2s}
+.hs-tag{position:absolute;font:800 10.5px system-ui,sans-serif;border-radius:999px;padding:2px 8px}
+.hs-c{left:7px;top:7px;background:rgba(255,250,240,.93);color:#1c1917}.hs-p{right:7px;bottom:7px;background:#1c1917;color:#f4c95d}
+.hs-b{position:absolute;max-width:86px;font:700 10px/1.25 system-ui,sans-serif;padding:5px 8px;border-radius:11px;box-shadow:0 3px 10px rgba(0,0,0,.25);opacity:0;animation:hsB 8s ease-in-out infinite}
+.hs-b1{right:5px;top:40px;background:#fff;color:#1c1917;border-bottom-right-radius:3px}
+.hs-b2{left:5px;top:146px;background:#edb72d;color:#1b1404;border-bottom-left-radius:3px;animation-delay:2s}
 @keyframes hsB{0%,8%{opacity:0;transform:translateY(4px)}16%,62%{opacity:1;transform:none}72%,100%{opacity:0}}
 }
 @media (prefers-reduced-motion:reduce){.hs-b{animation:none;opacity:1}}
-#hero-join .hj-stats.hj-stats-line{position:static;flex-direction:row;gap:16px;margin-top:6px;pointer-events:none}
-#hero-join .hj-stats.hj-stats-line b{display:inline;font-size:1rem}#hero-join .hj-stats.hj-stats-line span{display:inline;margin:0 0 0 4px;font-size:.8rem}
-#hj-rq{position:absolute;top:50%;transform:translateY(-50%);z-index:5;box-sizing:border-box;display:block;text-decoration:none;border-radius:16px;background:linear-gradient(160deg,#fff4e6,#ffdcb8);border:2px solid #e8792b;padding:12px 14px 13px;color:#7c2d12;font-family:system-ui,sans-serif;animation:rqGlow 4.5s ease-in-out infinite}
-#hj-rq:hover{border-color:#c2410c}
-@keyframes rqGlow{0%,100%{box-shadow:0 6px 16px rgba(194,65,12,.10)}50%{box-shadow:0 6px 26px rgba(234,88,12,.35)}}
-#hj-rq .rq-h{font:900 13px system-ui,sans-serif;letter-spacing:.02em;display:flex;align-items:center;gap:7px;color:#9a3412}
-#hj-rq .rq-dot{width:10px;height:10px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 0 rgba(220,38,38,.5);animation:rqDot 2s ease-out infinite}
-@keyframes rqDot{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}100%{box-shadow:0 0 0 9px rgba(220,38,38,0)}}
-#hj-rq .rq-s{font:700 11.5px system-ui,sans-serif;color:#b45309;margin-top:2px}
-#hj-rq .rq-win{position:relative;height:84px;margin-top:9px}
-#hj-rq .rq-it{position:absolute;inset:0;display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #fdba74;border-radius:12px;padding:9px 11px;opacity:0;transition:opacity .9s ease}
+.message-bridge #hero-join.hj.hj-duo{grid-template-columns:200px 560px}
+#hero-join.hj-duo .hj-main{position:relative}
+#hero-join.hj-duo .hj-fine{max-width:310px}
+#hero-join .hj-stats.hj-stats-in{position:absolute;top:auto;left:auto;right:0;bottom:0;flex-direction:row;gap:14px;text-align:center}
+#hero-join .hj-stats.hj-stats-in b{font-size:1.5rem;color:#075c4b}#hero-join .hj-stats.hj-stats-in span{margin-top:3px;font-size:.78rem;font-weight:700;color:#3f4a45}
+#hj-rq{position:absolute;top:50%;transform:translateY(-50%);z-index:5;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;text-decoration:none;border-radius:16px;background:linear-gradient(135deg,#fff4e6,#ffe1c2);border:2px solid #e8792b;padding:10px;color:#7c2d12;font-family:system-ui,sans-serif;box-shadow:0 6px 18px rgba(194,65,12,.12)}
+#hj-rq .rq-h{font:800 13px system-ui,sans-serif;display:flex;align-items:center;gap:7px;color:#9a3412}
+#hj-rq .rq-dot{width:9px;height:9px;border-radius:50%;background:#dc2626;animation:rqDot 2s ease-out infinite}
+@keyframes rqDot{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}100%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+#hj-rq .rq-s{font:600 11.5px system-ui,sans-serif;color:#9a3412;margin-top:1px}
+#hj-rq .rq-win{position:relative;height:84px;margin-top:8px}
+#hj-rq .rq-it{position:absolute;inset:0;display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,#9a3412,#c2410c);border:2px solid #fdba74;border-radius:14px;padding:0 10px;opacity:0;transition:opacity .9s ease;color:#fff}
 #hj-rq .rq-it.on{opacity:1}
-#hj-rq .rq-ic{flex:none;width:52px;height:52px;border-radius:10px;background:#ffedd5;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
+#hj-rq .rq-ic{flex:none;width:58px;height:58px;border-radius:50%;background:#ffedd5;border:2px solid #fed7aa;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
 #hj-rq .rq-ic img{width:100%!important;height:100%!important;object-fit:cover}
-#hj-rq .rq-t1{font:800 11px system-ui,sans-serif;color:#c2410c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#hj-rq .rq-t2{font:900 15px/1.2 system-ui,sans-serif;color:#1c1917;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#hj-rq .rq-t3{font:700 11px system-ui,sans-serif;color:#64748b;margin-top:1px}
+#hj-rq .rq-t1{font:700 11.5px system-ui,sans-serif;color:#fed7aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hj-rq .rq-t2{font:900 15px/1.2 system-ui,sans-serif;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#hj-rq .rq-t3{font:700 11px system-ui,sans-serif;color:#ffedd5;margin-top:1px}
 </style>
-<script>(function(){/* open requests tile, left side of the banner, computers only; real requests only, plus a "post a request" card */
-var SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',rows=null,el=null,k=0,timer=null;
+<script>(function(){/* computers: requests tile left + pros strip right, same size, equal space; content centered between them */
+var SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r',rows=null,el=null,k=0;
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function photo(p){return SB+'/storage/v1/object/public/texcontractor-requests/'+String(p).split('/').map(encodeURIComponent).join('/')}
-function build(){var n=rows.length,items=rows.map(function(r){var ph=(r.photo_paths||[])[0];return '<div class="rq-it" data-href="requests.html?r='+encodeURIComponent(r.id)+'"><div class="rq-ic">'+(ph?'<img src="'+photo(ph)+'" alt="" loading="lazy">':'🛠️')+'</div><div style="min-width:0"><div class="rq-t1">'+esc(r.service)+' · '+esc(r.city)+', '+esc(r.state)+'</div><div class="rq-t2">'+esc(r.title)+'</div><div class="rq-t3">'+(Number(r.offers_count)||0)+' of 5 offers · Send an offer →</div></div></div>'});
-items.push('<div class="rq-it" data-href="requests.html?post=1"><div class="rq-ic">📋</div><div style="min-width:0"><div class="rq-t1">Free for homeowners</div><div class="rq-t2">Need a job done? Post a request</div><div class="rq-t3">Get up to 5 offers from local pros →</div></div></div>');
+function build(){var n=rows.length,items=rows.map(function(r){var ph=(r.photo_paths||[])[0];return '<div class="rq-it" data-href="requests.html?r='+encodeURIComponent(r.id)+'"><div class="rq-ic">'+(ph?'<img src="'+photo(ph)+'" alt="" loading="lazy">':'🛠️')+'</div><div style="min-width:0"><div class="rq-t1">📍 '+esc(r.city)+', '+esc(r.state)+' · '+esc(r.service)+'</div><div class="rq-t2">'+esc(r.title)+'</div><div class="rq-t3">'+(Number(r.offers_count)||0)+' of 5 offers · Send offer →</div></div></div>'});
+items.push('<div class="rq-it" data-href="requests.html?post=1"><div class="rq-ic">📋</div><div style="min-width:0"><div class="rq-t1">Free for homeowners</div><div class="rq-t2">Need a job done? Post a request</div><div class="rq-t3">Get up to 5 offers →</div></div></div>');
 var a=document.createElement('a');a.id='hj-rq';a.href='requests.html';a.setAttribute('aria-label','Open requests from homeowners');
-a.innerHTML='<div class="rq-h"><span class="rq-dot"></span>'+(n?'OPEN REQUESTS NOW':'REQUESTS')+'</div><div class="rq-s">'+(n?(n===1?'1 homeowner':n+' homeowners')+' waiting for offers · tap to see':'Homeowners post jobs here · tap to see')+'</div><div class="rq-win">'+items.join('')+'</div>';
+a.innerHTML='<div class="rq-h"><span class="rq-dot"></span>'+(n?'OPEN REQUESTS':'REQUESTS')+'</div><div class="rq-s">'+(n?(n===1?'1 homeowner':n+' homeowners')+' waiting for offers':'Homeowners post jobs here')+'</div><div class="rq-win">'+items.join('')+'</div>';
 a.addEventListener('click',function(e){var on=a.querySelector('.rq-it.on');if(on){e.preventDefault();try{window.texVisit&&texVisit('hero_requests')}catch(_){}location.href=on.getAttribute('data-href')}});
 var its=a.querySelectorAll('.rq-it');its[0].classList.add('on');
-if(its.length>1)timer=setInterval(function(){if(document.hidden)return;its[k].classList.remove('on');k=(k+1)%its.length;its[k].classList.add('on')},6500);
+if(its.length>1)setInterval(function(){if(document.hidden)return;its[k].classList.remove('on');k=(k+1)%its.length;its[k].classList.add('on')},6500);
 return a}
-function place(){try{var h=document.getElementById('hero-join'),pic=h&&h.querySelector('.hj-pic'),st=h&&h.querySelector('.hj-stats'),m=h&&h.querySelector('.hj-main');if(!h||!pic||!rows)return;
-var wide=matchMedia('(min-width:1100px)').matches,cur=+(h.dataset.rqShift||0),need=266;
-if(!h.dataset.padL)h.dataset.padL=parseFloat(getComputedStyle(h).paddingLeft)||0;
-var base=wide?pic.getBoundingClientRect().left-h.getBoundingClientRect().left-cur/2:0,shift=0;if(wide&&base<need&&base+80>=need)shift=Math.ceil(2*(need-base));
-var show=wide&&base+shift/2>=need;if(!show)shift=0;if(shift!==cur){h.dataset.rqShift=shift;h.style.paddingLeft=shift?(+h.dataset.padL+shift)+'px':'';setTimeout(function(){dispatchEvent(new Event('resize'))},0)}
-var room=base+shift/2,w=Math.min(320,Math.round(room-36));
-if(show){if(!el)el=build();if(el.parentNode!==h)h.appendChild(el);el.style.width=w+'px';el.style.left=Math.max(12,Math.min(40,Math.round((room-w)/2)))+'px';if(st&&st.parentNode!==m){m.appendChild(st);st.classList.add('hj-stats-line')}}
-else{if(el&&el.parentNode)el.parentNode.removeChild(el);if(st&&st.parentNode===m){h.insertBefore(st,h.firstChild);st.classList.remove('hj-stats-line')}}}catch(e){}}
-function load(){if(!matchMedia('(min-width:1100px)').matches){rows=rows||null;}
-fetch(SB+'/rest/v1/rpc/texcontractor_requests_list',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_service:null,p_state:null,p_city:null,p_limit:8,p_offset:0})}).then(function(r){return r.ok?r.json():[]}).catch(function(){return[]}).then(function(d){rows=Array.isArray(d)?d.filter(function(r){return r&&r.id&&r.title}):[];place()})}
-document.addEventListener('DOMContentLoaded',load);var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(place,150)});})();</script>
+function place(){try{var h=document.getElementById('hero-join'),t=document.getElementById('pros-ticker'),col=document.querySelector('.cl-pros'),st=h&&h.querySelector('.hj-stats'),m=h&&h.querySelector('.hj-main');if(!h||!t||!col||!m||!rows)return;
+var W=h.getBoundingClientRect().width,side=(W-788)/2,w=Math.min(330,Math.round(side-44)),wide=matchMedia('(min-width:1100px)').matches;
+if(wide&&w>=230){if(!el)el=build();h.classList.add('hj-duo');if(el.parentNode!==h)h.appendChild(el);if(t.parentNode!==h)h.appendChild(t);h.classList.add('hj-has-pt');t.classList.add('hj-pt');col.classList.add('cl-pros-empty');
+var off=Math.round((side-w)/2)+'px';t.style.width=w+'px';t.style.right=off;el.style.width=w+'px';el.style.left=off;
+var tt=t.querySelector('.pt-tile'),th=tt?tt.getBoundingClientRect().height:0;el.style.height=th>=100?th+'px':'';
+if(st&&st.parentNode!==m){m.appendChild(st);st.classList.add('hj-stats-in')}}
+else{if(h.classList.contains('hj-duo')){h.classList.remove('hj-duo');if(el&&el.parentNode)el.parentNode.removeChild(el);if(st&&st.parentNode===m){h.insertBefore(st,h.firstChild);st.classList.remove('hj-stats-in')}h.classList.remove('hj-has-pt');t.classList.remove('hj-pt');t.style.width='';t.style.right='';if(t.parentNode!==col)col.appendChild(t);col.classList.remove('cl-pros-empty');dispatchEvent(new Event('resize'))}}}catch(e){}}
+window.texHeroDuo=function(){var h=document.getElementById('hero-join');return !!(h&&h.classList.contains('hj-duo'))};
+fetch(SB+'/rest/v1/rpc/texcontractor_requests_list',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_service:null,p_state:null,p_city:null,p_limit:8,p_offset:0})}).then(function(r){return r.ok?r.json():[]}).catch(function(){return[]}).then(function(d){rows=Array.isArray(d)?d.filter(function(r){return r&&r.id&&r.title}):[];if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',place);else place()});
+addEventListener('load',function(){setTimeout(place,50);setTimeout(place,1500)});var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(place,200)});})();</script>
 <div class="cl-ex-box cl-pros"><div id="pros-ticker" data-variant="tile"></div></div><script>/* phones: show the new pros right above the services list (the left column drops to the bottom there) */
 document.addEventListener('DOMContentLoaded',function(){try{if(!matchMedia('(max-width:1099px)').matches)return;var b=document.querySelector('.cl-pros'),h=document.querySelector('.catalog-head');if(b&&h&&h.parentNode){h.parentNode.insertBefore(b,h);b.classList.add('cl-pros-top')}}catch(e){}});</script>
     <aside class="cl-side" aria-label="Quick links">
