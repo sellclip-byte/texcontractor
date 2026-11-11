@@ -128,7 +128,7 @@
     let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
-      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof,price_type,price_amount,work_type', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof,price_type,price_amount,work_type,contact_methods', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
       const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, ...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {}) } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
@@ -147,6 +147,7 @@
         service:row.service || service,
         spanish:!!row.speaks_spanish,
         work_type:row.work_type||null,
+        contact_methods:(window.texContactMethods = Array.isArray(row.contact_methods) ? row.contact_methods : null, (function(m){ if (m && !m.includes('chat')) { var cb=document.getElementById('chat-profile-button'); if (cb) cb.hidden=true; } })(window.texContactMethods), window.texContactMethods),
         insured:!!row.insured, licensed:!!row.licensed, license_number:row.license_number||'', has_proof:!!row.has_proof,
         price_type:row.price_type||null, price_amount:row.price_amount||null,
         availFrom:row.avail_from, availTo:row.avail_to
@@ -292,7 +293,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
   <script src="tex-share-profile.js?v=20261107b"></script>
   <script src="tex-business-card.js?v=6"></script>
   <script src="tex-chat.js?v=20261022b"></script>
-  <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id);});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
+  <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id)||(Array.isArray(window.texContactMethods)&&!window.texContactMethods.includes('chat'));});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
   <script src="tex-language.js?v=20261103pronote"></script>
   <script src="tex-side-ads.js?v=20261110cream"></script>
 <script src="tex-worktype.js?v=1" defer></script>
