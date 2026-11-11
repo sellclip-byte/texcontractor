@@ -20,7 +20,7 @@ SITE = 'https://texcontractor.com'
 FB = os.path.join(ROOT, 'assets/fonts/Poppins-Bold.ttf')
 FM = os.path.join(ROOT, 'assets/fonts/Poppins-Medium.ttf')
 W, H = 1200, 630
-VERSION = '1'  # bump to redraw every card after a design change
+VERSION = '2'  # bump to redraw every card after a design change
 
 
 def get(url, binary=False):
@@ -102,54 +102,70 @@ def gold(size):
     return g
 
 
+def dark_bg(size):
+    """Charcoal background with a soft glow at the top left (owner 11-10: black + gold + cream, no green)."""
+    w, h = size
+    g = Image.new('RGB', size, (20, 17, 15))
+    glow = Image.new('L', size, 0)
+    ImageDraw.Draw(glow).ellipse([-w * 0.3, -h * 0.6, w * 0.7, h * 0.9], fill=255)
+    from PIL import ImageFilter
+    glow = glow.filter(ImageFilter.GaussianBlur(h // 3))
+    g.paste(Image.new('RGB', size, (43, 38, 34)), (0, 0), glow)
+    return g
+
+
 def card(row, photo):
+    """1200x630 link-preview card: charcoal + gold, photo, name, service, city, member badge."""
     S = 2  # draw at 2x, then shrink for smooth edges
     im = gold((W * S, H * S))
+    inner = dark_bg(((W - 10) * S, (H - 10) * S))
+    m = Image.new('L', inner.size, 0); ImageDraw.Draw(m).rounded_rectangle([0, 0, inner.size[0] - 1, inner.size[1] - 1], 24 * S, fill=255)
+    im.paste(inner, (5 * S, 5 * S), m)
     d = ImageDraw.Draw(im)
-    d.rounded_rectangle([18 * S, 18 * S, (W - 18) * S, (H - 18) * S], 26 * S, fill=(255, 250, 240))
-    d.rounded_rectangle([32 * S, 32 * S, (W - 32) * S, (H - 32) * S], 18 * S, outline=(217, 178, 90), width=2 * S)
-    # photo circle
-    r, cx, cy = 175 * S, 255 * S, 262 * S
-    ring = gold((2 * r + 24 * S, 2 * r + 24 * S)); m = Image.new('L', ring.size, 0)
+    d.rounded_rectangle([22 * S, 22 * S, (W - 22) * S, (H - 22) * S], 16 * S, outline=(150, 122, 60), width=S)
+    # photo circle with a gold ring
+    r, cx, cy = 150 * S, 215 * S, 315 * S
+    ring = gold((2 * r + 18 * S, 2 * r + 18 * S)); m = Image.new('L', ring.size, 0)
     ImageDraw.Draw(m).ellipse([0, 0, ring.size[0] - 1, ring.size[1] - 1], fill=255)
-    im.paste(ring, (cx - r - 12 * S, cy - r - 12 * S), m)
+    im.paste(ring, (cx - r - 9 * S, cy - r - 9 * S), m)
     if photo is not None:
         ph = face_square(photo).resize((2 * r, 2 * r), Image.LANCZOS)
     else:
-        ph = Image.new('RGB', (2 * r, 2 * r), (11, 122, 99)); pd = ImageDraw.Draw(ph)
+        ph = dark_bg((2 * r, 2 * r)); pd = ImageDraw.Draw(ph)
         ini = ''.join(w[0] for w in str(row['display_name'] or '?').split()[:2]).upper()
-        f = font(FB, 150 * S); tw = pd.textlength(ini, font=f)
-        pd.text(((2 * r - tw) / 2, r - 105 * S), ini, font=f, fill='white')
+        f = font(FB, 130 * S)
+        pd.text((r, r), ini, font=f, fill=(242, 193, 78), anchor='mm')
     m = Image.new('L', ph.size, 0); ImageDraw.Draw(m).ellipse([0, 0, 2 * r - 1, 2 * r - 1], fill=255)
     im.paste(ph, (cx - r, cy - r), m)
-    # logo
-    logo = Image.open(os.path.join(ROOT, 'texcontractor-logo.png')).convert('RGBA')
-    lw = 250 * S; logo = logo.resize((lw, int(lw * logo.height / logo.width)), Image.LANCZOS)
-    x_text = 490 * S; tw_max = (W - 70) * S - x_text
-    im.paste(logo, (x_text + (tw_max - lw) // 2, 46 * S), logo)
-    mid = x_text + tw_max / 2
+    GOLD, WHITE, SOFT = (244, 201, 93), (255, 255, 255), (207, 198, 184)
+    x = 420 * S; tw_max = (W - 70) * S - x
+    # brand
+    fb = font(FB, 30 * S); wa = d.textlength('Tex', font=fb)
+    d.text((x, 92 * S), 'Tex', font=fb, fill=GOLD, anchor='ls'); d.text((x + wa, 92 * S), 'Contractor', font=fb, fill=WHITE, anchor='ls')
+    d.text((x, 122 * S), 'L O C A L   P R O S   \u00b7   T E X A S', font=font(FM, 14 * S), fill=(201, 170, 100), anchor='ls')
+    # name, service, city
     name = str(row['display_name'] or '').strip()
-    f = fit(d, name, FB, 64 * S, tw_max)
-    d.text((mid, 258 * S), name, font=f, fill=(17, 24, 39), anchor='ms')
-    fs = font(FM, 34 * S)
-    lines = wrap(d, row['service'] or '', fs, tw_max)
-    y = 312 * S
-    for ln in lines:
-        d.text((mid, y), ln, font=fs, fill=(11, 122, 99), anchor='ms'); y += 44 * S
-    place = ', '.join(x for x in [row.get('city'), row.get('state')] if x)
+    f = fit(d, name, FB, 72 * S, tw_max)
+    d.text((x, 212 * S), name, font=f, fill=GOLD, anchor='ls')
+    fs = font(FB, 34 * S); y = 266 * S
+    for ln in wrap(d, row['service'] or '', fs, tw_max):
+        d.text((x, y), ln, font=fs, fill=WHITE, anchor='ls'); y += 44 * S
+    place = ', '.join(v for v in [row.get('city'), row.get('state')] if v)
     if place:
-        fp = font(FM, 30 * S); pw = d.textlength(place, font=fp)
-        d.text((mid + 14 * S, y + 6 * S), place, font=fp, fill=(75, 85, 99), anchor='ms')
-        dx = mid + 14 * S - pw / 2 - 20 * S; dy = y - 4 * S
-        d.ellipse([dx - 8 * S, dy - 8 * S, dx + 8 * S, dy + 8 * S], fill=(201, 151, 28))
-    # footer band
-    d.rounded_rectangle([x_text - 20 * S, 470 * S, (W - 50) * S, (H - 50) * S], 18 * S, fill=(7, 92, 75))
-    bm = (x_text - 20 * S + (W - 50) * S) / 2
-    d.text((bm, 503 * S), 'Text me directly on', font=font(FM, 24 * S), fill=(209, 250, 229), anchor='ms')
-    fb2 = font(FB, 44 * S); a, b = 'Tex', 'Contractor.com'
-    wa, wb = d.textlength(a, font=fb2), d.textlength(b, font=fb2); x0 = bm - (wa + wb) / 2
-    d.text((x0, 556 * S), a, font=fb2, fill=(242, 193, 78), anchor='ls')
-    d.text((x0 + wa, 556 * S), b, font=fb2, fill='white', anchor='ls')
+        d.ellipse([x + 2 * S, y - 20 * S, x + 16 * S, y - 6 * S], fill=(201, 154, 58))
+        d.text((x + 28 * S, y), place, font=font(FM, 28 * S), fill=SOFT, anchor='ls'); y += 20 * S
+    # member badge (every card here belongs to a pro who signed up himself)
+    fbd = font(FB, 22 * S); label = 'Proud member of TexContractor'
+    bw = d.textlength(label, font=fbd) + 86 * S; by = max(y + 22 * S, 372 * S)
+    d.rounded_rectangle([x, by, x + bw, by + 52 * S], 26 * S, outline=(233, 196, 106), width=2 * S)
+    disc = gold((38 * S, 38 * S)); mm = Image.new('L', disc.size, 0); ImageDraw.Draw(mm).ellipse([0, 0, 38 * S - 1, 38 * S - 1], fill=255)
+    im.paste(disc, (x + 8 * S, by + 7 * S), mm)
+    d.line([(x + 18 * S, by + 26 * S), (x + 24 * S, by + 32 * S), (x + 36 * S, by + 20 * S)], fill=(45, 33, 6), width=3 * S, joint='curve')
+    d.text((x + 58 * S, by + 34 * S), label, font=fbd, fill=(244, 213, 138), anchor='ls')
+    # footer
+    d.text((x, 520 * S), 'Text me directly on', font=font(FM, 24 * S), fill=SOFT, anchor='ls')
+    fb2 = font(FB, 44 * S); wa = d.textlength('Tex', font=fb2)
+    d.text((x, 570 * S), 'Tex', font=fb2, fill=GOLD, anchor='ls'); d.text((x + wa, 570 * S), 'Contractor.com', font=fb2, fill=WHITE, anchor='ls')
     return im.resize((W, H), Image.LANCZOS)
 
 

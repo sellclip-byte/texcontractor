@@ -1,7 +1,7 @@
 /* Framed business card for technicians (owner 11-06): photo, name, service, city + TexContractor.
    Drawn in the browser, so it is ready the moment the pro publishes. Share as an image (WhatsApp, Instagram,
    Facebook) or download it.
-   TexBusinessCard.render(el, {name, service, city, state, photoUrl, profileUrl, lang}) */
+   TexBusinessCard.render(el, {name, service, city, state, photoUrl, profileUrl, shareUrl, lang, imported}) */
 (function () {
   var W = 1080, H = 1350;
   var T = {
@@ -42,38 +42,78 @@
     var g = ctx.createLinearGradient(x0, y0, x1, y1);
     g.addColorStop(0, '#9c6a0a'); g.addColorStop(.25, '#e7b33a'); g.addColorStop(.5, '#fff0a8'); g.addColorStop(.75, '#d79a16'); g.addColorStop(1, '#8a5b06'); return g;
   }
+  // Owner 11-10 design: charcoal + gold + cream (no green), big round photo, name, service pill, city,
+  // "Proud member of TexContractor" badge (self-registered pros only), QR code to the pro's page.
+  var qrReady = null;
+  function loadQR() {
+    if (window.TexQR) return Promise.resolve();
+    if (qrReady) return qrReady;
+    qrReady = new Promise(function (ok) { var s = document.createElement('script'); s.src = '/tex-qr.js?v=1'; s.onload = ok; s.onerror = ok; document.head.appendChild(s); });
+    return qrReady;
+  }
+  function dark(ctx, x0, y0, x1, y1) { var g = ctx.createRadialGradient(x0 + (x1 - x0) * .3, y0 + (y1 - y0) * .2, 10, x0 + (x1 - x0) * .5, y0 + (y1 - y0) * .5, Math.max(x1 - x0, y1 - y0)); g.addColorStop(0, '#2b2622'); g.addColorStop(1, '#14110f'); return g; }
   async function draw(o) {
-    await loadFonts();
+    await Promise.all([loadFonts(), loadQR()]);
     var c = document.createElement('canvas'); c.width = W; c.height = H; var ctx = c.getContext('2d');
-    var t = T[o.lang === 'es' ? 'es' : 'en'];
-    // background + frame
+    var es = o.lang === 'es', t = T[es ? 'es' : 'en'], cx = W / 2;
+    // gold frame + cream card
     ctx.fillStyle = gold(ctx, 0, 0, W, H); ctx.fillRect(0, 0, W, H);
-    rr(ctx, 30, 30, W - 60, H - 60, 34); ctx.fillStyle = '#fffaf0'; ctx.fill();
-    rr(ctx, 52, 52, W - 104, H - 104, 24); ctx.lineWidth = 3; ctx.strokeStyle = '#d9b25a'; ctx.stroke();
-    // logo
+    rr(ctx, 16, 16, W - 32, H - 32, 28); ctx.fillStyle = '#fffaf0'; ctx.fill();
+    // dark top with a soft curved bottom
+    ctx.save(); rr(ctx, 16, 16, W - 32, H - 32, 28); ctx.clip();
+    ctx.beginPath(); ctx.moveTo(16, 16); ctx.lineTo(W - 16, 16); ctx.lineTo(W - 16, 426);
+    ctx.ellipse(cx, 426, cx - 16, 90, 0, 0, Math.PI); ctx.closePath(); ctx.fillStyle = dark(ctx, 16, 16, W - 16, 516); ctx.fill(); ctx.restore();
+    // logo on a cream pill
     var logo = await img('/texcontractor-logo.png');
-    if (logo) { var lw = 380, lh = lw * logo.height / logo.width; ctx.drawImage(logo, (W - lw) / 2, 74, lw, lh); }
-    // photo
-    var cx = W / 2, cy = 505, r = 205, photo = await img(o.photoUrl);
-    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r + 16, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, cx - r, cy - r, cx + r, cy + r); ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8; ctx.fill(); ctx.restore();
+    rr(ctx, cx - 110, 106, 220, 104, 20); ctx.fillStyle = '#fffaf0'; ctx.fill();
+    if (logo) { var lh = 88, lw = lh * logo.width / logo.height; ctx.drawImage(logo, cx - lw / 2, 114, lw, lh); }
+    // photo: gold ring, cream border, soft shadow
+    var cy = 406, R = 170, r = 151, photo = await img(o.photoUrl);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, cx - R, cy - R, cx + R, cy + R);
+    ctx.shadowColor = 'rgba(0,0,0,.22)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 20; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, R - 12, 0, Math.PI * 2); ctx.fillStyle = '#fffaf0'; ctx.fill();
     ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
     if (photo) { var s = Math.max(2 * r / photo.width, 2 * r / photo.height), pw = photo.width * s, ph = photo.height * s; ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph); }
-    else { ctx.fillStyle = '#0b7a63'; ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r); ctx.fillStyle = '#fff'; ctx.font = '200px TCB, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(o.name || '?').trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase(), cx, cy + 10); }
+    else { ctx.fillStyle = dark(ctx, cx - r, cy - r, cx + r, cy + r); ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r); ctx.fillStyle = '#f2c14e'; ctx.font = '150px TCB, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(o.name || '?').trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase(), cx, cy + 8); }
     ctx.restore();
-    // name, service, city
+    // name
     ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    var name = String(o.name || '').trim(); ctx.fillStyle = '#111827';
-    var ns = fit(ctx, name, 'TCB, sans-serif', 86, W - 200); ctx.font = ns + 'px TCB, sans-serif'; ctx.fillText(name, cx, 818);
-    ctx.font = '46px TCM, sans-serif'; ctx.fillStyle = '#0b7a63';
-    var lines = wrap(ctx, o.service || '', W - 220); lines.forEach(function (l, i) { ctx.fillText(l, cx, 886 + i * 56); });
+    var name = String(o.name || '').trim(); ctx.fillStyle = '#0f172a';
+    var ns = fit(ctx, name, 'TCB, sans-serif', 96, W - 180);
+    if (ns < 62 && /\s/.test(name)) { ctx.font = '58px TCB, sans-serif'; var nl = wrap(ctx, name, W - 180); if (nl.length > 1) { nl.forEach(function (l, i) { var z = fit(ctx, l, 'TCB, sans-serif', 58, W - 180); ctx.font = z + 'px TCB, sans-serif'; ctx.fillText(l, cx, 683 + i * 64); }); } else { ctx.font = ns + 'px TCB, sans-serif'; ctx.fillText(name, cx, 745); } }
+    else { ctx.font = ns + 'px TCB, sans-serif'; ctx.fillText(name, cx, 745); }
+    // service pill
+    var svc = String(o.service || (es ? 'Técnico local' : 'Local pro')).trim();
+    var ss = fit(ctx, svc, 'TCB, sans-serif', 40, W - 300); ctx.font = ss + 'px TCB, sans-serif';
+    var sw = ctx.measureText(svc).width + 72;
+    rr(ctx, cx - sw / 2, 767, sw, 88, 44); ctx.fillStyle = '#fff3d6'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#e6cf98'; ctx.stroke();
+    ctx.fillStyle = '#7a5200'; ctx.fillText(svc, cx, 825);
+    // city
     var place = [o.city, o.state].filter(Boolean).join(', ');
-    if (place) { ctx.font = '40px TCM, sans-serif'; ctx.fillStyle = '#4b5563'; var py = 886 + lines.length * 56 + 14; var pw2 = ctx.measureText(place).width; ctx.fillText(place, cx + 16, py); ctx.beginPath(); ctx.arc(cx + 16 - pw2 / 2 - 22, py - 13, 9, 0, Math.PI * 2); ctx.fillStyle = '#c9971c'; ctx.fill(); }
-    // footer band
-    rr(ctx, 52, H - 262, W - 104, 210, 24); ctx.fillStyle = '#075c4b'; ctx.fill();
-    ctx.fillStyle = '#d1fae5'; ctx.font = '38px TCM, sans-serif'; ctx.fillText(t.foot1, cx, H - 182);
-    ctx.font = '68px TCB, sans-serif'; var a = 'Tex', b = 'Contractor.com', wa = ctx.measureText(a).width, wb = ctx.measureText(b).width, x0 = cx - (wa + wb) / 2;
-    ctx.textAlign = 'left'; ctx.fillStyle = '#f2c14e'; ctx.fillText(a, x0, H - 98); ctx.fillStyle = '#ffffff'; ctx.fillText(b, x0 + wa, H - 98);
+    if (place) { ctx.font = '34px TCM, sans-serif'; ctx.fillStyle = '#475569'; var pw2 = ctx.measureText(place).width; ctx.fillText(place, cx + 14, 912);
+      ctx.beginPath(); ctx.arc(cx + 14 - pw2 / 2 - 22, 900, 8, 0, Math.PI * 2); ctx.fillStyle = '#c99a3a'; ctx.fill(); }
+    // badge
+    var badge = o.imported ? (es ? 'Encuéntrame en TexContractor' : 'Find me on TexContractor') : (es ? 'Miembro orgulloso de TexContractor' : 'Proud member of TexContractor');
+    ctx.font = '28px TCB, sans-serif'; var bw = ctx.measureText(badge).width + 104, bx = cx - bw / 2;
+    rr(ctx, bx, 942, bw, 64, 32); ctx.fillStyle = '#fffaf0'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#e6cf98'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx + 40, 974, 23, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, bx + 17, 951, bx + 63, 997); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(bx + 30, 975); ctx.lineTo(bx + 37, 982); ctx.lineTo(bx + 51, 967); ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#2d2106'; ctx.stroke();
+    ctx.textAlign = 'left'; ctx.fillStyle = '#7a5200'; ctx.fillText(badge, bx + 76, 984);
+    // bottom bar: text + QR
+    rr(ctx, 56, 1029, W - 112, 265, 28); ctx.fillStyle = dark(ctx, 56, 1029, W - 56, 1294); ctx.fill();
+    var qrUrl = (o.qrUrl || o.shareUrl || o.profileUrl || 'https://texcontractor.com/').replace(/utm_source=share&utm_medium=[\w-]+/, 'utm_source=qr').replace(/&service=[^&]*/, ''), m = null;
+    try { m = window.TexQR ? window.TexQR(qrUrl) : null; } catch (_) { m = null; }
+    var textMax = m ? 680 : W - 224;
+    ctx.fillStyle = '#fffaf0'; ctx.globalAlpha = .9; ctx.font = '30px TCM, sans-serif'; ctx.fillText(t.foot1, 92, 1132); ctx.globalAlpha = 1;
+    var fs = fit(ctx, 'TexContractor.com', 'TCB, sans-serif', 52, textMax); ctx.font = fs + 'px TCB, sans-serif';
+    var wa = ctx.measureText('Tex').width; ctx.fillStyle = '#f4c95d'; ctx.fillText('Tex', 92, 1199); ctx.fillStyle = '#ffffff'; ctx.fillText('Contractor.com', 92 + wa, 1199);
+    if (m) {
+      var qx = W - 56 - 36 - 190, qy = 1052, n = m.length, cell = 172 / n, off = 9, P = function (k) { return Math.round(off + k * cell); };
+      rr(ctx, qx, qy, 190, 190, 16); ctx.fillStyle = '#fffaf0'; ctx.fill(); ctx.fillStyle = '#1c1917';
+      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) if (m[y][x]) ctx.fillRect(qx + P(x), qy + P(y), P(x + 1) - P(x), P(y + 1) - P(y));
+      ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '22px TCB, sans-serif'; ctx.fillText(es ? 'Escanéame' : 'Scan me', qx + 95, 1272);
+    }
     return c;
   }
   var IC = {
