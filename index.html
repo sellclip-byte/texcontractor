@@ -872,7 +872,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
         <div class="hj-fine"></div>
       </div>
     </div>
-    <div id="hj-pro-m" class="hjp" hidden><div class="hjp-t">🛠️ <span class="hjp-t1">Are you a pro?</span></div><div class="hjp-s">Add your service FREE. Customers near you text you directly.</div><form class="hjp-f" novalidate><input class="hjp-zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Your ZIP code" aria-label="Your ZIP code"><button type="submit" class="hjp-go">Add my service →</button></form></div>
+    <div id="hj-pro-m" class="hjp" hidden><div class="hjp-t">🛠️ <span class="hjp-t1">Are you a pro?</span></div><div class="hjp-s">Add your service FREE. Customers near you text you directly.</div><form class="hjp-f" novalidate><input class="hjp-zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="ZIP code" aria-label="Your ZIP code"><button type="submit" class="hjp-go">Add my service →</button></form></div>
     <div id="site-banner-image-frame" hidden><img id="site-banner-image" alt="TexContractor announcement" hidden style="display:block;height:auto;object-fit:contain"></div>
     <div class="site-banner-text" id="site-banner-text" aria-live="polite"></div>
   </section>
@@ -900,7 +900,7 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 <script>(function(){/* phones/tablets: pro box under the customer box, requests strip under both, new-pros strip at the bottom */
 var M=matchMedia('(max-width:1099px)');function es(){return (document.documentElement.lang||'').indexOf('es')===0}
 var b=document.getElementById('hj-pro-m');if(!b)return;var z=b.querySelector('.hjp-zip');
-var L='';function paint(){var l=es()?'es':'en';if(l===L)return;L=l;b.querySelector('.hjp-t1').textContent=l==='es'?'¿Eres técnico?':'Are you a pro?';b.querySelector('.hjp-s').textContent=l==='es'?'Publica tu servicio GRATIS. Los clientes cerca de ti te escriben directo.':'Add your service FREE. Customers near you text you directly.';z.placeholder=l==='es'?'Tu código postal':'Your ZIP code';b.querySelector('.hjp-go').textContent=l==='es'?'Publicar mi servicio →':'Add my service →'}
+var L='';function paint(){var l=es()?'es':'en';if(l===L)return;L=l;b.querySelector('.hjp-t1').textContent=l==='es'?'¿Eres técnico?':'Are you a pro?';b.querySelector('.hjp-s').textContent=l==='es'?'Publica tu servicio GRATIS. Los clientes cerca de ti te escriben directo.':'Add your service FREE. Customers near you text you directly.';z.placeholder=l==='es'?'Código postal':'ZIP code';b.querySelector('.hjp-go').textContent=l==='es'?'Publicar mi servicio →':'Add my service →'}
 paint();setInterval(paint,800);
 z.addEventListener('input',function(){z.value=z.value.replace(/\D/g,'').slice(0,5);z.style.borderColor=''});
 b.querySelector('form').addEventListener('submit',function(e){e.preventDefault();var v=z.value.trim();if(!/^\d{5}$/.test(v)){z.style.borderColor='#ef4444';z.focus();return}try{localStorage.setItem('texcontractor-location',JSON.stringify({zip:v}))}catch(_){}try{window.texVisit&&texVisit('join_banner_pro_m')}catch(_){}location.href='start.html?src=home_hero_m&zip='+v+(es()?'&lang=es':'')});
