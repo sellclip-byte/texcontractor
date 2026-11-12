@@ -353,6 +353,7 @@ render();go(1);
 </script>
 <script>(function(){try{var es=(document.documentElement.lang||'').indexOf('es')===0||/[?&]lang=es/.test(location.search)||localStorage.getItem('texcontractor-language')==='es';if(!es)return;document.getElementById('wtL').textContent='¿Para quién trabajas? (toca uno o los dos)';document.getElementById('wtR').textContent='Residencial';document.getElementById('wtC').textContent='Comercial';}catch(e){}})();</script>
 <script src="/tex-nospam.js?v=2" defer></script>
+<script>/* owner 11-12: outreach texts open start.html with the trade (and name) already filled: ?svc=<exact service>&nm=<name> */(function(){try{var q=new URLSearchParams(location.search),v=q.get('svc'),nm=q.get('nm');var go=function(){var sel=document.getElementById('tradeSel');if(v&&sel&&![].some.call(sel.options,function(o){return o.value===v})){return setTimeout(go,300)}if(v&&sel&&sel.value!==v){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}var n=document.getElementById('name');if(nm&&n&&!n.value){n.value=nm.slice(0,40);n.dispatchEvent(new Event('input',{bubbles:true}))}};if(v||nm)setTimeout(go,400)}catch(_){}})();</script>
 <script>/* owner 11-10: ZIP typed on the home hero / panel carries over */(function(){try{var z=new URLSearchParams(location.search).get('zip');if(!/^\d{5}$/.test(z||''))return;var e=document.getElementById('zip');if(e&&!e.value){e.value=z;e.dispatchEvent(new Event('input',{bubbles:true}))}}catch(_){}})();</script>
 </body>
 </html>
