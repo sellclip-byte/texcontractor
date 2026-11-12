@@ -101,9 +101,10 @@
           <input type="hidden" name="realName">
           <label>Mobile number <span class="hint">A mobile number that can receive texts — not a landline.</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{10,22}" title="Enter a phone number only, not a website or other text" required></label>
           <input type="hidden" name="email">
-          <div class="cred-pick" style="display:grid;gap:6px;margin:4px 0"><span style="font-weight:800">Insurance &amp; license <span class="hint">Optional. Shown on your listing as “Info provided by the pro”. You are responsible for this information.</span></span>
+          <div class="cred-pick" style="display:grid;gap:6px;margin:4px 0"><span style="font-weight:800">Insurance, license &amp; background check <span class="hint">Optional. Shown as a badge on your listing. You are responsible for this information.</span></span>
           <label style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" name="insured" value="yes" style="width:22px;height:22px"> I'm insured</label>
           <label style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" name="licensed" value="yes" style="width:22px;height:22px"> I'm licensed / certified</label>
+          <label style="display:flex;align-items:center;gap:10px;font-weight:700"><input type="checkbox" name="background" value="yes" style="width:22px;height:22px"> I have a clear background check</label>
           <input name="licenseNumber" maxlength="40" placeholder="License number (optional)" autocomplete="off"></div>
           <div class="wt-pick"><span style="font-weight:800">Who do you work for? <span class="hint">Tap one or both. Customers see it on your listing. <span lang="es">¿Para quién trabajas? Toca uno o los dos.</span></span></span><div class="wt-row"><label class="wt-opt wt-res"><input type="checkbox" name="workRes" value="yes"> <b style="white-space:nowrap">🏠 Residential</b> <small lang="es">Casas</small></label><label class="wt-opt wt-com"><input type="checkbox" name="workCom" value="yes"> <b style="white-space:nowrap">🏢 Commercial</b> <small lang="es">Negocios</small></label></div></div>
           <style>.wt-pick{display:grid;gap:6px;margin:4px 0}.wt-row{display:flex;gap:10px;flex-wrap:wrap}.wt-opt{flex:1;min-width:140px;display:flex!important;flex-direction:column!important;align-items:center;justify-content:center;gap:2px;font-weight:800;border:2px solid #e2e8f0;border-radius:12px;padding:12px;cursor:pointer;background:#fff;color:#334155;transition:all .15s}.wt-opt input{position:absolute;opacity:0;width:1px;height:1px}.wt-opt small{font-weight:600;opacity:.8}.wt-res:has(input:checked){border-color:#1d4ed8;background:#1d4ed8;color:#fff}.wt-com:has(input:checked){border-color:#ea580c;background:#ea580c;color:#fff}.wt-opt:has(input:focus-visible){outline:3px solid #93c5fd}</style>
@@ -159,7 +160,7 @@
         <div class="photo-preview" id="work-preview" aria-live="polite"></div>
       </section>
       <div class="privacy">Your name, city, state, service, description and photos are shown on your public listing. Your phone number is not printed on the page — signed-in customers reach you through the contact buttons.</div>
-      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>This is my mobile number and I can reply to customer texts. I agree to receive a one-time verification code by text at this number (message and data rates may apply). I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin:16px 0"><input type="checkbox" name="rulesAccepted" value="yes" required style="width:20px;height:20px;flex:none"> <span>This is my mobile number and I can reply to customer texts. I agree to receive a one-time verification code by text at this number (message and data rates may apply). I confirm everything I post (including insurance, license and background check) is true and that I am fully responsible for it and for my work. I agree to the <a href="site-guide.html#terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="site-guide.html#guidelines" target="_blank" rel="noopener">Contractor Guidelines</a>, and have read the <a href="site-guide.html#privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       <button class="submit" type="submit">Publish my service</button>
       <div class="success" id="success" role="status"></div>
     </form>
@@ -167,7 +168,7 @@
   </main>
   <script src="tex-auth.js?v=20261109fin"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-admin.js?v=20261111ct"></script>
+  <script src="tex-admin.js?v=20261112bg"></script>
   <script src="tex-phone-verify.js?v=20261024"></script>
   <script src="tex-state-avatar.js?v=20261103-labor"></script>
   <script>

@@ -127,6 +127,8 @@
         avail_to: data.availTo === '' || data.availTo == null ? null : Number(data.availTo),
         insured: data.insured === 'yes',
         licensed: data.licensed === 'yes',
+        background_check: data.background === 'yes',
+        terms_accepted_at: new Date().toISOString(),
         license_number: data.licensed === 'yes' && data.licenseNumber ? String(data.licenseNumber).trim().slice(0, 40) : null,
         price_type: ['hourly','starting','estimate','deal'].includes(data.priceType) ? data.priceType : null,
         price_amount: (() => { const v = Math.round(Number(data.priceType === 'hourly' ? data.priceHourly : data.priceType === 'starting' ? data.priceStarting : 0)); return v >= 1 && v <= 100000 ? v : null; })(),
@@ -413,7 +415,7 @@
   const myMedia = (id) => rpc('texcontractor_my_media', { p_id: id || null });
   const myCreds = (id) => rpc('texcontractor_my_creds', { p_id: id || null });
   const myPrice = (id, type, amount) => rpc('texcontractor_my_price', { p_id: id, p_type: type || null, p_amount: amount == null || amount === '' ? null : Math.round(Number(amount)) });
-  const myCredsUpdate = (id, { insured = null, licensed = null, license = null, addProof = null } = {}) => rpc('texcontractor_my_credentials_update', { p_id: id, p_insured: insured, p_licensed: licensed, p_license: license, p_add_proof: addProof });
+  const myCredsUpdate = (id, { insured = null, licensed = null, license = null, addProof = null, background = null } = {}) => rpc('texcontractor_my_credentials_update', { p_id: id, p_insured: insured, p_licensed: licensed, p_background: background, p_license: license, p_add_proof: addProof });
   // Private proof (insurance / license photo): goes to a non-public bucket, only the owner and admins can read it.
   const uploadMyProof = async (listingId, dataUrl) => {
     const user = await TexAuth.getUser();

@@ -74,6 +74,7 @@ input[type=file]{display:none}
     <h2 data-t="credH"></h2><p class="sub" data-t="credS"></p>
     <label class="chk"><input type="checkbox" id="insured"> <span data-t="insL"></span></label>
     <label class="chk"><input type="checkbox" id="licensed"> <span data-t="licL"></span></label>
+    <label class="chk"><input type="checkbox" id="bgchk"> <span data-t="bgL"></span></label>
     <div id="licbox" hidden><input id="licnum" maxlength="40" autocomplete="off"></div>
     <label class="big ghost" for="proof">📄 <span data-t="proofBtn"></span></label>
     <input id="proof" type="file" accept="image/*">
@@ -96,7 +97,7 @@ input[type=file]{display:none}
   <div class="links"><a id="view" href="#" hidden data-t="view"></a></div>
 </main>
 <script src="tex-auth.js?v=20261109fin"></script>
-<script src="tex-admin.js?v=20261111ct"></script>
+<script src="tex-admin.js?v=20261112bg"></script>
 <script>
 (function(){
 'use strict';
@@ -105,13 +106,13 @@ const T={
   photoH:'Your profile photo',photoS:'A clear photo of you. Customers see it next to your name.',photoBtn:'Take a photo or choose from my phone',photoTip:'Tip: good light, look at the camera, no sunglasses.',
   workH:'Photos of your work',workS:'Up to 10 photos of jobs you finished.',workBtn:'Add photos of my work',aboutH:'About your work',aboutS:'A few lines: what you do, your experience, the areas you cover.',
   prH:'How do you price your work? (optional)',prS:'Customers see this on your listing.',prHour:'I charge by the hour',prStart:'Jobs start at',prEst:'Free estimate',prDeal:"Contact me, let's make a deal",prNone:"Don't show a price",
-  credH:'Insurance & license (optional)',credS:'If you have them, check the boxes. Customers will see a small badge on your profile.',insL:'I\'m insured',licL:'I\'m licensed / certified',licPh:'License number (optional)',proofBtn:'Upload proof (optional, private)',proofOk:'✓ Proof uploaded. Only TexContractor can see it.',proofN:'{n} proof file(s) on file (private).',credNote:'Shown as “Info provided by the pro”. You are responsible for this information (see Terms).',save:'Save',saving:'Saving…',saved:'✓ Saved. Customers can see it now.',view:'See my profile →',count:'{n} of 10 photos',
+  credH:'Insurance, license & background check (optional)',credS:'If you have them, check the boxes. Customers will see a small badge on your profile.',insL:'I\'m insured',bgL:'I have a clear background check',licL:'I\'m licensed / certified',licPh:'License number (optional)',proofBtn:'Upload proof (optional, private)',proofOk:'✓ Proof uploaded. Only TexContractor can see it.',proofN:'{n} proof file(s) on file (private).',credNote:'You are responsible for this information (see Terms).',save:'Save',saving:'Saving…',saved:'✓ Saved. Customers can see it now.',view:'See my profile →',count:'{n} of 10 photos',
   claimed:'✅ We found your listing by your phone number. It is yours now: change the photo, add your work and save.',needSign:'Please sign in first.',noListing:'You don\'t have a service yet.',err:'Something went wrong. Please try again.',max:'Up to 10 work photos.'},
  es:{h1:'Mis fotos y trabajos',s1:'💡 Por nuestra experiencia con los clientes: casi siempre eligen al técnico con el perfil completo, con una foto clara de ti y fotos de tus trabajos. Da confianza, y te toma 2 minutos.',pickHint:'Tienes más de un servicio. Escoge cuál quieres actualizar.',
   photoH:'Tu foto de perfil',photoS:'Una foto clara de ti. Los clientes la ven junto a tu nombre.',photoBtn:'Tomar una foto o escoger de mi teléfono',photoTip:'Consejo: buena luz, mira a la cámara, sin lentes oscuros.',
   workH:'Fotos de tus trabajos',workS:'Hasta 10 fotos de trabajos que terminaste.',workBtn:'Agregar fotos de mis trabajos',aboutH:'Sobre tu trabajo',aboutS:'Unas líneas: qué haces, tu experiencia y las zonas donde trabajas.',
   prH:'¿Cómo cobras tu trabajo? (opcional)',prS:'Los clientes lo ven en tu perfil.',prHour:'Cobro por hora',prStart:'Trabajos desde',prEst:'Presupuesto gratis',prDeal:'Escríbeme y hacemos trato',prNone:'No mostrar precio',
-  credH:'Seguro y licencia (opcional)',credS:'Si los tienes, marca las casillas. Los clientes verán una pequeña insignia en tu perfil.',insL:'Tengo seguro',licL:'Tengo licencia / certificación',licPh:'Número de licencia (opcional)',proofBtn:'Subir comprobante (opcional, privado)',proofOk:'✓ Comprobante subido. Solo TexContractor lo puede ver.',proofN:'{n} comprobante(s) guardado(s) (privado).',credNote:'Se muestra como “Información del técnico”. Tú eres responsable de esta información (ver Términos).',save:'Guardar',saving:'Guardando…',saved:'✓ Guardado. Los clientes ya lo pueden ver.',view:'Ver mi perfil →',count:'{n} de 10 fotos',
+  credH:'Seguro, licencia y antecedentes (opcional)',credS:'Si los tienes, marca las casillas. Los clientes verán una pequeña insignia en tu perfil.',insL:'Tengo seguro',bgL:'Tengo antecedentes limpios (background check)',licL:'Tengo licencia / certificación',licPh:'Número de licencia (opcional)',proofBtn:'Subir comprobante (opcional, privado)',proofOk:'✓ Comprobante subido. Solo TexContractor lo puede ver.',proofN:'{n} comprobante(s) guardado(s) (privado).',credNote:'Tú eres responsable de esta información (ver Términos).',save:'Guardar',saving:'Guardando…',saved:'✓ Guardado. Los clientes ya lo pueden ver.',view:'Ver mi perfil →',count:'{n} de 10 fotos',
   claimed:'✅ Encontramos tu perfil con tu número. Ahora es tuyo: cambia tu foto, agrega tus trabajos y guarda.',needSign:'Primero entra a tu cuenta.',noListing:'Todavía no tienes un servicio.',err:'Algo salió mal. Intenta de nuevo.',max:'Hasta 10 fotos de trabajos.'}
 };
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -126,7 +127,7 @@ const url=p=>p?(p.startsWith('data:')?p:TexAdminApi.publicUrl(p)):'';
 function readImage(file,max=1200){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.8))};img.onerror=rej;img.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
 function showProfile(){const u=st.profileData||url(st.profile);$('#ph1').hidden=!u;$('#ph0').hidden=!!u;if(u)$('#ph1').src=u}
 function drawWork(){const g=$('#wgrid');g.innerHTML='';st.work.forEach((w,i)=>{const d=document.createElement('div');const im=document.createElement('img');im.src=w.data||url(w.path);im.alt='';const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Remove');x.onclick=()=>{st.work.splice(i,1);st.dirty=true;drawWork()};d.append(im,x);g.append(d)});$('#wcount').textContent=t('count').replace('{n}',st.work.length)}
-function loadCreds(id){const c=st.creds[id]||{};$('#insured').checked=!!c.insured;$('#licensed').checked=!!c.licensed;$('#licnum').value=c.license_number||'';$('#licbox').hidden=!c.licensed;st.proofData=null;$('#proofst').textContent=c.proof_count?t('proofN').replace('{n}',c.proof_count):''}
+function loadCreds(id){const c=st.creds[id]||{};$('#insured').checked=!!c.insured;$('#bgchk').checked=!!c.background_check;$('#licensed').checked=!!c.licensed;$('#licnum').value=c.license_number||'';$('#licbox').hidden=!c.licensed;st.proofData=null;$('#proofst').textContent=c.proof_count?t('proofN').replace('{n}',c.proof_count):''}
 async function loadPrice(id){$$('input[name=pt]').forEach(r=>r.checked=r.value==='');$('#pa-hourly').value='';$('#pa-starting').value='';
  try{const r=await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/texcontractor_public_services?select=price_type,price_amount&id=eq.'+encodeURIComponent(id),{headers:{apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r'}});const j=await r.json();const p=j&&j[0];if(!p||st.cur?.id!==id)return;
  const t=p.price_type||'';$$('input[name=pt]').forEach(x=>x.checked=x.value===t);if(t==='hourly')$('#pa-hourly').value=p.price_amount||'';if(t==='starting')$('#pa-starting').value=p.price_amount||''}catch(_){}}
@@ -135,7 +136,7 @@ function load(row){st.cur=row;loadCreds(row.id);loadPrice(row.id);st.profile=row
  $('#view').href='profile.html?contractor='+encodeURIComponent(row.id);showProfile();drawWork()}
 $('#pfile').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{st.profileData=await readImage(f,900);st.dirty=true;showProfile();msg('')}catch(_){msg(t('err'),'err')}e.target.value=''});
 $('#wfile').addEventListener('change',async e=>{const fs=[...(e.target.files||[])];for(const f of fs){if(st.work.length>=10){msg(t('max'),'err');break}try{st.work.push({data:await readImage(f,1400)})}catch(_){}}st.dirty=true;drawWork();e.target.value=''});
-$('#licensed').addEventListener('change',()=>{$('#licbox').hidden=!$('#licensed').checked;st.dirty=true});$('#insured').addEventListener('change',()=>{st.dirty=true});$('#licnum').addEventListener('input',()=>{st.dirty=true});
+$('#licensed').addEventListener('change',()=>{$('#licbox').hidden=!$('#licensed').checked;st.dirty=true});$('#insured').addEventListener('change',()=>{st.dirty=true});$('#bgchk').addEventListener('change',()=>{st.dirty=true});$('#licnum').addEventListener('input',()=>{st.dirty=true});
 $('#proof').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{st.proofData=await readImage(f,1600);st.dirty=true;$('#proofst').textContent='📄 '+f.name}catch(_){msg(t('err'),'err')}e.target.value=''});
 $('#listing').addEventListener('change',()=>{const r=st.rows.find(x=>x.id===$('#listing').value);if(r)load(r)});
 $('#save').onclick=async()=>{const b=$('#save');if(!st.cur)return;b.disabled=true;b.textContent=t('saving');msg('');
@@ -145,15 +146,15 @@ $('#save').onclick=async()=>{const b=$('#save');if(!st.cur)return;b.disabled=tru
   const about=$('#about').value.trim();
   await TexAdminApi.myMediaUpdate(id,{profile,work,about:about||null});
   let addProof=null;if(st.proofData)addProof=await TexAdminApi.uploadMyProof(id,st.proofData);
-  const ins=$('#insured').checked,lic=$('#licensed').checked,num=$('#licnum').value.trim();
-  await TexAdminApi.myCredsUpdate(id,{insured:ins,licensed:lic,license:lic?num:null,addProof});
+  const ins=$('#insured').checked,bg=$('#bgchk').checked,lic=$('#licensed').checked,num=$('#licnum').value.trim();
+  await TexAdminApi.myCredsUpdate(id,{insured:ins,licensed:lic,license:lic?num:null,addProof,background:bg});
   // 11-10 fix: only copy to the person's OTHER services on a personal account (the admin account owns the whole imported directory)
   const fewRows=st.rows.length<=20;
-  if(fewRows)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myCredsUpdate(r.id,{insured:ins})}catch(_){}}
+  if(fewRows)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myCredsUpdate(r.id,{insured:ins,background:bg})}catch(_){}}
   { const pt=($$('input[name=pt]').find(x=>x.checked)||{}).value||'';const pa=pt==='hourly'?$('#pa-hourly').value:pt==='starting'?$('#pa-starting').value:null;
     if((pt==='hourly'||pt==='starting')&&!(Number(pa)>=1)){throw new Error(L==='es'?'Escribe el precio.':'Enter your price.')}
     await TexAdminApi.myPrice(id,pt,pa); }
-  const c=st.creds[id]=st.creds[id]||{};c.insured=ins;c.licensed=lic;c.license_number=lic?num:'';if(addProof){c.proof_count=(c.proof_count||0)+1;st.proofData=null;$('#proofst').textContent=t('proofOk')}
+  const c=st.creds[id]=st.creds[id]||{};c.insured=ins;c.background_check=bg;c.licensed=lic;c.license_number=lic?num:'';if(addProof){c.proof_count=(c.proof_count||0)+1;st.proofData=null;$('#proofst').textContent=t('proofOk')}
   // same person: use the new profile photo on all of their listings
   if(profile&&fewRows)for(const r of st.rows)if(r.id!==id){try{await TexAdminApi.myMediaUpdate(r.id,{profile})}catch(_){}}
   st.profileData=null;if(profile)st.profile=profile;st.work=work.map(p=>({path:p}));st.dirty=false;drawWork();

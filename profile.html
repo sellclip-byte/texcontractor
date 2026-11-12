@@ -69,7 +69,7 @@
     @keyframes galleryPulse { 0%,100% { opacity:1; box-shadow:0 0 0 2px rgba(185,28,28,.15); } 50% { opacity:.75; box-shadow:0 0 0 7px rgba(185,28,28,.06); } }
     @media (prefers-reduced-motion:reduce) { .gallery-text-cta { animation:none; } }
   .hablo{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:3px 10px 3px 6px;border-radius:999px;background:#fff;border:2px solid #006847;font:800 .82rem/1.2 "Segoe UI",Arial,sans-serif;color:#111;white-space:nowrap}.hablo .mx{font-size:1.05rem;line-height:1}.hablo .mxf{flex:none;border-radius:3px;box-shadow:0 0 0 1px #cfd8d3}.hablo b{color:#006847}.hablo em{font-style:normal;color:#ce1126}.avail-now{display:inline-flex;align-items:center;gap:6px;margin:6px 6px 0 0;padding:3px 10px;border-radius:999px;background:#e7f8ee;border:2px solid #16a34a;color:#0f5132;font:800 .8rem/1.2 "Segoe UI",Arial,sans-serif;white-space:nowrap}.avail-now i{width:9px;height:9px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.25);animation:availBlink 1s ease-in-out infinite}@keyframes availBlink{0%,100%{opacity:1;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.55),0 0 10px 3px rgba(34,197,94,.85)}50%{opacity:.25;background:#16a34a;box-shadow:0 0 0 7px rgba(34,197,94,0),0 0 0 0 rgba(34,197,94,0)}}@media (prefers-reduced-motion:reduce){.avail-now,.avail-now i{animation:none}}#avail-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 2px}.avail-hours{font-weight:700;color:#0f5132;font-size:.9rem}#hablo-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 2px}.hablo-note{font-weight:700;color:#006847;font-size:.9rem}
-.tc-cred{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}.tc-cred span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#eef7f3;border:1.5px solid #0a7a63;color:#064e3b;font:800 .78rem/1.2 "Segoe UI",Arial,sans-serif}.tc-cred small{flex-basis:100%;color:#64748b;font-size:.72rem}
+.tc-cred{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}.tc-cred span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#eef7f3;border:1.5px solid #0a7a63;color:#064e3b;font:800 .78rem/1.2 "Segoe UI",Arial,sans-serif}.tc-cred small{flex-basis:100%;color:#64748b;font-size:.72rem}.tc-cred span.tc-bg{background:#dcfce7;border-color:#15803d;color:#14532d}
     .fact[hidden]{display:none!important}
   </style>
 <link rel="stylesheet" href="tex-gold.css?v=1">
@@ -128,7 +128,7 @@
     let directoryToken = '';
     const loadProfile = async () => {
       if (!key) return null;
-      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof,price_type,price_amount,work_type,contact_methods', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
+      const query = new URLSearchParams({ select:'id,owner_id,display_name,years,city,state,service,about,profile_photo_path,work_photo_paths,speaks_spanish,avail_from,avail_to,insured,licensed,license_number,has_proof,background_check,price_type,price_amount,work_type,contact_methods', id:`eq.${key}`, is_published:'eq.true', limit:'1' });
       const response = await fetch(`${SUPABASE_URL}/rest/v1/texcontractor_public_services?${query.toString()}`, { headers:{ apikey:SUPABASE_KEY, ...(directoryToken ? {Authorization: `Bearer ${directoryToken}`} : {}) } });
       if (!response.ok) throw new Error('Profile could not be loaded.');
       const row = (await response.json())[0];
@@ -148,7 +148,7 @@
         spanish:!!row.speaks_spanish,
         work_type:row.work_type||null,
         contact_methods:(window.texContactMethods = Array.isArray(row.contact_methods) ? row.contact_methods : null, (function(m){ if (m && !m.includes('chat')) { var cb=document.getElementById('chat-profile-button'); if (cb) cb.hidden=true; } })(window.texContactMethods), window.texContactMethods),
-        insured:!!row.insured, licensed:!!row.licensed, license_number:row.license_number||'', has_proof:!!row.has_proof,
+        insured:!!row.insured, licensed:!!row.licensed, background_check:!!row.background_check, license_number:row.license_number||'', has_proof:!!row.has_proof,
         price_type:row.price_type||null, price_amount:row.price_amount||null,
         availFrom:row.avail_from, availTo:row.avail_to
       } : null;
@@ -200,7 +200,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
       const hrs=document.createElement('span');hrs.className='avail-hours';hrs.textContent='Hours: '+texHourLabel(profile.availFrom)+' – '+texHourLabel(profile.availTo)+' (Texas time)';box.append(hrs);
       document.getElementById('contractor-name').insertAdjacentElement('afterend',box);
     }
-    const credBadges=(p,full)=>{if(!p||!(p.insured||p.licensed))return null;const d=document.createElement('div');d.className='tc-cred';const es=(()=>{try{return localStorage.getItem('texcontractor-language')==='es'}catch(_){return false}})();if(p.insured){const s=document.createElement('span');s.textContent='🛡️ '+(es?'Asegurado':'Insured')+(p.has_proof&&full?(es?' · comprobante':' · proof on file'):'');d.append(s)}if(p.licensed){const s=document.createElement('span');s.textContent='📜 '+(es?'Con licencia':'Licensed')+(full&&p.license_number?' #'+p.license_number:'');d.append(s)}const n=document.createElement('small');n.textContent=es?'Información del técnico':'Info provided by the pro';d.append(n);return d};
+    const credBadges=(p,full)=>{if(!p||!(p.insured||p.licensed||p.background_check))return null;const d=document.createElement('div');d.className='tc-cred';const es=(()=>{try{return localStorage.getItem('texcontractor-language')==='es'}catch(_){return false}})();if(p.insured){const s=document.createElement('span');s.textContent='🛡️ '+(es?'Asegurado':'Insured')+(p.has_proof&&full?(es?' · comprobante':' · proof on file'):'');d.append(s)}if(p.licensed){const s=document.createElement('span');s.textContent='📜 '+(es?'Con licencia':'Licensed')+(full&&p.license_number?' #'+p.license_number:'');d.append(s)}if(p.background_check){const s=document.createElement('span');s.className='tc-bg';s.textContent='✅ '+(es?'Antecedentes limpios':'Clear background check');d.append(s)}return d};
     { const cb=credBadges(profile,true); if(cb && !document.getElementById('cred-box')){cb.id='cred-box';document.getElementById('contractor-name').insertAdjacentElement('afterend',cb);} }
     { const pb=window.texPriceBadge&&texPriceBadge(profile); if(pb&&!document.getElementById('price-box')){const w=document.createElement('div');w.id='price-box';w.append(pb);(document.getElementById('cred-box')||document.getElementById('contractor-name')).insertAdjacentElement('afterend',w);} }
     { const wb=window.texWorkBadge&&texWorkBadge(profile.work_type); if(wb&&!document.getElementById('wt-box')){wb.id='wt-box';document.getElementById('contractor-name').insertAdjacentElement('afterend',wb);} }

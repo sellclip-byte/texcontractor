@@ -262,6 +262,8 @@
     'Insurance & license': 'Seguro y licencia',
     "I'm insured": 'Tengo seguro',
     "I'm licensed / certified": 'Tengo licencia / certificación',
+    'I have a clear background check': 'Tengo antecedentes limpios (background check)',
+    'Optional. Shown as a badge on your listing. You are responsible for this information.': 'Opcional. Se muestra como insignia en tu anuncio. Tú eres responsable de esta información.',
     'Optional. Shown on your listing as “Info provided by the pro”. You are responsible for this information.': 'Opcional. Se muestra en tu anuncio como “Información del técnico”. Tú eres responsable de esta información.',
     'License number (optional)': 'Número de licencia (opcional)',
     '📷 Take a photo or choose from my phone (recommended)': '📷 Tomar una foto o escoger de mi teléfono (recomendado)',
