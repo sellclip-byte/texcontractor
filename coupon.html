@@ -40,6 +40,8 @@
     <div class="lbl">Your coupon code</div>
     <div class="code" id="code">DFW-······</div>
     <p class="meta" id="meta"></p>
+    <button class="go" id="copy" type="button" style="margin-top:12px">📋 Copy my code</button>
+    <script>document.getElementById('copy').addEventListener('click',function(){var b=this,c=document.getElementById('code').textContent;function ok(){b.textContent='✓ Copied: '+c;setTimeout(function(){b.textContent='📋 Copy my code'},2500)}try{navigator.clipboard.writeText(c).then(ok,function(){prompt('Copy your code:',c)})}catch(_){prompt('Copy your code:',c)}});</script>
     <div class="how"><b>How to use it:</b> text this code (or a screenshot of this page) to DFW Mobile Lawnmower when you book. $10 comes off your repair.</div>
     <a class="go g" id="txt" href="profile.html?contractor=f3339b5e-447d-4ec0-a6cb-b5d792f63f6d&amp;service=Lawn%20Mower%2C%20Water%20Pump%20%26%20Outdoor%20Equipment%20Repair&amp;utm_source=coupon">💬 Text DFW Mobile Lawnmower</a>
    </div>
