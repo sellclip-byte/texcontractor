@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>TexContractor LIVE screen</title>
+<style>
+@font-face{font-family:P;src:url(assets/fonts/Poppins-Bold.ttf);font-weight:800}
+@font-face{font-family:P;src:url(assets/fonts/Poppins-Medium.ttf);font-weight:500}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#0d0b07;overflow:hidden;font-family:P,sans-serif}
+/* 9:16 stage, scaled to fit the window (share this window in TikTok LIVE Studio) */
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center;overflow:hidden;
+ background:radial-gradient(900px 700px at 20% 10%,#2a2112 0%,transparent 60%),radial-gradient(900px 900px at 90% 90%,#0a3d31 0%,transparent 60%),linear-gradient(160deg,#17130b,#0d0b07)}
+.wave{position:absolute;inset:-20%;background:conic-gradient(from 0deg at 50% 50%,rgba(237,183,45,.10),rgba(10,107,85,.12),rgba(237,183,45,.10));filter:blur(60px);animation:spin 28s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dots span{position:absolute;bottom:-80px;font-size:56px;opacity:.55;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-2100px) rotate(30deg)}}
+.top{position:absolute;top:70px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:18px}
+.logo{background:#fffaf0;border-radius:28px;padding:16px 34px}.logo img{height:120px;display:block}
+.live{display:flex;align-items:center;gap:14px;background:#e11d48;color:#fff;font:800 38px P;padding:10px 28px;border-radius:999px;letter-spacing:2px}
+.live i{width:20px;height:20px;border-radius:50%;background:#fff;animation:blink 1s infinite}@keyframes blink{50%{opacity:.2}}
+.h{position:absolute;top:430px;left:60px;right:60px;text-align:center;color:#fff;font:800 92px/1.05 P;letter-spacing:-1px}
+.h b{color:#f4c95d}
+.sub{position:absolute;top:690px;left:70px;right:70px;text-align:center;color:#fdf3d7;font:500 46px/1.3 P}
+.box{position:absolute;top:880px;left:70px;right:70px;height:430px;border-radius:44px;background:#fffaf0;border:8px solid #edb72d;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px;text-align:center;opacity:0;transform:translateY(40px);transition:all .8s}
+.slide.on{opacity:1;transform:none}
+.slide .k{font:800 34px P;color:#a16d0d;letter-spacing:3px;text-transform:uppercase}
+.slide .v{font:800 80px/1.08 P;color:#0b3d2c;margin-top:10px}
+.slide .w{font:500 40px/1.3 P;color:#334;margin-top:14px}
+.type{position:absolute;top:1370px;left:70px;right:70px;border-radius:36px;background:#0a6b55;color:#fff;padding:34px;text-align:center}
+.type .a{font:800 54px/1.15 P}.type .a b{color:#ffdc58}
+.type .ex{font:500 40px P;color:#d7f5ea;margin-top:10px;min-height:52px}
+.pro{position:absolute;top:1640px;left:70px;right:70px;border-radius:30px;background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;padding:26px;text-align:center;font:800 46px/1.2 P}
+.es{position:absolute;bottom:40px;left:0;right:0;text-align:center;color:#f4c95d;font:800 38px P;opacity:.95}
+.arrow{display:inline-block;animation:bob 1.2s infinite}@keyframes bob{50%{transform:translateY(14px)}}
+</style></head><body>
+<div id="stage">
+ <div class="wave"></div><div class="dots" id="dots"></div>
+ <div class="top"><div class="logo"><img src="texcontractor-logo.png" alt="TexContractor"></div><div class="live"><i></i>LIVE · FIND A PRO</div></div>
+ <div class="h">Need a pro in <b>Texas?</b></div>
+ <div class="sub">We find local pros for you, live. They text you directly. Free.</div>
+ <div class="box" id="box"></div>
+ <div class="type"><div class="a">Type your <b>CITY</b> + <b>SERVICE</b> in the chat <span class="arrow">👇</span></div><div class="ex" id="ex"></div></div>
+ <div class="pro">👷 Are you a pro? Join FREE. No lead fees.</div>
+ <div class="es">¿Español? ¡Escríbenos en el chat! 🇲🇽</div>
+</div>
+<script>
+(function(){
+ var st=document.getElementById('stage');function fit(){var s=Math.min(innerWidth/1080,innerHeight/1920);st.style.transform='translate(-50%,-50%) scale('+s+')'}addEventListener('resize',fit);fit();
+ var icons=['🔧','⚡','❄️','🏠','🌳','🚚','🧹','🔑','🎨','🚿','🛠️','🚗'],d=document.getElementById('dots');
+ for(var i=0;i<16;i++){var e=document.createElement('span');e.textContent=icons[i%icons.length];e.style.left=(Math.random()*100)+'%';e.style.animationDuration=(14+Math.random()*14)+'s';e.style.animationDelay=(-Math.random()*20)+'s';d.appendChild(e)}
+ var S=[['How it works','1. Tell us what you need','City + service in the chat'],['How it works','2. We show you local pros','Real pros near you, on TexContractor.com'],['How it works','3. Text them directly','No middleman. No waiting on hold.'],
+  ['Popular right now','AC & Heating','Dallas · Houston · Austin · San Antonio'],['Popular right now','Plumbers','Fast help for leaks, drains, water heaters'],['Popular right now','Handyman','Small jobs, big help'],
+  ['Popular right now','Garage Doors','Springs, openers, installs'],['Popular right now','Lawn & Trees','Mowing, trimming, cleanups'],['Popular right now','Movers & Junk Removal','Same-day help near you'],
+  ['Post a job','Get offers from local pros','Post your request free on TexContractor.com'],['For pros','Your free business card','Customers near you text you directly']];
+ var box=document.getElementById('box');S.forEach(function(s){var e=document.createElement('div');e.className='slide';e.innerHTML='<div class="k"></div><div class="v"></div><div class="w"></div>';e.children[0].textContent=s[0];e.children[1].textContent=s[1];e.children[2].textContent=s[2];box.appendChild(e)});
+ var k=0,sl=box.children;function nx(){for(var j=0;j<sl.length;j++)sl[j].classList.remove('on');sl[k%sl.length].classList.add('on');k++}nx();setInterval(nx,4500);
+ var X=['e.g. "Plano – plumber"','e.g. "Houston – AC repair"','e.g. "Austin – handyman"','ej. "Dallas – electricista"','e.g. "Fort Worth – garage door"','e.g. "San Antonio – movers"'],x=0,ex=document.getElementById('ex');
+ function tx(){ex.textContent=X[x++%X.length]}tx();setInterval(tx,3000);
+})();
+</script>
+</body></html>
