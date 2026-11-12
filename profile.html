@@ -176,6 +176,8 @@
     } else {
     document.title = `${profile.name} · TexContractor`;
     document.getElementById('contractor-name').textContent = profile.name;
+    /* owner 11-12: $10 coupon button only on DFW Mobile Lawnmower's own profile */
+    if (profile.id === 'f3339b5e-447d-4ec0-a6cb-b5d792f63f6d' && !document.getElementById('dfw-coupon')) { const ar = document.querySelector('.action-row'); if (ar) { const cb = document.createElement('a'); cb.id = 'dfw-coupon'; cb.className = 'action'; cb.href = 'coupon.html?utm_source=profile_coupon'; cb.textContent = '🎟️ Show your $10 coupon'; cb.style.cssText = 'background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;font-weight:900;border:0;text-align:center;text-decoration:none'; ar.prepend(cb); } }
     const texCardGo = async () => { try { if (window.TexBusinessCard && (params.get('contractor') || params.get('imported')) && profile.id && !document.getElementById('pro-card')) {
       const imp = !!params.get('imported');
       let mine = false; try { const me = window.TexAuth && await TexAuth.getUser(); mine = !!(me && profile.ownerId && me.id === profile.ownerId && me.id !== '6d83440a-820a-4309-b666-cba8e24a8290'); } catch (_) {}

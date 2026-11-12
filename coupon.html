@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="strict-origin-when-cross-origin">
+<title>$10 OFF · DFW Mobile Lawnmower · TexContractor</title>
+<style>
+/* owner 11-12: coupon for DFW Mobile Lawnmower customers only. Code = DFW- + first 6 of the account id, checked by the admin in the database. */
+*{box-sizing:border-box}body{margin:0;background:#f6f1e4;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#10231c}
+.wrap{max-width:460px;margin:0 auto;padding:18px 16px 40px}
+.top{text-align:center}.top img{height:54px}
+.cp{margin-top:14px;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 14px 40px rgba(60,40,0,.16);border:3px dashed #c99a3a}
+.hd{background:linear-gradient(135deg,#0a6b55,#0b3d2c);color:#fff;text-align:center;padding:22px 16px 18px}
+.pp{width:92px;height:92px;border-radius:50%;object-fit:cover;border:4px solid #edb72d;background:#fff;display:block;margin:0 auto 10px}
+.hd h1{margin:0;font-size:24px;font-weight:900}.hd p{margin:4px 0 0;color:#cfeee3;font-size:15px}
+.off{font-size:64px;font-weight:900;color:#ffdc58;line-height:1;margin-top:12px;letter-spacing:-1px}
+.off small{display:block;font-size:20px;color:#fff;letter-spacing:0;margin-top:4px}
+.bd{padding:20px 18px;text-align:center}
+.code{display:inline-block;font:900 34px ui-monospace,Menlo,Consolas,monospace;letter-spacing:3px;color:#0b3d2c;background:#fff7dd;border:2px solid #edb72d;border-radius:14px;padding:10px 18px;margin:6px 0}
+.lbl{font-size:13px;font-weight:800;color:#8a6a1a;letter-spacing:2px;text-transform:uppercase}
+.meta{color:#4b5d55;font-size:15px;margin:8px 0 0}
+.how{text-align:left;background:#f4faf7;border-radius:14px;padding:12px 14px;margin:16px 0 0;font-size:15px;line-height:1.45}
+.how b{color:#0b3d2c}
+.go{display:block;width:100%;margin-top:16px;padding:16px;border:0;border-radius:14px;background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;font-weight:900;font-size:19px;font-family:inherit;text-align:center;text-decoration:none;cursor:pointer}
+.go.g{background:#0a6b55;color:#fff}
+.fine{font-size:12.5px;color:#6b7b74;margin-top:14px;line-height:1.4}
+[hidden]{display:none!important}
+</style>
+<script src="/tex-readable.js?v=20261112o" defer></script></head><body>
+<div class="wrap">
+ <div class="top"><a href="/?utm_source=coupon"><img src="texcontractor-logo.png" alt="TexContractor"></a></div>
+ <div class="cp">
+  <div class="hd"><img class="pp" id="pp" alt="DFW Mobile Lawnmower" src="https://rryehtaskbjnfbodymjj.supabase.co/storage/v1/object/public/texcontractor-media/6d83440a-820a-4309-b666-cba8e24a8290/f3339b5e-447d-4ec0-a6cb-b5d792f63f6d/profile.jpg">
+   <h1>DFW Mobile Lawnmower</h1><p>Lawn mower, zero-turn &amp; outdoor equipment repair · We come to you</p>
+   <div class="off">$10 OFF<small>your repair</small></div></div>
+  <div class="bd">
+   <div id="out">
+    <p style="font-size:17px;margin:0 0 4px"><b>Get your $10 coupon in 1 minute.</b></p>
+    <p class="meta" style="margin-top:0">Sign up free on TexContractor with your phone number. Your coupon code shows up right here.</p>
+    <button class="go" id="get" type="button">Get my $10 coupon</button>
+   </div>
+   <div id="in" hidden>
+    <div class="lbl">Your coupon code</div>
+    <div class="code" id="code">DFW-······</div>
+    <p class="meta" id="meta"></p>
+    <div class="how"><b>How to use it:</b> text this code (or a screenshot of this page) to DFW Mobile Lawnmower when you book. $10 comes off your repair.</div>
+    <a class="go g" id="txt" href="profile.html?contractor=f3339b5e-447d-4ec0-a6cb-b5d792f63f6d&amp;service=Lawn%20Mower%2C%20Water%20Pump%20%26%20Outdoor%20Equipment%20Repair&amp;utm_source=coupon">💬 Text DFW Mobile Lawnmower</a>
+   </div>
+   <p class="fine">One coupon per customer, for one repair with DFW Mobile Lawnmower. Can't be combined with other offers. No cash value. Offer from DFW Mobile Lawnmower; TexContractor only shows the code.</p>
+  </div>
+ </div>
+</div>
+<script src="tex-auth.js?v=20261109fin"></script>
+<script src="tex-quick-signup.js?v=20261112f"></script>
+<script>
+(function(){
+ function show(u){
+  var c='DFW-'+String(u.id||'').replace(/-/g,'').slice(0,6).toUpperCase();
+  document.getElementById('code').textContent=c;
+  var d=u.created_at?new Date(u.created_at):new Date();
+  var ph=String(u.phone||'').replace(/\D/g,'').slice(-4);
+  document.getElementById('meta').textContent='Member since '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+(ph?' · phone ending '+ph:'');
+  document.getElementById('out').hidden=true;document.getElementById('in').hidden=false;
+  try{window.texVisit&&texVisit('coupon_shown')}catch(_){}
+ }
+ async function check(){try{var u=window.TexAuth&&await TexAuth.getUser();if(u){show(u);return true}}catch(_){}return false}
+ document.getElementById('get').addEventListener('click',async function(){
+  try{window.texVisit&&texVisit('coupon_click')}catch(_){}
+  if(await check())return;
+  var ok=false;try{var pr=TexQuickSignup.require({name:'DFW Mobile Lawnmower',source:'coupon',returnTo:location.pathname+location.search});
+   setTimeout(function(){var t=document.getElementById('tqs-title'),sb=document.getElementById('tqs-sub'),pk=document.getElementById('tqs-perks');if(t)t.textContent='Get your $10 coupon ✓';if(sb)sb.textContent='Add your mobile number. We text you a code, then your coupon shows up on this page.';if(pk)pk.hidden=true},60);
+   ok=await pr}catch(_){}
+  if(ok)check();
+ });
+ check();
+})();
+</script>
+</body></html>
