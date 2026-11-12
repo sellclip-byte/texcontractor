@@ -2,7 +2,7 @@ name: Independent GitHub backup
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 6 * * *'
+    - cron: '17 6 * * 0'   # weekly (Sunday); keeps ~3 copies
 permissions:
   contents: read
 jobs:
@@ -26,4 +26,4 @@ jobs:
           path: |
             ${{ runner.temp }}/backup/texcontractor-repository.bundle
             ${{ runner.temp }}/backup/texcontractor-site-files.tar.gz
-          retention-days: 90
+          retention-days: 21
