@@ -1,0 +1,106 @@
+# TexContractor
+
+> TexContractor (texcontractor.com) is a free directory of local, individual home-service pros in Texas and across the U.S. Customers find a pro by service and city and text or call them directly. There are no lead fees, no bidding and no middleman. Customers can also post a free job request so local pros can text them offers. English and Spanish.
+
+Key facts:
+- Free for customers and for pros. Pros never pay per lead.
+- Customers contact the pro directly (text, call or chat on TexContractor).
+- Listings are for individual, self-employed technicians (not big companies).
+- Each pro has a profile with their service, city, work photos, hours, languages and badges such as Insured, Licensed or Clear background check. Badges are entered by the pro.
+- Pages exist for every service in every Texas city, plus other U.S. states.
+
+## How to find a pro
+- [Find a pro by service and ZIP](https://texcontractor.com/contractor.html): choose a service, enter a ZIP code, text the pro directly.
+- [Browse by city](https://texcontractor.com/local/): every service in every city. URL pattern: https://texcontractor.com/local/tx/<city>/<service>.html (example: [Plumbers in Dallas, TX](https://texcontractor.com/local/tx/dallas/plumbing-pipe-repair.html)).
+- [Post a free job request](https://texcontractor.com/requests.html): local pros see it and text you.
+- [En español](https://texcontractor.com/es/local/)
+
+## Services
+- [Appliance Repair or Maintenance Contractors](https://texcontractor.com/services/appliance-repair-or-maintenance.html)
+- [Architectural Services Contractors](https://texcontractor.com/services/architectural-services.html)
+- [Babysitting & Childcare Services Contractors](https://texcontractor.com/services/babysitting-and-childcare-services.html)
+- [Barber & Hair Styling Services Contractors](https://texcontractor.com/services/barber-and-hair-styling-services.html)
+- [Bathroom Remodel Contractors](https://texcontractor.com/services/bathroom-remodel.html)
+- [Carpet Cleaning Contractors](https://texcontractor.com/services/carpet-cleaning.html)
+- [Central Air Conditioning Repair or Maintenance Contractors](https://texcontractor.com/services/central-air-conditioning-repair-or-maintenance.html)
+- [Computer Repair Contractors](https://texcontractor.com/services/computer-repair.html)
+- [Concrete Installation Contractors](https://texcontractor.com/services/concrete-installation.html)
+- [Deck or Porch Remodel or Addition Contractors](https://texcontractor.com/services/deck-or-porch-remodel-or-addition.html)
+- [DJ Services Contractors](https://texcontractor.com/services/dj-services.html)
+- [Dog Grooming Contractors](https://texcontractor.com/services/dog-grooming.html)
+- [Dog Training & Horse Riding Lessons Contractors](https://texcontractor.com/services/dog-training-and-horse-riding-lessons.html)
+- [Dog Training Contractors](https://texcontractor.com/services/dog-training.html)
+- [Door Installation Contractors](https://texcontractor.com/services/door-installation.html)
+- [Drywall Repair and Texturing Contractors](https://texcontractor.com/services/drywall-repair-and-texturing.html)
+- [Electrical and Wiring Repair Contractors](https://texcontractor.com/services/electrical-and-wiring-repair.html)
+- [Event Planning Contractors](https://texcontractor.com/services/event-planning.html)
+- [Fence and Gate Installation Contractors](https://texcontractor.com/services/fence-and-gate-installation.html)
+- [Floor Installation or Replacement Contractors](https://texcontractor.com/services/floor-installation-or-replacement.html)
+- [Furniture Assembly Contractors](https://texcontractor.com/services/furniture-assembly.html)
+- [Furniture Moving and Heavy Lifting Contractors](https://texcontractor.com/services/furniture-moving-and-heavy-lifting.html)
+- [Garage Door Repair Contractors](https://texcontractor.com/services/garage-door-repair.html)
+- [General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services Contractors](https://texcontractor.com/services/general-automotive-services-towing-key-programming-window-tinting-and-tire-services.html)
+- [General Contracting Contractors](https://texcontractor.com/services/general-contracting.html)
+- [General Labor and Helpers](https://texcontractor.com/services/general-labor-and-helpers.html)
+- [Gutter Cleaning and Maintenance Contractors](https://texcontractor.com/services/gutter-cleaning-and-maintenance.html)
+- [Handyman Contractors](https://texcontractor.com/services/handyman.html)
+- [Heating System Repair or Maintenance Contractors](https://texcontractor.com/services/heating-system-repair-or-maintenance.html)
+- [Home Foundation Repair Contractors](https://texcontractor.com/services/home-foundation-repair.html)
+- [Home Inspection Consulting Contractors](https://texcontractor.com/services/home-inspection-consulting.html)
+- [House Cleaning Contractors](https://texcontractor.com/services/house-cleaning.html)
+- [In-Home Nursing Care Contractors](https://texcontractor.com/services/in-home-nursing-care.html)
+- [Interior Design Contractors](https://texcontractor.com/services/interior-design.html)
+- [Interior Painting Contractors](https://texcontractor.com/services/interior-painting.html)
+- [Junk Removal Contractors](https://texcontractor.com/services/junk-removal.html)
+- [Lawn Mower, Water Pump & Outdoor Equipment Repair Contractors](https://texcontractor.com/services/lawn-mower-water-pump-and-outdoor-equipment-repair.html)
+- [Lighting Installation Contractors](https://texcontractor.com/services/lighting-installation.html)
+- [Local Moving (under 50 miles) Contractors](https://texcontractor.com/services/local-moving-under-50-miles.html)
+- [Lock Installation and Repair Contractors](https://texcontractor.com/services/lock-installation-and-repair.html)
+- [Metalwork Contractors](https://texcontractor.com/services/metalwork.html)
+- [Mobile Auto Detailing Contractors](https://texcontractor.com/services/mobile-auto-detailing.html)
+- [Mobile Auto Mechanic Contractors](https://texcontractor.com/services/mobile-auto-mechanic.html)
+- [Notarization Contractors](https://texcontractor.com/services/notarization.html)
+- [Outdoor Landscaping and Design Contractors](https://texcontractor.com/services/outdoor-landscaping-and-design.html)
+- [Personal Training Contractors](https://texcontractor.com/services/personal-training.html)
+- [Pest Control Services Contractors](https://texcontractor.com/services/pest-control-services.html)
+- [Plumbing Drain Repair Contractors](https://texcontractor.com/services/plumbing-drain-repair.html)
+- [Plumbing Pipe Repair Contractors](https://texcontractor.com/services/plumbing-pipe-repair.html)
+- [Pressure Washing Contractors](https://texcontractor.com/services/pressure-washing.html)
+- [Private Taxi & Transportation Services Contractors](https://texcontractor.com/services/private-taxi-and-transportation-services.html)
+- [Roof Repair or Maintenance Contractors](https://texcontractor.com/services/roof-repair-or-maintenance.html)
+- [Specialty Meal Preparation & Dietary Cooking Contractors](https://texcontractor.com/services/specialty-meal-preparation-and-dietary-cooking.html)
+- [Swimming Pool Cleaning & Maintenance Contractors](https://texcontractor.com/services/swimming-pool-cleaning-and-maintenance.html)
+- [Tree Trimming and Removal Contractors](https://texcontractor.com/services/tree-trimming-and-removal.html)
+- [Tutoring & Education Services Contractors](https://texcontractor.com/services/tutoring-and-education-services.html)
+- [TV Mounting Contractors](https://texcontractor.com/services/tv-mounting.html)
+- [Upholstery and Furniture Cleaning Contractors](https://texcontractor.com/services/upholstery-and-furniture-cleaning.html)
+- [Wedding and Event Makeup Contractors](https://texcontractor.com/services/wedding-and-event-makeup.html)
+- [Wedding and Event Photography Contractors](https://texcontractor.com/services/wedding-and-event-photography.html)
+- [Wedding Officiant Contractors](https://texcontractor.com/services/wedding-officiant.html)
+- [Window Repair Contractors](https://texcontractor.com/services/window-repair.html)
+- [Window Tinting Contractors](https://texcontractor.com/services/window-tinting.html)
+
+
+## Cost guides
+- [Ac repair cost](https://texcontractor.com/guides/ac-repair-cost.html)
+- [Garage door repair cost](https://texcontractor.com/guides/garage-door-repair-cost.html)
+- [House cleaning cost](https://texcontractor.com/guides/house-cleaning-cost.html)
+- [Plumber cost](https://texcontractor.com/guides/plumber-cost.html)
+- [Roof replacement cost](https://texcontractor.com/guides/roof-replacement-cost.html)
+- [Water heater replacement cost](https://texcontractor.com/guides/water-heater-replacement-cost.html)
+
+
+## For pros
+- [List your service free](https://texcontractor.com/start.html): get a free pro card; customers near you text you directly. No lead fees.
+
+
+## Compare
+- [TexContractor vs Angi](https://texcontractor.com/compare/angi-alternative.html)
+- [TexContractor vs Thumbtack](https://texcontractor.com/compare/thumbtack-alternative.html)
+- [TexContractor vs Yelp](https://texcontractor.com/compare/yelp-alternative.html)
+- [TexContractor vs Craigslist](https://texcontractor.com/compare/craigslist-alternative.html)
+
+
+## Policies
+- [Help, safety, terms and privacy](https://texcontractor.com/site-guide.html)
+- Contact: texcontractor.help@gmail.com

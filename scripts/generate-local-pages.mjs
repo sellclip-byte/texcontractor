@@ -120,6 +120,16 @@ ${body}
 `;
 }
 
+// Each listed pro as a small LocalBusiness so search engines and AI assistants (ChatGPT via Bing,
+// Perplexity, Gemini) can read "who does what, where" and link to the profile. No phone numbers.
+const proLd = (r, p) => ({
+  '@type': 'LocalBusiness', name: r.name,
+  url: SITE + '/profile.html?' + new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service }),
+  address: { '@type': 'PostalAddress', addressLocality: r.city || p.city, addressRegion: r.state || p.state, addressCountry: 'US' },
+  areaServed: { '@type': 'City', name: `${p.city}, ${p.state}` },
+  makesOffer: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: r.service || p.service } },
+  ...(r.es ? { knowsLanguage: ['en', 'es'] } : {})
+});
 const breadcrumbLd = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map(([name, href], i) => ({ '@type': 'ListItem', position: i + 1, name, item: SITE + href })) });
 
 async function main() {
@@ -231,7 +241,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
       title: total > p.list.length ? `${p.term} in ${p.city}, ${p.state}: ${total} Pros In & Near ${p.city} to Text | TexContractor` : `${p.term} in ${p.city}, ${p.state}: ${p.list.length} Local ${p.list.length === 1 ? 'Pro' : 'Pros'} to Text | TexContractor`,
       description: total > p.list.length ? `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${total} ${p.service.toLowerCase()} pros in and near ${p.city} on TexContractor, see their profiles and text them directly for a quote. No middleman.` : `Need ${p.term.toLowerCase()} in ${p.city}, ${p.state}? Compare ${p.list.length} local ${p.service.toLowerCase()} ${p.list.length === 1 ? 'pro' : 'pros'} on TexContractor, see their profiles and text them directly for a quote. No middleman.`,
       crumbs, body, noindex: !p.indexable, alt: p.esPath ? { en: p.path, es: p.esPath } : null,
-      jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
+      jsonld: [breadcrumbLd(crumbs.slice(0, 4).concat([[p.service, '/' + p.path]])), { '@context': 'https://schema.org', '@type': 'ItemList', name: `${p.service} in ${p.city}, ${p.state}`, numberOfItems: p.list.length, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, item: proLd(r, p) })) }],
     });
     mkdirSync(join(root, p.path, '..'), { recursive: true });
     writeFileSync(join(root, p.path), html);
@@ -266,7 +276,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Consejos para contratar: <a h
         title: `${esH} en ${p.city}, ${p.state}: ${n} ${n === 1 ? 'proveedor local' : 'proveedores locales'} | TexContractor`,
         description: `¿Buscas ${esH.toLowerCase()} en ${p.city}? Encuentra ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${low} en ${p.city}, Texas. Mira los perfiles y mándales un mensaje directo para pedir un precio en TexContractor.`,
         crumbs: esCrumbs, body: esBody,
-        jsonld: [breadcrumbLd(esCrumbs.slice(0, 3).concat([[svc, '/' + p.esPath]])), { '@context': 'https://schema.org', '@type': 'ItemList', inLanguage: 'es', name: `${svc} en ${p.city}, ${p.state}`, numberOfItems: n, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })) }],
+        jsonld: [breadcrumbLd(esCrumbs.slice(0, 3).concat([[svc, '/' + p.esPath]])), { '@context': 'https://schema.org', '@type': 'ItemList', inLanguage: 'es', name: `${svc} en ${p.city}, ${p.state}`, numberOfItems: n, itemListElement: p.list.map((r, i) => ({ '@type': 'ListItem', position: i + 1, item: proLd(r, p) })) }],
       }));
     }
   }
