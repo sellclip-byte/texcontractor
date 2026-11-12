@@ -90,13 +90,26 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 .tip h2{margin:6px 0 8px;font-size:1.35rem}.tip p{margin:0 0 6px;color:#334155;line-height:1.45}
 .tip .ic{display:flex;justify-content:center;gap:10px;font-size:1.9rem;margin-bottom:4px}
 @media(min-width:640px){.tipbg{align-items:center}}
+
+/* owner 11-11: phones — pick the trade from a big dark list (no typing), then optionally add your own photo */
+.tsel-l{display:block;font-weight:900;color:#0f172a;margin:6px 0 8px;font-size:1.05rem}
+select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #075c4b;background:#fff;padding:16px 14px;min-height:58px}
+.tp-row{display:flex;gap:12px;margin-top:14px}
+.tp-box{flex:1;margin:0;border:2px solid #cbd5e1;border-radius:16px;background:#fff;padding:8px;text-align:center;cursor:pointer}
+.tp-box img,.tp-prev{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block;background:#eef2f1}
+.tp-box figcaption,.tp-cap{display:block;margin-top:6px;font-weight:900;color:#0f172a;font-size:.95rem}
+.tp-add{border:3px dashed #075c4b;background:#f0fbf7}
+.tp-prev{display:flex;align-items:center;justify-content:center;font-size:2.6rem;background-size:cover;background-position:center}
+.tp-add.has{border-style:solid}
+.tp-note{color:#334155;font-weight:700;margin-top:8px}
+.lang button{font-size:1rem;font-weight:900;padding:9px 13px;min-height:42px}
 </style>
 <script src="/tex-readable.js?v=5" defer></script></head>
 <body>
 <div class="top"><div class="bar">
   <button class="back" id="back" aria-label="Back">‹</button>
   <img class="logo" src="texcontractor-logo.png" alt="TexContractor">
-  <div class="lang"><button data-l="en" aria-pressed="true">🇺🇸 EN</button><button data-l="es" aria-pressed="false">🇲🇽 ES</button></div>
+  <div class="lang"><button data-l="en" aria-pressed="true">🇺🇸 English</button><button data-l="es" aria-pressed="false">🇲🇽 Español</button></div>
 </div><div class="prog"><i id="prog"></i></div></div>
 
 <main id="app" style="visibility:hidden">
@@ -104,7 +117,17 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
     <span class="kick" data-t="k1"></span>
     <h1 data-t="h1"></h1>
     <p class="sub" data-t="s1"></p>
-    <div class="grid" id="trades"></div>
+    <label class="lb tsel-l" for="tradeSel" data-t="tselL"></label>
+    <select class="field tsel" id="tradeSel"></select>
+    <div id="tpick" hidden>
+      <div class="tp-row">
+        <figure class="tp-box"><img id="timg" alt=""><figcaption data-t="ourPic"></figcaption></figure>
+        <label class="tp-box tp-add" for="myph"><span class="tp-prev" id="tprev"><b>📷</b></span><span class="tp-cap" id="tpcap"></span><input type="file" id="myph" accept="image/*" hidden></label>
+      </div>
+      <p class="small tp-note" data-t="photoNote"></p>
+      <button class="cta" id="t1go" type="button" data-t="next1"></button>
+    </div>
+    <div class="grid" id="trades" hidden></div>
     <div class="all" id="allbox" hidden><input class="field" id="allq" type="search" autocomplete="off"><div class="alist" id="alist"></div></div>
   </section>
   <section class="step" data-s="2">
@@ -178,7 +201,7 @@ const T={
   st4:'Last step',h4:'Enter the code we texted you',s4:'We sent a 6-digit code to {phone}.',verify:'Publish my free profile',verifying:'Publishing…',resend:'Send a new code',edit:'Change number',resent:'New code sent.',
   h5:'You are live, {name}!',s5:'Customers in {city} can now find you under {trade} and text you directly at {phone}.',seeProf:'See my profile',
   more:'Add my photo & my work (customers pick complete profiles)',
-  dupH:'You are already listed ✅',dupS:'Your number {phone} is already listed under {trade}, so customers can text you now. No need to sign up again.',allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tipH:'💡 Did you know?',tipP:'From our experience with customers: they almost always choose the pro whose profile is complete, with a clear photo of you and photos of your work. It builds trust, and it takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
+  dupH:'You are already listed ✅',dupS:'Your number {phone} is already listed under {trade}, so customers can text you now. No need to sign up again.',allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tselL:'What is your trade? Tap to choose ▾',tselPh:'Choose your trade ▾',popular:'Most common',allTr:'All trades (A–Z)',ourPic:'Our picture',addPh:'Add your photo',chgPh:'Change photo',photoNote:'Optional: a photo of you or your work. Tap the green box to take a photo or pick one from your phone. It goes live after you confirm your number.',next1:'Next →',tipH:'💡 Did you know?',tipP:'From our experience with customers: they almost always choose the pro whose profile is complete, with a clear photo of you and photos of your work. It builds trust, and it takes 2 minutes.',tipGo:'Add my photo & my work now',tipNo:'Later',
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos, menos de un minuto. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
@@ -189,7 +212,7 @@ const T={
   st4:'Último paso',h4:'Escribe el código que te mandamos',s4:'Mandamos un código de 6 dígitos al {phone}.',verify:'Publicar mi perfil gratis',verifying:'Publicando…',resend:'Mandar otro código',edit:'Cambiar número',resent:'Código nuevo enviado.',
   h5:'¡Ya estás publicado, {name}!',s5:'Los clientes en {city} ya te pueden encontrar en {trade} y escribirte directo al {phone}.',seeProf:'Ver mi perfil',
   more:'Agregar mi foto y mis trabajos (los clientes eligen perfiles completos)',
-  dupH:'Ya estás publicado ✅',dupS:'Tu número {phone} ya está publicado en {trade}, así que los clientes ya te pueden escribir. No necesitas registrarte otra vez.',allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tipH:'💡 ¿Sabías que…?',tipP:'Por nuestra experiencia con los clientes: casi siempre eligen al técnico con el perfil completo, con una foto clara de ti y fotos de tus trabajos. Da confianza, y te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
+  dupH:'Ya estás publicado ✅',dupS:'Tu número {phone} ya está publicado en {trade}, así que los clientes ya te pueden escribir. No necesitas registrarte otra vez.',allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tselL:'¿Cuál es tu oficio? Toca para escoger ▾',tselPh:'Escoge tu oficio ▾',popular:'Los más comunes',allTr:'Todos los oficios (A–Z)',ourPic:'Nuestra foto',addPh:'Agrega tu foto',chgPh:'Cambiar foto',photoNote:'Opcional: una foto tuya o de tu trabajo. Toca el cuadro verde para tomar una foto o escoger una de tu teléfono. Se publica cuando confirmes tu número.',next1:'Siguiente →',tipH:'💡 ¿Sabías que…?',tipP:'Por nuestra experiencia con los clientes: casi siempre eligen al técnico con el perfil completo, con una foto clara de ti y fotos de tus trabajos. Da confianza, y te toma 2 minutos.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
   errPhone:'Escribe un número de celular de EE. UU. de 10 dígitos.',errName:'Escribe tu nombre.',errGeneric:'Algo salió mal. Intenta de nuevo.'}
 };
 const TRADES=[
@@ -217,11 +240,18 @@ const norm=x=>x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function drawAll(){const q=norm($('#allq').value.trim());const box=$('#alist');box.innerHTML='';
  ALL.map(([en,es])=>({s:en,i:'',en,es})).sort((a,b)=>(L==='es'?a.es:a.en).localeCompare(L==='es'?b.es:b.en)).filter(x=>!q||norm(x.en+' '+x.es).includes(q)).forEach(tr=>{
   const b=document.createElement('button');b.type='button';b.textContent=L==='es'?tr.es:tr.en;b.onclick=()=>{st.trade=TRADES.find(x=>x.s===tr.s)||tr;ev('quick_trade',{trade:tr.s,from:'all'});$('#allbox').hidden=true;go(2)};box.appendChild(b)})}
+const CIMG={"A customer messaging a technician directly": "images/home/catalog-15e5b518293a6f0d.jpg", "Central Air Conditioning Repair or Maintenance": "images/home/catalog-d62107fb07c7078f.jpg", "Electrical and Wiring Repair": "images/home/catalog-6ad88b6bcd342352.jpg", "TV Mounting": "images/home/catalog-8f4ca9b92c014783.jpg", "Tree Trimming and Removal": "images/home/catalog-fae17fd6ff320725.jpg", "Furniture Assembly": "images/home/catalog-b061069e10814df0.jpg", "Furniture Moving and Heavy Lifting": "images/home/catalog-aef97d73aa76ba09.jpg", "Mobile Auto Mechanic": "images/home/catalog-db2fedd186bdf317.jpg", "Handyman": "images/home/catalog-eb3123aa3163fb0b.jpg", "Outdoor Landscaping and Design": "images/home/catalog-6ae2f86a9d0b8335.jpg", "Interior Painting": "images/home/catalog-1a57bc6c2a550ffc.jpg", "Junk Removal": "images/home/catalog-1d7880b1f7cc4a97.jpg", "Roof Repair or Maintenance": "images/home/catalog-98d2c8f81847aa2d.jpg", "Appliance Repair or Maintenance": "images/home/catalog-62d3a83557173a13.jpg", "Floor Installation or Replacement": "images/home/catalog-8d5fa64a39d67893.jpg", "Lock Installation and Repair": "images/home/catalog-488c391d28046099.jpg", "Garage Door Repair": "images/home/catalog-d8ccd66591b47033.jpg", "Concrete Installation": "images/home/catalog-3e2728b4a169e8a1.jpg", "Bathroom Remodel": "images/home/catalog-5c6b851899f29325.jpg", "Metalwork": "images/home/catalog-c75ad60302e05da9.jpg", "Window Repair": "images/home/catalog-f257f0e100c4c050.jpg", "Plumbing Drain Repair": "images/home/catalog-76e0085f66d7a39f.jpg", "Plumbing Pipe Repair": "images/home/catalog-41c6fdd548fb7e0c.jpg", "Heating System Repair or Maintenance": "images/home/catalog-f023d9088a8dbad5.jpg", "House Cleaning": "images/home/catalog-761209465a696f45.jpg", "Carpet Cleaning": "images/home/catalog-d54bbbe32017b687.jpg", "Pressure Washing": "images/home/catalog-5851c4d94d520413.jpg", "Upholstery and Furniture Cleaning": "images/home/catalog-557f9ac499c88c4f.jpg", "Mobile Auto Detailing": "images/home/catalog-f8a8568ba9d5e9d6.jpg", "Local Moving (under 50 miles)": "images/home/catalog-429347c54d44faf4.jpg", "Computer Repair": "images/home/catalog-069f7430dc62283e.jpg", "Notarization": "images/home/catalog-2a6cff22a3d3096b.jpg", "Dog Grooming": "images/home/catalog-fd53e149a26d7d59.jpg", "DJ Services": "images/home/catalog-2531c18af707a760.jpg", "Wedding and Event Makeup": "images/home/catalog-f361568454a69494.jpg", "Dog Training": "images/home/catalog-47beecb13de3728d.jpg", "Personal Training": "images/home/catalog-e6c3e362ad6881d6.jpg", "Wedding and Event Photography": "images/home/catalog-db06025b9dd0cf22.jpg", "Pest Control Services": "images/home/catalog-7ab5f09a80134d22.jpg", "Fence and Gate Installation": "images/home/catalog-ead3aacdf8621ee9.jpg", "Drywall Repair and Texturing": "images/home/catalog-d5ef8e50ba3655ef.jpg", "Deck or Porch Remodel or Addition": "images/home/catalog-c2bf0e748499fa79.jpg", "Swimming Pool Cleaning & Maintenance": "images/home/catalog-78d2fd185f657a43.jpg", "Lighting Installation": "images/home/catalog-4bdc9e30bd918933.jpg", "General Contracting": "images/home/catalog-e5dafb9a4a541054.jpg", "Gutter Cleaning and Maintenance": "images/home/catalog-8b345eccbc25c558.jpg", "Door Installation": "images/home/catalog-370a36b16e14a844.jpg", "Window Tinting": "images/home/catalog-9131a50c8292b672.jpg", "Wedding Officiant": "images/home/catalog-e4ec9f8a155a9383.jpg", "Event Planning": "images/home/catalog-e32fe49393e357d5.jpg", "Interior Design": "images/home/catalog-e67c6630060ef276.jpg", "Architectural Services": "images/home/catalog-bceb9425fe42d735.jpg", "Home Inspection Consulting": "images/home/catalog-a78160bc9259cc61.jpg", "Home Foundation Repair": "images/home/catalog-eb78c683484020a6.jpg", "In-Home Nursing Care": "images/home/catalog-71543b0f03b43866.jpg", "Private Taxi and Transportation Services": "images/home/catalog-caec0cea622597a2.jpg"};
+const tImg=tr=>tr&&(CIMG[tr.s]||(tr.i?'trade-icons/'+tr.i+'.webp':'texcontractor-logo.png'));
+function drawSel(){const sel=$('#tradeSel');const cur=st.trade?st.trade.s:'';sel.innerHTML='';const o0=document.createElement('option');o0.value='';o0.textContent=t('tselPh');o0.disabled=true;o0.selected=!cur;sel.appendChild(o0);
+ const g1=document.createElement('optgroup');g1.label=t('popular');TRADES.forEach(tr=>{const o=document.createElement('option');o.value=tr.s;o.textContent=L==='es'?tr.es:tr.en;g1.appendChild(o)});sel.appendChild(g1);
+ const g2=document.createElement('optgroup');g2.label=t('allTr');ALL.map(([en,es])=>({en,es})).sort((a,b)=>(L==='es'?a.es:a.en).localeCompare(L==='es'?b.es:b.en)).forEach(x=>{const o=document.createElement('option');o.value=x.en;o.textContent=L==='es'?x.es:x.en;g2.appendChild(o)});sel.appendChild(g2);
+ if(cur)sel.value=cur;drawPick()}
+function drawPick(){const box=$('#tpick');if(!st.trade){box.hidden=true;return}box.hidden=false;$('#timg').src=tImg(st.trade);$('#timg').alt=L==='es'?st.trade.es:st.trade.en;const add=$('.tp-add'),pv=$('#tprev');if(st.photo){add.classList.add('has');pv.style.backgroundImage='url('+st.photo+')';pv.innerHTML='';$('#tpcap').textContent=t('chgPh')}else{add.classList.remove('has');pv.style.backgroundImage='';pv.innerHTML='<b>📷</b>';$('#tpcap').textContent=t('addPh')}}
 function render(){
  document.documentElement.lang=L;
  $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===L));
  $$('[data-t]').forEach(e=>{const k=e.dataset.t;if(k==='agree')e.innerHTML=t(k);else e.textContent=t(k)});
- const g=$('#trades');g.innerHTML='';
+ drawSel(); const g=$('#trades');g.innerHTML='';
  TRADES.forEach(tr=>{const b=document.createElement('button');b.className='tile'+(st.trade===tr?' sel':'');b.innerHTML='<img src="trade-icons/'+tr.i+'.webp" alt="">'+(L==='es'?tr.es:tr.en);b.onclick=()=>{st.trade=tr;ev('quick_trade',{trade:tr.s});go(2)};g.appendChild(b)});
  const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+t('moreT');m.onclick=()=>{$('#allbox').hidden=false;$('#allq').focus();drawAll();$('#allbox').scrollIntoView({behavior:'smooth',block:'start'})};g.appendChild(m);$('#allq').placeholder=t('allQ');if(!$('#allbox').hidden)drawAll();
  $('#s4').textContent=fmt(t('s4'));$('#h5').textContent=fmt(t('h5'));$('#s5').textContent=fmt(t('s5'));
@@ -229,6 +259,10 @@ function render(){
 function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_played')){var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.8;var ok=function(){try{sessionStorage.setItem('tex_last_played','1')}catch(_){}};/* owner 11-11: iPhone sometimes blocks the voice; if so, play it on the next tap */au.play().then(ok).catch(function(){var t=function(){document.removeEventListener('pointerdown',t,true);document.removeEventListener('keydown',t,true);if(st.step===3)au.play().then(ok).catch(function(){})};document.addEventListener('pointerdown',t,true);document.addEventListener('keydown',t,true)})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
  if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===3)setTimeout(()=>$('#name').focus(),200);if(n===4)setTimeout(()=>$('#code').focus(),200);render()}
 $('#allq').addEventListener('input',drawAll);
+$('#tradeSel').addEventListener('change',e=>{const v=e.target.value;const a=ALL.find(x=>x[0]===v);st.trade=TRADES.find(x=>x.s===v)||(a?{s:a[0],i:'',en:a[0],es:a[1]}:null);ev('quick_trade',{trade:v,from:'select'});drawPick();setTimeout(()=>$('#t1go').scrollIntoView({behavior:'smooth',block:'center'}),150)});
+$('#t1go').onclick=()=>{if(st.trade)go(2)};
+$('#myph').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const M=1080,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);st.photo=c.toDataURL('image/jpeg',0.85);try{sessionStorage.setItem('tex_quick_photo',st.photo)}catch(_){}ev('quick_photo_added');drawPick()};im.src=r.result};r.readAsDataURL(f)});
+try{const sp=sessionStorage.getItem('tex_quick_photo');if(sp&&/^data:image\//.test(sp))st.photo=sp}catch(_){}
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
 // step 2
@@ -264,7 +298,7 @@ async function publish(user){
     $('#seeprof').href='profile.html?contractor='+encodeURIComponent(dup.id);
     go(5);$('#h5').textContent=t('dupH');$('#s5').textContent=fmt(t('dupS'));
     setTimeout(()=>{$('#tip').hidden=false},1400);return;}
-  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:'',workPhotos:[]}});
+  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:st.photo||'',workPhotos:[]}});try{sessionStorage.removeItem('tex_quick_photo')}catch(_){}
   try{localStorage.removeItem(DRAFT)}catch(_){}
   ev('quick_published',{trade:svc});
   $('#seeprof').href=saved&&saved.id?'profile.html?contractor='+encodeURIComponent(saved.id):'account.html';
