@@ -23,8 +23,9 @@
   .tqs .tqs-switch a{color:#075c4b;font-weight:800}
   .tqs .tqs-perks{margin:0 0 4px;padding-left:18px;color:#334155;font-size:.88rem}
   .tqs .tqs-perks li{margin:2px 0}
-  .tqs .tqs-lg{display:flex;gap:4px;margin:0 0 10px}
-  .tqs .tqs-lg button{font:800 12px Arial;padding:5px 9px;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer}
+  .tqs .tqs-lg{display:flex;gap:8px;margin:0 40px 12px 0}
+  .tqs .tqs-lg .ls{display:none}@media(max-width:374px){.tqs .tqs-lg .lf{display:none}.tqs .tqs-lg .ls{display:inline}}
+  .tqs .tqs-lg button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font:800 16px Arial;padding:7px 16px;line-height:1.2;border-radius:999px;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer}
   .tqs .tqs-lg button[aria-pressed=false]{border-color:#e2e8f0!important;background:#fff!important;color:#64748b!important}
   .tqs .tqs-lg button[aria-pressed=true]{background:#fff4dc;border-color:#c99a3a;color:#7a5a00}`;
 
@@ -34,7 +35,7 @@
     box.className = 'tqs-back'; box.hidden = true;
     box.innerHTML = `<form class="tqs" role="dialog" aria-modal="true" aria-labelledby="tqs-title" novalidate>
       <button class="tqs-x" type="button" aria-label="Close">&times;</button>
-      <div class="tqs-lg"><button type="button" data-l="en" data-tex-readable="1">🇺🇸 EN</button><button type="button" data-l="es" data-tex-readable="1">🇲🇽 ES</button></div>
+      <div class="tqs-lg"><button type="button" data-l="en" data-tex-readable="1"><span style="font-size:24px;line-height:1">🇺🇸</span><span class="lf">English</span><span class="ls">EN</span></button><button type="button" data-l="es" data-tex-readable="1"><span style="font-size:24px;line-height:1">🇲🇽</span><span class="lf">Español</span><span class="ls">ES</span></button></div>
       <h2 id="tqs-title"></h2>
       <p class="tqs-sub" id="tqs-sub"></p>
       <ul class="tqs-perks" id="tqs-perks"><li>Text or call local technicians directly</li><li>Chat on TexContractor and post job requests</li></ul>
