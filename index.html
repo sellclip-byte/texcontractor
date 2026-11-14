@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded',function(){order();setTimeout(order
 .cl-pros #pros-ticker .pt-t1{white-space:normal!important;font-size:11px!important;line-height:1.25}
 .cl-pros #pros-ticker .pt-t2{font-size:14px!important;line-height:1.2}
 @media(max-width:1099px){.cl-ex-box.cl-pros{width:100%;margin:10px 0 4px;grid-column:1/-1}.cl-pros #pros-ticker .pt-win{height:110px!important}.cl-pros #pros-ticker .pt-item{flex-direction:row!important;text-align:left}.cl-pros #pros-ticker .pt-ic{width:58px!important;height:58px!important}}
-.bcard-row.bcard-under{grid-template-columns:1fr;max-width:760px;margin:18px auto 8px}
+.bcard-row.bcard-under{grid-template-columns:1fr 1fr;max-width:1100px;margin:18px auto 8px}.bcard-work .bcard-tag{background:#102a5c}.bcard-row .bcard-promo.bcard-work img{width:130px;transform:rotate(2deg)}.bcard-row .bcard-promo.bcard-work{grid-template-columns:130px 1fr}@media(max-width:760px){.bcard-row.bcard-under{grid-template-columns:1fr}.bcard-row .bcard-promo.bcard-work{grid-template-columns:96px 1fr}.bcard-row .bcard-promo.bcard-work img{width:96px}}
 </style>
 <style>/* owner 11-10: on computers the pros strip sits in the empty right corner of the top banner */
 #hero-join.hj-has-pt{position:relative}
@@ -1367,6 +1367,11 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
     <a class="bcard-promo" href="business-card.html">
       <img src="assets/business-card-example.jpg" alt="Example business card for a technician" width="540" height="675" loading="lazy">
       <span class="bcard-txt"><span class="bcard-tag">🎁 FREE FOR PROS</span><strong>Share your business card. Be our partner.</strong><span>Add your service free and get your own card with your photo, name and city. Give it to your friends and family: everyone shares your card, and you spread with us everywhere. You’re our partner in this.</span><span class="bcard-cta">Get my free card →</span></span>
+    </a>
+    <!-- owner 11-14: before/after gallery card next to the business-card banner -->
+    <a class="bcard-promo bcard-work" href="/pro-work.html">
+      <img src="assets/pro-work-thumb.jpg" alt="Before and after: garage door and driveway" width="420" height="315" loading="lazy">
+      <span class="bcard-txt"><span class="bcard-tag">BEFORE &amp; AFTER</span><strong>This is how professional pros work</strong><span>Roofs, fences, plumbing, floors, lawns, cars and more. See the difference a real pro makes.</span><span class="bcard-cta">See the photos →</span></span>
     </a>
     </div>
 
