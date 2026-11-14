@@ -65,8 +65,8 @@
     ctx.ellipse(cx, 426, cx - 16, 90, 0, 0, Math.PI); ctx.closePath(); ctx.fillStyle = dark(ctx, 16, 16, W - 16, 516); ctx.fill(); ctx.restore();
     // logo on a cream pill
     var logo = await img('/texcontractor-logo.png');
-    rr(ctx, cx - 110, 106, 220, 104, 20); ctx.fillStyle = '#fffaf0'; ctx.fill();
-    if (logo) { var lh = 108, lw = lh * logo.width / logo.height; ctx.drawImage(logo, cx - lw / 2, 104, lw, lh); }
+    rr(ctx, cx - 140, 106, 280, 104, 20); ctx.fillStyle = "#fffaf0"; ctx.fill();
+    if (logo) { var lw = 252, lh = lw * logo.height / logo.width; if (lh > 92) { lh = 92; lw = lh * logo.width / logo.height; } ctx.drawImage(logo, cx - lw / 2, 106 + (104 - lh) / 2, lw, lh); }
     // photo: gold ring, cream border, soft shadow
     var cy = 406, R = 170, r = 151, photo = await img(o.photoUrl);
     ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, cx - R, cy - R, cx + R, cy + R);
