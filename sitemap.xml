@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://texcontractor.com/</loc></url>
   <url><loc>https://texcontractor.com/contractor.html</loc></url>
   <url><loc>https://texcontractor.com/services/</loc></url>
@@ -70,4 +70,5 @@
   <url><loc>https://texcontractor.com/services/window-repair.html</loc></url>
   <url><loc>https://texcontractor.com/services/window-tinting.html</loc></url>
   <url><loc>https://texcontractor.com/business-card.html</loc><lastmod>2026-11-06</lastmod></url>
+  <url><loc>https://texcontractor.com/pro-work.html</loc><lastmod>2026-11-14</lastmod><image:image><image:loc>https://texcontractor.com/images/work/01-front-door.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/02-roof.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/03-fence.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/04-plumbing.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/05-drywall.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/06-garage-driveway.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/07-ac-unit.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/08-bathroom.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/09-lawn.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/10-flooring.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/11-flat-tire.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/12-dog-grooming.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/13-car-detailing.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/14-pressure-washing.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/15-carpet-cleaning.jpg</image:loc></image:image><image:image><image:loc>https://texcontractor.com/images/work/16-junk-removal.jpg</image:loc></image:image></url>
 </urlset>
