@@ -240,6 +240,7 @@
     'Your name or nickname': 'Tu nombre o apodo',
     'Shown on your listing. Use your real name or a nickname. Individual technicians only.': 'Se muestra en tu anuncio. Usa tu nombre real o un apodo. Solo técnicos individuales.',
     'Mobile number': 'Número de celular',
+    '🔒 Your number is not shown to the public. Only real customers who sign in can see it and contact you for work. No spam.': '🔒 Tu número no se muestra al público. Solo los clientes reales que inician sesión pueden verlo y contactarte para trabajos. Sin spam.',
     'A mobile number that can receive texts — not a landline.': 'Un celular que reciba mensajes de texto, no un teléfono fijo.',
     'Years of experience': 'Años de experiencia',
     'Optional': 'Opcional',

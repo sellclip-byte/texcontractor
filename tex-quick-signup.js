@@ -12,6 +12,8 @@
   .tqs .tqs-sub{margin:0 0 14px;color:#475569;font-size:.93rem;line-height:1.45}
   .tqs label{display:block;font-weight:800;font-size:.88rem;margin:10px 0 5px}
   .tqs input{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #a5b6b0;border-radius:9px;font:inherit;font-size:16px}
+  .tqs .tqs-priv[hidden]{display:none}
+  .tqs .tqs-priv{margin:6px 0 0;color:#c81e1e;font-weight:800;font-size:.9rem;line-height:1.35}
   .tqs .tqs-hint{font-size:.8rem;color:#64748b;margin:5px 0 0}
   .tqs .tqs-go{display:block;width:100%;margin-top:14px;min-height:48px;border:0;border-radius:10px;background:#075c4b;color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer}
   .tqs .tqs-go:disabled{opacity:.6;cursor:wait}
@@ -42,6 +44,7 @@
       <div id="tqs-phonebox">
         <label for="tqs-phone" id="tqs-phone-l">Mobile number</label>
         <input id="tqs-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(214) 555-0123" maxlength="16">
+        <p class="tqs-priv" id="tqs-priv">🔒 Your phone stays private. It's only for your account. No spam, no calls.</p>
         <div id="tqs-codebox" hidden><label for="tqs-code" id="tqs-code-l">Code we texted you</label>
         <input id="tqs-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
         <p class="tqs-switch" style="margin:6px 0 0"><button type="button" id="tqs-resend" style="background:none;border:0;padding:0;color:#0b7a63;font-weight:800;text-decoration:underline;cursor:pointer" disabled></button></p></div>
@@ -139,6 +142,8 @@
     box.querySelectorAll('.tqs-lg button').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.l === 'es') === es)));
     box.querySelector('#tqs-phone-l').textContent = es ? 'Número de celular' : 'Mobile number';
     box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
+    box.querySelector('#tqs-priv').hidden = current.intent === 'provider'; // owner 11-14: customers only (pros' phones are shown to customers)
+    box.querySelector('#tqs-priv').textContent = es ? '🔒 Tu número es privado. Solo es para tu cuenta. Sin spam, sin llamadas.' : "🔒 Your phone stays private. It's only for your account. No spam, no calls.";
     box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
     box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
     if (box.dataset.sent !== '1') box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
