@@ -180,16 +180,19 @@
     if (profile.id === 'f3339b5e-447d-4ec0-a6cb-b5d792f63f6d' && !document.getElementById('dfw-coupon')) { const ar = document.querySelector('.action-row'); if (ar) { const cb = document.createElement('a'); cb.id = 'dfw-coupon'; cb.className = 'action'; cb.href = 'coupon.html?utm_source=profile_coupon'; cb.textContent = '🎟️ Show your $10 coupon'; cb.style.cssText = 'background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;font-weight:900;border:0;text-align:center;text-decoration:none'; ar.prepend(cb); } }
     const texCardGo = async () => { try { if (window.TexBusinessCard && (params.get('contractor') || params.get('imported')) && profile.id && !document.getElementById('pro-card')) {
       const imp = !!params.get('imported');
+      // Owner 11-14: every pro who has not signed up himself (directory + admin-owned listings) gets the same plain card
+      // (initials, 'Find me on TexContractor'). Once he signs up and adds his photo, his card shows the photo + 'Proud member'.
+      const unclaimed = imp || profile.ownerId === '6d83440a-820a-4309-b666-cba8e24a8290';
       let mine = false; try { const me = window.TexAuth && await TexAuth.getUser(); mine = !!(me && profile.ownerId && me.id === profile.ownerId && me.id !== '6d83440a-820a-4309-b666-cba8e24a8290'); } catch (_) {}
       const holder = document.createElement('section'); holder.id = 'pro-card'; holder.style.cssText = 'max-width:520px;margin:18px auto;padding:0 12px';
       (document.querySelector('main') || document.body).appendChild(holder);
       const loc = String(profile.location || '').split(',').map(x => x.trim());
-      TexBusinessCard.render(holder, { name: profile.name, service: profile.service, city: loc[0] || '', state: loc[1] || '', photoUrl: profile.profilePhoto || '',
+      TexBusinessCard.render(holder, { name: profile.name, service: profile.service, city: loc[0] || '', state: loc[1] || '', photoUrl: unclaimed ? '' : (profile.profilePhoto || ''),
         shareUrl: imp ? location.href.split('#')[0].split('?')[0] + '?imported=' + encodeURIComponent(profile.id) + (profile.service ? '&service=' + encodeURIComponent(profile.service) : '') + '&utm_source=share&utm_medium=profile_card' : 'https://texcontractor.com/p/' + profile.id + '/?utm_source=share&utm_medium=profile_card',
-        profileUrl: location.href.split('#')[0], third: !mine, imported: imp, contacts: window.texContactMethods || null,
+        profileUrl: location.href.split('#')[0], third: !mine, imported: unclaimed, contacts: window.texContactMethods || null,
         title: imp ? 'Know someone who needs this pro? Share the card' : mine ? 'Share my business card' : 'Share ' + String(profile.name).split(/\s+/)[0] + '\u2019s card',
         note: imp ? 'Send it to a friend or neighbor by text, WhatsApp or Facebook so they can text this pro directly. Is this your business? Claim it free with your phone to add your photo and edit your info.' : mine ? undefined : 'Know someone who needs ' + String(profile.service || 'this service').toLowerCase() + '? Send them this card. They can text ' + String(profile.name).split(/\s+/)[0] + ' directly.' });
-      if (imp) { const j = document.createElement('a'); j.href = '/signup.html?role=pro&utm_source=site&utm_medium=imported_card'; j.textContent = 'This is my business: claim it free \u2192'; j.style.cssText = 'display:block;margin:-6px auto 0;max-width:520px;text-align:center;font-weight:800;color:#075c4b'; holder.appendChild(j); }
+      if (unclaimed) { const j = document.createElement('a'); j.href = '/signup.html?role=pro&utm_source=site&utm_medium=imported_card'; j.textContent = 'This is my business: claim it free \u2192'; j.style.cssText = 'display:block;margin:-6px auto 0;max-width:520px;text-align:center;font-weight:800;color:#075c4b'; holder.appendChild(j); }
       if (location.hash === '#pro-card') setTimeout(() => holder.scrollIntoView({ behavior: 'smooth', block: 'start' }), 600);
     } } catch (_) {} };
     if (window.TexBusinessCard) texCardGo(); else window.addEventListener('load', texCardGo);
