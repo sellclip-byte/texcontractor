@@ -254,6 +254,7 @@
     const SERVICES = ["Appliance Repair or Maintenance", "Architectural Services", "Babysitting & Childcare Services", "Barber & Hair Styling Services", "Bathroom Remodel", "Carpet Cleaning", "Central Air Conditioning Repair or Maintenance", "Computer Repair", "Concrete Installation", "DJ Services", "Deck or Porch Remodel or Addition", "Dog Grooming", "Dog Training", "Dog Training & Horse Riding Lessons", "Door Installation", "Drywall Repair and Texturing", "Electrical and Wiring Repair", "Event Planning", "Fence and Gate Installation", "Floor Installation or Replacement", "Furniture Assembly", "Furniture Moving and Heavy Lifting", "Garage Door Repair", "General Contracting", "General Labor and Helpers", "Gutter Cleaning and Maintenance", "Handyman", "Heating System Repair or Maintenance", "Home Foundation Repair", "Home Inspection Consulting", "House Cleaning", "In-Home Nursing Care", "Interior Design", "Interior Painting", "Junk Removal", "Lawn Mower, Water Pump & Outdoor Equipment Repair", "Lighting Installation", "Local Moving (under 50 miles)", "Lock Installation and Repair", "Metalwork", "Mobile Auto Detailing", "Mobile Auto Mechanic", "Notarization", "Outdoor Landscaping and Design", "Personal Training", "Pest Control Services", "Plumbing Drain Repair", "Plumbing Pipe Repair", "Pressure Washing", "Private Taxi & Transportation Services", "Roof Repair or Maintenance", "Specialty Meal Preparation & Dietary Cooking", "Swimming Pool Cleaning & Maintenance", "TV Mounting", "Tree Trimming and Removal", "Tutoring & Education Services", "Upholstery and Furniture Cleaning", "Wedding Officiant", "Wedding and Event Makeup", "Wedding and Event Photography", "Window Repair", "Window Tinting"];
     const STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming", "DC": "Washington, D.C."};
     const C = window.TexChat;
+    try { const pr = new URLSearchParams(location.search).get('promo'); if (pr === 'dfw15') localStorage.setItem('tc_promo', 'dfw15'); } catch (_) {}
     const BUCKET = 'texcontractor-requests';
     const PAGE = 24;
     const $ = (id) => document.getElementById(id);
@@ -448,9 +449,9 @@
           msg.textContent = `Uploading photo ${i + 1} of ${picked.length}…`; paths.push(await upload(await shrink(picked[i].file)));
         }
         const args = { p_service: v.service, p_state: v.state, p_city: v.city, p_title: v.title, p_body: v.body, p_photo_paths: paths, p_contact_chat: chat, p_contact_text: text, p_contact_call: call, p_phone: (text || call) ? phone : null };
-        const wasEditing = editing;
+        const wasEditing = editing; let newReqId = null;
         if (wasEditing) { msg.textContent = 'Saving…'; await C.rpc('texcontractor_request_update', { p_request_id: wasEditing.id, ...args }, true); }
-        else { msg.textContent = 'Posting…'; await C.rpc('texcontractor_request_create', args, true); }
+        else { msg.textContent = 'Posting…'; newReqId = await C.rpc('texcontractor_request_create', args, true); }
         picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = [];
         $('p-title').value = ''; $('p-body').value = '';
         $('post-dlg').close();
@@ -463,6 +464,17 @@
           let n = document.getElementById('near-note');
           if (!n) { n = document.createElement('div'); n.id = 'near-note'; n.style.cssText = 'margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#ecf7f3;border:1px solid #b7e0d2;color:#064e3b;font-weight:700;line-height:1.45'; $('mine').prepend(n); }
           n.innerHTML = '✅ Your request is posted. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>';
+          // owner 11-15: DFW Mobile Lawnmower customers who came from the $15 card get a request code to text to DFW
+          let promo = ''; try { promo = localStorage.getItem('tc_promo') || ''; } catch (_) {}
+          const rid = String(Array.isArray(newReqId) ? newReqId[0] : (newReqId || '')).replace(/[^0-9a-f]/gi, '');
+          if (promo === 'dfw15' && rid.length >= 6) {
+            const code = 'REQ-' + rid.slice(0, 6).toUpperCase();
+            let b = document.getElementById('promo-note');
+            if (!b) { b = document.createElement('div'); b.id = 'promo-note'; b.style.cssText = 'margin:0 0 14px;padding:16px;border-radius:14px;background:#fff7dd;border:2px solid #edb72d;color:#141B2E;line-height:1.45;text-align:center'; n.after(b); }
+            b.innerHTML = '<div style="font-weight:800">🎁 Your $15 code from DFW Mobile Lawnmower</div><div style="font:900 30px ui-monospace,Menlo,Consolas,monospace;letter-spacing:3px;margin:8px 0">' + code + '</div><button type="button" id="promo-copy" style="border:0;border-radius:10px;padding:10px 16px;background:#141B2E;color:#E0A82E;font-weight:800;cursor:pointer">📋 Copy my code</button><div style="font-size:14px;margin-top:8px">Text this code to DFW Mobile Lawnmower when you book. $15 comes off your mower repair.</div>';
+            document.getElementById('promo-copy').onclick = function () { const t = this; const ok = () => { t.textContent = '✓ Copied: ' + code; }; try { navigator.clipboard.writeText(code).then(ok, () => prompt('Copy your code:', code)); } catch (_) { prompt('Copy your code:', code); } };
+            try { localStorage.removeItem('tc_promo'); } catch (_) {}
+          }
         }
         $('mine').scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch (err) { msg.className = 'msg-line error'; msg.textContent = err.message; }
