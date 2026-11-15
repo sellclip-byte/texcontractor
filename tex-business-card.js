@@ -38,12 +38,13 @@
     if (cur) lines.push(cur); return lines.slice(0, 2);
   }
   function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
-  function gold(ctx, x0, y0, x1, y1) {
+  function gold_unused(ctx, x0, y0, x1, y1) {
     var g = ctx.createLinearGradient(x0, y0, x1, y1);
     g.addColorStop(0, '#9c6a0a'); g.addColorStop(.25, '#e7b33a'); g.addColorStop(.5, '#fff0a8'); g.addColorStop(.75, '#d79a16'); g.addColorStop(1, '#8a5b06'); return g;
   }
-  // Owner 11-10 design: charcoal + gold + cream (no green), big round photo, name, service pill, city,
-  // "Proud member of TexContractor" badge (self-registered pros only), QR code to the pro's page.
+  // Owner 11-14 design ("3"): navy + gold brand colors. With a photo: the pro's photo fills the top of the card,
+  // service tag + big name over it, navy bottom with "Text me directly on TexContractor.com", contact chips and QR.
+  // Without a photo: clean white card with the initials in a gold ring (looks finished even with no picture).
   var qrReady = null;
   function loadQR() {
     if (window.TexQR) return Promise.resolve();
@@ -51,69 +52,94 @@
     qrReady = new Promise(function (ok) { var s = document.createElement('script'); s.src = '/tex-qr.js?v=1'; s.onload = ok; s.onerror = ok; document.head.appendChild(s); });
     return qrReady;
   }
-  function dark(ctx, x0, y0, x1, y1) { var g = ctx.createRadialGradient(x0 + (x1 - x0) * .3, y0 + (y1 - y0) * .2, 10, x0 + (x1 - x0) * .5, y0 + (y1 - y0) * .5, Math.max(x1 - x0, y1 - y0)); g.addColorStop(0, '#2b2622'); g.addColorStop(1, '#14110f'); return g; }
+  var NAVY = '#141B2E', NAVY2 = '#1E2A47', GOLD = '#E0A82E', GOLD2 = '#C98A13';
+  function cover(ctx, im, x, y, w, h, fy) { var s = Math.max(w / im.width, h / im.height), pw = im.width * s, ph = im.height * s; ctx.drawImage(im, x + (w - pw) / 2, y + (h - ph) * fy, pw, ph); }
+  function initials(n) { return String(n || '?').trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase(); }
+  function pin(ctx, x, y) { ctx.save(); ctx.fillStyle = GOLD; ctx.beginPath(); ctx.arc(x, y - 6, 11, Math.PI, 0); ctx.lineTo(x, y + 14); ctx.closePath(); ctx.fill(); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.arc(x, y - 6, 4, 0, 7); ctx.fill(); ctx.restore(); }
+  function check(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = GOLD; ctx.fill(); ctx.beginPath(); ctx.moveTo(x - r * .42, y + r * .02); ctx.lineTo(x - r * .12, y + r * .32); ctx.lineTo(x + r * .45, y - r * .3); ctx.lineWidth = r * .22; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = NAVY; ctx.stroke(); }
+  function site(ctx, x, y, size, a, b, center) { ctx.font = size + 'px TCB, sans-serif'; ctx.textAlign = 'left'; var w1 = ctx.measureText('Tex').width, w = ctx.measureText('TexContractor.com').width; if (center) x -= w / 2; ctx.fillStyle = a; ctx.fillText('Tex', x, y); ctx.fillStyle = b; ctx.fillText('Contractor.com', x + w1, y); }
+  function qrBox(ctx, url, x, y, size) {
+    var m = null; try { m = window.TexQR ? window.TexQR(url) : null; } catch (_) { m = null; } if (!m) return false;
+    var n = m.length, pad = Math.round(size * .06), cell = (size - 2 * pad) / n, P = function (k) { return Math.round(pad + k * cell); };
+    rr(ctx, x, y, size, size, 18); ctx.fillStyle = '#fff'; ctx.fill(); ctx.fillStyle = NAVY;
+    for (var j = 0; j < n; j++) for (var i = 0; i < n; i++) if (m[j][i]) ctx.fillRect(x + P(i), y + P(j), P(i + 1) - P(i), P(j + 1) - P(j));
+    return true;
+  }
+  // name in one line, or two lines when it is long; returns {lines, size}
+  function nameLines(ctx, name, max, big, small) {
+    var s = fit(ctx, name, 'TCB, sans-serif', big, max);
+    if (s >= small || !/\s/.test(name)) return { lines: [name], size: s };
+    ctx.font = small + 'px TCB, sans-serif'; var l = wrap(ctx, name, max), z = small;
+    l.forEach(function (x) { z = Math.min(z, fit(ctx, x, 'TCB, sans-serif', small, max)); });
+    return { lines: l, size: z };
+  }
+  function chipsFor(o, es) {
+    var m = Array.isArray(o.contacts) && o.contacts.length ? o.contacts : ['text', 'call', 'chat'];
+    var L = es ? { text: 'Texto', call: 'Llamada', chat: 'Chat' } : { text: 'Text', call: 'Call', chat: 'Chat' };
+    return ['text', 'call', 'chat'].filter(function (k) { return m.indexOf(k) > -1; }).map(function (k) { return L[k]; });
+  }
   async function draw(o) {
     await Promise.all([loadFonts(), loadQR()]);
     var c = document.createElement('canvas'); c.width = W; c.height = H; var ctx = c.getContext('2d');
     var es = o.lang === 'es', t = T[es ? 'es' : 'en'], cx = W / 2;
-    // gold frame + cream card
-    ctx.fillStyle = gold(ctx, 0, 0, W, H); ctx.fillRect(0, 0, W, H);
-    rr(ctx, 16, 16, W - 32, H - 32, 28); ctx.fillStyle = '#fffaf0'; ctx.fill();
-    // dark top with a soft curved bottom
-    ctx.save(); rr(ctx, 16, 16, W - 32, H - 32, 28); ctx.clip();
-    ctx.beginPath(); ctx.moveTo(16, 16); ctx.lineTo(W - 16, 16); ctx.lineTo(W - 16, 426);
-    ctx.ellipse(cx, 426, cx - 16, 90, 0, 0, Math.PI); ctx.closePath(); ctx.fillStyle = dark(ctx, 16, 16, W - 16, 516); ctx.fill(); ctx.restore();
-    // logo on a cream pill
-    var logo = await img('/texcontractor-logo.png');
-    rr(ctx, cx - 140, 106, 280, 104, 20); ctx.fillStyle = "#fffaf0"; ctx.fill();
-    if (logo) { var lw = 252, lh = lw * logo.height / logo.width; if (lh > 92) { lh = 92; lw = lh * logo.width / logo.height; } ctx.drawImage(logo, cx - lw / 2, 106 + (104 - lh) / 2, lw, lh); }
-    // photo: gold ring, cream border, soft shadow
-    var cy = 406, R = 170, r = 151, photo = await img(o.photoUrl);
-    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, cx - R, cy - R, cx + R, cy + R);
-    ctx.shadowColor = 'rgba(0,0,0,.22)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 20; ctx.fill(); ctx.restore();
-    ctx.beginPath(); ctx.arc(cx, cy, R - 12, 0, Math.PI * 2); ctx.fillStyle = '#fffaf0'; ctx.fill();
-    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
-    if (photo) { var s = Math.max(2 * r / photo.width, 2 * r / photo.height), pw = photo.width * s, ph = photo.height * s; ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph); }
-    else { ctx.fillStyle = dark(ctx, cx - r, cy - r, cx + r, cy + r); ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r); ctx.fillStyle = '#f2c14e'; ctx.font = '150px TCB, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(o.name || '?').trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase(), cx, cy + 8); }
-    ctx.restore();
-    // name
-    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    var name = String(o.name || '').trim(); ctx.fillStyle = '#0f172a';
-    var ns = fit(ctx, name, 'TCB, sans-serif', 96, W - 180);
-    if (ns < 62 && /\s/.test(name)) { ctx.font = '58px TCB, sans-serif'; var nl = wrap(ctx, name, W - 180); if (nl.length > 1) { nl.forEach(function (l, i) { var z = fit(ctx, l, 'TCB, sans-serif', 58, W - 180); ctx.font = z + 'px TCB, sans-serif'; ctx.fillText(l, cx, 683 + i * 64); }); } else { ctx.font = ns + 'px TCB, sans-serif'; ctx.fillText(name, cx, 745); } }
-    else { ctx.font = ns + 'px TCB, sans-serif'; ctx.fillText(name, cx, 745); }
-    // service pill
+    var name = String(o.name || '').trim() || (es ? 'Técnico local' : 'Local pro');
     var svc = String(o.service || (es ? 'Técnico local' : 'Local pro')).trim();
-    var ss = fit(ctx, svc, 'TCB, sans-serif', 40, W - 300); ctx.font = ss + 'px TCB, sans-serif';
-    var sw = ctx.measureText(svc).width + 72;
-    rr(ctx, cx - sw / 2, 767, sw, 88, 44); ctx.fillStyle = '#fff3d6'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#e6cf98'; ctx.stroke();
-    ctx.fillStyle = '#7a5200'; ctx.fillText(svc, cx, 825);
-    // city
     var place = [o.city, o.state].filter(Boolean).join(', ');
-    if (place) { ctx.font = '34px TCM, sans-serif'; ctx.fillStyle = '#475569'; var pw2 = ctx.measureText(place).width; ctx.fillText(place, cx + 14, 912);
-      ctx.beginPath(); ctx.arc(cx + 14 - pw2 / 2 - 22, 900, 8, 0, Math.PI * 2); ctx.fillStyle = '#c99a3a'; ctx.fill(); }
-    // badge
     var badge = o.imported ? (es ? 'Encuéntrame en TexContractor' : 'Find me on TexContractor') : (es ? 'Miembro orgulloso de TexContractor' : 'Proud member of TexContractor');
-    ctx.font = '28px TCB, sans-serif'; var bw = ctx.measureText(badge).width + 104, bx = cx - bw / 2;
-    rr(ctx, bx, 942, bw, 64, 32); ctx.fillStyle = '#fffaf0'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#e6cf98'; ctx.stroke();
-    ctx.beginPath(); ctx.arc(bx + 40, 974, 23, 0, Math.PI * 2); ctx.fillStyle = gold(ctx, bx + 17, 951, bx + 63, 997); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(bx + 30, 975); ctx.lineTo(bx + 37, 982); ctx.lineTo(bx + 51, 967); ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#2d2106'; ctx.stroke();
-    ctx.textAlign = 'left'; ctx.fillStyle = '#7a5200'; ctx.fillText(badge, bx + 76, 984);
-    // bottom bar: text + QR
-    rr(ctx, 56, 1029, W - 112, 265, 28); ctx.fillStyle = dark(ctx, 56, 1029, W - 56, 1294); ctx.fill();
-    var qrUrl = (o.qrUrl || o.shareUrl || o.profileUrl || 'https://texcontractor.com/').replace(/utm_source=share&utm_medium=[\w-]+/, 'utm_source=qr').replace(/&service=[^&]*/, ''), m = null;
-    try { m = window.TexQR ? window.TexQR(qrUrl) : null; } catch (_) { m = null; }
-    var textMax = m ? 680 : W - 224;
-    ctx.fillStyle = '#fffaf0'; ctx.globalAlpha = .9; ctx.font = '30px TCM, sans-serif'; ctx.fillText(t.foot1, 92, 1132); ctx.globalAlpha = 1;
-    var fs = fit(ctx, 'TexContractor.com', 'TCB, sans-serif', 52, textMax); ctx.font = fs + 'px TCB, sans-serif';
-    var wa = ctx.measureText('Tex').width; ctx.fillStyle = '#f4c95d'; ctx.fillText('Tex', 92, 1199); ctx.fillStyle = '#ffffff'; ctx.fillText('Contractor.com', 92 + wa, 1199);
-    if (m) {
-      var qx = W - 56 - 36 - 190, qy = 1052, n = m.length, cell = 172 / n, off = 9, P = function (k) { return Math.round(off + k * cell); };
-      rr(ctx, qx, qy, 190, 190, 16); ctx.fillStyle = '#fffaf0'; ctx.fill(); ctx.fillStyle = '#1c1917';
-      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) if (m[y][x]) ctx.fillRect(qx + P(x), qy + P(y), P(x + 1) - P(x), P(y + 1) - P(y));
-      ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '22px TCB, sans-serif'; ctx.fillText(es ? 'Escanéame' : 'Scan me', qx + 95, 1272);
+    var scan = es ? 'Escanéame' : 'Scan me', chips = chipsFor(o, es);
+    var qrUrl = (o.qrUrl || o.shareUrl || o.profileUrl || 'https://texcontractor.com/').replace(/utm_source=share&utm_medium=[\w-]+/, 'utm_source=qr').replace(/&service=[^&]*/, '');
+    var photo = await img(o.photoUrl), logo = await img('/texcontractor-logo.png');
+    ctx.textBaseline = 'alphabetic';
+    if (photo) {
+      // ---- photo card ----
+      ctx.fillStyle = NAVY; ctx.fillRect(0, 0, W, H);
+      var hh = 860; ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, hh); ctx.clip(); cover(ctx, photo, 0, 0, W, hh, .25); ctx.restore();
+      var g = ctx.createLinearGradient(0, 360, 0, hh); g.addColorStop(0, 'rgba(20,27,46,0)'); g.addColorStop(.7, 'rgba(20,27,46,.86)'); g.addColorStop(1, NAVY); ctx.fillStyle = g; ctx.fillRect(0, 0, W, hh + 2);
+      var g2 = ctx.createLinearGradient(0, 0, 0, 220); g2.addColorStop(0, 'rgba(20,27,46,.55)'); g2.addColorStop(1, 'rgba(20,27,46,0)'); ctx.fillStyle = g2; ctx.fillRect(0, 0, W, 220);
+      rr(ctx, 50, 50, 330, 100, 50); ctx.fillStyle = '#fff'; ctx.fill();
+      if (logo) { var lw = 270, lh = lw * logo.height / logo.width; ctx.drawImage(logo, 80, 50 + (100 - lh) / 2, lw, lh); }
+      // name block from the bottom up: city at 880, name above, service tag above the name
+      var nl = nameLines(ctx, name, W - 140, 108, 74), lh2 = Math.round(nl.size * 1.02), base = 812 - (nl.lines.length - 1) * lh2;
+      ctx.textAlign = 'left'; ctx.fillStyle = '#fff'; ctx.font = nl.size + 'px TCB, sans-serif';
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 18; nl.lines.forEach(function (l, i) { ctx.fillText(l, 66, base + i * lh2); }); ctx.restore();
+      var S = svc.toUpperCase(), ts = fit(ctx, S, 'TCB, sans-serif', 34, W - 200); ctx.font = ts + 'px TCB, sans-serif';
+      var tw = ctx.measureText(S).width + 60, ty = base - nl.size * .78 - 30 - 66;
+      rr(ctx, 70, ty, tw, 66, 12); ctx.fillStyle = GOLD; ctx.fill(); ctx.fillStyle = NAVY; ctx.fillText(S, 100, ty + 46);
+      if (place) { ctx.font = '36px TCM, sans-serif'; ctx.fillStyle = '#D6DDEA'; ctx.fillText(place, 112, 880); pin(ctx, 84, 870); }
+      ctx.fillStyle = GOLD; ctx.fillRect(70, 935, 120, 8);
+      var hasQR = qrBox(ctx, qrUrl, W - 70 - 240, 985, 240), tmax = hasQR ? 640 : W - 140;
+      ctx.textAlign = 'left'; ctx.fillStyle = '#C9D2E3'; ctx.font = '32px TCM, sans-serif'; ctx.fillText(t.foot1, 70, 1030);
+      site(ctx, 70, 1100, fit(ctx, 'TexContractor.com', 'TCB, sans-serif', 56, tmax), GOLD, '#fff');
+      ctx.font = '30px TCB, sans-serif'; var x = 70;
+      chips.forEach(function (ch) { var w = ctx.measureText(ch).width + 56; rr(ctx, x, 1160, w, 60, 30); ctx.strokeStyle = 'rgba(224,168,46,.85)'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText(ch, x + w / 2, 1201); ctx.textAlign = 'left'; x += w + 16; });
+      check(ctx, 86, 1272, 16); ctx.fillStyle = '#AEB8CC'; ctx.font = fit(ctx, badge, 'TCB, sans-serif', 24, tmax - 50) + 'px TCB, sans-serif'; ctx.fillText(badge, 112, 1281);
+      if (hasQR) { ctx.textAlign = 'center'; ctx.fillStyle = GOLD; ctx.font = '24px TCB, sans-serif'; ctx.fillText(scan, W - 70 - 120, 1265); }
+      return c;
     }
+    // ---- no photo: clean white card ----
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = NAVY; ctx.fillRect(0, 0, W, 330); ctx.fillStyle = GOLD; ctx.fillRect(0, 330, W, 12);
+    var rg = ctx.createRadialGradient(W * .85, 0, 10, W * .85, 0, 500); rg.addColorStop(0, 'rgba(224,168,46,.35)'); rg.addColorStop(1, 'rgba(224,168,46,0)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, 330);
+    rr(ctx, cx - 190, 54, 380, 118, 59); ctx.fillStyle = '#fff'; ctx.fill();
+    if (logo) { var lw2 = 310, lh3 = lw2 * logo.height / logo.width; ctx.drawImage(logo, cx - lw2 / 2, 54 + (118 - lh3) / 2, lw2, lh3); }
+    var cy = 420, R = 200;
+    ctx.save(); ctx.shadowColor = 'rgba(15,23,42,.3)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 16; ctx.beginPath(); ctx.arc(cx, cy, R + 14, 0, 7); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, R + 6, 0, 7); ctx.fillStyle = GOLD; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fillStyle = NAVY; ctx.fill();
+    ctx.fillStyle = GOLD; ctx.font = '150px TCB, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(initials(name), cx, cy + 8); ctx.textBaseline = 'alphabetic';
+    var nb = nameLines(ctx, name, W - 160, 90, 64), lhb = Math.round(nb.size * 1.05), y = 730 - (nb.lines.length - 1) * lhb * .6;
+    ctx.fillStyle = NAVY; ctx.font = nb.size + 'px TCB, sans-serif'; nb.lines.forEach(function (l, i) { ctx.fillText(l, cx, y + i * lhb); }); y += (nb.lines.length - 1) * lhb;
+    var S2 = svc.toUpperCase(); ctx.font = fit(ctx, S2, 'TCB, sans-serif', 36, W - 360) + 'px TCB, sans-serif'; ctx.fillStyle = GOLD2; ctx.fillText(S2, cx, y + 65);
+    var sw = ctx.measureText(S2).width; ctx.fillStyle = GOLD; ctx.fillRect(cx - sw / 2 - 90, y + 52, 60, 4); ctx.fillRect(cx + sw / 2 + 30, y + 52, 60, 4);
+    if (place) { ctx.font = '34px TCM, sans-serif'; var pw = ctx.measureText(place).width; ctx.fillStyle = '#475569'; ctx.fillText(place, cx + 16, y + 132); pin(ctx, cx + 16 - pw / 2 - 24, y + 122); }
+    ctx.font = '30px TCB, sans-serif'; var gap = 22, ws = chips.map(function (ch) { return ctx.measureText(ch).width + 64; }), tot = ws.reduce(function (a, b) { return a + b; }, 0) + gap * (chips.length - 1), xx = cx - tot / 2, cyy = Math.min(y + 172, 940);
+    chips.forEach(function (ch, i) { rr(ctx, xx, cyy, ws[i], 64, 32); ctx.fillStyle = '#F4F6FA'; ctx.fill(); ctx.strokeStyle = '#D9DFEA'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = NAVY; ctx.fillText(ch, xx + ws[i] / 2, cyy + 43); xx += ws[i] + gap; });
+    rr(ctx, 50, 1025, W - 100, 280, 32); ctx.fillStyle = NAVY; ctx.fill();
+    var hasQR2 = qrBox(ctx, qrUrl, W - 98 - 215, 1048, 215), tmax2 = hasQR2 ? 620 : W - 200;
+    ctx.textAlign = 'left'; ctx.fillStyle = '#C9D2E3'; ctx.font = '30px TCM, sans-serif'; ctx.fillText(t.foot1, 98, 1115);
+    site(ctx, 98, 1177, fit(ctx, 'TexContractor.com', 'TCB, sans-serif', 50, tmax2), GOLD, '#fff');
+    check(ctx, 114, 1243, 17); ctx.fillStyle = '#E8ECF4'; ctx.font = fit(ctx, badge, 'TCB, sans-serif', 25, tmax2 - 50) + 'px TCB, sans-serif'; ctx.textAlign = 'left'; ctx.fillText(badge, 142, 1252);
+    if (hasQR2) { ctx.textAlign = 'center'; ctx.fillStyle = GOLD; ctx.font = '22px TCB, sans-serif'; ctx.fillText(scan, W - 98 - 107, 1290); }
     return c;
   }
   var IC = {
@@ -126,10 +152,10 @@
   function css() {
     if (document.getElementById('tbc-css')) return;
     var s = document.createElement('style'); s.id = 'tbc-css';
-    s.textContent = '.tbc{margin:16px 0;padding:16px;border:2px solid #e8c766;border-radius:16px;background:#fffaf0;text-align:center}' +
+    s.textContent = '.tbc{margin:16px 0;padding:16px;border:2px solid #E0A82E;border-radius:16px;background:#fff;text-align:center}' +
       '.tbc h3{margin:0 0 6px;font-size:1.2rem;color:#111827}.tbc p{margin:0 0 12px;color:#374151;font-size:.95rem;line-height:1.35}' +
       '.tbc-img img{display:block;width:min(340px,100%);margin:0 auto 12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18)}' +
-      '.tbc-share{display:flex;width:100%;min-height:52px;margin:0 0 10px;align-items:center;justify-content:center;border:2px solid #c99a3a;border-radius:14px;background:radial-gradient(circle at 30% 20%,#2b2622,#14110f);color:#f4c95d;font:800 1.05rem system-ui,sans-serif;cursor:pointer}' +
+      '.tbc-share{display:flex;width:100%;min-height:52px;margin:0 0 10px;align-items:center;justify-content:center;border:2px solid #c99a3a;border-radius:14px;background:#141B2E;color:#E0A82E;font:800 1.05rem system-ui,sans-serif;cursor:pointer}' +
       '.tbc-g{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.tbc-g a,.tbc-g button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:4px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;color:#111827;font:700 .72rem system-ui,sans-serif;text-decoration:none;cursor:pointer}' +
       '.tbc-g svg{width:26px;height:26px}.tbc-copy{margin-top:10px;background:none;border:0;color:#7a5200;font:700 .9rem system-ui,sans-serif;text-decoration:underline;cursor:pointer}' +
       '.tbc small{display:block;margin-top:10px;color:#92400e;font-weight:700}.tbc-ok{min-height:1em;margin-top:6px;color:#0b7a63;font-weight:700}';
