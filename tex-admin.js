@@ -272,7 +272,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
-      select: 'user_id,email,display_name,avatar_url,provider,status,status_note,status_changed_at,created_at,last_sign_in_at,updated_at',
+      select: 'user_id,email,display_name,avatar_url,provider,status,status_note,status_changed_at,created_at,last_sign_in_at,updated_at,account_intent',
       order: 'created_at.desc,user_id.desc'
     });
     return requestAllRows('/rest/v1/texcontractor_members', params, token);

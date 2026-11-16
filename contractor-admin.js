@@ -119,7 +119,7 @@
     rows.forEach((row) => {
       const svc = svcOf(row.user_id);
       const name = row.display_name || svc[0]?.display_name || (row.provider === 'phone' ? 'New member (phone)' : 'No profile name');
-      const roleLabel = svc.length ? `Technician · ${[...new Set(svc.map((x) => x.service))].join(', ')}` : 'Customer (no service listed)';
+      const roleLabel = svc.length ? `Technician · ${[...new Set(svc.map((x) => x.service))].join(', ')}` : row.account_intent === 'provider' ? '🟠 Pro — page not finished · فني لم يكمل صفحته' : row.account_intent === 'customer' ? '🔵 Customer · عميل' : 'Member (no service listed) · عضو';
       const isCurrentAdmin = row.user_id === currentUser?.id;
       const blocked = row.status === 'blocked';
       const card = document.createElement('article');
@@ -166,7 +166,7 @@
         const email = document.createElement('a');
         email.className = 'member-action';
         // Open Gmail as texcontractor.help@gmail.com (not the computer's default mail app)
-        const unfinished = !svc.length;
+        const unfinished = !svc.length && row.account_intent === 'provider';
         const su = unfinished ? 'Finish your TexContractor page so customers can text you' : 'TexContractor';
         const body = unfinished ? [
           'Hi! Thanks for joining TexContractor.', '',
