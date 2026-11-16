@@ -46,7 +46,7 @@ const cleanAbout = (s) => {
   if (text.length > 240) text = text.slice(0, 240).replace(/\s+\S*$/, '') + '…';
   return text;
 };
-const cleanName = (s) => plain(s).replace(/[*()\[\]"“”]+/g, ' ').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}.!)]+$/gu, '').replace(/\s+/g, ' ').trim();
+const cleanName = (s) => plain(s).replace(/\s*@\s*[a-z0-9-]+(\.[a-z]{2,})*\b/gi, ' ').replace(/[*()\[\]"“”]+/g, ' ').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}.!)]+$/gu, '').replace(/\s+/g, ' ').trim();
 
 async function fetchAll(table, select, extra = {}) {
   const rows = [];
@@ -425,6 +425,10 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Hiring tips: <a href="/servic
 
   // Separate sitemap so the existing 66-URL sitemap and its checks stay untouched.
   const urls = ['local/', ...states.map((st) => `local/${st.toLowerCase()}/`), ...[...cityMap.keys()].filter(indexable).map((k) => { const [st, c] = k.split('|'); return `local/${st.toLowerCase()}/${slug(c)}/`; }), ...pages.filter((p) => p.indexable).map((p) => p.path)];
+  // Two spellings of a city (e.g. "San Jose"/"San José") share one path; the last page written wins.
+  // Keep only URLs whose final file is indexable, so the sitemap never lists a noindex page.
+  const isIndexed = (u) => { const f = join(root, u.endsWith('.html') ? u : u + 'index.html'); try { return !/name="robots" content="noindex/.test(readFileSync(f, 'utf8').slice(0, 4000)); } catch (_) { return false; } };
+  for (let i = urls.length - 1; i >= 0; i--) if (!isIndexed(urls[i])) urls.splice(i, 1);
   const today = new Date().toISOString().slice(0, 10);
   writeFileSync(join(root, 'sitemap-local.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE}/${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
   console.log(`Local pages: ${pages.length} city/service pages, ${cityMap.size} city hubs (${[...cityMap.keys()].filter(indexable).length} indexable), ${stateMap.size} state hubs, ${urls.length} sitemap URLs (min ${MIN_PER_PAGE} providers per page, ${rows.length} usable listings).`);
