@@ -182,6 +182,22 @@
         email.href = 'https://mail.google.com/mail/?' + new URLSearchParams({ view: 'cm', fs: '1', authuser: 'texcontractor.help@gmail.com', to: row.email, su, body }).toString();
         email.target = '_blank';
         email.rel = 'noopener';
+        const meta = card.querySelector('.member-meta');
+        const sentTag = document.createElement('span');
+        sentTag.className = 'member-badge';
+        sentTag.style.cssText = 'background:#e0f2fe;color:#075985;font-weight:800';
+        const paintSent = () => {
+          if (!row.admin_emailed_at) { sentTag.remove(); return; }
+          sentTag.textContent = `📧 Emailed ${displayDate(row.admin_emailed_at)} (${row.admin_email_count || 1}×) · تم إرسال إيميل`;
+          meta?.appendChild(sentTag);
+        };
+        paintSent();
+        email.addEventListener('click', (ev) => {
+          if (row.admin_emailed_at && !window.confirm(`Already emailed on ${displayDate(row.admin_emailed_at)}. Open a new email anyway?\nأرسلنا له إيميل من قبل. تفتح إيميل جديد؟`)) { ev.preventDefault(); return; }
+          const count = (row.admin_email_count || 0) + 1;
+          TexAdminApi.markMemberEmailed(row.user_id, count).then((r) => { if (r) { row.admin_emailed_at = r.admin_emailed_at; row.admin_email_count = r.admin_email_count; paintSent(); } })
+            .catch((error) => showMessage('Could not record the email: ' + error.message, 'error'));
+        });
         email.textContent = 'Email';
         email.title = 'Open a new email to this member';
         actions.prepend(email);

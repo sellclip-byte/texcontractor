@@ -272,7 +272,7 @@
     const token = await TexAuth.getAccessToken();
     if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
     const params = new URLSearchParams({
-      select: 'user_id,email,display_name,avatar_url,provider,status,status_note,status_changed_at,created_at,last_sign_in_at,updated_at,account_intent',
+      select: 'user_id,email,display_name,avatar_url,provider,status,status_note,status_changed_at,created_at,last_sign_in_at,updated_at,account_intent,admin_emailed_at,admin_email_count',
       order: 'created_at.desc,user_id.desc'
     });
     return requestAllRows('/rest/v1/texcontractor_members', params, token);
@@ -292,6 +292,16 @@
       method: 'PATCH',
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify(body)
+    }, token);
+    return rows?.[0] || null;
+  };
+
+  const markMemberEmailed = async (userId, count) => {
+    const token = await TexAuth.getAccessToken();
+    if (!token) throw new Error('Your sign-in session expired. Please sign in again.');
+    const rows = await request(`/rest/v1/texcontractor_members?user_id=eq.${encodeURIComponent(userId)}&select=admin_emailed_at,admin_email_count`, {
+      method: 'PATCH', headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ admin_emailed_at: new Date().toISOString(), admin_email_count: count })
     }, token);
     return rows?.[0] || null;
   };
@@ -444,5 +454,5 @@
     return result;
   };
 
-  window.TexAdminApi = { myServices, setMyContact, myContact, myMedia, myCreds, myCredsUpdate, myPrice, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyWorkType, myWorkType, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
+  window.TexAdminApi = { markMemberEmailed, myServices, setMyContact, myContact, myMedia, myCreds, myCredsUpdate, myPrice, uploadMyProof, myMediaUpdate, uploadMyPhoto, listingForPhone, setMySpanish, setMyWorkType, myWorkType, setMyHours, changeMyService, deleteMyService, deleteListing, deleteMember, uploadHomepageBannerImage, uploadSubmissionPhotos, uploadSubmissionPhoto, createSubmission, getAdminRecord, getHomepageBanner, listMembers, listReports, listSideAds, listSubmissions, publicUrl, removeSideAdImage, sideAdPublicUrl, uploadSideAdImage, updateHomepageBanner, updateMember, upsertSideAd, updateSubmission };
 })();
