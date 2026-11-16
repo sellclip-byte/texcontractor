@@ -92,7 +92,7 @@ h2{font-size:22px;margin:34px 0 10px}.links{display:flex;flex-wrap:wrap;gap:8px;
 .links a:hover{background:#fff8e1;border-color:#f5b800}.links a span{color:#000;font-weight:800}.note{font-size:14px;color:var(--muted);max-width:70ch}
 footer{margin-top:40px;border-top:1px solid var(--line);background:#fff}footer .wrap{padding-block:18px;font-size:14px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}`;
 
-function page({ path, title, description, crumbs, body, jsonld, noindex, lang = 'en', alt = null }) {
+function page({ path, title, description, crumbs, body, jsonld, noindex, lang = 'en', alt = null, css: cssMode = 'inline' }) {
   const url = `${SITE}/${path}`;
   const es = lang === 'es';
   // alt = { en: 'local/…', es: 'es/local/…' } when both language versions of a page exist.
@@ -107,7 +107,7 @@ ${gtag}
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:type" content="website"><meta property="og:image" content="${SITE}/texcontractor-logo.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
 <script src="/tex-readable.js?v=5" defer></script><script src="/tex-local-zip.js?v=1" defer></script>
-<style>${css}</style>
+${cssMode === 'pro' ? '<link rel="stylesheet" href="/tc-local.css?v=1">' : `<style>${css}</style>`}
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
 </head><body>
 <header class="top"><div class="wrap"><a href="/" aria-label="TexContractor home"><img src="/texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a>${alt ? `<span style="display:flex;gap:10px;align-items:center"><a href="/${es ? alt.en : alt.es}" hreflang="${es ? 'en' : 'es'}" lang="${es ? 'en' : 'es'}" style="font-weight:700">${es ? 'English' : 'Español'}</a><a class="cta" href="/auth.html">${es ? 'Regístrate' : 'Sign up'}</a></span>` : '<a class="cta" href="/auth.html">Sign up</a>'}</div></header>
@@ -120,11 +120,23 @@ ${body}
 `;
 }
 
+// Owner 11-16: one static, indexable page per listed pro (Angi-style), so every pro in the
+// directory can be found on Google/Bing by name, service and city. No phone numbers or links;
+// the page sends people to the live profile to sign in and text. Paths do not change week to week.
+const proId8 = (r) => String(r.id).replace(/[^a-z0-9]/gi, '').slice(0, 8).toLowerCase();
+const proPath = (r) => `pro/${String(r.state).toLowerCase()}/${slug(r.city)}/${(slug(r.name).slice(0, 60).replace(/-+$/, '') || 'pro')}-${proId8(r)}.html`;
+const liveProfile = (r) => `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+const PRO_INDEX_ABOUT = Number(process.env.PRO_INDEX_ABOUT || 40); // short or empty "about" = noindex,follow
+// Boilerplate sentences that were filled in for many imported listings. A pro page is indexed only
+// when its "about" still has real, own text after these are removed (no thin duplicate pages).
+const TEMPLATE_SENTENCE = /[^.!?]*(is a local .* provider in|text them directly on texcontractor|text a short description of the job|message directly with your job details|send a text to ask about availability|text to check the schedule|describe what you need by text|reach out by text with the details|a quick text with the job details|^\s*(based|located|works|serves|local) (in|to|the)\b)[^.!?]*[.!?]?/gi;
+const ownText = (r) => String(r.about || '').replace(TEMPLATE_SENTENCE, ' ').replace(new RegExp(`\\b(${[r.city, r.state, r.service].filter(Boolean).map((x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'gi'), ' ').replace(/[^a-z]+/gi, ' ').trim();
+
 // Each listed pro as a small LocalBusiness so search engines and AI assistants (ChatGPT via Bing,
 // Perplexity, Gemini) can read "who does what, where" and link to the profile. No phone numbers.
 const proLd = (r, p) => ({
   '@type': 'LocalBusiness', name: r.name,
-  url: SITE + '/profile.html?' + new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service }),
+  url: SITE + '/' + proPath(r),
   address: { '@type': 'PostalAddress', addressLocality: r.city || p.city, addressRegion: r.state || p.state, addressCountry: 'US' },
   areaServed: { '@type': 'City', name: `${p.city}, ${p.state}` },
   makesOffer: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: r.service || p.service } },
@@ -214,13 +226,13 @@ async function main() {
     const browse = `/contractor.html?${new URLSearchParams({ service: p.service, city: p.city, state: p.state })}`;
     const serviceSlug = slug(p.service) + '.html';
     const cardEn = (r, d) => {
-      const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+      const href = '/' + proPath(r);
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}${d ? ` · about ${d} mi from ${esc(p.city)}` : ''}</div>${r.es ? '<span class="hablo" lang="es"><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     };
     const nearbyCards = (p.nearby || []).map((n) => cardEn(n.r, n.d)).join('\n');
     const total = p.list.length + (p.nearby || []).length;
     const cards = p.list.map((r) => {
-      const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+      const href = '/' + proPath(r);
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
     const body = `<h1>${esc(p.term)} in ${esc(p.city)}, ${esc(p.state)}</h1>
@@ -252,7 +264,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
       const esOthers = others.filter((o) => o.esPath);
       const esElsewhere = sameServiceElsewhere.filter((o) => o.esPath);
       const esCards = p.list.map((r) => {
-        const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`;
+        const href = '/' + proPath(r);
         return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`;
       }).join('\n');
       const esCount = p.list.filter((r) => r.es).length;
@@ -264,7 +276,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
 <section class="grid" aria-label="${esc(svc)} en ${esc(p.city)}">
 ${esCards}
 </section>
-${(p.nearby || []).length ? `<h2>Más proveedores de ${esc(low)} cerca de ${esc(p.city)}</h2><p class="lead">De ciudades cercanas, primero los más cercanos. También atienden ${esc(p.city)} y sus alrededores.</p><section class="grid" aria-label="${esc(svc)} cerca de ${esc(p.city)}">\n${p.nearby.map((x) => { const r = x.r; const href = `/profile.html?${new URLSearchParams(r.kind === 'contractor' ? { contractor: r.id, service: r.service } : { imported: r.id, service: r.service })}`; return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)} · a unas ${x.d} millas de ${esc(p.city)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`; }).join('\n')}\n</section>` : ''}
+${(p.nearby || []).length ? `<h2>Más proveedores de ${esc(low)} cerca de ${esc(p.city)}</h2><p class="lead">De ciudades cercanas, primero los más cercanos. También atienden ${esc(p.city)} y sus alrededores.</p><section class="grid" aria-label="${esc(svc)} cerca de ${esc(p.city)}">\n${p.nearby.map((x) => { const r = x.r; const href = '/' + proPath(r); return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)} · a unas ${x.d} millas de ${esc(p.city)}</div>${r.es ? '<span class="badge">Habla español</span>' : ''}${r.about ? `<p lang="en">${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">Ver perfil y enviar mensaje →</a></article>`; }).join('\n')}\n</section>` : ''}
 <p class="note">Antes de contratar, describe el trabajo, comparte fotos si ayudan y pregunta por el precio, el tiempo y la licencia o el seguro cuando apliquen. TexContractor no realiza los trabajos ni verifica cada perfil. Las descripciones las escribe cada proveedor.</p>
 ${esOthers.length ? `<h2>Otros servicios en ${esc(p.city)}</h2><ul class="links">${esOthers.map((o) => `<li><a href="/${o.esPath}">${esc(o.esName)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
 ${esElsewhere.length ? `<h2>${esc(svc)} en otras ciudades de Texas</h2><ul class="links">${esElsewhere.map((o) => `<li><a href="/${o.esPath}">${esc(o.city)} <span>(${o.list.length})</span></a></li>`).join('')}</ul>` : ''}
@@ -352,6 +364,58 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Consejos para contratar: <a h
   const esToday = new Date().toISOString().slice(0, 10);
   writeFileSync(join(root, 'sitemap-es-local.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${esUrls.map((u) => `  <url><loc>${SITE}/${u}</loc><lastmod>${esToday}</lastmod></url>`).join('\n')}\n</urlset>\n`);
   console.log(`Spanish pages: ${esUrls.length} URLs (${esCities.length} Texas cities).`);
+
+  writeFileSync(join(root, 'tc-local.css'), css + `
+.sub{font-size:18px;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}.about{background:#fff;border:1px solid var(--line);border-radius:14px;padding:4px 18px 14px;margin:0 0 18px}.about h2{margin:12px 0 4px;font-size:18px}.about p{margin:0}
+.plist{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:8px}.plist li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}.plist a{font-weight:700;text-decoration:none}.plist .loc{display:block;font-size:13px;color:var(--muted)}
+.claim{margin:30px 0 0;padding:16px 18px;border-radius:14px;background:var(--accent-soft);border:1px solid #b9ddd3}.claim a{font-weight:800}
+`);
+  // ---- One static page per pro (owner 11-16, Angi-style "every business has a page"). ----
+  const PRO_OUT = join(root, 'pro');
+  rmSync(PRO_OUT, { recursive: true, force: true });
+  const pageByKey = new Map(pages.map((p) => [`${p.state}|${p.city}|${p.service}`, p]));
+  const proUrls = [];
+  const seenPro = new Set();
+  for (const r of rows) {
+    const path = proPath(r);
+    if (seenPro.has(path)) continue; seenPro.add(path);
+    const p = pageByKey.get(`${r.state}|${r.city}|${r.service}`);
+    const stName = STATES[r.state];
+    const cityPath = `/local/${r.state.toLowerCase()}/${slug(r.city)}/`;
+    const serviceSlug = slug(r.service) + '.html';
+    const same = (p ? p.list : []).filter((o) => o !== r).slice(0, 8);
+    const near = (p && p.nearby ? p.nearby : []).filter((x) => x.r !== r).slice(0, 6);
+    const otherSvcs = (cityMap.get(`${r.state}|${r.city}`) || []).filter((o) => o.service !== r.service).sort((a, b) => b.list.length - a.list.length).slice(0, 12);
+    const indexablePro = ownText(r).length >= PRO_INDEX_ABOUT;
+    const low = r.service.toLowerCase();
+    const mini = (o, d) => `<li><a href="/${proPath(o)}">${esc(o.name)}</a> <span class="loc">${esc(o.city)}${d ? ` · ${d} mi` : ''}</span></li>`;
+    const body = `<h1>${esc(r.name)}</h1>
+<p class="sub"><b>${esc(r.service)}</b> in ${esc(r.city)}, ${esc(r.state)}${r.es ? ' <span class="hablo" lang="es"><b>Hablo</b> <em>español</em></span>' : ''}</p>
+${r.about ? `<section class="about"><h2>About</h2><p>${esc(r.about)}</p></section>` : `<p class="lead">${esc(r.name)} offers ${esc(low)} in ${esc(r.city)}, ${esc(stName)} and is listed on TexContractor.</p>`}
+<div class="ctas"><a class="cta" href="${esc(liveProfile(r))}" rel="nofollow">Text ${esc(r.name.length > 28 ? 'this pro' : r.name)} on TexContractor</a><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: r.service })}`)}">Post a request</a></div>
+<p class="note">Sign in to see contact options and text directly — no middleman. Before you hire, ask about price, timing, licensing and insurance where they apply. TexContractor does not perform the work or verify every listing.</p>
+${same.length ? `<h2>More ${esc(low)} pros in ${esc(r.city)}</h2><ul class="plist">${same.map((o) => mini(o)).join('')}</ul>` : ''}
+${near.length ? `<h2>${esc(r.service)} pros near ${esc(r.city)}</h2><ul class="plist">${near.map((x) => mini(x.r, x.d)).join('')}</ul>` : ''}
+<h2>Find more in ${esc(r.city)}</h2><ul class="links">${p ? `<li><a href="/${p.path}">All ${esc(low)} in ${esc(r.city)}</a></li>` : ''}<li><a href="${cityPath}">All services in ${esc(r.city)}</a></li>${otherSvcs.map((o) => `<li><a href="/${o.path}">${esc(o.service)}</a></li>`).join('')}</ul>
+${servicePages.has(serviceSlug) ? `<p class="note">Hiring tips: <a href="/services/${serviceSlug}">${esc(r.service)} guide</a>.</p>` : ''}
+<div class="claim"><b>Is this your business?</b> Claim it free, add photos and get your own business card. <a href="/start.html">Claim this page →</a></div>`;
+    const crumbs = [['Home', '/'], [stName, `/local/${r.state.toLowerCase()}/`], [r.city, cityPath], ...(p ? [[r.service, '/' + p.path]] : []), [r.name, null]];
+    const ld = { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: r.name, url: SITE + '/' + path,
+      ...(r.about ? { description: r.about } : {}),
+      address: { '@type': 'PostalAddress', addressLocality: r.city, addressRegion: r.state, addressCountry: 'US' },
+      areaServed: { '@type': 'City', name: `${r.city}, ${r.state}` },
+      makesOffer: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: r.service } },
+      ...(r.es ? { knowsLanguage: ['en', 'es'] } : {}) };
+    const html = page({ path, crumbs, body, noindex: !indexablePro, css: 'pro',
+      title: `${r.name} — ${r.service} in ${r.city}, ${r.state} | TexContractor`,
+      description: (r.about ? `${r.name}: ${r.service.toLowerCase()} in ${r.city}, ${r.state}. ${r.about}` : `${r.name} offers ${low} in ${r.city}, ${stName}. See the profile and text them directly on TexContractor.`).slice(0, 158),
+      jsonld: [breadcrumbLd(crumbs.slice(0, -1).concat([[r.name, '/' + path]])), ld] });
+    mkdirSync(join(root, path, '..'), { recursive: true });
+    writeFileSync(join(root, path), html);
+    if (indexablePro) proUrls.push(path);
+  }
+  writeFileSync(join(root, 'sitemap-pros.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${proUrls.map((u) => `  <url><loc>${SITE}/${u}</loc></url>`).join('\n')}\n</urlset>\n`);
+  console.log(`Pro pages: ${seenPro.size} pages, ${proUrls.length} indexable in sitemap-pros.xml.`);
 
   // Small city list for the home page sidebar ("Nearby cities", "Cities by state").
   let coords = {};
