@@ -165,7 +165,23 @@
       if (row.email) {
         const email = document.createElement('a');
         email.className = 'member-action';
-        email.href = `mailto:${row.email}?subject=${encodeURIComponent('TexContractor')}`;
+        // Open Gmail as texcontractor.help@gmail.com (not the computer's default mail app)
+        const unfinished = !svc.length;
+        const su = unfinished ? 'Finish your TexContractor page so customers can text you' : 'TexContractor';
+        const body = unfinished ? [
+          'Hi! Thanks for joining TexContractor.', '',
+          "Your account is ready, but your page isn't live yet, so customers can't find you or contact you.", '',
+          'Here\'s how it works: homeowners near you search for a service, see your page, and text you directly. No middleman, no lead fees.', '',
+          'To go live, finish these 3 things (about 2 minutes):',
+          '1. Your photo. Customers trust a real face and are much more likely to text a pro they can see.',
+          '2. Your service and the cities you cover.',
+          '3. Your phone number, so customers\' texts reach you.', '',
+          'Finish here: https://texcontractor.com/start.html', '',
+          'Questions? Just reply to this email.', '— TexContractor Team'
+        ].join('\n') : '';
+        email.href = 'https://mail.google.com/mail/?' + new URLSearchParams({ view: 'cm', fs: '1', authuser: 'texcontractor.help@gmail.com', to: row.email, su, body }).toString();
+        email.target = '_blank';
+        email.rel = 'noopener';
         email.textContent = 'Email';
         email.title = 'Open a new email to this member';
         actions.prepend(email);
