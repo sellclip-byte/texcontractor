@@ -92,7 +92,7 @@ h2{font-size:22px;margin:34px 0 10px}.links{display:flex;flex-wrap:wrap;gap:8px;
 .links a:hover{background:#fff8e1;border-color:#f5b800}.links a span{color:#000;font-weight:800}.note{font-size:14px;color:var(--muted);max-width:70ch}
 footer{margin-top:40px;border-top:1px solid var(--line);background:#fff}footer .wrap{padding-block:18px;font-size:14px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}`;
 
-function page({ path, title, description, crumbs, body, jsonld, noindex, lang = 'en', alt = null, css: cssMode = 'inline' }) {
+function page({ path, title, description, crumbs, body, jsonld, noindex, lang = 'en', alt = null, css: cssMode = 'shared' }) {
   const url = `${SITE}/${path}`;
   const es = lang === 'es';
   // alt = { en: 'local/…', es: 'es/local/…' } when both language versions of a page exist.
@@ -107,7 +107,7 @@ ${gtag}
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:type" content="website"><meta property="og:image" content="${SITE}/texcontractor-logo.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/texcontractor-icon-192.png">
 <script src="/tex-readable.js?v=5" defer></script><script src="/tex-local-zip.js?v=1" defer></script>
-${cssMode === 'pro' ? '<link rel="stylesheet" href="/tc-local.css?v=1">' : `<style>${css}</style>`}
+${cssMode === 'inline' ? `<style>${css}</style>` : '<link rel="stylesheet" href="/tc-local.css?v=1">'}
 ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
 </head><body>
 <header class="top"><div class="wrap"><a href="/" aria-label="TexContractor home"><img src="/texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a>${alt ? `<span style="display:flex;gap:10px;align-items:center"><a href="/${es ? alt.en : alt.es}" hreflang="${es ? 'en' : 'es'}" lang="${es ? 'en' : 'es'}" style="font-weight:700">${es ? 'English' : 'Español'}</a><a class="cta" href="/auth.html">${es ? 'Regístrate' : 'Sign up'}</a></span>` : '<a class="cta" href="/auth.html">Sign up</a>'}</div></header>
@@ -236,7 +236,7 @@ async function main() {
       return `<article class="card"><h3>${esc(r.name)}</h3><div class="loc">${esc(r.city)}, ${esc(r.state)}</div>${r.es ? '<span class="hablo" lang="es"><svg class="mxf" viewBox="0 0 30 20" width="27" height="18" aria-hidden="true"><rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce1126"/><circle cx="15" cy="10" r="3.2" fill="#8c5a2b"/><circle cx="15" cy="10" r="1.6" fill="#3f7d3a"/></svg><b>Hablo</b> <em>español</em></span>' : ''}${r.about ? `<p>${esc(r.about)}</p>` : ''}<a class="more" href="${esc(href)}">View profile &amp; text →</a></article>`;
     }).join('\n');
     const body = `<h1>${esc(p.term)} in ${esc(p.city)}, ${esc(p.state)}</h1>
-<p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman. Updated ${esc(updated)}.</p>
+<p class="lead">${p.list.length} ${esc(p.service.toLowerCase())} provider${p.list.length === 1 ? '' : 's'} based in ${esc(p.city)}, ${esc(stName)} are listed on TexContractor. Open a profile, sign in to see the phone number, and text the provider directly for a quote — no middleman.</p>
 <a class="nearest" href="${esc(browse)}"><b>See all ${stateSvc.get(`${p.state}|${p.service}`)} ${esc(p.service.toLowerCase())} providers near ${esc(p.city)}</b><span>Nearest first: ${esc(p.city)}, then nearby cities, then the rest of ${esc(stName)} →</span></a>
 <div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Post a request</a><a class="cta alt" href="/start.html">List your service</a></div>
 <section class="grid" aria-label="${esc(p.service)} providers in ${esc(p.city)}">
@@ -270,7 +270,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Tips for hiring: <a href="/se
       const esCount = p.list.filter((r) => r.es).length;
       const esH = p.esTerm || svc;
       const esBody = `<h1>${esc(esH)} en ${esc(p.city)}, ${esc(p.state)}</h1>
-<p class="lead">En TexContractor hay ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${esc(low)} en ${esc(p.city)}, Texas${esCount ? ` (${esCount} ${esCount === 1 ? 'dice' : 'dicen'} que habla${esCount === 1 ? '' : 'n'} español)` : ''}. Abre un perfil, inicia sesión para ver el número y mándale un mensaje directo al proveedor para pedir un precio, sin intermediarios. Actualizado: ${esc(new Date().toLocaleDateString('es-US', { month: 'long', year: 'numeric' }))}.</p>
+<p class="lead">En TexContractor hay ${n} ${n === 1 ? 'proveedor' : 'proveedores'} de ${esc(low)} en ${esc(p.city)}, Texas${esCount ? ` (${esCount} ${esCount === 1 ? 'dice' : 'dicen'} que habla${esCount === 1 ? '' : 'n'} español)` : ''}. Abre un perfil, inicia sesión para ver el número y mándale un mensaje directo al proveedor para pedir un precio, sin intermediarios.</p>
 <a class="nearest" href="${esc(browse)}"><b>Ver los ${stateSvc.get(`${p.state}|${p.service}`)} proveedores de ${esc(low)} cerca de ${esc(p.city)}</b><span>Primero los más cercanos: ${esc(p.city)}, luego ciudades cercanas y el resto de Texas →</span></a>
 <div class="ctas"><a class="cta req" href="${esc(`/requests.html?${new URLSearchParams({ post: 1, service: p.service })}`)}">Publicar una solicitud</a><a class="cta alt" href="/start.html">Anuncia tu servicio gratis</a></div>
 <section class="grid" aria-label="${esc(svc)} en ${esc(p.city)}">
@@ -406,7 +406,7 @@ ${servicePages.has(serviceSlug) ? `<p class="note">Hiring tips: <a href="/servic
       areaServed: { '@type': 'City', name: `${r.city}, ${r.state}` },
       makesOffer: { '@type': 'Offer', itemOffered: { '@type': 'Service', name: r.service } },
       ...(r.es ? { knowsLanguage: ['en', 'es'] } : {}) };
-    const html = page({ path, crumbs, body, noindex: !indexablePro, css: 'pro',
+    const html = page({ path, crumbs, body, noindex: !indexablePro,
       title: `${r.name} — ${r.service} in ${r.city}, ${r.state} | TexContractor`,
       description: (r.about ? `${r.name}: ${r.service.toLowerCase()} in ${r.city}, ${r.state}. ${r.about}` : `${r.name} offers ${low} in ${r.city}, ${stName}. See the profile and text them directly on TexContractor.`).slice(0, 158),
       jsonld: [breadcrumbLd(crumbs.slice(0, -1).concat([[r.name, '/' + path]])), ld] });
