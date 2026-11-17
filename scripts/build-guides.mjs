@@ -29,6 +29,11 @@ const SRC = {
   hcpClean: ['Housecall Pro – House Cleaning Prices', 'https://www.housecallpro.com/resources/pricing/house-cleaning-prices/'],
   fixrWh: ['Fixr – How Much Does It Cost to Install a Water Heater?', 'https://www.fixr.com/costs/install-water-heater'],
   nerdWh: ['NerdWallet – Water Heater Cost', 'https://www.nerdwallet.com/article/mortgages/water-heater-cost'],
+  fixrFound: ['Fixr – How Much Does Foundation Repair Cost?', 'https://www.fixr.com/costs/repair-foundation'],
+  tohFound: ['This Old House – Foundation Repair Cost', 'https://www.thisoldhouse.com/foundations/foundation-repair-cost'],
+  fixrPest: ['Fixr – How Much Does It Cost To Hire An Exterminator?', 'https://www.fixr.com/costs/pest-control'],
+  tohPest: ['This Old House – Pest Control Cost', 'https://www.thisoldhouse.com/pest-control/pest-control-cost'],
+  hcpPest: ['Housecall Pro – Pest Control Prices', 'https://www.housecallpro.com/resources/pest-control-prices/'],
 };
 
 const table = (head, rows) => `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -295,6 +300,96 @@ ${ul(['¿El precio incluye el equipo y la instalación, por escrito?', '¿Incluy
       ctaBrowse: 'Encontrar plomeros cerca de ti', ctaReq: 'Publicar una solicitud de calentador de agua',
       upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
       srcTitle: 'Fuentes', sources: [SRC.fixrWh, SRC.nerdWh],
+    },
+  },
+  {
+    slugEn: 'foundation-repair-cost', slugEs: 'costo-reparar-cimientos',
+    service: 'Home Foundation Repair', svcSlug: 'home-foundation-repair',
+    en: {
+      title: 'How Much Does Foundation Repair Cost?',
+      desc: 'Typical foundation repair prices by repair type, foundation type and problem, plus structural engineer, soil report and permit costs.',
+      body: `<p>Foundation repair prices depend on what is wrong, the type of foundation and how much of the house is affected. Small cracks can cost a few hundred dollars, while piers or lifting a house can cost tens of thousands. These national figures help you know what to expect before you call foundation pros near you.</p>
+<h2>Typical total cost</h2>
+<p>One guide puts the national average at about <strong>$5,200</strong>, with most jobs between <strong>$2,200 and $8,200</strong>. Another reports a 2026 average of <strong>$5,179</strong>, with a typical range of <strong>$2,224 – $8,134</strong>.</p>
+<h2>By type of repair</h2>
+${table(['Repair', 'Typical range'], [['Crack sealing / epoxy injection', '$200 – $1,000'], ['Mudjacking / slabjacking', '$500 – $1,900'], ['Sealing and waterproofing', '$2,300 – $7,300'], ['Wall stabilization (carbon fiber strips)', '$4,000 – $12,000'], ['Wall tiebacks', '$5,000 – $15,000'], ['Piers (each)', '$1,000 – $3,000'], ['Underpinning / piering (whole job)', '$10,000 – $40,000'], ['Lifting and leveling the house', '$20,000 – $30,000']])}
+<h2>By foundation type</h2>
+${table(['Foundation', 'Typical repair cost'], [['Slab', '$1,000 – $10,000'], ['Pier and beam', '$2,000 – $15,000'], ['Crawl space', '$2,500 – $12,000'], ['Basement', '$2,500 – $25,000']])}
+<h2>By problem</h2>
+${table(['Problem', 'Typical range'], [['Foundation crack', '$200 – $1,000'], ['Foundation leak', '$2,000 – $10,000'], ['Bowing wall (water pressure)', '$4,000 – $15,000'], ['Sinking or uneven settling', '$4,500 – $25,000']])}
+<h2>Inspection, reports and permits</h2>
+${table(['Item', 'Typical range'], [['Structural engineer report', '$300 – $2,000'], ['Soil (geotechnical) report', '$500 – $5,000'], ['Permit', '$75 – $150']])}
+<p class="note">Signs to get checked: cracks wider than a coin, doors or windows that stick, sloping floors, gaps around window frames, or water in the basement or crawl space. Small problems usually cost much less to fix early.</p>
+<h2>What to ask before you hire</h2>
+${ul(['Do you recommend a structural engineer report before the work?', 'What method will you use (piers, slabjacking, wall stabilization) and why?', 'Is the price per pier or for the whole job, in writing?', 'Is a permit needed, and who gets it?', 'What warranty covers the work, and can it transfer if I sell the house?'])}`,
+      ctaBrowse: 'Find foundation pros near you', ctaReq: 'Post a foundation repair request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.fixrFound, SRC.tohFound],
+    },
+    es: {
+      title: '¿Cuánto cuesta reparar los cimientos de una casa?',
+      desc: 'Precios típicos para reparar cimientos según el tipo de reparación, el tipo de cimiento y el problema, más el ingeniero estructural, el estudio de suelo y los permisos.',
+      body: `<p>El precio para reparar los cimientos depende de cuál es el problema, del tipo de cimiento y de qué tanto de la casa está afectado. Una grieta pequeña puede costar unos cientos de dólares, mientras que los pilotes o levantar una casa pueden costar decenas de miles. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a profesionales de cimientos cerca de ti.</p>
+<h2>Costo total típico</h2>
+<p>Una guía indica que el promedio nacional es de unos <strong>$5,200</strong>, y la mayoría de los trabajos cuesta entre <strong>$2,200 y $8,200</strong>. Otra guía reporta un promedio en 2026 de <strong>$5,179</strong>, con un rango típico de <strong>$2,224 – $8,134</strong>.</p>
+<h2>Según el tipo de reparación</h2>
+${table(['Reparación', 'Rango típico'], [['Sellado de grietas / inyección de epoxi', '$200 – $1,000'], ['Levantar losa (mudjacking / slabjacking)', '$500 – $1,900'], ['Sellado e impermeabilización', '$2,300 – $7,300'], ['Estabilizar paredes (tiras de fibra de carbono)', '$4,000 – $12,000'], ['Anclajes de pared (tiebacks)', '$5,000 – $15,000'], ['Pilotes (cada uno)', '$1,000 – $3,000'], ['Recalce / pilotes (trabajo completo)', '$10,000 – $40,000'], ['Levantar y nivelar la casa', '$20,000 – $30,000']])}
+<h2>Según el tipo de cimiento</h2>
+${table(['Cimiento', 'Costo típico de reparación'], [['Losa (slab)', '$1,000 – $10,000'], ['Pilares y vigas (pier and beam)', '$2,000 – $15,000'], ['Espacio de acceso (crawl space)', '$2,500 – $12,000'], ['Sótano', '$2,500 – $25,000']])}
+<h2>Según el problema</h2>
+${table(['Problema', 'Rango típico'], [['Grieta en el cimiento', '$200 – $1,000'], ['Filtración en el cimiento', '$2,000 – $10,000'], ['Pared que se curva (presión del agua)', '$4,000 – $15,000'], ['Hundimiento o asentamiento desigual', '$4,500 – $25,000']])}
+<h2>Inspección, estudios y permisos</h2>
+${table(['Concepto', 'Rango típico'], [['Informe de ingeniero estructural', '$300 – $2,000'], ['Estudio de suelo (geotécnico)', '$500 – $5,000'], ['Permiso', '$75 – $150']])}
+<p class="note">Señales para revisar: grietas más anchas que una moneda, puertas o ventanas que se atoran, pisos inclinados, espacios alrededor de los marcos de las ventanas, o agua en el sótano o en el espacio de acceso. Los problemas pequeños normalmente cuestan mucho menos si se arreglan a tiempo.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Recomiendas un informe de ingeniero estructural antes del trabajo?', '¿Qué método vas a usar (pilotes, levantar la losa, estabilizar paredes) y por qué?', '¿El precio es por pilote o por todo el trabajo, por escrito?', '¿Se necesita permiso y quién lo saca?', '¿Qué garantía tiene el trabajo y se puede pasar al nuevo dueño si vendo la casa?'])}`,
+      ctaBrowse: 'Encontrar profesionales de cimientos cerca de ti', ctaReq: 'Publicar una solicitud de reparación de cimientos',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.fixrFound, SRC.tohFound],
+    },
+  },
+  {
+    slugEn: 'pest-control-cost', slugEs: 'costo-control-de-plagas',
+    service: 'Pest Control Services', svcSlug: 'pest-control-services',
+    en: {
+      title: 'How Much Does Pest Control Cost?',
+      desc: 'Typical pest control prices for a one-time visit, recurring plans and common pests like ants, roaches, rodents, termites and bed bugs.',
+      body: `<p>Pest control prices depend on the pest, how big the problem is, the size of your home and whether you choose a one-time visit or a recurring plan. These national figures help you know what to expect before you call exterminators near you.</p>
+<h2>Typical cost</h2>
+<p>One guide puts the national average at about <strong>$223</strong>, with most one-time visits between <strong>$158 and $288</strong>. Another reports an average of <strong>$171</strong> to treat a standard infestation, with most visits between <strong>$50 and $500</strong>.</p>
+<h2>One-time visit vs. a plan</h2>
+${table(['Option', 'Typical range'], [['One-time visit', '$100 – $300'], ['Visit on a monthly or quarterly plan', '$40 – $80 per visit'], ['Regular treatments for a full year', '$471 – $867 per year']])}
+<h2>By pest</h2>
+${table(['Pest', 'Typical range'], [['Ants', '$100 – $500'], ['Cockroaches', '$100 – $600'], ['Fleas', '$100 – $400'], ['Mice and rodents', '$180 – $600'], ['Wasps', '$300 – $700'], ['Mosquitoes', '$65 – $500'], ['Termites', '$250 – $3,000+ (whole-house fumigation can cost more)'], ['Bed bugs', '$1,000 – $4,000']])}
+<h2>By home size (one-time treatment)</h2>
+${table(['Home size', 'Typical range'], [['1,000 sq ft', '$250 – $450'], ['1,500 sq ft', '$300 – $550'], ['2,000 sq ft', '$350 – $600'], ['2,500 sq ft', '$400 – $675'], ['3,000 sq ft', '$450 – $750']])}
+<h2>Extras you may see on the quote</h2>
+${table(['Item', 'Typical range'], [['Tent fumigation', '$1,500 – $8,000'], ['Wildlife removal', '$250 – $1,000'], ['Sealing entry points', '$100 – $500+'], ['Rodent bait stations', '$25 – $75'], ['Wasp or hornet nest removal', '$50 – $150']])}
+<h2>What to ask before you hire</h2>
+${ul(['What pest is it, and how will you treat it?', 'Is the first visit priced differently from follow-up visits?', 'If I sign up for a plan, can I cancel any time?', 'Are the products safe for kids and pets, and how long should we stay out?', 'If the pests come back between visits, do you return at no extra charge?'])}`,
+      ctaBrowse: 'Find pest control pros near you', ctaReq: 'Post a pest control request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.fixrPest, SRC.tohPest, SRC.hcpPest],
+    },
+    es: {
+      title: '¿Cuánto cuesta el control de plagas?',
+      desc: 'Precios típicos del control de plagas para una visita, planes regulares y plagas comunes como hormigas, cucarachas, roedores, termitas y chinches.',
+      body: `<p>El precio del control de plagas depende de la plaga, de qué tan grande es el problema, del tamaño de tu casa y de si eliges una sola visita o un plan regular. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a exterminadores cerca de ti.</p>
+<h2>Costo típico</h2>
+<p>Una guía indica que el promedio nacional es de unos <strong>$223</strong>, y la mayoría de las visitas únicas cuesta entre <strong>$158 y $288</strong>. Otra guía reporta un promedio de <strong>$171</strong> para tratar una plaga normal, y la mayoría de las visitas cuesta entre <strong>$50 y $500</strong>.</p>
+<h2>Una visita o un plan</h2>
+${table(['Opción', 'Rango típico'], [['Una sola visita', '$100 – $300'], ['Visita en un plan mensual o trimestral', '$40 – $80 por visita'], ['Tratamientos regulares por un año completo', '$471 – $867 al año']])}
+<h2>Según la plaga</h2>
+${table(['Plaga', 'Rango típico'], [['Hormigas', '$100 – $500'], ['Cucarachas', '$100 – $600'], ['Pulgas', '$100 – $400'], ['Ratones y roedores', '$180 – $600'], ['Avispas', '$300 – $700'], ['Mosquitos', '$65 – $500'], ['Termitas', '$250 – $3,000+ (fumigar toda la casa puede costar más)'], ['Chinches', '$1,000 – $4,000']])}
+<h2>Según el tamaño de la casa (un tratamiento)</h2>
+${table(['Tamaño de la casa', 'Rango típico'], [['1,000 pies²', '$250 – $450'], ['1,500 pies²', '$300 – $550'], ['2,000 pies²', '$350 – $600'], ['2,500 pies²', '$400 – $675'], ['3,000 pies²', '$450 – $750']])}
+<h2>Extras que puedes ver en el presupuesto</h2>
+${table(['Concepto', 'Rango típico'], [['Fumigación con carpa', '$1,500 – $8,000'], ['Retiro de animales silvestres', '$250 – $1,000'], ['Sellar puntos de entrada', '$100 – $500+'], ['Estaciones de cebo para roedores', '$25 – $75'], ['Quitar nidos de avispas', '$50 – $150']])}
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Qué plaga es y cómo la vas a tratar?', '¿La primera visita cuesta diferente que las siguientes?', 'Si me inscribo en un plan, ¿puedo cancelar cuando quiera?', '¿Los productos son seguros para niños y mascotas, y cuánto tiempo debemos salir?', 'Si la plaga regresa entre visitas, ¿vuelves sin costo extra?'])}`,
+      ctaBrowse: 'Encontrar control de plagas cerca de ti', ctaReq: 'Publicar una solicitud de control de plagas',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.fixrPest, SRC.tohPest, SRC.hcpPest],
     },
   },
 ];
