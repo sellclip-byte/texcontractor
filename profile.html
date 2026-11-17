@@ -72,7 +72,7 @@
 .tc-cred{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}.tc-cred span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#eef7f3;border:1.5px solid #0a7a63;color:#064e3b;font:800 .78rem/1.2 "Segoe UI",Arial,sans-serif}.tc-cred small{flex-basis:100%;color:#64748b;font-size:.72rem}.tc-cred span.tc-bg{background:#dcfce7;border-color:#15803d;color:#14532d}
     .fact[hidden]{display:none!important}
   </style>
-<link rel="stylesheet" href="tex-gold.css?v=2">
+<link rel="stylesheet" href="tex-gold.css?v=3"><script src="tex-last3.js?v=1" defer></script>
 <script src="/tex-readable.js?v=20261112p" defer></script></head>
 <body>
   <header>
@@ -227,6 +227,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
     else document.querySelector('.fact:nth-child(3)').hidden = true;
     if(profile.imported){document.querySelector('.verified').textContent='Local provider';document.querySelector('.fact:nth-child(3)').hidden=true;}
     const textLink = document.getElementById('text-link');
+    textLink.dataset.pid = profile.id;
     const messageTemplate = () => TexSmsMessage({
       name: profile.name || '',
       service: profile.service || '',

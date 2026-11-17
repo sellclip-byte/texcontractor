@@ -31,3 +31,6 @@
   box-shadow: 0 3px 8px rgba(26,115,232,.28) !important;
 }
 .text-button:hover, .text-action:hover { filter: brightness(1.08); }
+/* Last 3 digits under the Text button (set by tex-last3.js; full number stays private). */
+.text-button[data-l3], .text-action[data-l3] { flex-direction: column; line-height: 1.15; padding-top: 5px; padding-bottom: 5px; }
+.text-button[data-l3]::after, .text-action[data-l3]::after { content: "(•••) •••-•" attr(data-l3); display: block; font-size: .74em; font-weight: 600; letter-spacing: 1px; opacity: .9; margin-top: 2px; }
