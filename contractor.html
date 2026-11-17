@@ -81,8 +81,9 @@
     .provider-contact-icon:disabled { opacity:.65; cursor:wait; }
     .provider-actions { display:flex; flex-direction:column; gap:8px; align-items:stretch; }
     .profile-button, .text-button { display:inline-flex; align-items:center; justify-content:center; min-width:150px; min-height:40px; padding:0 14px; border-radius:9px; font:700 .83rem inherit; text-decoration:none; transition:filter .2s ease, transform .2s ease; }
-    .profile-button { color:#fff; background:var(--green); border:1px solid var(--green); }
-    .profile-button:hover, .profile-button:focus-visible { filter:brightness(.92); transform:translateY(-1px); }
+    .profile-button { color:var(--green); background:#fff; border:2px solid var(--green); }
+    .empty-state .profile-button, .empty-state .profile-button:hover { color:#fff; background:var(--green); }
+    .profile-button:hover, .profile-button:focus-visible { background:#effaf6; transform:translateY(-1px); }
     .profile-button:focus-visible, .text-button:focus-visible { outline:3px solid var(--gold-dark); outline-offset:2px; }
     .text-button { color:#241a00; background:var(--gold); }
     .text-button:hover, .text-button:focus-visible { filter:brightness(.97); transform:translateY(-1px); }

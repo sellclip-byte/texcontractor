@@ -20,3 +20,14 @@
 }
 /* Sign-in mode keeps the green button. */
 .join-box.is-login .join-submit { background: #075c4b !important; border-color: #064c3f !important; text-shadow: none; box-shadow: 0 5px 13px rgba(7,92,75,.2) !important; }
+
+/* Owner 11-17 (option B): "Text this contractor" = SMS blue, the main action on every card/profile. */
+.text-button, .text-action {
+  background: #1a73e8 !important;
+  border: 1px solid #1558b0 !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  text-shadow: none;
+  box-shadow: 0 3px 8px rgba(26,115,232,.28) !important;
+}
+.text-button:hover, .text-action:hover { filter: brightness(1.08); }
