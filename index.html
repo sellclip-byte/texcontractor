@@ -1012,7 +1012,7 @@ function place(){try{var h=document.getElementById('hero-join'),t=document.getEl
 var W=h.getBoundingClientRect().width,side=(W-788)/2,w=Math.min(330,Math.round(side-44)),wide=matchMedia('(min-width:1100px)').matches;
 if(wide&&w>=230){if(!el)el=build();h.classList.add('hj-duo');document.body.classList.add('tc-duo');if(el.parentNode!==h)h.appendChild(el);if(t.parentNode!==h)h.appendChild(t);h.classList.add('hj-has-pt');t.classList.add('hj-pt');col.classList.add('cl-pros-empty');
 var off=Math.round((side-w)/2)+'px';t.style.width=w+'px';t.style.right=off;el.style.width=w+'px';el.style.left=off;
-var tt=t.querySelector('.pt-tile'),th=tt?tt.getBoundingClientRect().height:0;el.style.height=th>=100?th+'px':'';
+var tt=t.querySelector('.pt-tile'),th=tt?tt.getBoundingClientRect().height:0;el.style.height='';el.style.minHeight=th>=100?th+'px':'';
 if(st&&st.parentNode!==m){m.appendChild(st);st.classList.add('hj-stats-in')}}
 else{document.body.classList.remove('tc-duo');if(h.classList.contains('hj-duo')){h.classList.remove('hj-duo');if(el&&el.parentNode)el.parentNode.removeChild(el);if(st&&st.parentNode===m){h.insertBefore(st,h.firstChild);st.classList.remove('hj-stats-in')}h.classList.remove('hj-has-pt');t.classList.remove('hj-pt');t.style.width='';t.style.right='';if(t.parentNode!==col)col.appendChild(t);col.classList.remove('cl-pros-empty');dispatchEvent(new Event('resize'))}}}catch(e){}}
 window.texHeroDuo=function(){var h=document.getElementById('hero-join');return !!(h&&h.classList.contains('hj-duo'))};
