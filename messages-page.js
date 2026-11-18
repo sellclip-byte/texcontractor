@@ -34,7 +34,11 @@
   const conversationTitle = (conversation) => {
     if (!isAdmin) return 'TexContractor Support';
     const member = memberMap().get(conversation.member_id);
-    return member?.display_name || bizNames.get(conversation.member_id) || member?.email || 'New member (phone)';
+    if (member?.display_name || bizNames.get(conversation.member_id) || member?.email) return member?.display_name || bizNames.get(conversation.member_id) || member?.email;
+    // Owner 11-17: phone sign-ups have no name -> say who it is (type + join time + short id) so the admin knows the chat goes to the right person.
+    const kind = member?.account_intent === 'customer' ? '🔵 Customer · عميل' : member?.account_intent === 'provider' ? '🟠 Pro (page not finished)' : 'New member (phone)';
+    const when = member?.created_at ? new Date(member.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+    return `${kind}${when ? ' · joined ' + when : ''} · #${String(conversation.member_id || '').slice(0, 6)}`;
   };
   const conversationSubtitle = (conversation) => {
     if (!isAdmin) return 'Private conversation with the administration';

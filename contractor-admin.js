@@ -118,7 +118,7 @@
     membersEmpty.hidden = rows.length > 0;
     rows.forEach((row) => {
       const svc = svcOf(row.user_id);
-      const name = row.display_name || svc[0]?.display_name || (row.provider === 'phone' ? 'New member (phone)' : 'No profile name');
+      const name = row.display_name || svc[0]?.display_name || (row.provider === 'phone' ? 'New member (phone) #' + String(row.user_id || '').slice(0, 6) : 'No profile name');
       const roleLabel = svc.length ? `Technician · ${[...new Set(svc.map((x) => x.service))].join(', ')}` : row.account_intent === 'provider' ? '🟠 Pro — page not finished · فني لم يكمل صفحته' : row.account_intent === 'customer' ? '🔵 Customer · عميل' : 'Member (no service listed) · عضو';
       const isCurrentAdmin = row.user_id === currentUser?.id;
       const blocked = row.status === 'blocked';
