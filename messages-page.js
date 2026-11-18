@@ -138,6 +138,22 @@
     renderConversations(unread);
   };
 
+  // Owner 11-17: two ready messages for members who signed up but didn't finish — pick one, check, Send.
+  const QUICK = {
+    customer: "Hi! Thanks for joining TexContractor 👋 Need help with something at home? Post your job on the Requests page with a photo, and local pros near you will send you offers. You choose who to text.\n\n¡Gracias por unirte! ¿Necesitas ayuda en casa? Publica tu trabajo en la página de Solicitudes con una foto y los técnicos cerca de ti te mandarán ofertas.",
+    pro: "Hi! Thanks for joining TexContractor 👋 Your page isn't finished yet. Tap Account → Add my service, pick your trade and city, and add 2-3 photos of your work. Then customers near you can text you directly. It's free, no lead fees.\n\n¡Gracias por unirte! Tu página aún no está lista. Toca Cuenta → Agregar mi servicio, elige tu oficio y ciudad, y sube 2-3 fotos de tu trabajo. Así los clientes cerca de ti te pueden escribir directo. Es gratis."
+  };
+  const quickBar = (() => {
+    const bar = document.createElement('div'); bar.id = 'quick-msgs'; bar.hidden = true;
+    bar.style.cssText = 'display:none;gap:8px;flex-wrap:wrap;margin:8px 16px 0';
+    const mk = (key, label, bg) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+      b.style.cssText = `flex:1;min-width:150px;border:0;border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer;color:#fff;background:${bg}`;
+      b.addEventListener('click', () => { messageInput.value = QUICK[key]; messageInput.focus(); showMessage('Check the message, then press Send. / راجع الرسالة واكبس Send', 'ok'); });
+      return b; };
+    bar.append(mk('customer', '🔵 Customer message · رسالة عميل', '#1a73e8'), mk('pro', '🟠 Pro message · رسالة فني', '#b45309'));
+    const form = document.getElementById('message-form'); form.parentNode.insertBefore(bar, form);
+    return bar;
+  })();
   // Admin: fill the message box with a thank-you + the member's business card link (owner 11-06).
   const cardButton = (() => {
     const b = document.createElement('button'); b.type = 'button'; b.id = 'send-card'; b.hidden = true;
@@ -203,6 +219,7 @@
   const selectConversation = async (conversation) => {
     selectedConversation = conversation;
     cardButton.hidden = !isAdmin;
+    quickBar.hidden = !isAdmin; if (isAdmin) quickBar.style.display = 'flex';
     archiveButton.hidden = !isAdmin;
     archiveButton.textContent = isArchived(conversation) ? '↩ Move to Inbox' : '🗄 Archive';
     if (isAdmin && conversation.member_id) {
