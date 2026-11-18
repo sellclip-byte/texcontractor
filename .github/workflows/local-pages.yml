@@ -44,21 +44,33 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add local sitemap-local.xml es/local sitemap-es-local.xml pro sitemap-pros.xml tc-local.css
           if ! git diff --cached --quiet; then
+            git diff --cached --name-only --diff-filter=AM -- '*.html' > "$RUNNER_TEMP/changed-pages.txt"
             git commit -m "Refresh city service pages from live directory"
             git pull --rebase origin seo-safe-review-20261011
             git push origin HEAD:seo-safe-review-20261011
             echo "changed=1" >> "$GITHUB_ENV"
           fi
       - name: Tell Bing and other IndexNow engines about the pages
-        if: env.changed == '1' || github.event_name == 'push'
+        if: env.changed == '1'
         run: |
           sleep 150   # let GitHub Pages publish the new files first
           python3 - <<'PY'
           import json, re, urllib.request
           key = '1fcf50d9e46b4178a64e2d1ade1e6a5e'
           allurls = re.findall(r'<loc>([^<]+)</loc>', open('sitemap-local.xml').read()) + re.findall(r'<loc>([^<]+)</loc>', open('sitemap-es-local.xml').read()) + re.findall(r'<loc>([^<]+)</loc>', open('sitemap-pros.xml').read())
-          for i in range(0, min(len(allurls), 50000), 10000):
-              urls = allurls[i:i + 10000]
+          # Bing warns against huge IndexNow batches: send only the pages that changed in this run (indexable ones), max 2,000 per run.
+          import os
+          inset = set(allurls)
+          changed = []
+          try:
+              for f in open(os.path.join(os.environ.get('RUNNER_TEMP', '.'), 'changed-pages.txt')).read().split():
+                  u = 'https://texcontractor.com/' + (f[:-10] if f.endswith('index.html') else f)
+                  if u in inset: changed.append(u)
+          except FileNotFoundError:
+              pass
+          urls = changed[:2000]
+          print('Changed indexable pages:', len(changed), '- sending', len(urls))
+          if urls:
               body = json.dumps({'host': 'texcontractor.com', 'key': key, 'keyLocation': f'https://texcontractor.com/{key}.txt', 'urlList': urls}).encode()
               req = urllib.request.Request('https://api.indexnow.org/indexnow', data=body, headers={'Content-Type': 'application/json; charset=utf-8'})
               try:
