@@ -110,8 +110,8 @@ document.querySelectorAll('a.cta').forEach(function(a){var u=new URL(a.href);if(
 document.querySelectorAll('[data-set]').forEach(function(b){b.onclick=function(){set(b.dataset.set)}});
 if(q.get('lang')==='es')set('es');
 // Ads per trade + city (Thumbtack-style): ?t=plomero&c=Houston personalizes the headline.
-var T={plomero:['Are you a plumber in %c?','¿Eres plomero en %c?'],handyman:['Are you a handyman in %c?','¿Eres handyman en %c?'],aire:['Are you an AC technician in %c?','¿Eres técnico de aire acondicionado en %c?'],limpieza:['Do you clean houses in %c?','¿Haces limpieza de casas en %c?'],electricista:['Are you an electrician in %c?','¿Eres electricista en %c?'],jardineria:['Do you do landscaping in %c?','¿Haces jardinería en %c?']};
-var t=T[(q.get('t')||'').toLowerCase()],c=(q.get('c')||'').replace(/[^A-Za-zÀ-ÿ .'-]/g,'').trim().slice(0,30);
+var T={plomero:['Are you a plumber in %c?','¿Eres plomero en %c?'],handyman:['Are you a handyman in %c?','¿Eres handyman en %c?'],aire:['Are you an AC technician in %c?','¿Eres técnico de aire acondicionado en %c?'],limpieza:['Do you clean houses in %c?','¿Haces limpieza de casas en %c?'],electricista:['Are you an electrician in %c?','¿Eres electricista en %c?'],jardineria:['Do you do landscaping in %c?','¿Haces jardinería en %c?'],calefaccion:['Do you repair heating in %c?','¿Reparas calefacción en %c?'],'luces-navidad':['Do you install Christmas lights in %c?','¿Instalas luces de Navidad en %c?']};
+var t=T[(q.get('t')||'').toLowerCase()],c=(q.get('c')||'').replace(/[^A-Za-zÀ-ÿ .'-]/g,'').replace(/-/g,' ').trim().slice(0,30).replace(/\b[a-z]/g,function(m){return m.toUpperCase()});
 if(t&&c){var hs=document.querySelectorAll('h1[data-l]');hs.forEach(function(x){var i=x.dataset.l==='es'?1:0,em=x.querySelector('em');var pre=document.createTextNode(t[i].replace('%c',c)+' ');x.textContent='';x.append(pre);var e=document.createElement('em');e.textContent=i?'Tu tarjeta gratis.':'Your free card.';x.append(e);});}
 // Keep the ad source on the sign-up button so we know which ad brought each pro.
 var src=(q.get('utm_source')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,40);
