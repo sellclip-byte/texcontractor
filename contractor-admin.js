@@ -2,6 +2,7 @@
   let currentUser = null;
   let members = [];
   let cardSent = new Map(); // member_id -> date the business card was sent (owner 11-09)
+  let adminMsg = new Map(); // member_id -> last date the admin messaged them (owner 11-17)
   let submissions = [];
   let importedBusinesses = [];
   const PAGE = 60;
@@ -158,6 +159,15 @@
           tag.style.cssText = sentAt ? 'background:#dcfce7;color:#166534;font-weight:800' : 'background:#fef3c7;color:#92400e;font-weight:800';
           tag.textContent = sentAt ? '🎁 Card sent ' + displayDate(sentAt) + ' · تم إرسال الكرت' : '🎁 No card yet · لم يُرسل الكرت';
           card.querySelector('.member-meta')?.appendChild(tag);
+        }
+        { // Owner 11-17: show on the list who already got a message from us, so we don't open every chat
+          const lastMsg = adminMsg.get(row.user_id);
+          const mt = document.createElement('span');
+          mt.className = 'member-badge';
+          mt.style.cssText = lastMsg ? 'background:#dbeafe;color:#1e40af;font-weight:800' : 'background:#f3f4f6;color:#6b7280;font-weight:700';
+          mt.textContent = lastMsg ? '✉️ Messaged ' + displayDate(lastMsg) + ' · تم الإرسال' : '✉️ Not messaged yet · لم نرسل';
+          card.querySelector('.member-meta')?.appendChild(mt);
+          if (lastMsg && (!svc.length || sentAt)) chat.textContent = '💬 Open chat ✓';
         }
         chat.title = 'Open the private TexContractor conversation';
         actions.prepend(chat);
@@ -975,6 +985,12 @@
           fetch(SBU + 'texcontractor_conversations?select=id,member_id', { headers: H }).then((r) => r.ok ? r.json() : []),
           fetch(SBU + 'texcontractor_messages?select=conversation_id,created_at&body=ilike.*texcontractor.com/p/*&order=created_at.asc', { headers: H }).then((r) => r.ok ? r.json() : [])
         ]);
+        try {
+          const ids = [...new Set([currentUser?.id, '6d83440a-820a-4309-b666-cba8e24a8290'].filter(Boolean))].join(',');
+          const am = await fetch(SBU + `texcontractor_messages?select=conversation_id,created_at&sender_id=in.(${ids})&order=created_at.desc&limit=5000`, { headers: H }).then((r) => r.ok ? r.json() : []);
+          const bc = new Map(convs.map((c) => [c.id, c.member_id]));
+          adminMsg = new Map(); am.forEach((m) => { const mid = bc.get(m.conversation_id); if (mid && !adminMsg.has(mid)) adminMsg.set(mid, m.created_at); });
+        } catch (_) { adminMsg = new Map(); }
         const byConv = new Map(convs.map((c) => [c.id, c.member_id]));
         cardSent = new Map(); msgs.forEach((m) => { const mid = byConv.get(m.conversation_id); if (mid && !cardSent.has(mid)) cardSent.set(mid, m.created_at); });
       } catch (_) { cardSent = new Map(); }
