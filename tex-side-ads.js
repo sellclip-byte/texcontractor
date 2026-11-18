@@ -152,7 +152,8 @@
       .tc-side-ad-body.motion-scroll .tc-side-ad-copy { white-space: nowrap; animation: tc-side-ad-scroll 15s linear infinite; }
       @keyframes tc-side-ad-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: .84; } }
       @keyframes tc-side-ad-scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 20px 8px; background: #fbf6ea; border: 0; border-radius: 16px; box-shadow: 0 0 0 1.5px #e6cf98, 0 8px 20px rgba(15,23,42,.06); /* owner 11-10: calmer cream & gold (was dark green) */ }
+      .tc-side-ad-body.ad-vertical { display: flex; align-items: center; justify-content: center; padding: 20px 8px; background: transparent; border: 0; border-radius: 0; box-shadow: none; /* owner 11-18: no box, no frame — sits on the page background */ }
+      .tc-side-ad-body.ad-vertical.motion-shimmer { animation: none; }
       .tc-side-ad-body.ad-vertical .tc-side-ad-copy { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; font-family: 'Courier Prime', 'Courier New', Courier, monospace; text-align: center; overflow-wrap: normal; white-space: nowrap; }
       .tc-side-ad-word { display: block; min-height: 1.1em; }
       .tc-side-ad-big { font-size: 1.12rem; line-height: 1.1; font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: #a16d0d; }
