@@ -100,7 +100,7 @@
     #post-dlg { width:min(680px,calc(100vw - 16px)); }
     #post-dlg .dlg { padding:22px 26px 24px; border-top:6px solid var(--req); }
     #post-dlg h2 { font-size:1.65rem; color:#0f172a; }
-    #post-dlg .sub { font-size:1.02rem; color:#334155; }
+    #post-dlg .sub { font-size:1.05rem; color:#0f172a; }
     #post-dlg label.f { font-size:1.12rem; font-weight:800; color:#0f172a; margin:18px 0 7px; }
     #post-dlg input[type=text], #post-dlg input[type=tel], #post-dlg select, #post-dlg textarea { font-size:1.12rem; min-height:54px; padding:12px 14px; border:2px solid #64748b; border-radius:11px; color:#0f172a; background:#fff; }
     #post-dlg textarea { min-height:130px; line-height:1.45; }
@@ -113,12 +113,12 @@
     #post-dlg .slot:not(:has(img))::after { content:"Add photo"; font-size:.9rem; font-weight:800; }
     html[lang^="es"] #post-dlg .slot:not(:has(img))::after { content:"Agregar foto"; }
     #post-dlg .slot .rm { width:28px; height:28px; font-size:16px; }
-    #post-dlg .hint { font-size:1rem; color:#334155; margin-top:8px; }
+    #post-dlg .hint { font-size:1.02rem; color:#0f172a; margin-top:8px; }
     #post-dlg .opt { border:2px solid #94a3b8; border-radius:12px; padding:14px 16px; margin-top:10px; font-size:1.1rem; color:#0f172a; gap:12px; }
     #post-dlg .opt input { width:26px; height:26px; accent-color:var(--req); }
     #post-dlg .opt:has(input:checked) { border-color:var(--req); background:var(--req-soft); }
-    #post-dlg .opt small { font-size:.92rem; color:#334155; }
-    #post-dlg .fine { font-size:.95rem; line-height:1.45; color:#334155; }
+    #post-dlg .opt small { font-size:.95rem; color:#0f172a; font-weight:600; }
+    #post-dlg .fine { font-size:1rem; line-height:1.5; color:#0f172a; }
     #post-dlg .safe { font-size:1.02rem; color:#0f172a; padding:12px 14px; }
     #post-dlg .msg-line { font-size:1.02rem; }
     #post-dlg #post-submit { font-size:1.2rem; padding:16px 18px; border-radius:12px; margin-top:6px; background:var(--req); color:#fff !important; }
@@ -240,10 +240,10 @@
       <input type="file" id="p-photos" accept="image/*" multiple hidden>
       <div class="hint">Photos help technicians give you an accurate offer.</div>
       <label class="f">How can technicians contact you?</label>
-      <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-chat" checked> 💬 Chat on TexContractor<small>phone stays private</small></label>
-      <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-text"> ✉ Text message<small>shows your number</small></label>
+      <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-chat"> 💬 Chat on TexContractor<small>phone stays private</small></label>
+      <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-text" checked> ✉ Text message<small>shows your number</small></label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-call"> 📞 Phone call<small>shows your number</small></label>
-      <div id="phone-field" hidden><label class="f" for="p-phone">Your mobile number</label><input type="tel" id="p-phone" placeholder="(214) 555-0123" autocomplete="tel" maxlength="20"></div>
+      <div id="phone-field"><label class="f" for="p-phone">Your mobile number</label><input type="tel" id="p-phone" placeholder="(214) 555-0123" autocomplete="tel" maxlength="20"></div>
       <p class="fine">🔒 With Chat, your number stays private. If you choose Text or Call, your number is shown only to signed-in technicians, never to visitors or search engines, and it is hidden as soon as you close your request. Your title, description, city and photos are public.</p>
       <div class="safe">💬 Offers arrive in your Messages.<br>✓ Close your request when you find the right technician.</div>
       <p class="fine" id="alert-note">📱 <b>Text alert when technicians reply:</b> so you don't miss an offer, we send a short text to your mobile number (the one above, or the one on your account): at most once a day and up to 3 times per request. Adding your number is optional, and you choose how technicians contact you. Reply STOP to stop alerts.</p>
@@ -424,7 +424,7 @@
     async function openPost() {
       const wantService = new URLSearchParams(location.search).get('service') || '';
       if (!user) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '')); return; }
-      if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-text','c-call'].forEach((k) => ($(k).checked = false)); $('c-chat').checked = true; }
+      if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-chat','c-call'].forEach((k) => ($(k).checked = false)); $('c-text').checked = true; }
       setMode(null);
       $('post-msg').textContent = '';
       if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
