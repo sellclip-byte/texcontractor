@@ -320,6 +320,7 @@
     'Thousands': 'Miles',
     'of local pros': 'de técnicos locales',
     'cities': 'ciudades',
+    'services': 'servicios',
     'Text alert when technicians reply:': 'Aviso por mensaje cuando los técnicos respondan:',
     'Need something done?': '¿Necesitas un trabajo?',
     'Describe the job, add photos, and get up to 5 offers from local technicians.': 'Describe el trabajo, agrega fotos y recibe hasta 5 ofertas de técnicos locales.',
