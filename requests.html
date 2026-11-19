@@ -124,7 +124,7 @@
     #post-dlg #post-submit { font-size:1.2rem; padding:16px 18px; border-radius:12px; margin-top:6px; background:var(--req); color:#fff !important; }
     #post-dlg #post-submit:hover { background:var(--req-dark); }
     #post-dlg .x { width:42px; height:42px; font-size:1.5rem; }
-    @media (max-width:520px) { #post-dlg .dlg { padding:18px 16px 20px; } #post-dlg .slots { grid-template-columns:repeat(2,1fr); } #post-dlg .row2 { grid-template-columns:1fr; } }
+    @media (max-width:520px) { #post-dlg .dlg { padding:18px 16px 20px; } #post-dlg .slots { grid-template-columns:repeat(4,1fr); gap:8px; } #post-dlg .slot { font-size:1.7rem; } #post-dlg .slot:not(:has(img))::after { font-size:.72rem; } #post-dlg .row2 { grid-template-columns:1fr; } }
     .offer-for { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; font-size:.88rem; margin:8px 0 0; }
     .card h3 a { text-decoration:none; color:inherit; }
     .card h3 a:hover { color:var(--green); text-decoration:underline; }
@@ -210,7 +210,7 @@
     <div class="in">
       <span class="tag">📋 CUSTOMER REQUESTS</span>
       <h1>Tell local technicians what you need</h1>
-      <p>Post your job with up to 4 photos. Technicians in your area send you offers on TexContractor. You choose how they contact you: chat, text, or call.</p>
+      <p>Post your job with up to 8 photos. Technicians in your area send you offers on TexContractor. You choose how they contact you: chat, text, or call.</p>
       <div class="steps"><span>1 · Post your request</span><span>2 · Get up to 5 offers</span><span>3 · Reply to the one you like</span><span>4 · Close the request</span></div>
       <div class="post-row"><button class="btn" type="button" id="open-post">＋ Post your request</button></div>
       <div class="filters">
@@ -248,7 +248,7 @@
       <input type="text" id="p-title" placeholder="e.g. Leak under the kitchen sink" required maxlength="120">
       <label class="f" for="p-body">What do you need?</label>
       <textarea id="p-body" placeholder="Describe the job, size, and when you need it…" required maxlength="2000"></textarea>
-      <label class="f">Photos (up to 4)</label>
+      <label class="f">Photos (up to 8)</label>
       <div class="slots" id="slots"></div>
       <input type="file" id="p-photos" accept="image/*" multiple hidden>
       <div class="hint">Photos help technicians give you an accurate offer.</div>
@@ -408,7 +408,7 @@
     const signInFor = (what) => { location.href = 'auth.html?mode=signup&intent=customer&return_to=' + encodeURIComponent('requests.html?' + what); };
     function renderSlots() {
       const wrap = $('slots'); wrap.replaceChildren();
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 8; i++) {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'slot';
         if (picked[i]) {
           b.innerHTML = `<img src="${picked[i].url}" alt="Selected photo ${i + 1}"><span class="rm" aria-hidden="true">×</span>`;
@@ -419,7 +419,7 @@
       }
     }
     $('p-photos').addEventListener('change', (e) => {
-      for (const f of e.target.files) { if (picked.length >= 4) break; if (/^image\//.test(f.type)) picked.push({ file: f, url: URL.createObjectURL(f) }); }
+      for (const f of e.target.files) { if (picked.length >= 8) break; if (/^image\//.test(f.type)) picked.push({ file: f, url: URL.createObjectURL(f) }); }
       e.target.value = ''; renderSlots();
     });
     const syncPhone = () => { $('phone-field').hidden = !($('c-text').checked || $('c-call').checked); };
@@ -549,7 +549,7 @@
       let r;
       try { r = await getRequest(id); } catch (_) {}
       if (!r) { alert('This request is closed or no longer available.'); return; }
-      const photos = (r.photo_paths || []).slice(0, 4);
+      const photos = (r.photo_paths || []).slice(0, 8);
       const open = (r.status || 'open') === 'open';
       $('view-top').innerHTML = `<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span><span>· ${esc(ago(r.created_at))}</span>${open ? '<span class="open">● Open</span>' : '<span class="closed-tag">Closed</span>'}`;
       $('view-title').textContent = r.title;
@@ -609,7 +609,7 @@
       let r; try { r = await getRequest(id); } catch (_) {}
       if (!r || !r.mine || (r.status || 'open') !== 'open') { alert('This request can no longer be edited.'); return; }
       picked.forEach((p) => p.file && URL.revokeObjectURL(p.url));
-      picked = (r.photo_paths || []).slice(0, 4).map((path) => ({ path, url: photoUrl(path) }));
+      picked = (r.photo_paths || []).slice(0, 8).map((path) => ({ path, url: photoUrl(path) }));
       $('p-service').value = r.service; $('p-state').value = r.state; $('p-city').value = r.city;
       $('p-title').value = r.title; $('p-body').value = r.body;
       $('c-chat').checked = !!r.contact_chat; $('c-text').checked = !!r.contact_text; $('c-call').checked = !!r.contact_call;
