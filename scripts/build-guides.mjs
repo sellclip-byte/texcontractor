@@ -14,7 +14,7 @@ const adsTag = `  <!-- Google Ads tag: AW-18516159223 -->
     gtag('js', new Date());
     gtag('config', 'AW-18516159223');
   </script>`;
-const css = 'body{font:17px/1.65 system-ui,sans-serif;margin:auto;max-width:780px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:24px 0}h1{line-height:1.2}table{border-collapse:collapse;width:100%;margin:12px 0 20px}th,td{border:1px solid #d6e0e6;padding:8px 10px;text-align:left;vertical-align:top}th{background:#eef4f7}.note{background:#f4f8fa;border-left:4px solid #075c80;padding:10px 14px}.upd{color:#5b6b76;font-size:.9rem}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}.ctas a{display:inline-block;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;color:#fff;background:#075c80}.ctas a.req{background:#b45309}.src{font-size:.9rem}.tc-lang{float:right}';
+const css = 'body{font:17px/1.65 system-ui,sans-serif;margin:auto;max-width:780px;padding:24px;color:#192b38}a{color:#0769a3}header,footer{padding:14px 0}main{padding:24px 0}h1{line-height:1.2}table{border-collapse:collapse;width:100%;margin:12px 0 20px}th,td{border:1px solid #d6e0e6;padding:8px 10px;text-align:left;vertical-align:top}th{background:#eef4f7}.note{background:#f4f8fa;border-left:4px solid #075c80;padding:10px 14px}.upd{color:#5b6b76;font-size:.9rem}.ctas{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}.ctas a{display:inline-block;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;color:#fff;background:#075c80}.ctas a.req{background:#1d4ed8}.src{font-size:.9rem}.tc-lang{float:right}';
 
 const SRC = {
   inchRoof: ['Inch Calculator – Cost to Replace Roof', 'https://www.inchcalculator.com/roof-replacement-cost/'],

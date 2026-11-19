@@ -22,7 +22,7 @@ const adsTag = `  <!-- Google Ads tag: AW-18516159223 -->
     gtag('config', 'AW-18516159223');
   </script>`;
 
-const reqCss = '.tc-req{margin:28px 0 0;padding:18px 20px;border:2px solid #f0b44c;background:#fff8ec;border-radius:12px}.tc-req h2{margin:0 0 6px;font-size:1.15rem;color:#7c2d12}.tc-req p{margin:0 0 12px}.tc-req a.tc-req-btn{display:inline-block;padding:12px 20px;background:#b45309;color:#fff;border-radius:8px;text-decoration:none;font-weight:700}.tc-lang{float:right}';
+const reqCss = '.tc-req{margin:28px 0 0;padding:18px 20px;border:2px solid #f0b44c;background:#fff8ec;border-radius:12px}.tc-req h2{margin:0 0 6px;font-size:1.15rem;color:#7c2d12}.tc-req p{margin:0 0 12px}.tc-req a.tc-req-btn{display:inline-block;padding:12px 20px;background:#1d4ed8;color:#fff;border-radius:8px;text-decoration:none;font-weight:700}.tc-lang{float:right}';
 
 const pages = readdirSync(svcDir).filter((f) => f.endsWith('.html') && f !== 'index.html');
 const esUrls = [];
