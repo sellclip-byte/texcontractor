@@ -871,6 +871,75 @@ dialog.join-box.join-pop::backdrop{background:rgba(15,23,42,.55)}
 .message-bridge #hero-join.hj{max-width:none;grid-template-columns:200px minmax(0,660px);justify-content:center;column-gap:28px}
 @media(max-width:640px){.message-bridge #hero-join.hj{grid-template-columns:96px 1fr;justify-content:stretch;column-gap:12px}.loc-row{padding:6px 10px 0}.loc-row .location-bar{white-space:normal;font-size:.92rem!important}}
 </style>
+<style>
+/* 11-19 owner approved: customer-first hero (Thumbtack-style). Old hero kept in DOM (hidden) so it can be restored by deleting this block. */
+.message-bridge{display:none!important}
+body .req-strip{display:none!important}
+#cust-hero{background:linear-gradient(180deg,#eff6ff,#fbfcfd);border-bottom:1px solid #dbeafe;margin-top:6px}
+#cust-hero .ch-in{max-width:1240px;margin:0 auto;padding:30px 24px 28px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:32px;align-items:center}
+#cust-hero h1{font-size:44px;line-height:1.08;font-weight:900;letter-spacing:-.5px;margin:0;color:#0f172a}
+#cust-hero h1 .ch-blue{color:#1d4ed8;display:block}
+#cust-hero .ch-sub{font-size:20px;color:#1e293b;margin:12px 0 20px;line-height:1.4}
+#cust-hero .ch-box{background:#fff;border:2px solid #1d4ed8;border-radius:16px;padding:10px;display:flex;gap:10px;box-shadow:0 10px 30px rgba(29,78,216,.14);align-items:stretch}
+#cust-hero .ch-q{flex:1;min-width:0;border:0;font:inherit;font-size:19px;padding:12px;color:#0f172a;background:transparent;outline:none}
+#cust-hero .ch-q::placeholder{color:#475569;opacity:1}
+#cust-hero .ch-city{border-left:2px solid #e2e8f0;padding:0 14px;display:flex;align-items:center;font-size:16px;font-weight:800;white-space:nowrap;color:#0f172a;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+#cust-hero .ch-go{background:#1d4ed8;color:#fff;border:0;border-radius:12px;padding:14px 24px;font:inherit;font-size:19px;font-weight:900;white-space:nowrap;cursor:pointer}
+#cust-hero .ch-go:hover{background:#1e3a8a}
+#cust-hero .ch-trust{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:16.5px;font-weight:700;color:#0f172a;list-style:none;padding:0}
+#cust-hero .ch-trust b{color:#16a34a}
+#cust-hero .ch-alt{margin:12px 0 0;font-size:16px;color:#334155}#cust-hero .ch-alt a{color:#1d4ed8;font-weight:800}
+#cust-hero .ch-side{display:flex;flex-direction:column;gap:14px;min-width:0}
+#ch-rq{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#fff;border-radius:16px;padding:16px;text-decoration:none;display:block}
+#ch-rq .h{font-weight:900;font-size:14px;letter-spacing:.4px;display:flex;gap:8px;align-items:center}#ch-rq .dot{width:10px;height:10px;border-radius:50%;background:#ef4444}
+#ch-rq .it{display:flex;gap:12px;align-items:center;margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px;min-height:80px}
+#ch-rq .it img,#ch-rq .it .ic{width:58px;height:58px;border-radius:10px;object-fit:cover;flex:none;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:26px}
+#ch-rq .t1{font-size:13px;color:#bfdbfe;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ch-rq .t2{font-size:17px;font-weight:900;line-height:1.2}
+#ch-rq .see{margin-top:12px;background:#fff;color:#1d4ed8;text-align:center;border-radius:10px;padding:10px;font-weight:900}
+#ch-pt-slot:empty{display:none}
+#ch-pt-slot #pros-ticker{position:static!important;transform:none!important;width:auto!important;margin:0!important}
+#ch-pt-slot #pros-ticker .pt-win{height:84px!important}
+#cust-hero .ch-pro{background:#fff;border:2px solid #075c4b;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center;text-decoration:none;color:#0f172a}
+#cust-hero .ch-pro .ic{font-size:30px}#cust-hero .ch-pro b{display:block;font-size:17px;color:#075c4b}#cust-hero .ch-pro small{font-size:14.5px;color:#334155}
+#cust-hero .ch-pro .arr{margin-left:auto;background:#075c4b;color:#fff;border-radius:10px;padding:10px 14px;font-weight:900;white-space:nowrap}
+#ch-stats:empty{display:none}#ch-stats .hj-stats{position:static!important;flex-direction:row!important;justify-content:center;gap:28px;color:#0f172a!important;margin:0}
+#ch-stats .hj-stats b{color:#0f172a!important;font-size:1.5rem}#ch-stats .hj-stats span{color:#334155!important}
+#cust-quick{max-width:1240px;margin:0 auto;padding:22px 24px 6px}#cust-quick h2{font-size:24px;margin:0 0 12px;color:#0f172a}
+#cust-quick .ch-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
+#cust-quick .ch-c{background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;text-align:center;font-weight:800;font-size:15px;color:#0f172a;text-decoration:none;display:block}
+#cust-quick .ch-c:hover{border-color:#1d4ed8;box-shadow:0 6px 16px rgba(29,78,216,.15)}
+#cust-quick .ch-c img{width:100%;height:auto;aspect-ratio:1.15;object-fit:cover;display:block}#cust-quick .ch-c span{display:block;padding:8px 4px 10px}
+@media(max-width:1099px){#cust-hero .ch-in{grid-template-columns:1fr;padding:22px 16px}#cust-hero h1{font-size:34px}#cust-hero .ch-sub{font-size:18px}
+#cust-hero .ch-box{flex-direction:column}#cust-hero .ch-city{border-left:0;border-top:2px solid #e2e8f0;padding:12px;max-width:none}#cust-hero .ch-go{text-align:center}
+#cust-quick{padding:18px 16px 4px}#cust-quick .ch-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}#cust-quick .ch-c{font-size:12.5px}}
+</style>
+<section id="cust-hero" aria-label="Find a pro or post a job"><div class="ch-in"><div>
+<h1>Need something fixed? <span class="ch-blue">Local pros send you offers.</span></h1>
+<p class="ch-sub">Post your job with photos. Compare prices. You choose who to text.</p>
+<form class="ch-box" id="ch-form" novalidate><input class="ch-q" id="ch-q" type="text" maxlength="120" autocomplete="off" placeholder="e.g. leaking sink, AC not cooling" aria-label="What do you need?"><span class="ch-city" id="ch-city">📍 <span id="ch-city-t">Near you</span></span><button class="ch-go" type="submit">Get offers →</button></form>
+<ul class="ch-trust"><li><b>✓</b> Free for customers</li><li><b>✓</b> No calls until you choose a pro</li><li><b>✓</b> Your number stays private</li></ul>
+<p class="ch-alt">Prefer to pick a pro yourself? <a href="#catalog-start" id="ch-browse">Browse pros near you</a></p>
+</div><div class="ch-side">
+<a id="ch-rq" href="requests.html"><div class="h"><span class="dot"></span><span id="ch-rq-h">OPEN REQUESTS</span></div><div class="it" id="ch-rq-it"><span class="ic">📋</span><div><div class="t1">Free for homeowners</div><div class="t2">Need a job done? Post a request</div></div></div><div class="see">See all requests</div></a>
+<div id="ch-pt-slot"></div>
+<a class="ch-pro" href="start.html?src=home_cust_hero"><span class="ic">🧰</span><div><b>Are you a pro?</b><small>Get a free page &amp; card. Customers text you.</small></div><span class="arr">Join free</span></a>
+</div></div><div id="ch-stats"></div></section>
+<section id="cust-quick"><h2>Or pick a service</h2><div class="ch-grid"><a class="ch-c" href="contractor.html?service=Central%20Air%20Conditioning%20Repair%20or%20Maintenance&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-d62107fb07c7078f.jpg" alt="Central Air Conditioning Repair or Maintenance" loading="lazy" width="200" height="174"><span>AC Repair</span></a><a class="ch-c" href="contractor.html?service=Plumbing%20Pipe%20Repair&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-41c6fdd548fb7e0c.jpg" alt="Plumbing Pipe Repair" loading="lazy" width="200" height="174"><span>Plumbing</span></a><a class="ch-c" href="contractor.html?service=Electrical%20and%20Wiring%20Repair&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-6ad88b6bcd342352.jpg" alt="Electrical and Wiring Repair" loading="lazy" width="200" height="174"><span>Electrical</span></a><a class="ch-c" href="contractor.html?service=Handyman&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-eb3123aa3163fb0b.jpg" alt="Handyman" loading="lazy" width="200" height="174"><span>Handyman</span></a><a class="ch-c" href="contractor.html?service=Garage%20Door%20Repair&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-d8ccd66591b47033.jpg" alt="Garage Door Repair" loading="lazy" width="200" height="174"><span>Garage Door</span></a><a class="ch-c" href="contractor.html?service=Roof%20Repair%20or%20Maintenance&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-98d2c8f81847aa2d.jpg" alt="Roof Repair or Maintenance" loading="lazy" width="200" height="174"><span>Roofing</span></a><a class="ch-c" href="contractor.html?service=House%20Cleaning&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-761209465a696f45.jpg" alt="House Cleaning" loading="lazy" width="200" height="174"><span>Cleaning</span></a><a class="ch-c" href="contractor.html?service=Pest%20Control%20Services&utm_source=site&utm_medium=home_quick"><img src="images/home/catalog-7ab5f09a80134d22.jpg" alt="Pest Control Services" loading="lazy" width="200" height="174"><span>Pest Control</span></a></div></section>
+<script>(function(){
+var M=[[/\b(a\/?c|air ?con|cooling|not cool|hvac|thermostat)/i,'Central Air Conditioning Repair or Maintenance'],[/(heat|furnace|heater not)/i,'Heating System Repair or Maintenance'],[/(drain|clog)/i,'Plumbing Drain Repair'],[/(sink|leak|pipe|toilet|faucet|water heater|plumb|shower|tub)/i,'Plumbing Pipe Repair'],[/(outlet|electric|breaker|wiring|panel|light switch)/i,'Electrical and Wiring Repair'],[/garage/i,'Garage Door Repair'],[/roof/i,'Roof Repair or Maintenance'],[/(clean|maid)/i,'House Cleaning'],[/(pest|roach|bug|termite|rat|mice|ant)/i,'Pest Control Services'],[/(mower|lawn ?mower|weed ?eater|edger)/i,'Lawn Mower, Water Pump & Outdoor Equipment Repair'],[/(tree|stump)/i,'Tree Trimming and Removal'],[/fence|gate/i,'Fence and Gate Installation'],[/paint/i,'Interior Painting'],[/(lock|key)/i,'Lock Installation and Repair'],[/(junk|haul)/i,'Junk Removal'],[/(move|moving)/i,'Local Moving (under 50 miles)'],[/(appliance|washer|dryer|fridge|refrigerator|dishwasher|oven|stove)/i,'Appliance Repair or Maintenance'],[/(foundation)/i,'Home Foundation Repair']];
+function svc(q){for(var i=0;i<M.length;i++)if(M[i][0].test(q))return M[i][1];var o=[].slice.call(document.querySelectorAll('#hj-svc option'));q=q.toLowerCase();for(var j=0;j<o.length;j++){var v=(o[j].value||'').toLowerCase();if(v&&q.length>3&&(v.indexOf(q)>=0||q.indexOf(v.split(' ')[0])>=0))return o[j].value}return 'Handyman'}
+var f=document.getElementById('ch-form');f.addEventListener('submit',function(e){e.preventDefault();var q=(document.getElementById('ch-q').value||'').trim();var p=new URLSearchParams({post:'1',utm_source:'site',utm_medium:'home_get_offers'});if(q){p.set('service',svc(q));p.set('title',q.slice(0,120))}if((document.documentElement.lang||'').indexOf('es')===0)p.set('lang','es');try{window.texVisit&&texVisit('home_get_offers')}catch(_){}location.href='requests.html?'+p.toString()});
+document.getElementById('ch-browse').addEventListener('click',function(e){var c=document.querySelector('.catalog-head');if(c){e.preventDefault();c.scrollIntoView({behavior:'smooth',block:'start'})}});
+function city(){try{var l=document.querySelector('.location-bar');var t=l&&l.innerText.trim();if(t&&!/^(choose|elige)/i.test(t.replace(/^📍\s*/,''))){document.getElementById('ch-city-t').textContent=t.split('·')[0].replace(/^📍\s*/,'').trim()}}catch(_){}}
+function moveBits(){try{var slot=document.getElementById('ch-pt-slot'),t=document.getElementById('pros-ticker');if(t&&matchMedia('(min-width:1100px)').matches&&t.parentNode!==slot){slot.appendChild(t);t.classList.remove('hj-pt');var col=document.querySelector('.cl-pros');col&&col.classList.add('cl-pros-empty')}var st=document.querySelector('.hj-stats'),cs=document.getElementById('ch-stats');if(st&&st.parentNode!==cs){cs.appendChild(st);st.classList.remove('hj-stats-in')}}catch(_){}city()}
+var SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+fetch(SB+'/rest/v1/rpc/texcontractor_requests_list',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_service:null,p_state:null,p_city:null,p_limit:8,p_offset:0})}).then(function(r){return r.ok?r.json():[]}).catch(function(){return[]}).then(function(d){var rows=(Array.isArray(d)?d:[]).filter(function(r){return r&&r.id&&r.title});if(!rows.length)return;
+document.getElementById('ch-rq-h').textContent='OPEN REQUESTS · '+rows.length;var k=0,box=document.getElementById('ch-rq-it'),a=document.getElementById('ch-rq');
+function show(){var r=rows[k%rows.length],ph=(r.photo_paths||[])[0];box.innerHTML=(ph?'<img src="'+SB+'/storage/v1/object/public/texcontractor-requests/'+String(ph).split('/').map(encodeURIComponent).join('/')+'" alt="">':'<span class="ic">🛠️</span>')+'<div style="min-width:0"><div class="t1">📍 '+esc(r.city)+', '+esc(r.state)+' · '+esc(r.service)+'</div><div class="t2">'+esc(r.title)+'</div></div>';a.href='requests.html?r='+encodeURIComponent(r.id)}
+show();if(rows.length>1)setInterval(function(){if(!document.hidden){k++;show()}},6500)});
+document.addEventListener('DOMContentLoaded',moveBits);addEventListener('load',function(){setTimeout(moveBits,300);setTimeout(moveBits,2000);setTimeout(moveBits,5000)});var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(moveBits,500)});
+})();</script>
 <section class="message-bridge">
     <img src="images/home/catalog-15e5b518293a6f0d.jpg" alt="A customer messaging a technician directly">
     <div id="hero-join" class="hj" data-slide="0">
@@ -1942,7 +2011,7 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
 
   </script>
 
-  <script src="tex-language.js?v=20261118th2"></script>
+  <script src="tex-language.js?v=20261119hero"></script>
   <script src="tex-side-ads.js?v=20261118noframe"></script>
 <script src="tex-chat.js?v=20261022b"></script>
 <script>

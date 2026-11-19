@@ -436,13 +436,15 @@
     }
     async function openPost() {
       const wantService = new URLSearchParams(location.search).get('service') || '';
-      if (!user) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '')); return; }
+      const wantTitle = (new URLSearchParams(location.search).get('title') || '').slice(0, 120);
+      if (!user) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '') + (wantTitle ? '&title=' + encodeURIComponent(wantTitle) : '')); return; }
       if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-chat','c-call'].forEach((k) => ($(k).checked = false)); $('c-text').checked = true; }
       setMode(null);
       $('post-msg').textContent = '';
       if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
       fillCities($('p-state'), $('p-city-list'));
       if (wantService && !$('p-service').value && [...$('p-service').options].some((o) => o.value === wantService)) $('p-service').value = wantService;
+      if (wantTitle && !$('p-title').value) $('p-title').value = wantTitle;
       renderSlots(); syncPhone();
       $('pro-note').hidden = true;
       C.rpc('texcontractor_my_listing_services', {}, true).then((a) => { $('pro-note').hidden = !(Array.isArray(a) && a.length); }).catch(() => {});
@@ -666,6 +668,6 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261118th2"></script>
+  <script src="tex-language.js?v=20261119hero"></script>
 </body>
 </html>
