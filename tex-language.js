@@ -317,6 +317,7 @@
     'All states': 'Todos los estados',
     'All cities': 'Todas las ciudades',
     'My requests': 'Mis solicitudes',
+    'Text alert when technicians reply:': 'Aviso por mensaje cuando los técnicos respondan:',
     'Need something done?': '¿Necesitas un trabajo?',
     'Describe the job, add photos, and get up to 5 offers from local technicians.': 'Describe el trabajo, agrega fotos y recibe hasta 5 ofertas de técnicos locales.',
     'No open requests match these filters right now.': 'Ahora no hay solicitudes abiertas con estos filtros.',
@@ -489,6 +490,7 @@
     [/^Text ([A-Z][\w.'’-]*(?: [A-Z][\w.'’-]*)*)$/, (m) => `Enviar mensaje a ${m[1]}`],
     [/^Chat with ([A-Z][\w.'’-]*(?: [A-Z][\w.'’-]*)*)$/, (m) => `Chatear con ${m[1]}`],
     [/^Your name, city, state, service, description and photos are shown on your public listing\./, () => 'Tu nombre, ciudad, estado, servicio, descripción y fotos se muestran en tu anuncio público. Tu número de teléfono no aparece en la página: los clientes con sesión iniciada te contactan con los botones de contacto.'],
+    [/^so you don't miss an offer, we send a short text/, () => 'para que no te pierdas una oferta, te mandamos un mensaje corto a tu celular (el de arriba o el de tu cuenta): máximo una vez al día y hasta 3 veces por solicitud. Agregar tu número es opcional y tú eliges cómo te contactan los técnicos. Responde STOP para dejar de recibir avisos.'],
     [/^This is my mobile number and I can reply to customer texts\./, () => 'Este es mi celular y puedo responder los mensajes de los clientes. Acepto recibir un código de verificación único por mensaje de texto a este número (pueden aplicar tarifas de mensajes y datos), acepto los']
   ];
   function translateText(value) {
