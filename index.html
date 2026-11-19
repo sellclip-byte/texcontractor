@@ -895,7 +895,7 @@ body .req-strip{display:none!important}
 #ch-rq .it{display:flex;gap:12px;align-items:center;margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px;min-height:80px}
 #ch-rq .it img,#ch-rq .it .ic{width:58px;height:58px;border-radius:10px;object-fit:cover;flex:none;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:26px}
 #ch-rq .t1{font-size:13px;color:#bfdbfe;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ch-rq .t2{font-size:17px;font-weight:900;line-height:1.2}
-#ch-rq .see{margin-top:12px;background:#fff;color:#1d4ed8;text-align:center;border-radius:10px;padding:10px;font-weight:900}
+#ch-rq .it{color:#fff;text-decoration:none}#ch-rq .ch-rq-btns{display:flex;gap:10px;margin-top:12px}#ch-rq .ch-rq-btns a{flex:1;text-align:center;border-radius:10px;padding:11px 8px;font-weight:900;text-decoration:none;white-space:nowrap}#ch-rq .ch-rq-post{background:#fde047;color:#1e3a8a}#ch-rq .ch-rq-post:hover{background:#facc15}#ch-rq .see{background:#fff;color:#1d4ed8}
 #ch-pt-slot:empty{display:none}
 #ch-pt-slot #pros-ticker{position:static!important;transform:none!important;width:auto!important;margin:0!important}
 #ch-pt-slot #pros-ticker .pt-win{height:84px!important}
@@ -920,7 +920,7 @@ body .req-strip{display:none!important}
 <ul class="ch-trust"><li><b>✓</b> Free for customers</li><li><b>✓</b> No calls until you choose a pro</li><li><b>✓</b> Your number stays private</li></ul>
 <p class="ch-alt">Prefer to pick a pro yourself? <a href="#catalog-start" id="ch-browse">Browse pros near you</a></p>
 </div><div class="ch-side">
-<a id="ch-rq" href="requests.html"><div class="h"><span class="dot"></span><span id="ch-rq-h">OPEN REQUESTS</span></div><div class="it" id="ch-rq-it"><span class="ic">📋</span><div><div class="t1">Free for homeowners</div><div class="t2">Need a job done? Post a request</div></div></div><div class="see">See all requests</div></a>
+<div id="ch-rq"><div class="h"><span class="dot"></span><span id="ch-rq-h">OPEN REQUESTS</span></div><a class="it" id="ch-rq-it" href="requests.html"><span class="ic">📋</span><div><div class="t1">Free for homeowners</div><div class="t2">Need a job done? Post a request</div></div></a><div class="ch-rq-btns"><a class="ch-rq-post" href="requests.html?post=1&amp;utm_source=site&amp;utm_medium=home_rq_post">📋 <span>Post a request</span></a><a class="see" href="requests.html">See all requests</a></div></div>
 <div id="ch-pt-slot"></div>
 <a class="ch-pro" href="start.html?src=home_cust_hero"><span class="ic">🧰</span><div><b>Are you a pro?</b><small>Get a free page &amp; card. Customers text you.</small></div><span class="arr">Join free</span></a>
 </div></div><div id="ch-stats"></div></section>
@@ -935,7 +935,7 @@ function moveBits(){try{var slot=document.getElementById('ch-pt-slot'),t=documen
 var SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
 function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 fetch(SB+'/rest/v1/rpc/texcontractor_requests_list',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_service:null,p_state:null,p_city:null,p_limit:8,p_offset:0})}).then(function(r){return r.ok?r.json():[]}).catch(function(){return[]}).then(function(d){var rows=(Array.isArray(d)?d:[]).filter(function(r){return r&&r.id&&r.title});if(!rows.length)return;
-document.getElementById('ch-rq-h').textContent='OPEN REQUESTS · '+rows.length;var k=0,box=document.getElementById('ch-rq-it'),a=document.getElementById('ch-rq');
+document.getElementById('ch-rq-h').textContent='OPEN REQUESTS · '+rows.length;var k=0,box=document.getElementById('ch-rq-it'),a=box;
 function show(){var r=rows[k%rows.length],ph=(r.photo_paths||[])[0];box.innerHTML=(ph?'<img src="'+SB+'/storage/v1/object/public/texcontractor-requests/'+String(ph).split('/').map(encodeURIComponent).join('/')+'" alt="">':'<span class="ic">🛠️</span>')+'<div style="min-width:0"><div class="t1">📍 '+esc(r.city)+', '+esc(r.state)+' · '+esc(r.service)+'</div><div class="t2">'+esc(r.title)+'</div></div>';a.href='requests.html?r='+encodeURIComponent(r.id)}
 show();if(rows.length>1)setInterval(function(){if(!document.hidden){k++;show()}},6500)});
 document.addEventListener('DOMContentLoaded',moveBits);addEventListener('load',function(){setTimeout(moveBits,300);setTimeout(moveBits,2000);setTimeout(moveBits,5000)});var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(moveBits,500)});
