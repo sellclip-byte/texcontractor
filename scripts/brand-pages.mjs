@@ -33,7 +33,7 @@ for (const d of dirs) {
     if (!h.includes('/tc-brand.css')) h = h.replace('</head>', '<link rel="icon" type="image/png" href="/texcontractor-icon-192.png"><link rel="stylesheet" href="/tc-brand.css?v=2"></head>');
     h = h.replace(/<body(?: class="tc-brand")?>/, '<body class="tc-brand">' + header);
     h = h.replace(/<script src="\/tex-call\.js[^"]*" defer><\/script>/g, '');
-    h = h.replace('</body>', footer + '<script src="/tex-call.js?v=20261120call" defer></script></body>');
+    h = h.replace('</body>', footer + '<script src="/tex-call.js?v=20261120wrap" defer></script></body>');
     writeFileSync(p, h);
     n++;
   }
