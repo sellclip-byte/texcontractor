@@ -357,6 +357,8 @@
     'Title': 'Título',
     'What do you need?': '¿Qué necesitas?',
     'Photos (up to 8)': 'Fotos (hasta 8)',
+    '📷 Take a photo': '📷 Tomar foto',
+    '🖼 Choose photos': '🖼 Escoger fotos',
     'Photos help technicians give you an accurate offer.': 'Las fotos ayudan a los técnicos a darte una oferta precisa.',
     'How can technicians contact you?': '¿Cómo pueden contactarte los técnicos?',
     '💬 Chat on TexContractor': '💬 Chat en TexContractor',

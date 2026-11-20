@@ -191,7 +191,8 @@
     .msgs-link, .edit-btn { border-color:#1d4ed8; color:#1d4ed8; }
     .status-note { color:#1e3a8a; background:#eff6ff; }
     nav a:hover { color:#1d4ed8; border-color:#bfdbfe; background:#eff6ff; }
-  </style>
+  .ph-btns{display:flex;gap:10px;margin:2px 0 10px}.ph-btn{flex:1;padding:12px 10px;border-radius:12px;border:2px solid #1d4ed8;background:#fff;color:#1d4ed8;font-weight:800;font-size:1rem;cursor:pointer}.ph-btn:first-child{background:#1d4ed8;color:#fff}
+</style>
 <script src="/tex-readable.js?v=20261112p" defer></script></head>
 <body>
   <header>
@@ -249,8 +250,10 @@
       <label class="f" for="p-body">What do you need?</label>
       <textarea id="p-body" placeholder="Describe the job, size, and when you need it…" required maxlength="2000"></textarea>
       <label class="f">Photos (up to 8)</label>
+      <div class="ph-btns" data-tex-readable="1"><button type="button" class="ph-btn" id="p-cam-btn">📷 Take a photo</button><button type="button" class="ph-btn" id="p-pick-btn">🖼 Choose photos</button></div>
       <div class="slots" id="slots"></div>
       <input type="file" id="p-photos" accept="image/*" multiple hidden>
+      <input type="file" id="p-cam" accept="image/*" capture="environment" hidden>
       <div class="hint">Photos help technicians give you an accurate offer.</div>
       <label class="f">How can technicians contact you?</label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-chat"> 💬 Chat on TexContractor<small>phone stays private</small></label>
@@ -418,10 +421,14 @@
         wrap.append(b);
       }
     }
-    $('p-photos').addEventListener('change', (e) => {
+    const addPicked = (e) => {
       for (const f of e.target.files) { if (picked.length >= 8) break; if (/^image\//.test(f.type)) picked.push({ file: f, url: URL.createObjectURL(f) }); }
       e.target.value = ''; renderSlots();
-    });
+    };
+    $('p-photos').addEventListener('change', addPicked);
+    $('p-cam').addEventListener('change', addPicked); // 11-19 owner: snap a photo straight from the phone camera
+    $('p-cam-btn').onclick = () => { if (picked.length < 8) $('p-cam').click(); };
+    $('p-pick-btn').onclick = () => { if (picked.length < 8) $('p-photos').click(); };
     const syncPhone = () => { $('phone-field').hidden = !($('c-text').checked || $('c-call').checked); };
     $('c-text').addEventListener('change', syncPhone); $('c-call').addEventListener('change', syncPhone);
 
@@ -668,6 +675,6 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261119hero"></script>
+  <script src="tex-language.js?v=20261119cam"></script>
 </body>
 </html>
