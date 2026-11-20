@@ -14,6 +14,17 @@
     var bar = document.createElement('div'); bar.id = 'tc-callbar';
     bar.innerHTML = '<a href="tel:' + TEL + '" data-tc-call>📞 <span>' + txt() + '</span>: <b>' + NUM + '</b></a>';
     document.body.insertBefore(bar, document.body.firstChild);
+    // Pages whose <body> is a side-by-side flex box (signup.html, find.html) would put the bar NEXT TO
+    // the card and push the page sideways on phones (owner 11-20). Give the bar its own full row there.
+    try {
+      var bs = getComputedStyle(document.body);
+      if (/flex/.test(bs.display) && bs.flexDirection.indexOf('row') === 0) {
+        document.body.style.flexWrap = 'wrap';
+        document.body.style.alignContent = 'flex-start';
+        var pl = parseFloat(bs.paddingLeft) || 0, pr = parseFloat(bs.paddingRight) || 0, pt = parseFloat(bs.paddingTop) || 0;
+        bar.style.cssText = 'flex:0 0 calc(100% + ' + (pl + pr) + 'px);max-width:none;box-sizing:border-box;margin:-' + pt + 'px -' + pr + 'px 10px -' + pl + 'px';
+      }
+    } catch (e) { }
     var f = document.querySelector('footer');
     if (f && !f.querySelector('.tc-call-foot')) { var p = document.createElement('span'); p.className = 'tc-call-foot'; p.innerHTML = '📞 <span>' + txt() + '</span>: <a href="tel:' + TEL + '">' + NUM + '</a>';
       var em = [].slice.call(f.querySelectorAll('a')).filter(function (a) { return /texcontractor\.help@gmail\.com/.test(a.textContent); })[0];
