@@ -26,7 +26,13 @@
     color:#2d2106!important;font-weight:900;font-size:.72rem;line-height:1.2;text-decoration:none}
   @keyframes tcHelloSun{0%,100%{box-shadow:0 0 4px 1px rgba(34,197,94,.35)}50%{box-shadow:0 0 18px 7px rgba(34,197,94,.95),0 0 36px 14px rgba(134,239,172,.5)}}
   @keyframes tcHelloGold{0%,100%{box-shadow:0 0 4px 1px rgba(246,196,69,.35)}50%{box-shadow:0 0 16px 6px rgba(246,196,69,.9),0 0 30px 10px rgba(255,220,88,.45)}}
-  @media (prefers-reduced-motion:reduce){.tc-hello-ring{animation:none!important}}`;
+  @media (prefers-reduced-motion:reduce){.tc-hello-ring{animation:none!important}}
+  /* 11-19 owner: no box/frame, sits on the page background, dark readable text */
+  .tc-hello{background:transparent!important;border:0!important;box-shadow:none!important;color:#0e1b37}
+  .tc-hello-top{color:#0e1b37}.tc-hello-sub{color:#475569}
+  .tc-hello-card{color:#0e1b37}
+  .tc-hello-card.is-new .tc-hello-ring,.tc-hello-card.is-dir .tc-hello-ring{border:2px solid #dbe3ef;animation:none!important;box-shadow:0 2px 8px rgba(15,23,42,.12)}
+  .tc-hello-city{color:#1d4ed8;font-weight:700}`;
   document.head.appendChild(css);
 
   const T = {
