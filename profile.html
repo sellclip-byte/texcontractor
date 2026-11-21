@@ -177,6 +177,12 @@
       window.location.replace(destination.href);
     } else {
     document.title = `${profile.name} · TexContractor`;
+    /* 11-20: schema.org for Google / AI answers (no phone numbers, ever) */
+    try { if (!document.getElementById('pro-ld')) { const loc = String(profile.location || '').split(',').map(x => x.trim()); const img = profile.profilePhoto || (profile.work || [])[0] || '';
+      const ld = { '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness', name: profile.name, url: location.origin + location.pathname + (importedId ? '?imported=' + encodeURIComponent(profile.id) : '?contractor=' + encodeURIComponent(profile.id)),
+        description: String(profile.about || '').slice(0, 300), address: { '@type': 'PostalAddress', addressLocality: loc[0] || undefined, addressRegion: loc[1] || undefined, addressCountry: 'US' },
+        areaServed: loc[0] ? { '@type': 'City', name: loc.filter(Boolean).join(', ') } : undefined, knowsAbout: profile.service || undefined, knowsLanguage: profile.spanish ? ['en', 'es'] : undefined, image: img || undefined };
+      const s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'pro-ld'; s.textContent = JSON.stringify(ld).replace(/</g, '\\u003c'); document.head.appendChild(s); } } catch (_) {}
     document.getElementById('contractor-name').textContent = profile.name;
     /* owner 11-12: $10 coupon button only on DFW Mobile Lawnmower's own profile */
     if (profile.id === 'f3339b5e-447d-4ec0-a6cb-b5d792f63f6d' && !document.getElementById('dfw-coupon')) { const ar = document.querySelector('.action-row'); if (ar) { const cb = document.createElement('a'); cb.id = 'dfw-coupon'; cb.className = 'action'; cb.href = 'coupon.html?utm_source=profile_coupon'; cb.textContent = '🎟️ Show your $10 coupon'; cb.style.cssText = 'background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;font-weight:900;border:0;text-align:center;text-decoration:none'; ar.prepend(cb); } }
