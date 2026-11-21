@@ -190,6 +190,8 @@
     .choose .ch span { display:block; font-size:.84rem; margin-top:4px; font-weight:500; }
     .choose #open-post.ch { background:#fff; border:2px solid #1d4ed8; color:#1e3a8a; box-shadow:none; font-size:1rem; padding:14px; }
     .choose .ch-b { background:linear-gradient(135deg,#f97316,#dc2626); color:#fff; border:0; box-shadow:0 6px 18px rgba(220,38,38,.3); }
+    .choose.tc-pulse .ch { animation:tcPulse 1s ease-in-out 4; }
+    @keyframes tcPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.04); } }
     .boom-why { display:inline-block; margin-top:8px; font-weight:700; font-size:.88rem; color:#c2410c; text-decoration:underline; background:none; border:0; padding:0; cursor:pointer; }
     .card.boom { border:2px solid #fb923c; }
     .boom-badge { background:linear-gradient(135deg,#f97316,#dc2626); color:#fff !important; font-weight:800; border-radius:999px; padding:2px 9px; }
@@ -740,7 +742,16 @@
       }
       await Promise.all([load(true), loadCount(), loadMine()]);
       const q = new URLSearchParams(location.search);
-      if (q.get('post')) openPost();
+      // 11-21 owner: on computers, let the customer SEE the two choices (Post / BOOM) for ~4s before the form opens. Phones unchanged.
+      const desk = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)').matches;
+      if (q.get('post') && desk && !q.get('boom')) {
+        let chose = false;
+        ['open-post', 'open-boom'].forEach((id) => { const b = $(id); if (b) b.addEventListener('click', () => { chose = true; }, { once: true }); });
+        const ch = document.querySelector('.choose');
+        if (ch) { ch.classList.add('tc-pulse'); ch.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        setTimeout(() => { if (ch) ch.classList.remove('tc-pulse'); if (!chose) openPost(); }, 4000);
+      }
+      else if (q.get('post')) openPost();
       else if (q.get('boom')) openBoom();
       if (q.get('r')) openView(q.get('r'));
       const oid = q.get('offer');
