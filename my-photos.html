@@ -141,9 +141,15 @@ $('#proof').addEventListener('change',async e=>{const f=e.target.files&&e.target
 $('#listing').addEventListener('change',()=>{const r=st.rows.find(x=>x.id===$('#listing').value);if(r)load(r)});
 $('#save').onclick=async()=>{const b=$('#save');if(!st.cur)return;b.disabled=true;b.textContent=t('saving');msg('');
  try{const id=st.cur.id;let profile=null;
-  if(st.profileData)profile=await TexAdminApi.uploadMyPhoto(id,st.profileData,'profile');
-  const work=[];for(const w of st.work){work.push(w.path||await TexAdminApi.uploadMyPhoto(id,w.data,'work'))}
+  // 11-21 fix: an Android pro left the page while photos were still saving -> nothing was linked. Save the profile photo first,
+  // then link work photos as each one finishes, and show progress so people wait.
+  const prog=(n,tot)=>{b.textContent=(L==='es'?'Subiendo ':'Uploading ')+n+'/'+tot+'…';msg(L==='es'?'No cierres esta página hasta que diga Guardado.':"Don't close this page until it says Saved.")};
+  const newWork=st.work.filter(w=>!w.path).length,tot=newWork+(st.profileData?1:0);let done=0;
   const about=$('#about').value.trim();
+  if(st.profileData){prog(++done,tot);profile=await TexAdminApi.uploadMyPhoto(id,st.profileData,'profile');await TexAdminApi.myMediaUpdate(id,{profile});st.profile=profile;st.profileData=null}
+  const work=[];for(const w of st.work){if(w.path){work.push(w.path);continue}prog(++done,tot);const pth=await TexAdminApi.uploadMyPhoto(id,w.data,'work');w.path=pth;w.data=null;work.push(pth);
+    await TexAdminApi.myMediaUpdate(id,{work:st.work.filter(x=>x.path).map(x=>x.path)})}
+  b.textContent=t('saving');
   await TexAdminApi.myMediaUpdate(id,{profile,work,about:about||null});
   let addProof=null;if(st.proofData)addProof=await TexAdminApi.uploadMyProof(id,st.proofData);
   const ins=$('#insured').checked,bg=$('#bgchk').checked,lic=$('#licensed').checked,num=$('#licnum').value.trim();
