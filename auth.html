@@ -134,7 +134,7 @@ var l=q.get('lang');if(l)o.set('lang',l);location.replace('/signup.html'+(o.toSt
     </div>
     <div class="mobile-required"><p data-join-copy>Sign up to receive customer requests by text message.</p></div>
     <div id="quick-pro" hidden>
-      <a class="join-submit" id="quick-pro-go" href="start.html" style="display:block;text-align:center;text-decoration:none">List my service free · 1 minute →</a>
+      <a class="join-submit" id="quick-pro-go" href="start.html" style="display:block;text-align:center;text-decoration:none">List my service free →</a>
       <p class="join-note" id="quick-pro-note">Pick your trade, enter your ZIP and mobile number, and we text you a code. No email or password.</p>
     </div>
     <div id="phone-box">
@@ -200,7 +200,7 @@ var l=q.get('lang');if(l)o.set('lang',l);location.replace('/signup.html'+(o.toSt
     document.getElementById('phone-box').hidden = quick || emailMode;
     document.getElementById('email-box').hidden = quick || !emailMode;
     var E = es();
-    document.getElementById('quick-pro-go').textContent = E ? 'Publica tu servicio gratis · 1 minuto →' : 'List my service free · 1 minute →';
+    document.getElementById('quick-pro-go').textContent = E ? 'Publica tu servicio gratis →' : 'List my service free →';
     document.getElementById('quick-pro-note').textContent = E ? 'Elige tu oficio, tu código postal y tu celular, y te mandamos un código. Sin email ni contraseña.' : 'Pick your trade, enter your ZIP and mobile number, and we text you a code. No email or password.';
     document.getElementById('pb-l').textContent = E ? 'Número de celular' : 'Mobile number';
     document.getElementById('pb-cl').textContent = E ? 'Código que te mandamos' : 'Code we texted you';

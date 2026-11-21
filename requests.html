@@ -236,7 +236,7 @@
       <div class="steps"><span>1 · Post your request</span><span>2 · Get up to 5 offers</span><span>3 · Reply to the one you like</span><span>4 · Close the request</span></div>
       <div class="choose">
         <button class="ch" type="button" id="open-post"><b>📝 Post a request</b><span>Add photos. Pros send offers here. Take your time.</span></button>
-        <button class="ch ch-b" type="button" id="open-boom"><b>⚡ BOOM – Pros now</b><span>In a hurry? 30 sec. Sent straight to pros near you.</span></button>
+        <button class="ch ch-b" type="button" id="open-boom"><b>⚡ BOOM – Pros now</b><span>In a hurry? Sent straight to pros near you.</span></button>
       </div>
       <button class="boom-why" type="button" id="boom-why">What is BOOM?</button>
       <div class="filters">
@@ -303,7 +303,7 @@
 
   <dialog id="post-dlg" aria-labelledby="post-title">
     <form class="dlg" id="post-form" method="dialog" novalidate>
-      <div class="dlg-head"><div><h2 id="post-title">Post your request</h2><p class="sub">Takes about one minute.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <div class="dlg-head"><div><h2 id="post-title">Post your request</h2><p class="sub">Free. Pros near you send you offers.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
       <div id="pro-note" hidden style="margin:0 0 12px;padding:10px 12px;border:2px solid #f0b44c;background:#fff8ec;border-radius:10px;color:#7c2d12;font-weight:600;font-size:.92rem">You already have a service listed on TexContractor — customers find you there and text you directly. This form is for customers who need a technician. To get jobs, close this form and send offers on the open requests.</div>
       <label class="f" for="p-service">Service</label>
       <select id="p-service" required><option value="">Choose a service</option></select>
@@ -342,14 +342,13 @@
   <dialog id="boom-info" aria-labelledby="boom-info-title">
     <div class="dlg">
       <div class="dlg-head"><div><h2 id="boom-info-title" style="color:#c2410c">⚡ What is BOOM?</h2></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
-      <p>For when you need help <b>today</b>. Fill it in 30 seconds and we send your job <b>right away</b> to pros near you. You don't wait for pros to visit the site. They contact you directly.</p>
+      <p>For when you need help <b>today</b>. Fill it in and we send your job <b>right away</b> to pros near you. You don't wait for pros to visit the site. They contact you directly.</p>
       <table class="cmp"><tr><th></th><th style="color:#1e3a8a">📝 Request</th><th style="color:#c2410c">⚡ BOOM</th></tr>
-        <tr><td>Time to fill</td><td>~1 min</td><td><b>30 sec</b></td></tr>
         <tr><td>How pros see it</td><td>When they visit</td><td><b>Sent to them now</b></td></tr>
         <tr><td>How many pros</td><td>Up to 5 offers</td><td><b>You pick: 3 · 5 · 10 · all</b></td></tr>
         <tr><td>Stays open</td><td>Until you close it</td><td><b>24 hours</b></td></tr></table>
       <p class="fine">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or email is fine too. It's your choice. When you find your pro, tap <b>Close request</b>.</p>
-      <button class="btn full" type="button" id="boom-start" style="background:linear-gradient(135deg,#f97316,#dc2626)">⚡ Start BOOM – 30 sec</button>
+      <button class="btn full" type="button" id="boom-start" style="background:linear-gradient(135deg,#f97316,#dc2626)">⚡ Start BOOM</button>
     </div>
   </dialog>
 
@@ -530,7 +529,7 @@
       $('p-title').style.display = boomMode ? 'none' : ''; const tl = document.querySelector('label[for="p-title"]'); if (tl) tl.style.display = boomMode ? 'none' : '';
       if (boomMode) {
         $('post-title').textContent = '⚡ BOOM – Pros now';
-        $('post-dlg').querySelector('.sub').textContent = 'Takes 30 seconds. We send it straight to pros near you.';
+        $('post-dlg').querySelector('.sub').textContent = 'We send it straight to pros near you.';
         $('post-submit').textContent = '⚡ Send BOOM';
         $('p-body').placeholder = 'What broke? e.g. Water leaking under the kitchen sink';
       } else { $('p-body').placeholder = 'Describe the job, size, and when you need it…'; }
@@ -541,7 +540,7 @@
       $('post-submit').textContent = row ? 'Save changes' : 'Post request';
       const locked = !!(row && row.offers_count > 0);
       $('p-service').disabled = locked; $('p-state').disabled = locked;
-      $('post-dlg').querySelector('.sub').textContent = locked ? 'Service and state stay the same after technicians send offers.' : row ? 'Change anything and save.' : 'Takes about one minute.';
+      $('post-dlg').querySelector('.sub').textContent = locked ? 'Service and state stay the same after technicians send offers.' : row ? 'Change anything and save.' : 'Free. Pros near you send you offers.';
     }
     async function openPost() {
       const wantService = new URLSearchParams(location.search).get('service') || '';
@@ -800,7 +799,7 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261120boom"></script>
+  <script src="tex-language.js?v=20261121nt"></script>
 <script src="tex-call.js?v=20261120wrap" defer></script>
 </body>
 </html>
