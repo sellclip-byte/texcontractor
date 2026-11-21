@@ -183,6 +183,25 @@
     .btn:hover { background:#1e3a8a; border-color:#1e3a8a; }
     .btn.ghost { background:#fff; color:#1d4ed8; border:1.5px solid #1d4ed8; }
     #open-post { font-size:1.08rem; padding:13px 22px; border-radius:11px; box-shadow:0 6px 16px rgba(29,78,216,.25); }
+    /* 11-20 BOOM (owner layout B): two choices side by side */
+    .choose { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; max-width:640px; }
+    .choose .ch { display:block; text-align:left; border-radius:14px; padding:14px; cursor:pointer; font:inherit; line-height:1.3; }
+    .choose .ch b { display:block; font-size:1.05rem; }
+    .choose .ch span { display:block; font-size:.84rem; margin-top:4px; font-weight:500; }
+    .choose #open-post.ch { background:#fff; border:2px solid #1d4ed8; color:#1e3a8a; box-shadow:none; font-size:1rem; padding:14px; }
+    .choose .ch-b { background:linear-gradient(135deg,#f97316,#dc2626); color:#fff; border:0; box-shadow:0 6px 18px rgba(220,38,38,.3); }
+    .boom-why { display:inline-block; margin-top:8px; font-weight:700; font-size:.88rem; color:#c2410c; text-decoration:underline; background:none; border:0; padding:0; cursor:pointer; }
+    .card.boom { border:2px solid #fb923c; }
+    .boom-badge { background:linear-gradient(135deg,#f97316,#dc2626); color:#fff !important; font-weight:800; border-radius:999px; padding:2px 9px; }
+    .boom-left { color:#c2410c; font-weight:700; }
+    #boom-box { margin:4px 0 6px; padding:12px; border-radius:12px; background:#fff7ed; border:1px solid #fdba74; color:#7c2d12; }
+    #boom-box select { width:100%; margin-top:6px; }
+    dialog.boom .dlg-head h2 { color:#c2410c; }
+    dialog.boom #post-submit { background:linear-gradient(135deg,#f97316,#dc2626); }
+    #boom-info .cmp { width:100%; border-collapse:collapse; font-size:.9rem; margin:10px 0; }
+    #boom-info .cmp th, #boom-info .cmp td { padding:7px 6px; border-top:1px solid #e2e8f0; text-align:center; }
+    #boom-info .cmp td:first-child, #boom-info .cmp th:first-child { text-align:left; }
+    @media (max-width:420px) { .choose .ch { padding:12px 10px; } .choose .ch b { font-size:.98rem; } }
     .card { border-color:#dbe3f0; }
     .svc { background:#eff6ff; color:#1e3a8a; border:1px solid #bfdbfe; }
     .ways span { border-color:#bfdbfe; color:#1e3a8a; background:#f8fbff; }
@@ -213,7 +232,11 @@
       <h1>Tell local technicians what you need</h1>
       <p>Post your job with up to 8 photos. Technicians in your area send you offers on TexContractor. You choose how they contact you: chat, text, or call.</p>
       <div class="steps"><span>1 · Post your request</span><span>2 · Get up to 5 offers</span><span>3 · Reply to the one you like</span><span>4 · Close the request</span></div>
-      <div class="post-row"><button class="btn" type="button" id="open-post">＋ Post your request</button></div>
+      <div class="choose">
+        <button class="ch" type="button" id="open-post"><b>📝 Post a request</b><span>Add photos. Pros send offers here. Take your time.</span></button>
+        <button class="ch ch-b" type="button" id="open-boom"><b>⚡ BOOM – Pros now</b><span>In a hurry? 30 sec. Sent straight to pros near you.</span></button>
+      </div>
+      <button class="boom-why" type="button" id="boom-why">What is BOOM?</button>
       <div class="filters">
         <select id="f-service" aria-label="Service"><option value="">All services</option></select>
         <select id="f-state" aria-label="State"><option value="">All states</option></select>
@@ -255,6 +278,11 @@
       <input type="file" id="p-photos" accept="image/*" multiple hidden>
       <input type="file" id="p-cam" accept="image/*" capture="environment" hidden>
       <div class="hint">Photos help technicians give you an accurate offer.</div>
+      <div id="boom-box" hidden>
+        <label class="f" for="p-wanted" style="margin-top:0">How many pros should we send it to?</label>
+        <select id="p-wanted"><option value="3">3 pros</option><option value="5">5 pros</option><option value="10" selected>10 pros</option><option value="20">All pros nearby</option></select>
+        <div style="margin-top:8px;font-size:.88rem">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or call is fine too. It's your choice.</div>
+      </div>
       <label class="f">How can technicians contact you?</label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-chat"> 💬 Chat on TexContractor<small>phone stays private</small></label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-text" checked> ✉ Text message<small>shows your number</small></label>
@@ -267,6 +295,19 @@
       <button class="btn full" type="submit" id="post-submit">Post request</button>
       <p class="fine" id="post-terms">By posting, you agree to the <a href="site-guide.html#terms">Terms</a>. TexContractor only connects you with independent pros: you choose who to hire and agree on price and work directly with them.</p>
     </form>
+  </dialog>
+  <dialog id="boom-info" aria-labelledby="boom-info-title">
+    <div class="dlg">
+      <div class="dlg-head"><div><h2 id="boom-info-title" style="color:#c2410c">⚡ What is BOOM?</h2></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <p>For when you need help <b>today</b>. Fill it in 30 seconds and we send your job <b>right away</b> to pros near you. You don't wait for pros to visit the site. They contact you directly.</p>
+      <table class="cmp"><tr><th></th><th style="color:#1e3a8a">📝 Request</th><th style="color:#c2410c">⚡ BOOM</th></tr>
+        <tr><td>Time to fill</td><td>~1 min</td><td><b>30 sec</b></td></tr>
+        <tr><td>How pros see it</td><td>When they visit</td><td><b>Sent to them now</b></td></tr>
+        <tr><td>How many pros</td><td>Up to 5 offers</td><td><b>You pick: 3 · 5 · 10 · all</b></td></tr>
+        <tr><td>Stays open</td><td>Until you close it</td><td><b>24 hours</b></td></tr></table>
+      <p class="fine">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or email is fine too. It's your choice. When you find your pro, tap <b>Close request</b>.</p>
+      <button class="btn full" type="button" id="boom-start" style="background:linear-gradient(135deg,#f97316,#dc2626)">⚡ Start BOOM – 30 sec</button>
+    </div>
   </dialog>
 
   <dialog id="offer-dlg" aria-labelledby="offer-title">
@@ -334,9 +375,13 @@
     $('f-city').addEventListener('change', () => load(true));
 
     // Board
+    let boomMap = {};
+    async function loadBoom() { try { const a = await C.rpc('texcontractor_requests_boom', {}, false) || []; boomMap = {}; for (const b of a) boomMap[b.id] = b; } catch (_) {} }
+    const leftTxt = (t) => { const m = Math.max(0, Math.round((new Date(t) - Date.now()) / 60000)); return m >= 60 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm' : m + 'm'; };
     function card(r) {
       const el = document.createElement('article');
       el.className = 'card';
+      const bm = boomMap[r.id]; if (bm) el.classList.add('boom');
       const photos = (r.photo_paths || []).slice(0, 4);
       const ways = [];
       if (r.contact_chat) ways.push('<span>💬 Chat</span>');
@@ -347,7 +392,7 @@
       else if (r.offered) action = '<div class="status-note">✓ You sent an offer</div>';
       else action = '<button class="btn full" type="button" data-offer>Send an offer</button>';
       el.innerHTML = `
-        <div class="top"><span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.matches ? '<span class="match">Matches your service</span>' : ''}</div>
+        <div class="top">${bm ? `<span class="boom-badge">⚡ BOOM</span><span class="boom-left">⏱ ${leftTxt(bm.expires_at)} left</span>` : ''}<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.matches ? '<span class="match">Matches your service</span>' : ''}</div>
         <div class="top" style="margin-top:4px"><span>${esc(ago(r.created_at))}</span><span class="open">● Open</span></div>
         <h3><a href="requests.html?r=${esc(r.id)}" data-view>${esc(r.title)}</a></h3>
         <p>${esc(r.body)}</p>
@@ -365,7 +410,7 @@
     }
 
     async function load(reset) {
-      if (reset) { offset = 0; current = []; $('grid').replaceChildren(); }
+      if (reset) { offset = 0; current = []; $('grid').replaceChildren(); await loadBoom(); }
       $('load-more').hidden = true;
       try {
         const rows = await C.rpc('texcontractor_requests_list', { p_service: $('f-service').value || null, p_state: $('f-state').value || null, p_city: $('f-city').value.trim() || null, p_limit: PAGE, p_offset: offset }, false) || [];
@@ -397,7 +442,7 @@
           const open = r.status === 'open';
           const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
           d.className = 'mine-row' + (open ? '' : ' closed');
-          d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? (days > 365 ? 'open until you close it' : `closes in ${days} day${days === 1 ? '' : 's'}`) : 'closed'}</small></div>
+          d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? (days > 365 ? 'open until you close it' : (new Date(r.expires_at) - Date.now() < 36 * 3600000) ? `⚡ closes in ${leftTxt(r.expires_at)}` : `closes in ${days} day${days === 1 ? '' : 's'}`) : 'closed'}</small></div>
             <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? `<a class="msgs-link" href="contractor.html?service=${encodeURIComponent(r.service)}&city=${encodeURIComponent(r.city)}&state=${encodeURIComponent(r.state)}">Pros near you</a>` : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
           d.querySelector('[data-v]').addEventListener('click', () => openView(r.id));
           d.querySelector('[data-e]')?.addEventListener('click', () => openEdit(r.id));
@@ -434,8 +479,21 @@
     $('c-text').addEventListener('change', syncPhone); $('c-call').addEventListener('change', syncPhone);
 
     let editing = null;
+    let boomMode = false;
+    function setBoom(on) {
+      boomMode = !!on;
+      $('post-dlg').classList.toggle('boom', boomMode);
+      $('boom-box').hidden = !boomMode;
+      $('p-title').style.display = boomMode ? 'none' : ''; const tl = document.querySelector('label[for="p-title"]'); if (tl) tl.style.display = boomMode ? 'none' : '';
+      if (boomMode) {
+        $('post-title').textContent = '⚡ BOOM – Pros now';
+        $('post-dlg').querySelector('.sub').textContent = 'Takes 30 seconds. We send it straight to pros near you.';
+        $('post-submit').textContent = '⚡ Send BOOM';
+        $('p-body').placeholder = 'What broke? e.g. Water leaking under the kitchen sink';
+      } else { $('p-body').placeholder = 'Describe the job, size, and when you need it…'; }
+    }
     function setMode(row) {
-      editing = row;
+      editing = row; setBoom(false);
       $('post-title').textContent = row ? 'Edit your request' : 'Post your request';
       $('post-submit').textContent = row ? 'Save changes' : 'Post request';
       const locked = !!(row && row.offers_count > 0);
@@ -459,6 +517,15 @@
       $('post-dlg').showModal();
     }
     $('open-post').addEventListener('click', openPost);
+    async function openBoom() {
+      if (!user) { signInFor('boom=1'); return; }
+      await openPost(); setBoom(true);
+      try { if (typeof gtag === 'function') gtag('event', 'boom_open'); } catch (_) {}
+    }
+    $('open-boom').addEventListener('click', openBoom);
+    $('boom-why').addEventListener('click', () => $('boom-info').showModal());
+    $('boom-start').addEventListener('click', () => { $('boom-info').close(); openBoom(); });
+    $('boom-info').querySelector('[data-close]').addEventListener('click', () => $('boom-info').close());
     renderSlots();
 
     function shrink(file) {
@@ -486,12 +553,14 @@
       e.preventDefault();
       const msg = $('post-msg'); msg.className = 'msg-line error';
       const v = { service: $('p-service').value, state: $('p-state').value, city: $('p-city').value.trim(), title: $('p-title').value.trim(), body: $('p-body').value.trim() };
+      const isBoom = boomMode && !editing;
+      if (isBoom) { const short = v.body.replace(/\s+/g, ' ').slice(0, 70); v.title = (short.length >= 3 ? short : (v.service || 'Job')) + (short.length > 69 ? '…' : ''); }
       const chat = $('c-chat').checked, text = $('c-text').checked, call = $('c-call').checked;
       const phone = $('p-phone').value.replace(/[^\d+]/g, '');
       if (!v.service) return (msg.textContent = 'Choose a service.');
       if (!v.state || v.city.length < 2) return (msg.textContent = 'Choose your state and city.');
       if (v.title.length < 3) return (msg.textContent = 'Add a short title.');
-      if (v.body.length < 10) return (msg.textContent = 'Describe the job in a few words (at least 10 characters).');
+      if (v.body.length < (isBoom ? 5 : 10)) return (msg.textContent = isBoom ? 'Say in a few words what you need.' : 'Describe the job in a few words (at least 10 characters).');
       if (!chat && !text && !call) return (msg.textContent = 'Choose at least one way technicians can contact you.');
       if ((text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
       const btn = $('post-submit'); btn.disabled = true; msg.className = 'msg-line';
@@ -504,7 +573,9 @@
         const args = { p_service: v.service, p_state: v.state, p_city: v.city, p_title: v.title, p_body: v.body, p_photo_paths: paths, p_contact_chat: chat, p_contact_text: text, p_contact_call: call, p_phone: (text || call) ? phone : null };
         const wasEditing = editing; let newReqId = null;
         if (wasEditing) { msg.textContent = 'Saving…'; await C.rpc('texcontractor_request_update', { p_request_id: wasEditing.id, ...args }, true); }
-        else { msg.textContent = 'Posting…'; newReqId = await C.rpc('texcontractor_request_create', args, true); }
+        else { msg.textContent = isBoom ? 'Sending BOOM…' : 'Posting…'; newReqId = await C.rpc('texcontractor_request_create', args, true); }
+        let boomOk = false;
+        if (isBoom && newReqId) { try { const rid0 = String(Array.isArray(newReqId) ? newReqId[0] : newReqId); boomOk = !!(await C.rpc('texcontractor_request_set_boom', { p_request_id: rid0, p_wanted_pros: Number($('p-wanted').value) || 10 }, true)); } catch (_) {} if (typeof gtag === 'function') gtag('event', 'boom_posted', { service: v.service, state: v.state }); }
         picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = [];
         $('p-title').value = ''; $('p-body').value = '';
         $('post-dlg').close();
@@ -516,7 +587,7 @@
           const href = 'contractor.html?service=' + encodeURIComponent(v.service) + '&city=' + encodeURIComponent(v.city) + '&state=' + encodeURIComponent(v.state);
           let n = document.getElementById('near-note');
           if (!n) { n = document.createElement('div'); n.id = 'near-note'; n.style.cssText = 'margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#ecf7f3;border:1px solid #b7e0d2;color:#064e3b;font-weight:700;line-height:1.45'; $('mine').prepend(n); }
-          n.innerHTML = '✅ Your request is posted. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>';
+          n.innerHTML = boomOk ? ('🚀 BOOM! Your job is on its way to pros near ' + esc(v.city) + '. They will contact you the way you chose. Open for 24 hours. When you find your pro, tap <b>Close request</b>. <a style="color:#075c4b;text-decoration:underline" href="' + href + '">Want to text pros yourself too? →</a>') : ('✅ Your request is posted. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>');
           // owner 11-15: DFW Mobile Lawnmower customers who came from the $15 card get a request code to text to DFW
           let promo = ''; try { promo = localStorage.getItem('tc_promo') || ''; } catch (_) {}
           const rid = String(Array.isArray(newReqId) ? newReqId[0] : (newReqId || '')).replace(/[^0-9a-f]/gi, '');
@@ -670,13 +741,14 @@
       await Promise.all([load(true), loadCount(), loadMine()]);
       const q = new URLSearchParams(location.search);
       if (q.get('post')) openPost();
+      else if (q.get('boom')) openBoom();
       if (q.get('r')) openView(q.get('r'));
       const oid = q.get('offer');
       if (oid && user) { const r = current.find((x) => x.id === oid); if (r) openOffer(r); }
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261120terms"></script>
+  <script src="tex-language.js?v=20261120boom"></script>
 <script src="tex-call.js?v=20261120wrap" defer></script>
 </body>
 </html>
