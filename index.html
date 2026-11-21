@@ -1746,9 +1746,11 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
     }
 
     async function resolveLocation(location) {
-      const city = String(location.city || '').trim();
+      // 11-21 owner: a ZIP alone (e.g. "75052") must never ask for a state, even when it arrives as a "city" (saved/old links).
+      let city = String(location.city || '').trim();
       const state = normalizeState(location.state);
-      const zip = String(location.zip || '').trim().slice(0, 5);
+      let zip = String(location.zip || '').trim().slice(0, 5);
+      if (!zip && /^\d{5}(?:-\d{4})?$/.test(city.replace(/\s+/g, ''))) { zip = city.replace(/\s+/g, '').slice(0, 5); city = ''; }
       if (zip) {
         const known = zipDirectory[zip];
         if (known) {
@@ -1768,7 +1770,8 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
         } catch (error) {
           // Keep the entered ZIP visible when the lookup service is unavailable.
         }
-        renderLocation(city, state, zip);
+        // Lookup failed: Texas ZIPs (75xxx-79xxx, 885xx) still get TX so results load state-wide.
+        renderLocation(city, state || (/^(7[5-9]|885)/.test(zip) ? 'TX' : ''), zip);
         return;
       }
       // City + state (or state only): keep exactly what the visitor typed. Results are
