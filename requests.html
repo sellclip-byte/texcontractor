@@ -59,9 +59,16 @@
     .card p { margin:0 0 10px; color:#334155; white-space:pre-wrap; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
     .card p.expanded { display:block; }
     .more { border:0; background:none; color:var(--green); font:inherit; font-weight:800; font-size:.84rem; padding:0; margin:-6px 0 10px; cursor:pointer; align-self:flex-start; }
-    .ph { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
-    .ph a { display:block; aspect-ratio:1; border-radius:9px; overflow:hidden; border:1px solid #e2e8f0; background:#fff; }
-    .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+    /* Owner 11-21: Facebook-style photo mosaic (one big photo, the rest stacked beside it). */
+    .ph { display:grid; gap:4px; margin-bottom:12px; border-radius:10px; overflow:hidden; aspect-ratio:16/10; grid-template-columns:2fr 1fr; grid-auto-rows:1fr; }
+    .ph.n1 { grid-template-columns:1fr; }
+    .ph.n2 { grid-template-columns:1fr 1fr; }
+    .ph a { display:block; position:relative; overflow:hidden; background:#e2e8f0; min-height:0; }
+    .ph a:first-child { grid-row:1 / -1; }
+    .ph.n2 a:first-child { grid-row:auto; }
+    .ph img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .25s; }
+    .ph a:hover img { transform:scale(1.03); }
+    .ph .more { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,.55); color:#fff; font-size:1.5rem; font-weight:800; }
     .foot { margin-top:auto; border-top:1px dashed #e2e8f0; padding-top:10px; display:grid; gap:10px; }
     .ways { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
     .ways span, .ways a { font-size:.78rem; font-weight:800; border-radius:8px; padding:3px 8px; border:1px solid var(--green); color:var(--green); background:#f0fdf8; text-decoration:none; }
@@ -424,7 +431,7 @@
       const el = document.createElement('article');
       el.className = 'card';
       const bm = boomMap[r.id]; if (bm) el.classList.add('boom');
-      const photos = (r.photo_paths || []).slice(0, 4);
+      const allPh = r.photo_paths || [], photos = allPh.slice(0, 4), extra = allPh.length - photos.length;
       const ways = [];
       if (r.contact_chat) ways.push('<span>💬 Chat</span>');
       if (r.contact_text) ways.push(r.phone ? `<a href="sms:${esc(r.phone)}">✉ Text ${esc(fmtPhone(r.phone))}</a>` : '<a href="start.html">✉ Text · list your service free to see the number</a>');
@@ -438,7 +445,7 @@
         <div class="top" style="margin-top:4px"><span>${esc(ago(r.created_at))}</span><span class="open">● Open</span></div>
         <h3><a href="requests.html?r=${esc(r.id)}" data-view>${esc(r.title)}</a></h3>
         <p>${esc(r.body)}</p>
-        ${photos.length ? `<div class="ph">${photos.map((p) => `<a href="requests.html?r=${esc(r.id)}" data-view><img src="${photoUrl(p)}" alt="Request photo" loading="lazy"></a>`).join('')}</div>` : ''}
+        ${photos.length ? `<div class="ph n${photos.length}" style="grid-template-rows:repeat(${Math.max(1, photos.length - 1)},1fr)">${photos.map((p, i) => `<a href="requests.html?r=${esc(r.id)}" data-view><img src="${photoUrl(p)}" alt="Request photo" loading="lazy">${extra > 0 && i === photos.length - 1 ? `<span class="more">+${extra}</span>` : ''}</a>`).join('')}</div>` : ''}
         <a class="view-link" href="requests.html?r=${esc(r.id)}" data-view>View details${photos.length ? ' and photos' : ''} →</a>
         <div class="foot">
           <div class="ways">${ways.join('')}<span class="offers" style="border:0;background:none;color:#334155;padding:0">${r.offers_count} of 5 offers<span class="bar"><i style="width:${Math.min(100, r.offers_count * 20)}%"></i></span></span></div>
