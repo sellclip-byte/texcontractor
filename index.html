@@ -1750,7 +1750,7 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
       let city = String(location.city || '').trim();
       const state = normalizeState(location.state);
       let zip = String(location.zip || '').trim().slice(0, 5);
-      if (!zip && /^\d{5}(?:-\d{4})?$/.test(city.replace(/\s+/g, ''))) { zip = city.replace(/\s+/g, '').slice(0, 5); city = ''; }
+      if (!zip && !/[a-z]/i.test(city) && /\d{5}/.test(city)) { zip = city.match(/\d{5}/)[0]; city = ''; }
       if (zip) {
         const known = zipDirectory[zip];
         if (known) {
@@ -1844,7 +1844,7 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
 
     function parseLocation(value) {
       const text = value.trim().replace(/\s+/g, ' ');
-      if (/^\d{5}(?:-\d{4})?$/.test(text)) return { city:'', state:'', zip:text.slice(0, 5) };
+      if (!/[a-z]/i.test(text) && /\d{5}/.test(text)) return { city:'', state:'', zip:text.match(/\d{5}/)[0] };
       // A state on its own ("Texas", "new york", "TX") searches the whole state.
       const wholeState = normalizeText(text);
       if (stateDirectory[wholeState]) return { city:'', state:stateDirectory[wholeState], zip:'' };
