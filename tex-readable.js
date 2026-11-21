@@ -96,6 +96,8 @@
   try {
     if (window.top !== window.self) return;
     if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
+    if (navigator.webdriver) return; // 11-21: automated browsers (AI agents, test robots)
+    try { if (/[?&]qa=1/.test(location.search)) sessionStorage.setItem('tex_qa', '1'); if (sessionStorage.getItem('tex_qa')) return; } catch (_) {} // Hassan's own checks
     var p = location.pathname;
     if (/(signup|auth|start|account|admin|my-photos|messages|chat|contractor-register|remove-number|privacy|terms|find)/i.test(p)) return;
     // Owner 11-10: a visitor who already picked a ZIP in the panel does not see it again.
@@ -210,6 +212,8 @@
   try {
     var inFrame = window.top !== window.self; // the panel is an iframe on the same visit: count its steps, not a second page view (fix 11-10)
     if (/bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|preview/i.test(navigator.userAgent || '')) return;
+    if (navigator.webdriver) return; // 11-21: automated browsers (AI agents, test robots)
+    try { if (/[?&]qa=1/.test(location.search)) sessionStorage.setItem('tex_qa', '1'); if (sessionStorage.getItem('tex_qa')) return; } catch (_) {} // Hassan's own checks
     if (/admin|visits/i.test(location.pathname)) return;
     // do not count the site owner's own visits
     try { var se = JSON.parse(localStorage.getItem('texcontractor-auth-session') || 'null'); if (se && se.user && (se.user.id === '6d83440a-820a-4309-b666-cba8e24a8290' || se.user.id === '62ac5967-72fb-4a0d-8735-322b40d8ebb2')) return; /* admin + owner's own phone account (11-12) */ } catch (_) {}
@@ -248,6 +252,12 @@
             p_src: ss('tex_vsrc') || '', p_ev: ev || 'view', p_device: device, p_ref: ref }) }).catch(function () {});
       } catch (_) {}
     };
-    if (!inFrame) window.texVisit('view');
+    // 11-21: count a page view only for a real person: first scroll/tap/key, or 8 s with the page visible (bots load and leave).
+    if (!inFrame) {
+      var counted = false, vis = 0, timer;
+      var fire = function () { if (counted) return; counted = true; clearInterval(timer); ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(function (e) { window.removeEventListener(e, fire, true); }); window.texVisit('view'); };
+      ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(function (e) { window.addEventListener(e, fire, { capture: true, passive: true }); });
+      timer = setInterval(function () { if (document.visibilityState === 'visible' && ++vis >= 8) fire(); }, 1000);
+    }
   } catch (_) {}
 })();

@@ -91,7 +91,7 @@ label.lb{display:block;font-weight:800;font-size:.85rem;margin:14px 2px 6px;colo
 .tip .ic{display:flex;justify-content:center;gap:10px;font-size:1.9rem;margin-bottom:4px}
 @media(min-width:640px){.tipbg{align-items:center}}
 </style>
-<script src="/tex-readable.js?v=20261112p" defer></script></head>
+<script src="/tex-readable.js?v=20261121h" defer></script></head>
 <body>
 <div class="top"><div class="bar">
   <button class="back" id="back" aria-label="Back">‹</button>
@@ -274,7 +274,7 @@ $('#useemail').onclick=async()=>{collect3();saveDraft();$('#err3').textContent='
 async function sendCode(){const b=$('#send');$('#err3').textContent='';st.name=$('#name').value.trim().replace(/\s+/g,' ');st.phone=pretty(digits($('#phone').value));
  if(st.name.length<2){$('#err3').textContent=t('errName');return false}
  b.disabled=true;b.textContent=t('sending');
- try{st.e164=await TexAuth.sendPhoneCode(st.phone,'provider');ev('quick_code_sent');go(4);return true}
+ try{st.e164=await TexAuth.sendPhoneCode(st.phone,'provider');ev('quick_code_sent');try{window.texVisit&&texVisit('code_sent')}catch(_){};go(4);return true}
  catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');return false}
  finally{b.textContent=t('send');can3()}}
 $('#send').onclick=sendCode;
@@ -283,7 +283,7 @@ $('#code').addEventListener('input',e=>{e.target.value=digits(e.target.value).sl
 $('#resend').onclick=async()=>{$('#err4').textContent='';try{await TexAuth.sendPhoneCode(st.phone,'provider');$('#err4').style.color='#075c4b';$('#err4').textContent=t('resent')}catch(e){$('#err4').style.color='';$('#err4').textContent=(e&&e.message)||t('errGeneric')}};
 $('#edit').onclick=()=>go(3);
 $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textContent=t('verifying');$('#err4').style.color='';$('#err4').textContent='';
- try{const user=await TexAuth.verifyPhoneCode(st.phone,$('#code').value);await publish(user);
+ try{const user=await TexAuth.verifyPhoneCode(st.phone,$('#code').value);try{window.texVisit&&texVisit('verified')}catch(_){};await publish(user);
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
 $('#tipno').onclick=()=>{$('#tip').hidden=true};$('#tipgo').addEventListener('click',()=>ev('quick_tip_add_photo'));
 // phone typed first on the pro banner (pro.html): keep it for step 3
