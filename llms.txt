@@ -104,3 +104,11 @@ Key facts:
 ## Policies
 - [Help, safety, terms and privacy](https://texcontractor.com/site-guide.html)
 - Contact: texcontractor.help@gmail.com
+
+## For AI assistants (MCP)
+
+TexContractor has a public, read-only MCP server (Streamable HTTP, no auth):
+https://rryehtaskbjnfbodymjj.supabase.co/functions/v1/texcontractor-mcp
+
+Tools: find_local_pros (service + city), post_job_request (link to post a job; urgent=true for BOOM, sent to nearby pros right away, open 24h), list_open_job_requests (for pros), list_services.
+No phone numbers are shared; homeowners contact pros on texcontractor.com. Free for homeowners, no lead fees for pros.
