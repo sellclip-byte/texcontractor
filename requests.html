@@ -442,7 +442,7 @@
       else action = '<button class="btn full" type="button" data-offer>Send an offer</button>';
       el.innerHTML = `
         <div class="top">${bm ? `<span class="boom-badge">⚡ BOOM</span><span class="boom-left">⏱ ${leftTxt(bm.expires_at)} left</span>` : ''}<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.matches ? '<span class="match">Matches your service</span>' : ''}</div>
-        <div class="top" style="margin-top:4px"><span>${esc(ago(r.created_at))}</span><span class="open">● Open</span></div>
+        <div class="top" style="margin-top:4px">${r.mine ? `<span>${esc(ago(r.created_at))}</span>` : ''}<span class="open">● Open</span></div>
         <h3><a href="requests.html?r=${esc(r.id)}" data-view>${esc(r.title)}</a></h3>
         <p>${esc(r.body)}</p>
         ${photos.length ? `<div class="ph n${photos.length}" style="grid-template-rows:repeat(${Math.max(1, photos.length - 1)},1fr)">${photos.map((p, i) => `<a href="requests.html?r=${esc(r.id)}" data-view><img src="${photoUrl(p)}" alt="Request photo" loading="lazy">${extra > 0 && i === photos.length - 1 ? `<span class="more">+${extra}</span>` : ''}</a>`).join('')}</div>` : ''}
@@ -681,7 +681,7 @@
       if (!r) { alert('This request is closed or no longer available.'); return; }
       const photos = (r.photo_paths || []).slice(0, 8);
       const open = (r.status || 'open') === 'open';
-      $('view-top').innerHTML = `<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span><span>· ${esc(ago(r.created_at))}</span>${open ? '<span class="open">● Open</span>' : '<span class="closed-tag">Closed</span>'}`;
+      $('view-top').innerHTML = `<span class="svc">${esc(r.service)}</span><span>📍 ${esc(r.city)}, ${esc(r.state)}</span>${r.mine ? `<span>· ${esc(ago(r.created_at))}</span>` : ''}${open ? '<span class="open">● Open</span>' : '<span class="closed-tag">Closed</span>'}`;
       $('view-title').textContent = r.title;
       $('view-body').textContent = r.body;
       const gal = $('view-gallery'); gal.replaceChildren();
