@@ -365,6 +365,11 @@
       <div class="offer-for" id="offer-for"></div>
       <label class="f" for="o-msg">Your offer</label>
       <textarea id="o-msg" placeholder="When you can do it, an estimated price, and anything you need to know…" maxlength="1500" required></textarea>
+      <!-- Owner 11-21: optional, the pro recommends faster contact by text/call (adds his own number to the offer). -->
+      <label id="o-call-wrap" style="display:none;gap:10px;align-items:flex-start;margin:10px 0 2px;padding:10px 12px;border:1px solid #d1fae5;background:#f0fdf4;border-radius:10px;font-size:.95rem;line-height:1.35;cursor:pointer">
+        <input type="checkbox" id="o-call" style="width:20px;height:20px;margin-top:2px;flex:none">
+        <span><b>Recommended:</b> ask the customer to text or call me for faster details.<br><small style="color:#475569">Adds your number <b id="o-call-num"></b> to your offer.</small></span>
+      </label>
       <p class="msg-line" id="offer-msg" role="status"></p>
       <button class="btn full" type="submit" id="offer-submit">Send offer</button>
     </form>
@@ -761,6 +766,8 @@
       $('offer-msg').className = 'msg-line'; $('offer-msg').textContent = '';
       $('o-msg').hidden = false; $('offer-submit').hidden = false; $('o-msg').previousElementSibling.hidden = false;
       const block = (html) => { $('o-msg').hidden = true; $('o-msg').previousElementSibling.hidden = true; $('offer-submit').hidden = true; $('offer-msg').innerHTML = html; };
+      { const ph = String(user.phone || user.user_metadata?.contact_phone || '').replace(/\D/g, '').slice(-10);
+        $('o-call').checked = false; $('o-call-wrap').style.display = (ph.length === 10 && state === 'ok') ? 'flex' : 'none'; $('o-call-num').textContent = ph.length === 10 ? fmtPhone(ph) : ''; }
       if (state === 'no_listing') block(`Only technicians with an approved <b>${esc(r.service)}</b> listing in <b>${esc(STATES[r.state] || r.state)}</b> can send offers for this request.<br><br><a class="btn" href="contractor-register.html">List your service</a>`);
       else if (state === 'sent') block('✓ You already sent an offer for this request. Continue the conversation in <a href="chat.html">Messages</a>.');
       else if (state === 'own') block('This is your own request.');
@@ -769,7 +776,8 @@
     }
     $('offer-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const text = $('o-msg').value.trim(); const msg = $('offer-msg');
+      let text = $('o-msg').value.trim(); const msg = $('offer-msg');
+      if (text.length >= 5 && $('o-call').checked && $('o-call-num').textContent) text += '\n\n📱 For faster details, text or call me: ' + $('o-call-num').textContent;
       if (text.length < 5) { msg.className = 'msg-line error'; msg.textContent = 'Write a short offer.'; return; }
       const btn = $('offer-submit'); btn.disabled = true; msg.className = 'msg-line'; msg.textContent = 'Sending…';
       try {
