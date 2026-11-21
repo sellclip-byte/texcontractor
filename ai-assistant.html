@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TexContractor for AI Assistants | TexContractor</title>
+<meta name="description" content="Use TexContractor inside AI assistants like Claude: find local home-service pros by service and city, or get a link to post a job (BOOM for urgent jobs). Free, read-only, no phone numbers shared.">
+<link rel="canonical" href="https://texcontractor.com/ai-assistant.html">
+<link rel="icon" type="image/png" href="/texcontractor-icon-192.png"><link rel="stylesheet" href="/tc-brand.css?v=2">
+<style>
+:root{--ink:#0e1b37;--muted:#5b6b76;--line:#d6e0e6;--soft:#f4f8fa;--blue:#1d4ed8;--bg:#fff}
+body{font:17px/1.65 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:0 auto;max-width:820px;padding:24px 16px;color:var(--ink);background:var(--bg)}
+h1{line-height:1.2;font-size:clamp(1.7rem,5vw,2.3rem);margin:.2em 0}
+h2{margin-top:1.8em;font-size:1.3rem}
+a{color:#0769a3}
+.lead{color:var(--muted);font-size:1.08rem}
+code,.url{font:15px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:2px 6px;word-break:break-all}
+.url{display:block;padding:12px 14px;margin:10px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--soft)}
+.note{background:var(--soft);border-left:4px solid var(--blue);padding:10px 14px;border-radius:0 8px 8px 0}
+ol li,ul li{margin:.3em 0}
+</style></head>
+<body>
+<header><a href="/">TexContractor</a></header>
+<main>
+<h1>TexContractor for AI assistants</h1>
+<p class="lead">Ask your AI assistant for a local pro, and it can search TexContractor for you. Free for homeowners. No lead fees for pros.</p>
+
+<h2>What it does</h2>
+<table>
+<tr><th>Tool</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>find_local_pros</code></td><td>Finds independent home-service pros listed on TexContractor by service and city. Returns names, service, city and a link to each profile, where you see work photos and text the pro.</td><td>"Find me a plumber in Arlington, TX"</td></tr>
+<tr><td><code>post_job_request</code></td><td>Gives you a link to post your job so nearby pros contact you. Set <b>urgent</b> for ⚡ BOOM: your job is sent straight to pros near you and stays open 24 hours. Nothing is posted until you confirm on texcontractor.com.</td><td>"My AC stopped, I need someone today in Dallas"</td></tr>
+<tr><td><code>list_open_job_requests</code></td><td>For pros: open jobs homeowners posted, by state, city or service.</td><td>"Any handyman jobs in Houston?"</td></tr>
+<tr><td><code>list_services</code></td><td>All service categories on TexContractor.</td><td>"What services does TexContractor cover?"</td></tr>
+</table>
+<p>All tools are read-only. They never change anything and never share phone numbers.</p>
+
+<h2>Add it to Claude</h2>
+<ol>
+<li>In Claude, open <b>Settings → Connectors</b> and choose <b>Add custom connector</b>.</li>
+<li>Name: <b>TexContractor</b>. URL:<span class="url">https://rryehtaskbjnfbodymjj.supabase.co/functions/v1/texcontractor-mcp</span></li>
+<li>No sign-in is needed. Save, then ask: <i>"Find me a garage door repair pro in Dallas, TX."</i></li>
+</ol>
+<p class="note">Technical details: remote MCP server, Streamable HTTP transport, no authentication, public read-only data.</p>
+
+<h2>Privacy</h2>
+<p>The connector only reads information already public on texcontractor.com. It does not collect your name, phone number, email or messages. Your search words (like the service and city) are used only to answer that search. Read the full <a href="/site-guide.html#ai-connector">privacy policy</a>.</p>
+
+<h2>Support</h2>
+<p>Questions or problems: <a href="mailto:texcontractor.help@gmail.com">texcontractor.help@gmail.com</a>. Or call <a href="tel:+18173440807">(817) 344-0807</a> to hear how TexContractor works.</p>
+</main>
+<footer><a href="/">TexContractor home</a> · <a href="/site-guide.html#terms">Terms</a> · <a href="/site-guide.html#privacy">Privacy</a></footer>
+<script src="/tex-call.js?v=20261120call" defer></script>
+</body></html>
