@@ -182,7 +182,7 @@
           'Hi! Thanks for joining TexContractor.', '',
           "Your account is ready, but your page isn't live yet, so customers can't find you or contact you.", '',
           'Here\'s how it works: homeowners near you search for a service, see your page, and text you directly. No middleman, no lead fees.', '',
-          'To go live, finish these 3 things (about 2 minutes):',
+          'To go live, finish these 3 things:',
           '1. Your photo. Customers trust a real face and are much more likely to text a pro they can see.',
           '2. Your service and the cities you cover.',
           '3. Your phone number, so customers\' texts reach you.', '',
