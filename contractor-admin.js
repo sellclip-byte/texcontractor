@@ -509,7 +509,7 @@
           <div class="detail"><span class="detail-label">Phone</span><span class="detail-value">${escapeHtml(row.phone)}</span></div>
           <div class="detail"><span class="detail-label">Applicant email</span><span class="detail-value">${escapeHtml(row.email)}</span></div>
           <div class="detail"><span class="detail-label">Location</span><span class="detail-value">${escapeHtml(`${row.city || ''}, ${row.state || ''}`)}</span></div>
-          <div class="detail"><span class="detail-label">Experience</span><span class="detail-value">${escapeHtml(row.years)} years</span></div>
+          <div class="detail"><span class="detail-label">Experience</span><span class="detail-value">${row.years ? escapeHtml(row.years) + " years" : "Not given"}</span></div>
           <div class="detail"><span class="detail-label">Account email</span><span class="detail-value">${escapeHtml(row.owner_email)}</span></div>
         </div>
         <p class="about">${escapeHtml(row.about)}</p>
