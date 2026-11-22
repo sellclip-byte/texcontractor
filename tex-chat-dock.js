@@ -59,6 +59,20 @@
     async function ping() { if (document.visibilityState === 'visible') { try { await rpc('texcontractor_ping'); } catch (_) {} } }
     setInterval(badge, 45000); setInterval(ping, 120000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { ping(); badge(); } });
+    // owner 11-21: admins get a red flag button when a chat was reported
+    async function adminFlag() {
+      try {
+        if ((await rpc('texcontractor_is_admin')) !== 'true') return;
+        var t = await tok(); var r = await fetch(SB + '/rest/v1/rpc/texcontractor_admin_chat_reports', { method: 'POST', headers: { apikey: K, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+        var rows = r.ok ? await r.json() : []; var n = (rows || []).filter(function (x) { return x.status === 'open'; }).length;
+        var f = document.getElementById('tcd-flag');
+        var navN = document.getElementById('chat-rep-n'); if (navN) navN.textContent = n ? '(' + n + ')' : '';
+        if (!n) { if (f) f.remove(); return; }
+        if (!f) { f = document.createElement('a'); f.id = 'tcd-flag'; f.href = '/chat-admin.html'; f.style.cssText = 'position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:2147481000;background:#991b1b;color:#fff;border-radius:999px;padding:9px 14px;font:800 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 20px rgba(153,27,27,.35)'; document.body.appendChild(f); }
+        f.textContent = '🚩 ' + n + ' chat report' + (n > 1 ? 's' : '');
+      } catch (_) {}
+    }
+    setTimeout(adminFlag, 2500); setInterval(adminFlag, 120000);
     window.TexChatDockOpen = open;
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
   } catch (_) {}

@@ -60,20 +60,25 @@
       .thread-head .back-list { display:inline-block; }
     }
   </style>
+<style>.report-btn{border:1px solid #fecaca;background:#fff;color:#b91c1c;border-radius:10px;padding:6px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;margin-left:8px}
+#rp-box{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:14px}#rp-box[hidden]{display:none}
+#rp-box .in{background:#fff;border-radius:16px;padding:16px;max-width:380px;width:100%}#rp-box h3{margin:0 0 8px}#rp-box .rs{display:grid;gap:8px}#rp-box .rs button{border:2px solid #e2e8f0;background:#fff;border-radius:12px;padding:11px;font:inherit;font-weight:700;text-align:left;cursor:pointer}#rp-box .rs button.on{border-color:#b91c1c;background:#fef2f2}#rp-box textarea{width:100%;box-sizing:border-box;margin-top:8px;border:1px solid #e2e8f0;border-radius:10px;padding:8px;font:inherit}#rp-box .row{display:flex;gap:8px;margin-top:10px}#rp-box .row button{flex:1;border:0;border-radius:10px;padding:11px;font:inherit;font-weight:800;cursor:pointer}#rp-send{background:#b91c1c;color:#fff}#rp-cancel{background:#f1f5f9}
+</style>
 <style>html.embed header,html.embed .list h1{display:none!important}html.embed body{background:#fff}html.embed .app{height:100vh!important;max-height:none!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important}.tc-filter-err{margin:6px 12px 0;color:#b91c1c;font-weight:800;font-size:.92rem}</style>
-<script src="/tex-readable.js?v=20261121chat" defer></script></head>
+<script src="/tex-readable.js?v=20261122a" defer></script></head>
 <body>
   <header><a href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a><a class="back" href="javascript:history.back()">← Back</a></header>
   <main class="app" id="app">
     <section class="list" aria-label="Your chats"><h1>Messages</h1><div id="chat-list"><p class="empty">Loading your chats…</p></div></section>
     <section class="thread" aria-label="Conversation">
-      <div class="thread-head"><button class="back-list" id="back-list" type="button">← Chats</button><div><b id="thread-name">Select a chat</b><div class="svc" id="thread-service"></div></div><span class="live" id="live" hidden>● Live</span></div>
+      <div class="thread-head"><button class="back-list" id="back-list" type="button">← Chats</button><div><b id="thread-name">Select a chat</b><div class="svc" id="thread-service"></div></div><span class="live" id="live" hidden>● Live</span><button type="button" id="report-btn" class="report-btn" hidden>🚩 Report</button></div>
       <div class="msgs" id="msgs" aria-live="polite"><p class="empty">Choose a conversation to read and reply.</p></div>
       <p class="note">Keep your conversation here. Never share passwords or payment card numbers in chat.</p>
       <div class="picked" id="picked" hidden></div>
       <form class="compose" id="compose" hidden><button class="attach" id="attach" type="button" title="Add photos" aria-label="Add photos" hidden>📷</button><input id="photo-input" type="file" accept="image/*" hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…"></textarea><button type="submit" id="send">Send</button></form>
     </section>
   </main>
+  <div id="rp-box" hidden role="dialog" aria-modal="true"><div class="in"><h3 id="rp-h">Report this person</h3><p id="rp-p" style="margin:0 0 8px;color:#64748b;font-size:14px">Our team will read this chat and take action.</p><div class="rs" id="rp-rs"></div><textarea id="rp-note" rows="2" maxlength="500"></textarea><div class="row"><button type="button" id="rp-cancel">Cancel</button><button type="button" id="rp-send" disabled>Send report</button></div></div></div>
   <script src="tex-auth.js?v=20261109fin"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
   <script src="tex-chat.js?v=20261121dock"></script>
@@ -132,12 +137,31 @@
       });
       if (!append || atBottom) msgsEl.scrollTop = msgsEl.scrollHeight;
     }
+    // owner 11-21: Report this person -> admin chat page (chat-admin.html)
+    const ES = (document.documentElement.lang||'').indexOf('es')===0 || /[?&]lang=es/.test(location.search);
+    const RS = ES ? [['Rude or abusive','Grosero u ofensivo'],['Scam or fake','Estafa o falso'],['Spam or ads','Spam o publicidad'],['Inappropriate photo','Foto inapropiada'],['Other','Otro']] : [['Rude or abusive'],['Scam or fake'],['Spam or ads'],['Inappropriate photo'],['Other']];
+    let rpReason = '';
+    const rpBox = document.getElementById('rp-box'), rpSend = document.getElementById('rp-send');
+    if (ES) { document.getElementById('rp-h').textContent = 'Reportar a esta persona'; document.getElementById('rp-p').textContent = 'Nuestro equipo leerá este chat y tomará acción.'; document.getElementById('rp-cancel').textContent = 'Cancelar'; rpSend.textContent = 'Enviar reporte'; document.getElementById('report-btn').textContent = '🚩 Reportar'; document.getElementById('rp-note').placeholder = 'Algo más (opcional)'; } else document.getElementById('rp-note').placeholder = 'Anything else? (optional)';
+    document.getElementById('rp-rs').innerHTML = RS.map((r) => `<button type="button" data-r="${esc(r[0])}">${esc(r[1]||r[0])}</button>`).join('');
+    document.getElementById('rp-rs').addEventListener('click', (e) => { const b = e.target.closest('[data-r]'); if (!b) return; rpReason = b.dataset.r; document.querySelectorAll('#rp-rs button').forEach((x) => x.classList.toggle('on', x === b)); rpSend.disabled = false; });
+    document.getElementById('report-btn').addEventListener('click', () => { rpReason = ''; rpSend.disabled = true; document.querySelectorAll('#rp-rs button').forEach((x) => x.classList.remove('on')); document.getElementById('rp-note').value = ''; rpBox.hidden = false; });
+    document.getElementById('rp-cancel').addEventListener('click', () => { rpBox.hidden = true; });
+    rpSend.addEventListener('click', async () => {
+      const c = chats.find((x) => x.id === current); if (!c || !rpReason) return;
+      const other = c.customer_id === user.id ? c.technician_id : c.customer_id;
+      rpSend.disabled = true;
+      try { await api('texcontractor_chat_reports', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ chat_id: c.id, reported_id: other, reason: rpReason, note: document.getElementById('rp-note').value.trim() || null }) });
+        rpBox.hidden = true; alert(ES ? 'Gracias. Recibimos tu reporte.' : 'Thank you. We got your report.'); }
+      catch (e) { alert(e.message); rpSend.disabled = false; }
+    });
     async function openChat(id) {
       current = id; lastId = 0; app.classList.add('open'); compose.hidden = false;
       const c = chats.find((x) => x.id === id);
       document.getElementById('thread-name').textContent = c ? ((c.customer_id === user.id ? c.technician_name : c.customer_name) || 'TexContractor member') : 'Chat';
       document.getElementById('thread-service').textContent = c?.service || '';
       document.getElementById('live').hidden = false;
+      document.getElementById('report-btn').hidden = !c;
       history.replaceState(null, '', 'chat.html?c=' + id);
       render(await api('texcontractor_chat_messages?select=*&chat_id=eq.' + id + '&order=id.asc&limit=500'), false);
       C.rpc('texcontractor_chat_mark_read', { p_chat_id: id }, true).catch(() => {});
