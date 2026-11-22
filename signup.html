@@ -36,6 +36,12 @@ h1{font-size:1.45rem;line-height:1.2;margin:4px 0 6px}.sub{color:var(--mut);marg
 .role.cust{border-color:#9cc8bd;background:#f2faf7}.role.cust b{color:var(--g)}
 .role.tech{border-color:var(--gold);background:#fff8e8}.role.tech b{color:#8a6100}
 .role.one{grid-column:1/-1}
+/* 11-21 owner: one-role entry was a huge empty box on phones — keep it a compact button */
+.roles:has(.role.one){display:block!important;flex:none!important;height:auto!important;min-height:0!important}
+.role.one{height:auto!important;min-height:0!important;flex:none!important;padding:16px 18px!important}
+html.su-req .role.one .i,html.su-req .role.one b,html.su-req .role.one small,html.su-req .role.one .tag{display:none!important}
+html.su-req .role.one{display:block!important;background:#1d4ed8!important;border-color:#1d4ed8!important;text-align:center!important;padding:18px!important}html.su-req .role.one .lbl{display:block!important;margin:0!important;padding:0!important;text-align:center!important}html.su-req .role.one .lbl>*:not(.cta){display:none!important}html.su-req .role.one .cta{margin:0!important}
+html.su-req .role.one .lbl{width:100%}html.su-req .role.one .cta{display:block!important;background:none!important;color:#fff!important;font-size:19px!important;font-weight:800!important;padding:0!important;box-shadow:none!important;width:100%}
 .note{color:var(--mut);font-size:.78rem;text-align:center;margin:14px 0 0;line-height:1.45}.note a{color:var(--g)}
 .code{width:100%;border:2px solid var(--gold);border-radius:14px;padding:14px;font-size:1.7rem;font-weight:800;letter-spacing:.5em;text-align:center;outline:none;margin:4px 0 14px;font-family:inherit}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:800 1.02rem Arial;text-align:center;text-decoration:none;cursor:pointer}
@@ -221,6 +227,8 @@ try{const hm=/^#ph=(\d{10})$/.exec(location.hash);if(hm){$('#phone').value=prett
 // technician-only entry (ads that target technicians): one button, no question
 if(onlyPro){$('.role.cust').remove();$('.role.tech').classList.add('one');$('.q').style.display='none'}
 if(onlyCust){$('.role.tech').remove();$('.role.cust').classList.add('one');$('.q').style.display='none'}
+// 11-21: customers coming from 'Post your request' see what the number is for
+if(onlyCust&&/requests\.html/.test(safeReturn)){T.en.custS='Pros will contact you on this number';T.en.ctaC='Text me the code →';T.en.cust='Confirm your number';T.es.custS='Los profesionales te contactarán a este número';T.es.ctaC='Envíame el código →';T.es.cust='Confirma tu número';T.en.tagC='';T.es.tagC='';T.en.h1='Last step: your phone';T.es.h1='Último paso: tu teléfono';T.en.s1='Pros contact you on this number. We text you a code to confirm it.';T.es.s1='Los profesionales te contactan a este número. Te enviamos un código para confirmarlo.';document.documentElement.classList.add('su-req')}
 
 render();
 (async()=>{let u=null;try{u=await TexAuth.getUser()}catch(_){}
