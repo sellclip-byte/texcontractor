@@ -1,7 +1,7 @@
 /* Owner 11-21: clean PHONE homepage (like Angi) — one question, then ZIP, then "post a request" or "browse pros".
-   Desktop is unchanged. Only runs on index.html at phone width. */
+   Owner 11-21 (later): desktop uses the same steps — click the white box, the service list drops down, then ZIP, then the choice. */
 (function () {
-  if (!matchMedia('(max-width:700px)').matches) return;
+  var PH = matchMedia('(max-width:700px)').matches;
   var p = location.pathname;
   if (!(p === '/' || /\/index\.html$/.test(p))) return;
   var D = document, H = D.documentElement;
@@ -78,8 +78,14 @@
     '#mh-flow .opt.sel{border-color:#1d4ed8;background:#eff6ff}#mh-flow .opt .e{font-size:30px}#mh-flow .opt b{display:block;font-size:18px;margin-bottom:4px}#mh-flow .opt span.d{color:#475569;font-size:15px;line-height:1.35}',
     '#mh-flow .tag{display:inline-block;background:#dcfce7;color:#166534;font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px;margin-top:8px}'
   ].join('\n');
+  css.textContent += '\n' + [
+    '@media(min-width:701px){#mh-flow{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;max-width:calc(100vw - 32px);max-height:88vh;border-radius:18px;overflow:hidden;box-shadow:0 0 0 100vmax rgba(15,23,42,.55),0 20px 50px rgba(0,0,0,.3)}#mh-flow .x{cursor:pointer}#mh-flow .opt,#mh-flow .btn,#mh-flow .bk{cursor:pointer}}',
+    '#cust-hero .ch-box{position:relative}#cust-hero #ch-city{display:none!important}#cust-hero #ch-q{cursor:pointer}',
+    '#mh-dd{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:80;background:#fff;border:1px solid #cbd5e1;border-radius:14px;box-shadow:0 16px 40px rgba(15,23,42,.2);max-height:380px;overflow:auto;padding:6px}',
+    '#mh-dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 14px;font:600 17px system-ui,sans-serif;color:#0f172a;border-radius:10px;cursor:pointer}#mh-dd button:hover,#mh-dd button.on{background:#eff6ff;color:#1d4ed8}'
+  ].join('\n');
   D.head.appendChild(css);
-  H.classList.add('mh');
+  if (PH) H.classList.add('mh');
 
   var pics = ['catalog-41c6fdd548fb7e0c', 'catalog-d62107fb07c7078f', 'catalog-761209465a696f45', 'catalog-eb3123aa3163fb0b', 'catalog-98d2c8f81847aa2d'];
   var st = { svc: '', label: '', zip: '', city: '', state: '' };
@@ -91,7 +97,37 @@
   }
   function saved() { try { return JSON.parse(localStorage.getItem('texcontractor-location') || '{}') || {}; } catch (_) { return {}; } }
 
+  function desk() {
+    var q = D.getElementById('ch-q'), f = D.getElementById('ch-form'); if (!q || !f || D.getElementById('mh-dd')) return;
+    var dd = D.createElement('div'); dd.id = 'mh-dd'; dd.hidden = true; f.appendChild(dd);
+    var hits = [], cur = -1;
+    var draw = function () {
+      var all = names(), v = q.value.trim().toLowerCase();
+      hits = all.filter(function (n) { return !v || n.toLowerCase().indexOf(v) >= 0; });
+      if (v && !hits.length) hits = all.filter(function (n) { return v.split(/\s+/).some(function (w) { return w.length > 2 && n.toLowerCase().indexOf(w.slice(0, 4)) >= 0; }); });
+      if (!hits.length) hits = all.slice(0, 12);
+      hits = hits.slice(0, v ? 30 : 63); cur = -1;
+      dd.innerHTML = hits.map(function (n, i) { return '<button type="button" data-i="' + i + '">' + esc(n) + '</button>'; }).join('');
+      dd.hidden = false;
+    };
+    var choose = function (n) { if (!n) return; dd.hidden = true; q.value = n; st.svc = n; st.label = n; ev('mh_service'); flow(2); };
+    q.addEventListener('focus', function () { ev('mh_open'); draw(); });
+    q.addEventListener('click', function () { if (dd.hidden) draw(); });
+    q.addEventListener('input', draw);
+    q.addEventListener('keydown', function (e) {
+      if (dd.hidden) return; var bs = dd.querySelectorAll('button');
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (cur >= 0 && bs[cur]) bs[cur].classList.remove('on'); cur = Math.max(0, Math.min(bs.length - 1, cur + (e.key === 'ArrowDown' ? 1 : -1))); if (bs[cur]) { bs[cur].classList.add('on'); bs[cur].scrollIntoView({ block: 'nearest' }); } }
+      else if (e.key === 'Escape') dd.hidden = true;
+    });
+    dd.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    dd.addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) choose(hits[+b.dataset.i]); });
+    D.addEventListener('click', function (e) { if (!dd.hidden && !f.contains(e.target)) dd.hidden = true; });
+    // "Get offers" / Enter: take the highlighted or best match, then go to the ZIP step (same as the phone)
+    f.addEventListener('submit', function (e) { e.preventDefault(); e.stopImmediatePropagation(); if (!q.value.trim() && cur < 0) { draw(); q.focus(); return; } if (dd.hidden || !hits.length) draw(); choose(hits[cur >= 0 ? cur : 0]); }, true);
+  }
+
   function build() {
+    if (!PH) { desk(); return; }
     var hero = D.getElementById('cust-hero'); if (!hero || D.getElementById('mh-hero')) return;
     // header: burger menu with the hidden tools
     var tools = D.querySelector('.header-tools');

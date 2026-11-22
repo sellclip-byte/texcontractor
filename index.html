@@ -925,10 +925,8 @@ body .req-strip{display:none!important}
 </style>
 <section id="cust-hero" aria-label="Find a pro or post a job"><div class="ch-in"><div>
 <h1>Need something fixed? <span class="ch-blue">Local pros send you offers.</span></h1>
-<p class="ch-sub">Post your job with photos. Compare prices. You choose who to text.</p>
-<form class="ch-box" id="ch-form" novalidate><input class="ch-q" id="ch-q" type="text" maxlength="120" autocomplete="off" placeholder="e.g. leaking sink, AC not cooling" aria-label="What do you need?"><span class="ch-city" id="ch-city">📍 <span id="ch-city-t">Near you</span></span><button class="ch-go" type="submit">Get offers →</button></form>
+<form class="ch-box" id="ch-form" novalidate><input class="ch-q" id="ch-q" type="text" maxlength="120" autocomplete="off" placeholder="What do you need fixed?" aria-label="What do you need fixed?"><span class="ch-city" id="ch-city">📍 <span id="ch-city-t">Near you</span></span><button class="ch-go" type="submit">Get offers →</button></form>
 <ul class="ch-trust"><li><b>✓</b> Free for customers</li><li><b>✓</b> No calls until you choose a pro</li><li><b>✓</b> Your number stays private</li></ul>
-<p class="ch-alt">Prefer to pick a pro yourself? <a href="#catalog-start" id="ch-browse">Browse pros near you</a></p>
 </div><div class="ch-side">
 <div id="ch-rq"><div class="h"><span class="dot"></span><span id="ch-rq-h">OPEN REQUESTS</span></div><a class="it" id="ch-rq-it" href="requests.html"><span class="ic">📋</span><div><div class="t1">Free for homeowners</div><div class="t2">Need a job done? Post a request</div></div></a><div class="ch-rq-btns"><a class="ch-rq-post" href="requests.html?post=1&amp;utm_source=site&amp;utm_medium=home_rq_post">📋 <span>Post a request</span></a><a class="see" href="requests.html">See all requests</a></div></div>
 <div id="ch-pt-slot"></div>
@@ -939,7 +937,6 @@ body .req-strip{display:none!important}
 var M=[[/\b(a\/?c|air ?con|cooling|not cool|hvac|thermostat)/i,'Central Air Conditioning Repair or Maintenance'],[/(heat|furnace|heater not)/i,'Heating System Repair or Maintenance'],[/(drain|clog)/i,'Plumbing Drain Repair'],[/(sink|leak|pipe|toilet|faucet|water heater|plumb|shower|tub)/i,'Plumbing Pipe Repair'],[/(outlet|electric|breaker|wiring|panel|light switch)/i,'Electrical and Wiring Repair'],[/garage/i,'Garage Door Repair'],[/roof/i,'Roof Repair or Maintenance'],[/(clean|maid)/i,'House Cleaning'],[/(pest|roach|bug|termite|rat|mice|ant)/i,'Pest Control Services'],[/(mower|lawn ?mower|weed ?eater|edger)/i,'Lawn Mower, Water Pump & Outdoor Equipment Repair'],[/(tree|stump)/i,'Tree Trimming and Removal'],[/fence|gate/i,'Fence and Gate Installation'],[/paint/i,'Interior Painting'],[/(lock|key)/i,'Lock Installation and Repair'],[/(junk|haul)/i,'Junk Removal'],[/(move|moving)/i,'Local Moving (under 50 miles)'],[/(appliance|washer|dryer|fridge|refrigerator|dishwasher|oven|stove)/i,'Appliance Repair or Maintenance'],[/(foundation)/i,'Home Foundation Repair']];
 function svc(q){for(var i=0;i<M.length;i++)if(M[i][0].test(q))return M[i][1];var o=[].slice.call(document.querySelectorAll('#hj-svc option'));q=q.toLowerCase();for(var j=0;j<o.length;j++){var v=(o[j].value||'').toLowerCase();if(v&&q.length>3&&(v.indexOf(q)>=0||q.indexOf(v.split(' ')[0])>=0))return o[j].value}return 'Handyman'}
 var f=document.getElementById('ch-form');f.addEventListener('submit',function(e){e.preventDefault();var q=(document.getElementById('ch-q').value||'').trim();var p=new URLSearchParams({post:'1',utm_source:'site',utm_medium:'home_get_offers'});if(q){p.set('service',svc(q));p.set('title',q.slice(0,120))}if((document.documentElement.lang||'').indexOf('es')===0)p.set('lang','es');try{window.texVisit&&texVisit('home_get_offers')}catch(_){}location.href='requests.html?'+p.toString()});
-document.getElementById('ch-browse').addEventListener('click',function(e){var c=document.querySelector('.catalog-head');if(c){e.preventDefault();c.scrollIntoView({behavior:'smooth',block:'start'})}});
 function city(){try{var l=document.querySelector('.location-bar');var t=l&&l.innerText.trim();if(t&&!/^(choose|elige)/i.test(t.replace(/^📍\s*/,''))){document.getElementById('ch-city-t').textContent=t.split('·')[0].replace(/^📍\s*/,'').trim()}}catch(_){}}
 function moveBits(){try{var slot=document.getElementById('ch-pt-slot'),t=document.getElementById('pros-ticker');if(t&&matchMedia('(min-width:1100px)').matches&&t.parentNode!==slot){slot.appendChild(t);t.classList.remove('hj-pt');var col=document.querySelector('.cl-pros');col&&col.classList.add('cl-pros-empty')}var st=document.querySelector('.hj-stats'),cs=document.getElementById('ch-stats');if(st&&st.parentNode!==cs){cs.appendChild(st);st.classList.remove('hj-stats-in')}}catch(_){}city()}
 var SB='https://rryehtaskbjnfbodymjj.supabase.co',K='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
@@ -2076,6 +2073,6 @@ document.addEventListener('DOMContentLoaded',function(){try{return;/* owner 11-1
 <script src="tex-pw-eye.js?v=1" defer></script>
 <script src="/tex-nospam.js?v=20261114r" defer></script>
 <script src="tex-call.js?v=20261120wrap" defer></script>
-<script src="tex-mobile-home.js?v=20261121b" defer></script>
+<script src="tex-mobile-home.js?v=20261121e" defer></script>
 </body>
 </html>
