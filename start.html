@@ -102,6 +102,7 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
 .tp-prev{display:flex;align-items:center;justify-content:center;font-size:2.6rem;background-size:cover;background-position:center}
 .tp-add.has{border-style:solid}
 .tp-note{color:#334155;font-weight:700;margin-top:8px}
+.tp-btns{display:flex;gap:10px;margin-top:10px}.tp-b{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:14px;border:2px solid #075c4b;background:#fff;color:#075c4b;font-weight:900;font-size:1rem;cursor:pointer;text-align:center;padding:6px}.tp-b.cam{background:#075c4b;color:#fff}
 .lang button{font-size:1rem;font-weight:900;padding:9px 13px;min-height:42px}
 </style>
 <script src="/tex-readable.js?v=20261121i" defer></script></head>
@@ -124,6 +125,8 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
         <figure class="tp-box"><img id="timg" alt=""><figcaption data-t="ourPic"></figcaption></figure>
         <label class="tp-box tp-add" for="myph"><span class="tp-prev" id="tprev"><b>📷</b></span><span class="tp-cap" id="tpcap"></span><input type="file" id="myph" accept="image/*" hidden></label>
       </div>
+      <div class="tp-btns"><label class="tp-b cam" for="mycam">📷 <span data-t="camBtn"></span></label><label class="tp-b" for="myph">🖼️ <span data-t="galBtn"></span></label></div>
+      <input type="file" id="mycam" accept="image/*" capture="user" hidden>
       <p class="small tp-note" data-t="photoNote"></p>
       <button class="cta" id="t1go" type="button" data-t="next1"></button>
     </div>
@@ -201,7 +204,7 @@ const T={
   st4:'Last step',h4:'Enter the code we texted you',s4:'We sent a 6-digit code to {phone}.',verify:'Publish my free profile',verifying:'Publishing…',resend:'Send a new code',edit:'Change number',resent:'New code sent.',
   h5:'You are live, {name}!',s5:'Customers in {city} can now find you under {trade} and text you directly at {phone}.',seeProf:'See my profile',
   more:'Add my photo & my work (customers pick complete profiles)',
-  dupH:'You are already listed ✅',dupS:'Your number {phone} is already listed under {trade}, so customers can text you now. No need to sign up again.',allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tselL:'What is your trade? Tap to choose ▾',tselPh:'Choose your trade ▾',popular:'Most common',allTr:'All trades (A–Z)',ourPic:'Our picture',addPh:'Add your photo',chgPh:'Change photo',photoNote:'Optional: a photo of you or your work. Tap the green box to take a photo or pick one from your phone. It goes live after you confirm your number.',next1:'Next →',tipH:'💡 Did you know?',tipP:'From our experience with customers: they almost always choose the pro whose profile is complete, with a clear photo of you and photos of your work. It builds trust.',tipGo:'Add my photo & my work now',tipNo:'Later',
+  dupH:'You are already listed ✅',dupS:'Your number {phone} is already listed under {trade}, so customers can text you now. No need to sign up again.',allQ:'Search your trade (63 trades)',moreT:'All 63 trades',tselL:'What is your trade? Tap to choose ▾',tselPh:'Choose your trade ▾',popular:'Most common',allTr:'All trades (A–Z)',ourPic:'Our picture',addPh:'Add your photo',chgPh:'Change photo',photoNote:'Optional: a photo of you or your work. It goes live after you confirm your number.',camBtn:'Take a photo',galBtn:'From my photos',next1:'Next →',tipH:'💡 Did you know?',tipP:'From our experience with customers: they almost always choose the pro whose profile is complete, with a clear photo of you and photos of your work. It builds trust.',tipGo:'Add my photo & my work now',tipNo:'Later',
   errPhone:'Enter a 10-digit U.S. mobile number.',errName:'Enter your name.',errGeneric:'Something went wrong. Please try again.'},
  es:{k1:'Gratis para técnicos',h1:'Consigue clientes que te escriben directo',s1:'3 pasos rápidos. Sin pagar por cliente. ¿Cuál es tu oficio?',
   st2:'Paso 2 de 3',h2:'¿Dónde trabajas?',s2:'Escribe tu código postal para que los clientes cerca de ti te encuentren.',cityL:'Tu ciudad',next:'Continuar',
@@ -212,7 +215,7 @@ const T={
   st4:'Último paso',h4:'Escribe el código que te mandamos',s4:'Mandamos un código de 6 dígitos al {phone}.',verify:'Publicar mi perfil gratis',verifying:'Publicando…',resend:'Mandar otro código',edit:'Cambiar número',resent:'Código nuevo enviado.',
   h5:'¡Ya estás publicado, {name}!',s5:'Los clientes en {city} ya te pueden encontrar en {trade} y escribirte directo al {phone}.',seeProf:'Ver mi perfil',
   more:'Agregar mi foto y mis trabajos (los clientes eligen perfiles completos)',
-  dupH:'Ya estás publicado ✅',dupS:'Tu número {phone} ya está publicado en {trade}, así que los clientes ya te pueden escribir. No necesitas registrarte otra vez.',allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tselL:'¿Cuál es tu oficio? Toca para escoger ▾',tselPh:'Escoge tu oficio ▾',popular:'Los más comunes',allTr:'Todos los oficios (A–Z)',ourPic:'Nuestra foto',addPh:'Agrega tu foto',chgPh:'Cambiar foto',photoNote:'Opcional: una foto tuya o de tu trabajo. Toca el cuadro verde para tomar una foto o escoger una de tu teléfono. Se publica cuando confirmes tu número.',next1:'Siguiente →',tipH:'💡 ¿Sabías que…?',tipP:'Por nuestra experiencia con los clientes: casi siempre eligen al técnico con el perfil completo, con una foto clara de ti y fotos de tus trabajos. Da confianza.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
+  dupH:'Ya estás publicado ✅',dupS:'Tu número {phone} ya está publicado en {trade}, así que los clientes ya te pueden escribir. No necesitas registrarte otra vez.',allQ:'Busca tu oficio (63 oficios)',moreT:'Los 63 oficios',tselL:'¿Cuál es tu oficio? Toca para escoger ▾',tselPh:'Escoge tu oficio ▾',popular:'Los más comunes',allTr:'Todos los oficios (A–Z)',ourPic:'Nuestra foto',addPh:'Agrega tu foto',chgPh:'Cambiar foto',photoNote:'Opcional: una foto tuya o de tu trabajo. Se publica cuando confirmes tu número.',camBtn:'Tomar una foto',galBtn:'De mis fotos',next1:'Siguiente →',tipH:'💡 ¿Sabías que…?',tipP:'Por nuestra experiencia con los clientes: casi siempre eligen al técnico con el perfil completo, con una foto clara de ti y fotos de tus trabajos. Da confianza.',tipGo:'Agregar mi foto y mis trabajos',tipNo:'Después',
   errPhone:'Escribe un número de celular de EE. UU. de 10 dígitos.',errName:'Escribe tu nombre.',errGeneric:'Algo salió mal. Intenta de nuevo.'}
 };
 const TRADES=[
@@ -261,7 +264,7 @@ function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_play
 $('#allq').addEventListener('input',drawAll);
 $('#tradeSel').addEventListener('change',e=>{const v=e.target.value;const a=ALL.find(x=>x[0]===v);st.trade=TRADES.find(x=>x.s===v)||(a?{s:a[0],i:'',en:a[0],es:a[1]}:null);ev('quick_trade',{trade:v,from:'select'});drawPick();setTimeout(()=>$('#t1go').scrollIntoView({behavior:'smooth',block:'center'}),150)});
 $('#t1go').onclick=()=>{if(st.trade)go(2)};
-$('#myph').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const M=1080,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);st.photo=c.toDataURL('image/jpeg',0.85);try{sessionStorage.setItem('tex_quick_photo',st.photo)}catch(_){}ev('quick_photo_added');drawPick()};im.src=r.result};r.readAsDataURL(f)});
+const onPh=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const M=1080,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);st.photo=c.toDataURL('image/jpeg',0.85);try{sessionStorage.setItem('tex_quick_photo',st.photo)}catch(_){}ev('quick_photo_added');drawPick()};im.src=r.result};r.readAsDataURL(f);e.target.value=''};$('#myph').addEventListener('change',onPh);$('#mycam').addEventListener('change',onPh);
 try{const sp=sessionStorage.getItem('tex_quick_photo');if(sp&&/^data:image\//.test(sp))st.photo=sp}catch(_){}
 $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
