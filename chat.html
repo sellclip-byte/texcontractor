@@ -105,6 +105,8 @@
     async function loadList() {
       try {
         chats = await api('texcontractor_chats?select=*&order=last_message_at.desc.nullslast,created_at.desc');
+        // owner 11-21: a chat only shows once someone wrote in it (tapping Chat alone made empty chats)
+        chats = (chats || []).filter((c) => c.last_message_at || c.last_message || c.id === current);
         const unread = await api('texcontractor_chat_messages?select=chat_id&read_at=is.null&sender_id=neq.' + user.id);
         unreadBy = {}; (unread || []).forEach((m) => { unreadBy[m.chat_id] = (unreadBy[m.chat_id] || 0) + 1; });
       } catch (e) { listEl.innerHTML = '<p class="empty error">Chat is being set up. Please try again later.</p>'; return; }
