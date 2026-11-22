@@ -77,10 +77,11 @@
     if (!items.length) { np.style.display = 'none'; return; }
     var lab = es() ? ' en ' : ' · ';
     // Owner 11-21: no emoji icons. Pro without a photo -> the catalog photo of his service, else his state letters.
+    var norm = function (x) { return String(x || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z]+/g, ' ').trim(); };
     var CAT = {};
-    [].forEach.call(D.querySelectorAll('img[src*="images/home/catalog-"]'), function (im) { var a = String(im.alt || '').toLowerCase(); if (a && !CAT[a]) CAT[a] = im.getAttribute('src'); });
-    var catImg = function (sv) { sv = String(sv || '').toLowerCase(); if (!sv) return ''; if (CAT[sv]) return CAT[sv];
-      for (var k in CAT) if (k.indexOf(sv) === 0 || sv.indexOf(k) === 0) return CAT[k]; return ''; };
+    [].forEach.call(D.querySelectorAll('img[src*="images/home/catalog-"]'), function (im) { var a = norm(im.alt); if (a && !CAT[a]) CAT[a] = im.getAttribute('src'); });
+    var catImg = function (sv) { sv = norm(sv); if (!sv) return ''; if (CAT[sv]) return CAT[sv];
+      for (var k in CAT) if (k.indexOf(sv) === 0 || sv.indexOf(k) === 0 || (sv.length > 14 && k.slice(0, 18) === sv.slice(0, 18))) return CAT[k]; return ''; };
     var st = function (c) { var m = String(c || '').match(/,\s*([A-Za-z]{2})$/); return m ? m[1].toUpperCase() : 'US'; };
     var av = function (it) { var src = it.photo || catImg(it.service);
       return src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="st">' + esc(st(it.city)) + '</span>'; };
