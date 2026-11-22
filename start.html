@@ -104,6 +104,28 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
 .tp-note{color:#334155;font-weight:700;margin-top:8px}
 .tp-btns{display:flex;gap:10px;margin-top:10px}.tp-b{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:14px;border:2px solid #075c4b;background:#fff;color:#075c4b;font-weight:900;font-size:1rem;cursor:pointer;text-align:center;padding:6px}.tp-b.cam{background:#075c4b;color:#fff}
 .lang button{font-size:1rem;font-weight:900;padding:9px 13px;min-height:42px}
+
+.q2{font-size:1.2rem;margin:22px 0 10px}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.chips.two{grid-template-columns:1fr 1fr}.chips.three{grid-template-columns:repeat(3,1fr)}
+#hrChips{grid-template-columns:1fr 1fr}#abChips{grid-template-columns:1fr 1fr;margin-bottom:12px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:13px 6px;font:inherit;font-weight:800;font-size:1rem;color:var(--ink);cursor:pointer}
+.chip.on{border-color:#1d4ed8;background:#1d4ed8;color:#fff}
+#abChips .chip{font-size:.88rem;font-weight:700;padding:10px 6px;color:#1d4ed8;border-color:#bfdbfe;background:#eff6ff}
+.hr-custom{display:flex;gap:8px;align-items:center;margin-top:10px}.hr-custom .field{padding:12px}
+.pp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pp-opt{border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px;font:inherit;font-weight:800;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pp-opt.on{border-color:#1d4ed8;box-shadow:0 0 0 3px #bfdbfe}
+.pp-img{width:100%;aspect-ratio:1;border-radius:12px;background:#eef2f6 center/cover;display:flex;align-items:center;justify-content:center;font-size:2.4rem;overflow:hidden}.pp-img img{width:100%;height:100%;object-fit:cover}
+.wk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.wk{position:relative;aspect-ratio:1;border:2px dashed #cbd5e1;border-radius:12px;background:#fff center/cover}.wk.has{border:0}
+.wk label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#94a3b8;cursor:pointer}
+.wk .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(15,23,42,.75);color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.wk-count{margin:10px 2px 0;font-weight:800;color:#b45309}.wk-count.good{color:#15803d}
+.money{display:flex;align-items:center;gap:8px}.money b{font-size:1.4rem}
+textarea.field{resize:vertical;min-height:110px}
+.yn{display:grid;gap:10px}
+#tpick .tp-add,#tpick .tp-btns{display:none!important}
+section[data-s="12"] a[href="my-photos.html"]{display:none}
 </style>
 <script src="/tex-readable.js?v=20261121i" defer></script></head>
 <body>
@@ -127,7 +149,7 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
       </div>
       <div class="tp-btns"><label class="tp-b cam" for="mycam">📷 <span data-t="camBtn"></span></label><label class="tp-b" for="myph">🖼️ <span data-t="galBtn"></span></label></div>
       <input type="file" id="mycam" accept="image/*" capture="user" hidden>
-      <p class="small tp-note" data-t="photoNote"></p>
+      
       <button class="cta" id="t1go" type="button" data-t="next1"></button>
     </div>
     <div class="grid" id="trades" hidden></div>
@@ -147,6 +169,71 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
     <button class="cta" id="zipgo" disabled data-t="next"></button>
   </section>
   <section class="step" data-s="3">
+    <span class="kick" data-n="k3"></span>
+    <h1 data-n="h3"></h1>
+    <p class="sub" data-n="s3"></p>
+    <div class="pp-row">
+      <button type="button" class="pp-opt" id="ppMine"><span class="pp-img" id="ppMineImg"><b>🤳</b></span><span data-n="mine"></span></button>
+      <button type="button" class="pp-opt" id="ppOurs"><span class="pp-img"><img id="ppOursImg" alt=""></span><span data-n="ours"></span></button>
+    </div>
+    <div class="tp-btns" id="ppBtns" hidden><label class="tp-b cam" for="ppCam">📷 <span data-n="cam"></span></label><label class="tp-b" for="ppGal">🖼️ <span data-n="gal"></span></label></div>
+    <input type="file" id="ppCam" accept="image/*" capture="user" hidden><input type="file" id="ppGal" accept="image/*" hidden>
+    <button class="cta" id="go3" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="4">
+    <span class="kick" data-n="k4"></span>
+    <h1 data-n="h4"></h1>
+    <p class="sub" data-n="s4"></p>
+    <div class="tp-btns"><label class="tp-b cam" for="wkCam">📷 <span data-n="cam2"></span></label><label class="tp-b" for="wkGal">🖼️ <span data-n="gal2"></span></label></div>
+    <input type="file" id="wkCam" accept="image/*" capture="environment" hidden><input type="file" id="wkGal" accept="image/*" multiple hidden>
+    <div class="wk-grid" id="wkGrid"></div>
+    <p class="wk-count" id="wkCount"></p>
+    <button class="cta" id="go4" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="5">
+    <span class="kick" data-n="k5"></span>
+    <h1 data-n="h5"></h1>
+    <div class="chips" id="yrChips"></div>
+    <h2 class="q2" data-n="h5b"></h2>
+    <div class="chips two" id="esChips"></div>
+    <button class="cta" id="go5" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="6">
+    <span class="kick" data-n="k6"></span>
+    <h1 data-n="h6"></h1>
+    <div class="chips" id="hrChips"></div>
+    <div class="hr-custom" id="hrCustom" hidden><select class="field" id="hrFrom"></select><span>–</span><select class="field" id="hrTo"></select></div>
+    <h2 class="q2" data-n="h6b"></h2>
+    <p class="sub" data-n="s6b" style="margin-bottom:10px"></p>
+    <div class="chips three" id="ctChips"></div>
+    <button class="cta" id="go6" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="7">
+    <span class="kick" data-n="k7"></span>
+    <h1 data-n="h7"></h1>
+    <p class="sub" data-n="s7"></p>
+    <div class="opts" id="prOpts"></div>
+    <div id="prAmt" hidden><label class="lb" for="prNum" id="prLab"></label><div class="money"><b>$</b><input class="field" id="prNum" inputmode="numeric" maxlength="6" placeholder="75"></div></div>
+    <button class="cta" id="go7" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="8">
+    <span class="kick" data-n="k8"></span>
+    <h1 data-n="h8"></h1>
+    <p class="sub" data-n="s8"></p>
+    <div class="yn" id="ynBox"></div>
+    <div id="licBox" hidden><label class="lb" for="licNum" data-n="licL"></label><input class="field" id="licNum" maxlength="40" autocomplete="off"></div>
+    <button class="cta" id="go8" type="button" data-n="next"></button>
+  </section>
+  <section class="step" data-s="9">
+    <span class="kick" data-n="k9"></span>
+    <h1 data-n="h9"></h1>
+    <p class="sub" data-n="s9"></p>
+    <div class="chips" id="abChips"></div>
+    <textarea class="field" id="about" rows="4" maxlength="400"></textarea>
+    <p class="wk-count" id="abCount"></p>
+    <button class="cta" id="go9" type="button" disabled data-n="next"></button>
+  </section>
+  <section class="step" data-s="10">
     <span class="kick" data-t="st3"></span>
     <h1 data-t="h3"></h1>
     <p class="sub" data-t="s3"></p>
@@ -160,7 +247,7 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
     <p class="small" style="margin-top:10px"><button class="link" id="useemail" data-t="useEmail"></button></p>
     <p class="err" id="err3" role="alert"></p>
   </section>
-  <section class="step" data-s="4">
+  <section class="step" data-s="11">
     <span class="kick" data-t="st4"></span>
     <h1 data-t="h4"></h1>
     <p class="sub" id="s4"></p>
@@ -169,7 +256,7 @@ select.tsel{font-size:1.15rem;font-weight:900;color:#0f172a;border:3px solid #07
     <p class="err" id="err4" role="alert"></p>
     <p class="small"><button class="link" id="resend" data-t="resend"></button> · <button class="link" id="edit" data-t="edit"></button></p>
   </section>
-  <section class="step" data-s="5">
+  <section class="step" data-s="12">
     <div class="card" style="text-align:center">
       <div class="ok">✅</div>
       <h1 id="h5"></h1>
@@ -258,9 +345,10 @@ function render(){
  TRADES.forEach(tr=>{const b=document.createElement('button');b.className='tile'+(st.trade===tr?' sel':'');b.innerHTML='<img src="trade-icons/'+tr.i+'.webp" alt="">'+(L==='es'?tr.es:tr.en);b.onclick=()=>{st.trade=tr;ev('quick_trade',{trade:tr.s});go(2)};g.appendChild(b)});
  const m=document.createElement('button');m.className='tile more';m.innerHTML='<b>+</b>'+t('moreT');m.onclick=()=>{$('#allbox').hidden=false;$('#allq').focus();drawAll();$('#allbox').scrollIntoView({behavior:'smooth',block:'start'})};g.appendChild(m);$('#allq').placeholder=t('allQ');if(!$('#allbox').hidden)drawAll();
  $('#s4').textContent=fmt(t('s4'));$('#h5').textContent=fmt(t('h5'));$('#s5').textContent=fmt(t('s5'));
+ try{nrender()}catch(_){}
 }
-function go(n){st.step=n;if(n===3){try{if(!sessionStorage.getItem('tex_last_played')){var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.8;var ok=function(){try{sessionStorage.setItem('tex_last_played','1')}catch(_){}};/* owner 11-11: iPhone sometimes blocks the voice; if so, play it on the next tap */au.play().then(ok).catch(function(){var t=function(){document.removeEventListener('pointerdown',t,true);document.removeEventListener('keydown',t,true);if(st.step===3)au.play().then(ok).catch(function(){})};document.addEventListener('pointerdown',t,true);document.addEventListener('keydown',t,true)})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=5?100:(n-1)*25+5)+'%';$('#back').style.visibility=(n>1&&n<5)?'visible':'hidden';window.scrollTo(0,0);
- if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===3)setTimeout(()=>$('#name').focus(),200);if(n===4)setTimeout(()=>$('#code').focus(),200);render()}
+function go(n){st.step=n;if(n===10){try{if(!sessionStorage.getItem('tex_last_played')){var au=new Audio('/audio/last-'+(document.documentElement.lang==='es'?'es':'en')+'.mp3?v=1');au.volume=0.8;var ok=function(){try{sessionStorage.setItem('tex_last_played','1')}catch(_){}};/* owner 11-11: iPhone sometimes blocks the voice; if so, play it on the next tap */au.play().then(ok).catch(function(){var t=function(){document.removeEventListener('pointerdown',t,true);document.removeEventListener('keydown',t,true);if(st.step===10)au.play().then(ok).catch(function(){})};document.addEventListener('pointerdown',t,true);document.addEventListener('keydown',t,true)})}}catch(_){}try{window.texVisit&&texVisit('pro_phone_step')}catch(_){}}$$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));$('#prog').style.width=(n>=12?100:(n-1)*10+5)+'%';$('#back').style.visibility=(n>1&&n<12)?'visible':'hidden';window.scrollTo(0,0);
+ if(n===2)setTimeout(()=>$('#zip').focus(),200);if(n===10)setTimeout(()=>{if(!$('#name').value)$('#name').focus()},200);if(n===11)setTimeout(()=>$('#code').focus(),200);render()}
 $('#allq').addEventListener('input',drawAll);
 $('#tradeSel').addEventListener('change',e=>{const v=e.target.value;const a=ALL.find(x=>x[0]===v);st.trade=TRADES.find(x=>x.s===v)||(a?{s:a[0],i:'',en:a[0],es:a[1]}:null);ev('quick_trade',{trade:v,from:'select'});drawPick();setTimeout(()=>$('#t1go').scrollIntoView({behavior:'smooth',block:'center'}),150)});
 $('#t1go').onclick=()=>{if(st.trade)go(2)};
@@ -270,13 +358,13 @@ $('#back').onclick=()=>go(Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
 // step 2
 let phoneUser=null;
-const zipOk=()=>{$('#zipgo').disabled=!(st.zip.length===5&&(st.city||($('#cityin').value.trim().length>1))&&(!phoneUser||$('#name2').value.trim().length>1))};
+const zipOk=()=>{$('#zipgo').disabled=!(st.zip.length===5&&(st.city||($('#cityin').value.trim().length>1)))};
 $('#zip').addEventListener('input',async e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);st.zip=e.target.value;st.city='';st.state='';$('#zipcity').textContent='';$('#cityfb').hidden=true;zipOk();
  if(st.zip.length===5){const z=st.zip;try{const r=await fetch('https://api.zippopotam.us/us/'+z);if(r.ok&&z===st.zip){const d=await r.json();const pl=d.places&&d.places[0];if(pl){st.city=pl['place name'];st.state=pl['state abbreviation'];$('#zipcity').textContent='📍 '+st.city+', '+st.state}}}catch(_){}
   if(!st.city&&z===st.zip)$('#cityfb').hidden=false;zipOk()}});
 $('#cityin').addEventListener('input',zipOk);$('#name2').addEventListener('input',zipOk);
 $('#zipgo').onclick=async()=>{if(!st.city){st.city=$('#cityin').value.trim();st.state=st.state||'TX'}ev('quick_zip',{state:st.state});
- if(!phoneUser){go(3);return}
+ go(3);return;
  const b=$('#zipgo');st.name=$('#name2').value.trim().replace(/\s+/g,' ');$('#err2').textContent='';b.disabled=true;b.textContent=t('publishing');
  try{await publish(phoneUser)}catch(e){$('#err2').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('googleIn')}};
 // step 3
@@ -286,27 +374,27 @@ const PHONE_OTP=true; // turn on when Twilio Verify is connected in Supabase Aut
 const ready3=()=>{const d=digits($('#phone').value).replace(/^1(?=\d{10}$)/,'');return $('#name').value.trim().length>1&&d.length===10&&$('#agree').checked};
 const can3=()=>{const r=ready3();$('#send').disabled=!r;$('#google').disabled=!r;$('#useemail').disabled=!r};
 const DRAFT='texcontractor-quick-draft';
-const saveDraft=()=>{try{localStorage.setItem(DRAFT,JSON.stringify({trade:st.trade&&st.trade.s,zip:st.zip,city:st.city,state:st.state,name:st.name,phone:st.phone,L,at:Date.now()}))}catch(_){}};
+const saveDraft=()=>{try{localStorage.setItem(DRAFT,JSON.stringify({trade:st.trade&&st.trade.s,zip:st.zip,city:st.city,state:st.state,name:st.name,phone:st.phone,L,at:Date.now(),x:{years:st.years,spanish:st.spanish,hours:st.hours,hFrom:st.hFrom,hTo:st.hTo,call:st.call,chat:st.chat,price:st.price,priceAmt:st.priceAmt,lic:st.lic,ins:st.ins,bg:st.bg,licNum:st.licNum,about:st.about,ours:st.ours}}))}catch(_){}};
 const readDraft=()=>{try{const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d||Date.now()-d.at>3600e3)return null;return d}catch(_){return null}};
 const collect3=()=>{st.name=$('#name').value.trim().replace(/\s+/g,' ');st.phone=pretty(digits($('#phone').value))};
 async function publish(user){
   const svc=st.trade.s;
   const data={realName:st.name,displayName:st.name,phone:st.phone,email:String(user.email||''),years:'',city:st.city,state:st.state||'TX',service:svc,
-   about:(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'. Manda un mensaje para pedir un presupuesto.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'. Send a text to get a quote.'),
-   speaksSpanish:L==='es'?'yes':'no',availFrom:'',availTo:'',workRes:($('#wtRes')&&$('#wtRes').checked)?'yes':'',workCom:($('#wtCom')&&$('#wtCom').checked)?'yes':''};
+   about:String(st.about||'').trim().slice(0,400)||(L==='es'?'Escríbele directo a '+st.name+' para '+svc+' en '+st.city+', '+st.state+'.':'Contact '+st.name+' directly for '+svc+' in '+st.city+', '+st.state+'.'),
+   speaksSpanish:st.spanish?st.spanish:(L==='es'?'yes':'no'),availFrom:st.hFrom===''?'':st.hFrom,availTo:st.hTo===''?'':st.hTo,years:st.years||'',contactCall:st.call?'yes':'',contactChat:st.chat?'yes':'',insured:st.ins?'yes':'',licensed:st.lic?'yes':'',background:st.bg?'yes':'',licenseNumber:st.licNum||'',priceType:st.price||'',priceHourly:st.price==='hourly'?st.priceAmt:'',priceStarting:st.price==='starting'?st.priceAmt:'',workRes:($('#wtRes')&&$('#wtRes').checked)?'yes':'',workCom:($('#wtCom')&&$('#wtCom').checked)?'yes':''};
   // never create a second listing for the same phone + trade (imported directory listing or an earlier sign-up)
   let dup=null;try{dup=await TexAdminApi.listingForPhone(st.phone,svc)}catch(_){dup=null}
   if(dup&&dup.id){try{localStorage.removeItem(DRAFT)}catch(_){}
     ev('quick_duplicate',{trade:svc,mine:!!dup.mine});
     $('#seeprof').href='profile.html?contractor='+encodeURIComponent(dup.id);
-    go(5);$('#h5').textContent=t('dupH');$('#s5').textContent=fmt(t('dupS'));
-    setTimeout(()=>{$('#tip').hidden=false},1400);return;}
-  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:st.photo||'',workPhotos:[]}});try{sessionStorage.removeItem('tex_quick_photo')}catch(_){}
+    go(12);$('#h5').textContent=t('dupH');$('#s5').textContent=fmt(t('dupS'));
+    return;}
+  let pp=st.photo||'';if(st.ours||!pp){pp=await oursData()||pp}
+  const saved=await TexAdminApi.createSubmission({user,data,media:{profilePhoto:pp,workPhotos:(st.work||[]).slice(0,8)}});try{IDB.set('photos',null)}catch(_){}try{sessionStorage.removeItem('tex_quick_photo')}catch(_){}
   try{localStorage.removeItem(DRAFT)}catch(_){}
   ev('quick_published',{trade:svc});
   $('#seeprof').href=saved&&saved.id?'profile.html?contractor='+encodeURIComponent(saved.id):'account.html';
-  go(5);
-  setTimeout(()=>{$('#tip').hidden=false;ev('quick_tip_shown')},1400);
+  go(12);
 }
 const RET='start.html?resume=1';
 $('#google').onclick=async()=>{collect3();const b=$('#google');$('#err3').textContent='';
@@ -319,14 +407,14 @@ $('#useemail').onclick=async()=>{collect3();saveDraft();$('#err3').textContent='
 async function sendCode(){const b=$('#send');$('#err3').textContent='';st.name=$('#name').value.trim().replace(/\s+/g,' ');st.phone=pretty(digits($('#phone').value));
  if(st.name.length<2){$('#err3').textContent=t('errName');return false}
  b.disabled=true;b.textContent=t('sending');
- try{st.e164=await TexAuth.sendPhoneCode(st.phone,'provider');ev('quick_code_sent');try{window.texVisit&&texVisit('code_sent')}catch(_){};go(4);return true}
+ try{st.e164=await TexAuth.sendPhoneCode(st.phone,'provider');ev('quick_code_sent');try{window.texVisit&&texVisit('code_sent')}catch(_){};go(11);return true}
  catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');return false}
  finally{b.textContent=t('send');can3()}}
 $('#send').onclick=sendCode;
 // step 4
 $('#code').addEventListener('input',e=>{e.target.value=digits(e.target.value).slice(0,6);$('#verify').disabled=e.target.value.length<6});
 $('#resend').onclick=async()=>{$('#err4').textContent='';try{await TexAuth.sendPhoneCode(st.phone,'provider');$('#err4').style.color='#075c4b';$('#err4').textContent=t('resent')}catch(e){$('#err4').style.color='';$('#err4').textContent=(e&&e.message)||t('errGeneric')}};
-$('#edit').onclick=()=>go(3);
+$('#edit').onclick=()=>go(10);
 $('#verify').onclick=async()=>{const b=$('#verify');b.disabled=true;b.textContent=t('verifying');$('#err4').style.color='';$('#err4').textContent='';
  try{const user=await TexAuth.verifyPhoneCode(st.phone,$('#code').value);try{window.texVisit&&texVisit('verified')}catch(_){};await publish(user);
  }catch(e){$('#err4').textContent=(e&&e.message)||t('errGeneric');b.disabled=false;b.textContent=t('verify')}};
@@ -340,17 +428,95 @@ if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#go
  if(NEW_SIGNUP_FIRST&&!u&&!q.get('resume')&&q.get('classic')!=='1'){const p=new URLSearchParams(location.search);if(L==='es')p.set('lang','es');let h='';try{const pp=sessionStorage.getItem('texcontractor-pro-phone');if(pp&&/^\d{10}$/.test(pp))h='#ph='+pp}catch(_){}
   location.replace('signup.html?'+p.toString()+h);return}
  $('#app').style.visibility='';
- if(u&&u.phone&&digits(u.phone).replace(/^1(?=\d{10}$)/,'').length===10){phoneUser=u;st.phone=pretty(digits(u.phone));$('#namebox').hidden=false;
-  T.en.k1='✓ '+st.phone+' confirmed';T.en.h1='What is your trade?';T.en.s1='Pick your trade, then your ZIP and you are live.';T.en.st2='Step 2 of 2';T.en.h2='Where do you work?';T.en.next='Publish my free profile';
-  T.es.k1='✓ '+st.phone+' confirmado';T.es.h1='¿Cuál es tu oficio?';T.es.s1='Escoge tu oficio, luego tu código postal y listo.';T.es.st2='Paso 2 de 2';T.es.h2='¿Dónde trabajas?';T.es.next='Publicar mi perfil gratis';
+ if(u&&u.phone&&digits(u.phone).replace(/^1(?=\d{10}$)/,'').length===10){phoneUser=u;st.phone=pretty(digits(u.phone));$('#phone').value=st.phone;$('#phone').readOnly=true;
+  T.en.k1='✓ '+st.phone+' confirmed';T.en.h1='What is your trade?';T.en.s1='Fill in your profile, then you are live.';
+  T.es.k1='✓ '+st.phone+' confirmado';T.es.h1='¿Cuál es tu oficio?';T.es.s1='Llena tu perfil y listo.';
   render();zipOk()}
  if(u){try{$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
    const n=document.createElement('p');n.className='small';n.textContent=(L==='es'?'Ya entraste como ':'Signed in as ')+(u.email||u.phone||'');$('#google').after(n)}catch(_){}}
  const d=q.get('resume')?readDraft():null;
- if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||(ALL.find(x=>x[0]===d.trade)?{s:d.trade,i:'',en:d.trade,es:(ALL.find(x=>x[0]===d.trade)||[])[1]}:null);st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;
-  if(st.trade){go(3);$('#name').value=st.name;$('#phone').value=st.phone;$('#agree').checked=true;can3();
+ if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||(ALL.find(x=>x[0]===d.trade)?{s:d.trade,i:'',en:d.trade,es:(ALL.find(x=>x[0]===d.trade)||[])[1]}:null);st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;if(d.x)Object.assign(st,d.x);const ph=await IDB.get('photos');if(ph){st.photo=ph.photo||st.photo;st.work=ph.work||[];st.ours=!!ph.ours}
+  if(st.trade){go(10);$('#name').value=st.name;$('#phone').value=st.phone;$('#agree').checked=true;can3();
    try{$('#google').disabled=true;$('#google').lastChild.textContent=t('publishing');await publish(u)}catch(e){$('#err3').textContent=(e&&e.message)||t('errGeneric');$('#google').disabled=false;$('#google').lastChild.textContent=t('googleIn')}}}
 })();
+// ===== Owner 11-21: full profile BEFORE the phone. One screen per big question, two small questions per screen, taps instead of typing. =====
+const N={
+ en:{next:'Continue',k3:'Step 3 of 9',h3:'Your profile photo',s3:'Customers like to see who is coming. Use your own photo or pick ours.',mine:'My own photo',ours:'Use our picture',cam:'Take a photo',gal:'From my photos',
+  k4:'Step 4 of 9',h4:'Photos of your work',s4:'Add at least 3 photos of jobs you did (up to 8). Customers choose pros with real work photos.',cam2:'Take a photo',gal2:'Choose photos',need:'{n} of 3 photos added',ok8:'{n} photos added ✓ (up to 8)',
+  k5:'Step 5 of 9',h5:'Years of experience',h5b:'Do you speak Spanish?',yes:'Yes',no:'No',
+  k6:'Step 6 of 9',h6:'Your working hours',any:'Any time',cust:'Other hours',h6b:'How can customers reach you?',s6b:'Text is always on. Tap to add more.',txt:'Text',call:'Call',chat:'Site chat',
+  k7:'Step 7 of 9',h7:'How do you price your work?',s7:'Tap one.',hourly:'By the hour',starting:'Starting price',estimate:'Free estimate',deal:'We agree on the job',hourL:'Your price per hour',startL:'Jobs start at',
+  k8:'Step 8 of 9',h8:'Tap what applies to you',s8:'Only tap what is true. Leave the rest.',lic:'I am licensed',ins:'I am insured',bg:'Background check done',licL:'License number (optional)',
+  k9:'Step 9 of 9',h9:'A few words about your work',s9:'One or two sentences in your own words. Tap to add, then edit.',abMin:'Write a little more',abOk:'Looks good ✓',
+  c1:'Free estimates',c2:'Clean, careful work',c3:'Fair prices',c4:'Small jobs welcome',c5:'Licensed and insured',c6:'Friendly and respectful',
+  h10:'Last step: your number, and you\'re online',k10:'Last step'},
+ es:{next:'Continuar',k3:'Paso 3 de 9',h3:'Tu foto de perfil',s3:'A los clientes les gusta ver quién va a llegar. Usa tu foto o escoge la nuestra.',mine:'Mi propia foto',ours:'Usar nuestra foto',cam:'Tomar una foto',gal:'De mis fotos',
+  k4:'Paso 4 de 9',h4:'Fotos de tu trabajo',s4:'Agrega al menos 3 fotos de trabajos que hiciste (hasta 8). Los clientes eligen técnicos con fotos reales.',cam2:'Tomar una foto',gal2:'Escoger fotos',need:'{n} de 3 fotos',ok8:'{n} fotos ✓ (hasta 8)',
+  k5:'Paso 5 de 9',h5:'Años de experiencia',h5b:'¿Hablas español?',yes:'Sí',no:'No',
+  k6:'Paso 6 de 9',h6:'Tu horario de trabajo',any:'A cualquier hora',cust:'Otro horario',h6b:'¿Cómo te pueden contactar?',s6b:'El texto siempre está activo. Toca para agregar más.',txt:'Texto',call:'Llamada',chat:'Chat del sitio',
+  k7:'Paso 7 de 9',h7:'¿Cómo cobras tu trabajo?',s7:'Toca uno.',hourly:'Por hora',starting:'Precio desde',estimate:'Presupuesto gratis',deal:'Lo acordamos en el trabajo',hourL:'Tu precio por hora',startL:'Los trabajos empiezan en',
+  k8:'Paso 8 de 9',h8:'Toca lo que aplica para ti',s8:'Toca solo lo que es verdad. Deja lo demás.',lic:'Tengo licencia',ins:'Tengo seguro',bg:'Verificación de antecedentes',licL:'Número de licencia (opcional)',
+  k9:'Paso 9 de 9',h9:'Unas palabras sobre tu trabajo',s9:'Una o dos frases con tus palabras. Toca para agregar y luego edita.',abMin:'Escribe un poco más',abOk:'Se ve bien ✓',
+  c1:'Presupuestos gratis',c2:'Trabajo limpio y cuidadoso',c3:'Precios justos',c4:'Trabajos pequeños bienvenidos',c5:'Con licencia y seguro',c6:'Amable y respetuoso',
+  h10:'Último paso: tu número, y ya estás en línea',k10:'Último paso'}
+};
+const n_=k=>(N[L]&&N[L][k])||'';
+Object.assign(st,{work:[],years:'',spanish:'',hours:'',hFrom:'',hTo:'',call:false,chat:false,price:'',priceAmt:'',lic:false,ins:false,bg:false,licNum:'',about:'',ours:false});
+T.en.st3=N.en.k10;T.es.st3=N.es.k10;T.en.h3=N.en.h10;T.es.h3=N.es.h10;T.en.s1='No lead fees. What is your trade?';T.es.s1='Sin pagar por cliente. ¿Cuál es tu oficio?';T.en.st2='Step 2 of 9';T.es.st2='Paso 2 de 9';
+T.en.h5='Congratulations {name}, you are online!';T.es.h5='¡Felicidades {name}, ya estás en línea!';
+const shrink=(f,max)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.82))};im.src=r.result};r.readAsDataURL(f)});
+// photos survive a refresh or the Google sign-in trip (IndexedDB; text fields stay in the draft)
+const IDB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const q=indexedDB.open('tex-pro-draft',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)}))},
+ async set(k,v){try{const d=await this.open();await new Promise((res,rej)=>{const tx=d.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}catch(_){}},
+ async get(k){try{const d=await this.open();return await new Promise((res)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}catch(_){return null}}};
+const savePhotos=()=>IDB.set('photos',{photo:st.photo||'',ours:st.ours,work:st.work,at:Date.now()});
+const chip=(box,items,isOn,onTap)=>{box.innerHTML='';items.forEach(([v,lab])=>{const b=document.createElement('button');b.type='button';b.className='chip'+(isOn(v)?' on':'');b.textContent=lab;b.onclick=()=>{onTap(v);};box.appendChild(b)})};
+// step 3: profile photo
+const drawPP=()=>{$('#ppOursImg').src=tImg(st.trade)||'texcontractor-logo.png';const mi=$('#ppMineImg');if(st.photo&&!st.ours){mi.style.backgroundImage='url('+st.photo+')';mi.innerHTML=''}else{mi.style.backgroundImage='';mi.innerHTML='<b>🤳</b>'}
+ $('#ppMine').classList.toggle('on',!!st.photo&&!st.ours);$('#ppOurs').classList.toggle('on',st.ours);$('#go3').disabled=!(st.photo||st.ours)};
+$('#ppMine').onclick=()=>{$('#ppBtns').hidden=false;if(!st.photo||st.ours){st.ours=false;}drawPP()};
+$('#ppOurs').onclick=()=>{st.ours=true;$('#ppBtns').hidden=true;drawPP();savePhotos()};
+const onPP=async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;try{st.photo=await shrink(f,1080);st.ours=false;drawPP();savePhotos()}catch(_){}};
+$('#ppCam').addEventListener('change',onPP);$('#ppGal').addEventListener('change',onPP);
+$('#go3').onclick=()=>{ev('quick_photo',{ours:st.ours});go(4)};
+// step 4: work photos (3-8)
+const drawWK=()=>{const g=$('#wkGrid');g.innerHTML='';for(let i=0;i<8;i++){const d=document.createElement('div');d.className='wk'+(st.work[i]?' has':'');if(st.work[i]){d.style.backgroundImage='url('+st.work[i]+')';const x=document.createElement('button');x.type='button';x.className='x';x.textContent='×';x.setAttribute('aria-label','Remove');x.onclick=()=>{st.work.splice(i,1);drawWK();savePhotos()};d.appendChild(x)}else{const l=document.createElement('label');l.htmlFor='wkGal';l.textContent='+';d.appendChild(l)}g.appendChild(d)}
+ const n=st.work.length;$('#wkCount').textContent=(n>=3?n_('ok8'):n_('need')).replace('{n}',n);$('#wkCount').classList.toggle('good',n>=3);$('#go4').disabled=n<3};
+const onWK=async e=>{const fs=[...(e.target.files||[])];e.target.value='';for(const f of fs){if(st.work.length>=8)break;try{st.work.push(await shrink(f,1280));drawWK()}catch(_){}}savePhotos()};
+$('#wkCam').addEventListener('change',onWK);$('#wkGal').addEventListener('change',onWK);
+$('#go4').onclick=()=>{ev('quick_work',{n:st.work.length});go(5)};
+// step 5: years + Spanish
+const YRS=['1','2','3','4','5','6','7','8','10','12','15','20+'];
+const drawS5=()=>{chip($('#yrChips'),YRS.map(y=>[y,y]),v=>st.years===v,v=>{st.years=v;drawS5()});
+ chip($('#esChips'),[['yes',n_('yes')],['no',n_('no')]],v=>st.spanish===v,v=>{st.spanish=v;drawS5()});$('#go5').disabled=!(st.years&&st.spanish)};
+$('#go5').onclick=()=>go(6);
+// step 6: hours + contact
+const hl=h=>{h=+h;if(h===0||h===24)return L==='es'?'12 a. m.':'12 AM';if(h===12)return L==='es'?'12 p. m.':'12 PM';return h<12?h+(L==='es'?' a. m.':' AM'):(h-12)+(L==='es'?' p. m.':' PM')};
+const HP=[['7-17'],['8-18'],['8-20'],['6-22'],['0-24']];
+const drawS6=()=>{chip($('#hrChips'),HP.map(([v])=>[v,v==='0-24'?n_('any'):hl(v.split('-')[0])+' – '+hl(v.split('-')[1])]).concat([['c',n_('cust')]]),v=>st.hours===v,v=>{st.hours=v;if(v!=='c'){const p=v.split('-');st.hFrom=p[0];st.hTo=p[1]}else{st.hFrom=$('#hrFrom').value;st.hTo=$('#hrTo').value}$('#hrCustom').hidden=v!=='c';drawS6()});
+ chip($('#ctChips'),[['t','✓ '+n_('txt')],['c','📞 '+n_('call')],['h','💬 '+n_('chat')]],v=>v==='t'||(v==='c'&&st.call)||(v==='h'&&st.chat),v=>{if(v==='c')st.call=!st.call;if(v==='h')st.chat=!st.chat;drawS6()});
+ $('#go6').disabled=!st.hours};
+const fillHr=()=>{['#hrFrom','#hrTo'].forEach((s,j)=>{const e=$(s),cur=e.value;e.innerHTML='';for(let h=j?1:0;h<=(j?24:23);h++){const o=document.createElement('option');o.value=h;o.textContent=hl(h);e.appendChild(o)}e.value=cur||(j?'18':'8')})};
+['#hrFrom','#hrTo'].forEach(s=>$(s).addEventListener('change',()=>{st.hFrom=$('#hrFrom').value;st.hTo=$('#hrTo').value}));
+$('#go6').onclick=()=>{if(st.hours==='c'){st.hFrom=$('#hrFrom').value;st.hTo=$('#hrTo').value}go(7)};
+// step 7: price
+const drawS7=()=>{const box=$('#prOpts');box.innerHTML='';[['hourly','⏱️'],['starting','🏷️'],['estimate','📝'],['deal','🤝']].forEach(([v,e])=>{const b=document.createElement('button');b.type='button';b.className='opt'+(st.price===v?' sel':'');b.innerHTML='<span class="e">'+e+'</span>'+n_(v);b.onclick=()=>{st.price=v;drawS7();if(v==='hourly'||v==='starting')setTimeout(()=>$('#prNum').focus(),100)};box.appendChild(b)});
+ const amt=st.price==='hourly'||st.price==='starting';$('#prAmt').hidden=!amt;$('#prLab').textContent=n_(st.price==='hourly'?'hourL':'startL');
+ const a=+String($('#prNum').value).replace(/\D/g,'');$('#go7').disabled=!st.price||(amt&&!(a>=1))};
+$('#prNum').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6);st.priceAmt=e.target.value;drawS7()});
+$('#go7').onclick=()=>go(8);
+// step 8: licensed / insured / background (all optional)
+const drawS8=()=>{const box=$('#ynBox');box.innerHTML='';[['lic','🪪'],['ins','🛡️'],['bg','✔️']].forEach(([k,e])=>{const b=document.createElement('button');b.type='button';b.className='opt'+(st[k]?' sel':'');b.innerHTML='<span class="e">'+(st[k]?'✅':e)+'</span>'+n_(k);b.onclick=()=>{st[k]=!st[k];drawS8()};box.appendChild(b)});$('#licBox').hidden=!st.lic};
+$('#licNum').addEventListener('input',e=>{st.licNum=e.target.value});
+$('#go8').onclick=()=>go(9);
+// step 9: about (the only typing)
+const drawS9=()=>{chip($('#abChips'),['c1','c2','c3','c4','c5','c6'].filter(k=>k!=='c5'||(st.lic&&st.ins)).map(k=>[k,'+ '+n_(k)]),()=>false,k=>{const a=$('#about');const s=n_(k);if(a.value.indexOf(s)<0){a.value=(a.value.trim()?a.value.trim().replace(/[.!]?$/,'. '):'')+s+'.';}a.dispatchEvent(new Event('input'))});
+ const v=$('#about').value.trim();st.about=v;const ok=v.replace(/\s+/g,' ').split(' ').filter(w=>w.length>1).length>=5;$('#abCount').textContent=v?(ok?n_('abOk'):n_('abMin')):'';$('#abCount').classList.toggle('good',ok);$('#go9').disabled=!ok};
+$('#about').addEventListener('input',()=>{st.about=$('#about').value;$('#abCount').textContent='';const v=st.about.trim();const ok=v.replace(/\s+/g,' ').split(' ').filter(w=>w.length>1).length>=5;$('#abCount').textContent=v?(ok?n_('abOk'):n_('abMin')):'';$('#abCount').classList.toggle('good',ok);$('#go9').disabled=!ok});
+$('#go9').onclick=()=>{saveDraft();go(10)};
+const nrender=()=>{$$('[data-n]').forEach(e=>{e.textContent=n_(e.dataset.n)});if(!$('#hrFrom').options.length||$('#hrFrom').dataset.l!==L){fillHr();$('#hrFrom').dataset.l=L}drawPP();drawWK();drawS5();drawS6();drawS7();drawS8();drawS9()};
+// the stock picture becomes the profile photo when chosen (so every new pro has a photo)
+const oursData=()=>new Promise(res=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);try{res(c.toDataURL('image/jpeg',0.85))}catch(_){res('')}};im.onerror=()=>res('');im.src=tImg(st.trade)});
 render();go(1);
 })();
 </script>
