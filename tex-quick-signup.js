@@ -12,7 +12,8 @@
   .tqs .tqs-sub{margin:0 0 14px;color:#475569;font-size:.93rem;line-height:1.45}
   .tqs label{display:block;font-weight:800;font-size:.88rem;margin:10px 0 5px}
   .tqs input{box-sizing:border-box;width:100%;min-height:46px;padding:10px 12px;border:1px solid #a5b6b0;border-radius:9px;font:inherit;font-size:16px}
-  .tqs .tqs-priv[hidden]{display:none}
+  .tqs .tqs-priv[hidden],.tqs .tqs-pnote[hidden]{display:none}
+  .tqs .tqs-pnote{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:#eef4ff;border:1px solid #c7d7f5;color:#0f2a4a;font-size:.92rem;line-height:1.4}
   .tqs .tqs-priv{margin:6px 0 0;color:#c81e1e;font-weight:800;font-size:.9rem;line-height:1.35}
   .tqs .tqs-hint{font-size:.8rem;color:#64748b;margin:5px 0 0}
   .tqs .tqs-go{display:block;width:100%;margin-top:14px;min-height:48px;border:0;border-radius:10px;background:#075c4b;color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer}
@@ -50,6 +51,7 @@
         <p class="tqs-switch" style="margin:6px 0 0"><button type="button" id="tqs-resend" style="background:none;border:0;padding:0;color:#0b7a63;font-weight:800;text-decoration:underline;cursor:pointer" disabled></button></p></div>
         <p class="tqs-hint" id="tqs-phint">We text you a one-time code. No password needed. Msg &amp; data rates may apply.</p>
         <button class="tqs-go" type="button" id="tqs-pgo">Text me a code</button>
+        <p class="tqs-pnote" id="tqs-pnote" hidden></p>
         <p class="tqs-switch"><a href="#" id="tqs-useemail">Use email instead</a></p>
       </div>
       <div id="tqs-emailbox" hidden>
@@ -143,9 +145,14 @@
     box.querySelector('#tqs-phone-l').textContent = es ? 'Número de celular' : 'Mobile number';
     box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
     box.querySelector('#tqs-priv').hidden = current.intent === 'provider'; // owner 11-14: customers only (pros' phones are shown to customers)
-    box.querySelector('#tqs-priv').textContent = es ? '🔒 Tu número es privado. Solo es para tu cuenta. Sin spam, sin llamadas.' : "🔒 Your phone stays private. It's only for your account. No spam, no calls.";
+    box.querySelector('#tqs-priv').textContent = (current && current.post)
+      ? (es ? '🔒 Tu número nunca se muestra en público. Sin spam.' : '🔒 Your number is never shown publicly. No spam.')
+      : (es ? '🔒 Tu número es privado. Solo es para tu cuenta. Sin spam, sin llamadas.' : "🔒 Your phone stays private. It's only for your account. No spam, no calls.");
     box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
     box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
+    // Owner 11-21: in the post-request box, a small note: with a phone, pros can reach you easily; email is still fine.
+    const pn = box.querySelector('#tqs-pnote'); pn.hidden = !(current && current.post);
+    pn.innerHTML = es ? '📱 <b>Con tu teléfono</b>, los técnicos cerca de ti te pueden escribir o llamar para ayudarte más fácil. ¿Prefieres email? Tú decides: toca abajo.' : '📱 <b>With your phone</b>, pros near you can text or call you, so it is easier to get help. Prefer email? Your choice: tap below.';
     if (box.dataset.sent !== '1') box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
     try { document.querySelectorAll('.tex-nospam').forEach((p) => { p.textContent = es ? '🔒 Solo usamos tu número para que entres. Sin spam.' : '🔒 We only use your number to sign you in. No spam.'; }); } catch (_) {}
   }
