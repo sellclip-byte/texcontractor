@@ -87,6 +87,10 @@
     var norm = function (x) { return String(x || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z]+/g, ' ').trim(); };
     var CAT = {};
     [].forEach.call(D.querySelectorAll('img[src*="images/home/catalog-"]'), function (im) { var a = norm(im.alt); if (a && !CAT[a]) CAT[a] = im.getAttribute('src'); });
+    // Owner 11-21: Gemini photos for services that have no catalog photo yet.
+    [['Barber & Hair Styling Services', 'barber'], ['Tutoring & Education Services', 'tutoring'], ['Babysitting & Childcare Services', 'babysitting'],
+     ['Lawn Mower, Water Pump & Outdoor Equipment Repair', 'mower-repair'], ['General Automotive Services: Towing, Key Programming, Window Tinting & Tire Services', 'towing'],
+     ['Specialty Meal Preparation & Dietary Cooking', 'meal-prep']].forEach(function (x) { var k = norm(x[0]); if (!CAT[k]) CAT[k] = 'images/home/catalog-x-' + x[1] + '.jpg'; });
     var catImg = function (sv) { sv = norm(sv); if (!sv) return ''; if (CAT[sv]) return CAT[sv];
       for (var k in CAT) if (k.indexOf(sv) === 0 || sv.indexOf(k) === 0 || (sv.length > 14 && k.slice(0, 18) === sv.slice(0, 18))) return CAT[k]; return ''; };
     var st = function (c) { var m = String(c || '').match(/,\s*([A-Za-z]{2})$/); return m ? m[1].toUpperCase() : 'US'; };
