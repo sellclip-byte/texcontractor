@@ -117,6 +117,7 @@
     }
     function open() {
       if (shown || document.querySelector('dialog[open]')) return;
+      if (document.documentElement.classList.contains('mh')) return; // 11-21: new phone homepage has its own clean flow
       if (busy()) { clearTimeout(timer); timer = setTimeout(open, 20000); return; }
       shown = true; clearTimeout(timer); window.removeEventListener('scroll', onScroll);
       var es = (document.documentElement.lang || '').indexOf('es') === 0 || /\/es\//.test(p);
