@@ -71,7 +71,7 @@
       <div class="msgs" id="msgs" aria-live="polite"><p class="empty">Choose a conversation to read and reply.</p></div>
       <p class="note">Keep your conversation here. Never share passwords or payment card numbers in chat.</p>
       <div class="picked" id="picked" hidden></div>
-      <form class="compose" id="compose" hidden><button class="attach" id="attach" type="button" title="Add photos" aria-label="Add photos" hidden>📷</button><input id="photo-input" type="file" accept="image/*" multiple hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…"></textarea><button type="submit" id="send">Send</button></form>
+      <form class="compose" id="compose" hidden><button class="attach" id="attach" type="button" title="Add photos" aria-label="Add photos" hidden>📷</button><input id="photo-input" type="file" accept="image/*" hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…"></textarea><button type="submit" id="send">Send</button></form>
     </section>
   </main>
   <script src="tex-auth.js?v=20261109fin"></script>
@@ -195,8 +195,7 @@
     attachBtn.addEventListener('click', () => photoInput.click());
     photoInput.addEventListener('change', () => {
       const add = [...photoInput.files].filter((f) => /^image\//.test(f.type) || /\.(heic|heif)$/i.test(f.name));
-      picked = picked.concat(add).slice(0, 6);
-      if (add.length && picked.length === 6) alert('You can send up to 6 photos in one message.');
+      picked = add.slice(0, 1); // owner 11-21: one photo per message
       photoInput.value = ''; showPicked();
     });
     pickedEl.addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (b) { picked.splice(+b.dataset.rm, 1); showPicked(); } });
