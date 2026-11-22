@@ -75,7 +75,7 @@
     .fact[hidden]{display:none!important}
   </style>
 <link rel="stylesheet" href="tex-gold.css?v=3"><script src="tex-last3.js?v=1" defer></script>
-<script src="/tex-readable.js?v=20261121i" defer></script></head>
+<script src="/tex-readable.js?v=20261121chat" defer></script></head>
 <body>
   <header>
     <a class="brand" href="index.html" aria-label="TexContractor home"><img class="brand-logo" src="texcontractor-logo.png" alt="TexContractor"></a>
@@ -184,6 +184,11 @@
         areaServed: loc[0] ? { '@type': 'City', name: loc.filter(Boolean).join(', ') } : undefined, knowsAbout: profile.service || undefined, knowsLanguage: profile.spanish ? ['en', 'es'] : undefined, image: img || undefined };
       const s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'pro-ld'; s.textContent = JSON.stringify(ld).replace(/</g, '\\u003c'); document.head.appendChild(s); } } catch (_) {}
     document.getElementById('contractor-name').textContent = profile.name;
+    // Owner 11-21: green "Online" dot right next to the name when the pro has the site open (checked every 2 min).
+    if (params.get('contractor') && profile.id) { const onl = async () => { try { const r = await fetch('https://rryehtaskbjnfbodymjj.supabase.co/rest/v1/rpc/texcontractor_online_services', { method:'POST', headers:{ apikey:'sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r', 'Content-Type':'application/json' }, body: JSON.stringify({ p_ids:[profile.id] }) }); const ids = r.ok ? await r.json() : []; const on = Array.isArray(ids) && ids.some((x) => (x && (x.texcontractor_online_services || x)) === profile.id);
+      let d = document.getElementById('tc-online'); const h = document.getElementById('contractor-name');
+      if (on) { if (!d) { d = document.createElement('span'); d.id = 'tc-online'; d.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-left:10px;font-size:.5em;font-weight:800;color:#15803d;vertical-align:middle;white-space:nowrap'; h.appendChild(d); } d.innerHTML = '<i style="width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25);display:inline-block"></i>' + ((document.documentElement.lang||'').indexOf('es')===0 ? 'En línea' : 'Online'); }
+      else if (d) d.remove(); } catch (_) {} }; onl(); setInterval(onl, 120000); }
     /* owner 11-12: $10 coupon button only on DFW Mobile Lawnmower's own profile */
     if (profile.id === 'f3339b5e-447d-4ec0-a6cb-b5d792f63f6d' && !document.getElementById('dfw-coupon')) { const ar = document.querySelector('.action-row'); if (ar) { const cb = document.createElement('a'); cb.id = 'dfw-coupon'; cb.className = 'action'; cb.href = 'coupon.html?utm_source=profile_coupon'; cb.textContent = '🎟️ Show your $10 coupon'; cb.style.cssText = 'background:linear-gradient(110deg,#ba7c0c,#edb72d 45%,#ffdc58);color:#1b1404;font-weight:900;border:0;text-align:center;text-decoration:none'; ar.prepend(cb); } }
     const texCardGo = async () => { try { if (window.TexBusinessCard && (params.get('contractor') || params.get('imported')) && profile.id && !document.getElementById('pro-card')) {
@@ -306,7 +311,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
   </script>
   <script src="tex-share-profile.js?v=20261107b"></script>
   <script src="tex-business-card.js?v=9"></script>
-  <script src="tex-chat.js?v=20261022b"></script>
+  <script src="tex-chat.js?v=20261121dock"></script>
   <script>(function(){const id=new URLSearchParams(location.search).get('contractor');const b=document.getElementById('chat-profile-button');if(!id||!b||!window.TexChat)return;TexChat.enabledServices().then(set=>{b.hidden=!set.has(id)||(Array.isArray(window.texContactMethods)&&!window.texContactMethods.includes('chat'));});b.addEventListener('click',async()=>{b.disabled=true;try{await TexChat.start(id);}catch(e){alert(e.message);}finally{b.disabled=false;}});})();</script>
   <script src="tex-language.js?v=20261119hero"></script>
   <script src="tex-side-ads.js?v=20261118noframe"></script>

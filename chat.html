@@ -3,7 +3,7 @@
 <head>
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18516159223"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-18516159223');</script>
-  <meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}</script>
+  <meta charset="UTF-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests"><script>if(window.top!==window.self){var tcSame=false;try{tcSame=window.top.location.host===location.host}catch(e){}if(!tcSame){try{window.top.location.replace(window.location.href)}catch(e){document.documentElement.style.display="none"}}else{document.documentElement.classList.add("embed")}}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" sizes="192x192" href="texcontractor-icon-192.png">
@@ -60,7 +60,8 @@
       .thread-head .back-list { display:inline-block; }
     }
   </style>
-<script src="/tex-readable.js?v=20261121i" defer></script></head>
+<style>html.embed header{display:none!important}html.embed body{background:#fff}html.embed .app{height:100vh!important;max-height:none!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important}.tc-filter-err{margin:6px 12px 0;color:#b91c1c;font-weight:800;font-size:.92rem}</style>
+<script src="/tex-readable.js?v=20261121chat" defer></script></head>
 <body>
   <header><a href="index.html" aria-label="TexContractor home"><img src="texcontractor-logo.png" alt="TexContractor" width="132" height="44"></a><a class="back" href="javascript:history.back()">← Back</a></header>
   <main class="app" id="app">
@@ -75,7 +76,7 @@
   </main>
   <script src="tex-auth.js?v=20261109fin"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
-  <script src="tex-chat.js?v=20261022b"></script>
+  <script src="tex-chat.js?v=20261121dock"></script>
   <script>
   (async function () {
     const C = window.TexChat;
@@ -216,7 +217,11 @@
         }
         await api('texcontractor_chat_messages', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(payload) });
         bodyEl.value = ''; picked = []; showPicked(); await poll(); loadList();
-      } catch (err) { alert(err.message); } finally { btn.disabled = false; attachBtn.disabled = false; btn.textContent = 'Send'; bodyEl.focus(); }
+      } catch (err) { const m = String(err && err.message || ''); const esq = (document.documentElement.lang||'').indexOf('es')===0 || /[?&]lang=es/.test(location.search);
+        if (/TC_LINK|TC_WORDS/.test(m)) { let el = document.getElementById('tc-filter-err'); if (!el) { el = document.createElement('p'); el.id = 'tc-filter-err'; el.className = 'tc-filter-err'; el.setAttribute('role','alert'); compose.before(el); }
+          el.textContent = /TC_LINK/.test(m) ? (esq ? '🚫 No se permiten enlaces en el chat. Quita el enlace y envía otra vez. (Los números de teléfono sí se permiten.)' : '🚫 Links are not allowed in chat. Remove the link and send again. (Phone numbers are fine.)') : (esq ? '🚫 Por favor mantén el chat respetuoso. Cambia esa palabra y envía otra vez.' : '🚫 Please keep the chat respectful. Change that word and send again.');
+          setTimeout(() => { el && el.remove(); }, 9000); }
+        else alert(m); } finally { btn.disabled = false; attachBtn.disabled = false; btn.textContent = 'Send'; bodyEl.focus(); }
     });
     await loadList();
     if (current) openChat(current).catch(() => {});

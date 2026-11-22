@@ -171,7 +171,7 @@
       } catch (_) {}
       try {
         var r2 = await fetch(SB + '/rest/v1/rpc/texcontractor_chat_unread', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, h), body: '{}' });
-        if (r2.ok) chats = Number(await r2.text()) || 0;
+        if (r2.ok) chats = window.TexChatDock ? 0 : (Number(await r2.text()) || 0); // owner 11-21: chats show on the bottom Chat button
       } catch (_) {}
       return { support: support, chats: chats };
     }
@@ -262,3 +262,5 @@
     }
   } catch (_) {}
 })();
+// Owner 11-21: on-site chat button (bottom corner) + online status for signed-in members
+(function(){try{if(window.top!==window.self)return;if(!localStorage.getItem('texcontractor-auth-session'))return;var sc=document.createElement('script');sc.src='/tex-chat-dock.js?v=20261121a';sc.defer=true;(document.head||document.documentElement).appendChild(sc)}catch(_){}})();

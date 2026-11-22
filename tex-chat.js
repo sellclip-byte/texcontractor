@@ -31,6 +31,7 @@
       return;
     }
     const chatId = await rpc('texcontractor_start_chat', { p_service_id: serviceId }, true);
+    if (window.TexChatDockOpen) { window.TexChatDockOpen(chatId); return; } // owner 11-21: stay on the page
     window.location.href = 'chat.html?c=' + encodeURIComponent(chatId);
   }
 
