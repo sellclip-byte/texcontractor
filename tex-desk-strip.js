@@ -14,11 +14,6 @@
   var es = function () { return (H.lang || '').indexOf('es') === 0; };
   var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var get = function (path) { return fetch(SB + '/rest/v1/' + path, { headers: { apikey: K } }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }); };
-  var ICON = [[/air condition|hvac|heating/i, '❄️'], [/electric/i, '⚡'], [/plumb|drain/i, '🔧'], [/roof/i, '🏠'], [/junk/i, '🚛'], [/paint/i, '🎨'],
-    [/lawn mower|outdoor equipment/i, '🔩'], [/landscap|lawn|yard|tree/i, '🌿'], [/mechanic|auto/i, '🚗'], [/garage door|door|window|lock/i, '🚪'],
-    [/furniture|assembl/i, '🪑'], [/clean/i, '🧽'], [/mov/i, '📦'], [/pool/i, '🏊'], [/fenc/i, '🪵'], [/tv|mount/i, '📺'], [/appliance/i, '🧺'],
-    [/photo/i, '📸'], [/dj|event/i, '🎉'], [/floor|tile/i, '🧱'], [/pest/i, '🐜'], [/drywall|handyman|repair/i, '🛠️']];
-  var icon = function (s) { for (var i = 0; i < ICON.length; i++) if (ICON[i][0].test(s || '')) return ICON[i][1]; return '🛠️'; };
   var loc = function () { try { return JSON.parse(localStorage.getItem('texcontractor-location') || '{}') || {}; } catch (_) { return {}; } };
 
   function layout() {
@@ -81,8 +76,16 @@
     items = items.slice(0, 60);
     if (!items.length) { np.style.display = 'none'; return; }
     var lab = es() ? ' en ' : ' · ';
+    // Owner 11-21: no emoji icons. Pro without a photo -> the catalog photo of his service, else his state letters.
+    var CAT = {};
+    [].forEach.call(D.querySelectorAll('img[src*="images/home/catalog-"]'), function (im) { var a = String(im.alt || '').toLowerCase(); if (a && !CAT[a]) CAT[a] = im.getAttribute('src'); });
+    var catImg = function (sv) { sv = String(sv || '').toLowerCase(); if (!sv) return ''; if (CAT[sv]) return CAT[sv];
+      for (var k in CAT) if (k.indexOf(sv) === 0 || sv.indexOf(k) === 0) return CAT[k]; return ''; };
+    var st = function (c) { var m = String(c || '').match(/,\s*([A-Za-z]{2})$/); return m ? m[1].toUpperCase() : 'US'; };
+    var av = function (it) { var src = it.photo || catImg(it.service);
+      return src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="st">' + esc(st(it.city)) + '</span>'; };
     var card = function (it) {
-      return '<a class="np' + (it.reg ? ' reg' : '') + '" href="' + esc(it.href) + '"><span class="av">' + (it.photo ? '<img src="' + esc(it.photo) + '" alt="" loading="lazy">' : icon(it.service)) +
+      return '<a class="np' + (it.reg ? ' reg' : '') + '" href="' + esc(it.href) + '"><span class="av">' + av(it) +
         '</span><span class="tx"><small>' + esc(String(it.service || '').slice(0, 30)) + lab + esc(it.city) + '</small><b>' + esc(it.name) + '</b></span></a>';
     };
     var html = items.map(card).join('');
