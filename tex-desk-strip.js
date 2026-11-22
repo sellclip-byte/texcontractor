@@ -106,6 +106,8 @@
     tr.style.animationDuration = Math.max(40, items.length * 4) + 's';
   }
 
-  function go() { var np = layout(); if (np) load(np); }
+  function go() { var np = layout(); if (!np) return;
+    var w = window.texGeoReady ? Promise.race([window.texGeoReady, new Promise(function (r) { setTimeout(r, 2600); })]) : Promise.resolve();
+    w.then(function () { load(np); }, function () { load(np); }); }
   if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', go); else go();
 })();
