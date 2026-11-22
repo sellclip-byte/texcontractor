@@ -354,7 +354,7 @@ $('#tradeSel').addEventListener('change',e=>{const v=e.target.value;const a=ALL.
 $('#t1go').onclick=()=>{if(st.trade)go(2)};
 const onPh=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const M=1080,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);st.photo=c.toDataURL('image/jpeg',0.85);try{sessionStorage.setItem('tex_quick_photo',st.photo)}catch(_){}ev('quick_photo_added');drawPick()};im.src=r.result};r.readAsDataURL(f);e.target.value=''};$('#myph').addEventListener('change',onPh);$('#mycam').addEventListener('change',onPh);
 try{const sp=sessionStorage.getItem('tex_quick_photo');if(sp&&/^data:image\//.test(sp))st.photo=sp}catch(_){}
-$('#back').onclick=()=>go(Math.max(1,st.step-1));
+$('#back').onclick=()=>go(st.step===9?7:Math.max(1,st.step-1));
 $$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem('texcontractor-language',L)}catch(_){};render()});
 // step 2
 let phoneUser=null;
@@ -441,28 +441,28 @@ if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#go
 })();
 // ===== Owner 11-21: full profile BEFORE the phone. One screen per big question, two small questions per screen, taps instead of typing. =====
 const N={
- en:{next:'Continue',k3:'Step 3 of 9',h3:'Your profile photo',s3:'Customers like to see who is coming. Use your own photo or pick ours.',mine:'My own photo',ours:'Use our picture',cam:'Take a photo',gal:'From my photos',
-  k4:'Step 4 of 9',h4:'Photos of your work',s4:'Add at least 3 photos of jobs you did (up to 8). Customers choose pros with real work photos.',cam2:'Take a photo',gal2:'Choose photos',need:'{n} of 3 photos added',ok8:'{n} photos added ✓ (up to 8)',
-  k5:'Step 5 of 9',h5:'Years of experience',h5b:'Do you speak Spanish?',yes:'Yes',no:'No',
-  k6:'Step 6 of 9',h6:'Your working hours',any:'Any time',cust:'Other hours',h6b:'How can customers reach you?',s6b:'Text is always on. Tap to add more.',txt:'Text',call:'Call',chat:'Site chat',
-  k7:'Step 7 of 9',h7:'How do you price your work?',s7:'Tap one.',hourly:'By the hour',starting:'Starting price',estimate:'Free estimate',deal:'We agree on the job',hourL:'Your price per hour',startL:'Jobs start at',
-  k8:'Step 8 of 9',h8:'Tap what applies to you',s8:'Only tap what is true. Leave the rest.',lic:'I am licensed',ins:'I am insured',bg:'Background check done',licL:'License number (optional)',
-  k9:'Step 9 of 9',h9:'A few words about your work',s9:'One or two sentences in your own words. Tap to add, then edit.',abMin:'Write a little more',abOk:'Looks good ✓',
-  c1:'Free estimates',c2:'Clean, careful work',c3:'Fair prices',c4:'Small jobs welcome',c5:'Licensed and insured',c6:'Friendly and respectful',
+ en:{next:'Continue',k3:'Step 3 of 8',h3:'Your profile photo',s3:'Customers like to see who is coming. Use your own photo or pick ours.',mine:'My own photo',ours:'Use our picture',cam:'Take a photo',gal:'From my photos',
+  k4:'Step 4 of 8',h4:'Photos of your work',s4:'Add at least 3 photos of jobs you did (up to 8). Customers choose pros with real work photos.',cam2:'Take a photo',gal2:'Choose photos',need:'{n} of 3 photos added',ok8:'{n} photos added ✓ (up to 8)',
+  k5:'Step 5 of 8',h5:'Years of experience',h5b:'Do you speak Spanish?',yes:'Yes',no:'No',
+  k6:'Step 6 of 8',h6:'Your working hours',any:'Any time',cust:'Other hours',h6b:'How can customers reach you?',s6b:'Text is always on. Tap to add more.',txt:'Text',call:'Call',chat:'Site chat',
+  k7:'Step 7 of 8',h7:'How do you price your work?',s7:'Tap one.',hourly:'By the hour',starting:'Starting price',estimate:'Free estimate',deal:'We agree on the job',hourL:'Your price per hour',startL:'Jobs start at',
+  k8:'Step 8 of 8',h8:'Tap what applies to you',s8:'Only tap what is true. Leave the rest.',lic:'I am licensed',ins:'I am insured',bg:'Background check done',licL:'License number (optional)',
+  k9:'Step 8 of 8',h9:'A few words about your work',s9:'One or two sentences in your own words. Tap to add, then edit.',abMin:'Write a little more',abOk:'Looks good ✓',
+  c1:'Free estimates',c2:'Clean, careful work',c3:'Fair prices',c4:'Small jobs welcome',c6:'Friendly and respectful',
   h10:'Last step: your number, and you\'re online',k10:'Last step'},
- es:{next:'Continuar',k3:'Paso 3 de 9',h3:'Tu foto de perfil',s3:'A los clientes les gusta ver quién va a llegar. Usa tu foto o escoge la nuestra.',mine:'Mi propia foto',ours:'Usar nuestra foto',cam:'Tomar una foto',gal:'De mis fotos',
-  k4:'Paso 4 de 9',h4:'Fotos de tu trabajo',s4:'Agrega al menos 3 fotos de trabajos que hiciste (hasta 8). Los clientes eligen técnicos con fotos reales.',cam2:'Tomar una foto',gal2:'Escoger fotos',need:'{n} de 3 fotos',ok8:'{n} fotos ✓ (hasta 8)',
-  k5:'Paso 5 de 9',h5:'Años de experiencia',h5b:'¿Hablas español?',yes:'Sí',no:'No',
-  k6:'Paso 6 de 9',h6:'Tu horario de trabajo',any:'A cualquier hora',cust:'Otro horario',h6b:'¿Cómo te pueden contactar?',s6b:'El texto siempre está activo. Toca para agregar más.',txt:'Texto',call:'Llamada',chat:'Chat del sitio',
-  k7:'Paso 7 de 9',h7:'¿Cómo cobras tu trabajo?',s7:'Toca uno.',hourly:'Por hora',starting:'Precio desde',estimate:'Presupuesto gratis',deal:'Lo acordamos en el trabajo',hourL:'Tu precio por hora',startL:'Los trabajos empiezan en',
-  k8:'Paso 8 de 9',h8:'Toca lo que aplica para ti',s8:'Toca solo lo que es verdad. Deja lo demás.',lic:'Tengo licencia',ins:'Tengo seguro',bg:'Verificación de antecedentes',licL:'Número de licencia (opcional)',
-  k9:'Paso 9 de 9',h9:'Unas palabras sobre tu trabajo',s9:'Una o dos frases con tus palabras. Toca para agregar y luego edita.',abMin:'Escribe un poco más',abOk:'Se ve bien ✓',
-  c1:'Presupuestos gratis',c2:'Trabajo limpio y cuidadoso',c3:'Precios justos',c4:'Trabajos pequeños bienvenidos',c5:'Con licencia y seguro',c6:'Amable y respetuoso',
+ es:{next:'Continuar',k3:'Paso 3 de 8',h3:'Tu foto de perfil',s3:'A los clientes les gusta ver quién va a llegar. Usa tu foto o escoge la nuestra.',mine:'Mi propia foto',ours:'Usar nuestra foto',cam:'Tomar una foto',gal:'De mis fotos',
+  k4:'Paso 4 de 8',h4:'Fotos de tu trabajo',s4:'Agrega al menos 3 fotos de trabajos que hiciste (hasta 8). Los clientes eligen técnicos con fotos reales.',cam2:'Tomar una foto',gal2:'Escoger fotos',need:'{n} de 3 fotos',ok8:'{n} fotos ✓ (hasta 8)',
+  k5:'Paso 5 de 8',h5:'Años de experiencia',h5b:'¿Hablas español?',yes:'Sí',no:'No',
+  k6:'Paso 6 de 8',h6:'Tu horario de trabajo',any:'A cualquier hora',cust:'Otro horario',h6b:'¿Cómo te pueden contactar?',s6b:'El texto siempre está activo. Toca para agregar más.',txt:'Texto',call:'Llamada',chat:'Chat del sitio',
+  k7:'Paso 7 de 8',h7:'¿Cómo cobras tu trabajo?',s7:'Toca uno.',hourly:'Por hora',starting:'Precio desde',estimate:'Presupuesto gratis',deal:'Lo acordamos en el trabajo',hourL:'Tu precio por hora',startL:'Los trabajos empiezan en',
+  k8:'Paso 8 de 8',h8:'Toca lo que aplica para ti',s8:'Toca solo lo que es verdad. Deja lo demás.',lic:'Tengo licencia',ins:'Tengo seguro',bg:'Verificación de antecedentes',licL:'Número de licencia (opcional)',
+  k9:'Paso 8 de 8',h9:'Unas palabras sobre tu trabajo',s9:'Una o dos frases con tus palabras. Toca para agregar y luego edita.',abMin:'Escribe un poco más',abOk:'Se ve bien ✓',
+  c1:'Presupuestos gratis',c2:'Trabajo limpio y cuidadoso',c3:'Precios justos',c4:'Trabajos pequeños bienvenidos',c6:'Amable y respetuoso',
   h10:'Último paso: tu número, y ya estás en línea',k10:'Último paso'}
 };
 const n_=k=>(N[L]&&N[L][k])||'';
 Object.assign(st,{work:[],years:'',spanish:'',hours:'',hFrom:'',hTo:'',call:false,chat:false,price:'',priceAmt:'',lic:false,ins:false,bg:false,licNum:'',about:'',ours:false});
-T.en.st3=N.en.k10;T.es.st3=N.es.k10;T.en.h3=N.en.h10;T.es.h3=N.es.h10;T.en.s1='No lead fees. What is your trade?';T.es.s1='Sin pagar por cliente. ¿Cuál es tu oficio?';T.en.st2='Step 2 of 9';T.es.st2='Paso 2 de 9';
+T.en.st3=N.en.k10;T.es.st3=N.es.k10;T.en.h3=N.en.h10;T.es.h3=N.es.h10;T.en.s1='No lead fees. What is your trade?';T.es.s1='Sin pagar por cliente. ¿Cuál es tu oficio?';T.en.st2='Step 2 of 8';T.es.st2='Paso 2 de 8';
 T.en.h5='Congratulations {name}, you are online!';T.es.h5='¡Felicidades {name}, ya estás en línea!';
 const shrink=(f,max)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.82))};im.src=r.result};r.readAsDataURL(f)});
 // photos survive a refresh or the Google sign-in trip (IndexedDB; text fields stay in the draft)
@@ -504,13 +504,13 @@ const drawS7=()=>{const box=$('#prOpts');box.innerHTML='';[['hourly','⏱️'],[
  const amt=st.price==='hourly'||st.price==='starting';$('#prAmt').hidden=!amt;$('#prLab').textContent=n_(st.price==='hourly'?'hourL':'startL');
  const a=+String($('#prNum').value).replace(/\D/g,'');$('#go7').disabled=!st.price||(amt&&!(a>=1))};
 $('#prNum').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6);st.priceAmt=e.target.value;drawS7()});
-$('#go7').onclick=()=>go(8);
+$('#go7').onclick=()=>go(9); // owner 11-22: no license/insurance step
 // step 8: licensed / insured / background (all optional)
 const drawS8=()=>{const box=$('#ynBox');box.innerHTML='';[['lic','🪪'],['ins','🛡️'],['bg','✔️']].forEach(([k,e])=>{const b=document.createElement('button');b.type='button';b.className='opt'+(st[k]?' sel':'');b.innerHTML='<span class="e">'+(st[k]?'✅':e)+'</span>'+n_(k);b.onclick=()=>{st[k]=!st[k];drawS8()};box.appendChild(b)});$('#licBox').hidden=!st.lic};
 $('#licNum').addEventListener('input',e=>{st.licNum=e.target.value});
 $('#go8').onclick=()=>go(9);
 // step 9: about (the only typing)
-const drawS9=()=>{chip($('#abChips'),['c1','c2','c3','c4','c5','c6'].filter(k=>k!=='c5'||(st.lic&&st.ins)).map(k=>[k,'+ '+n_(k)]),()=>false,k=>{const a=$('#about');const s=n_(k);if(a.value.indexOf(s)<0){a.value=(a.value.trim()?a.value.trim().replace(/[.!]?$/,'. '):'')+s+'.';}a.dispatchEvent(new Event('input'))});
+const drawS9=()=>{chip($('#abChips'),['c1','c2','c3','c4','c6'].map(k=>[k,'+ '+n_(k)]),()=>false,k=>{const a=$('#about');const s=n_(k);if(a.value.indexOf(s)<0){a.value=(a.value.trim()?a.value.trim().replace(/[.!]?$/,'. '):'')+s+'.';}a.dispatchEvent(new Event('input'))});
  const v=$('#about').value.trim();st.about=v;const ok=v.replace(/\s+/g,' ').split(' ').filter(w=>w.length>1).length>=5;$('#abCount').textContent=v?(ok?n_('abOk'):n_('abMin')):'';$('#abCount').classList.toggle('good',ok);$('#go9').disabled=!ok};
 $('#about').addEventListener('input',()=>{st.about=$('#about').value;$('#abCount').textContent='';const v=st.about.trim();const ok=v.replace(/\s+/g,' ').split(' ').filter(w=>w.length>1).length>=5;$('#abCount').textContent=v?(ok?n_('abOk'):n_('abMin')):'';$('#abCount').classList.toggle('good',ok);$('#go9').disabled=!ok});
 $('#go9').onclick=()=>{saveDraft();go(10)};
