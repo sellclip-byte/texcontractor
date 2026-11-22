@@ -263,4 +263,4 @@
   } catch (_) {}
 })();
 // Owner 11-21: on-site chat button (bottom corner) + online status for signed-in members
-(function(){try{if(window.top!==window.self)return;if(!localStorage.getItem('texcontractor-auth-session'))return;var sc=document.createElement('script');sc.src='/tex-chat-dock.js?v=20261122a';sc.defer=true;(document.head||document.documentElement).appendChild(sc)}catch(_){}})();
+(function(){try{if(window.top!==window.self)return;if(!localStorage.getItem('texcontractor-auth-session'))return;var sc=document.createElement('script');sc.src='/tex-chat-dock.js?v=20261122b';sc.defer=true;(document.head||document.documentElement).appendChild(sc)}catch(_){}})();

@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Online now · TexContractor admin</title>
+<style>
+body{margin:0;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;color:#0f172a;background:#f8fafc;line-height:1.5}
+main{max-width:980px;margin:auto;padding:18px}a{color:#075c4b}h1{margin:6px 0}.sub{color:#475569;margin:0 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.bar button{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-weight:800;cursor:pointer}.bar button.on{background:#0f172a;color:#fff;border-color:#0f172a}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin:10px 0}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.2);flex:none}.dot.old{background:#cbd5e1;box-shadow:none}
+.kind{font-size:.75rem;font-weight:800;padding:2px 8px;border-radius:99px;background:#dbeafe;color:#1e3a8a}.kind.c{background:#fef3c7;color:#92400e}
+.info{color:#64748b;font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.row button{border:0;border-radius:8px;padding:8px 11px;font:inherit;font-weight:800;cursor:pointer;background:#075c4b;color:#fff}.row button.sent{background:#e2e8f0;color:#64748b}.row button.cust{background:#1d4ed8}
+#msg{font-weight:700}
+</style><script src="/tex-readable.js?v=20261122b" defer></script></head><body><main>
+<p><a href="contractor-admin.html">← Admin dashboard</a></p>
+<h1>🟢 Online now · مين أونلاين هلأ</h1>
+<p class="sub">Members signed in with the site open. Send a ready message from <b>TexContractor Team</b> with one tap; it shows on their screen as a support message. Each message once per person.<br>الأعضاء الداخلين على حسابهم والموقع مفتوح. ابعت رسالة جاهزة من TexContractor Team بكبسة. كل رسالة مرة وحدة للشخص.</p>
+<div class="bar" id="win"><button data-m="5" class="on">Now (5 min)</button><button data-m="60">Last hour</button><button data-m="1440">Today (24h)</button></div>
+<p id="msg" role="status"></p><div id="list">Loading…</div>
+</main>
+<script src="tex-auth.js?v=20261109fin"></script>
+<script src="tex-messages.js"></script>
+<script>
+(async function(){
+const SB='https://rryehtaskbjnfbodymjj.supabase.co',KEY='sb_publishable_10LgFmHximAplWyQXKNopw_2peqDb7r';
+const list=document.getElementById('list'),msg=document.getElementById('msg');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let H,me,mins=5,rows=[];
+const rpc=async(n,b)=>{const r=await fetch(SB+'/rest/v1/rpc/'+n,{method:'POST',headers:H,body:JSON.stringify(b||{})});const t=await r.text();const d=t?JSON.parse(t):null;if(!r.ok)throw Error((d&&d.message)||'Error');return d};
+try{me=await TexAuth.getUser();if(!me)throw Error('Please sign in first.');H={apikey:KEY,Authorization:'Bearer '+(await TexAuth.getAccessToken()),'Content-Type':'application/json'};
+ if(!(await rpc('texcontractor_is_admin')))throw Error('Administrator access required.');}catch(e){list.textContent='';msg.style.color='#991b1b';msg.textContent=e.message;return}
+const T={
+ welcome:{l:'👋 Welcome',pro:true,t:n=>`👋 Welcome to TexContractor, ${n}! Your free profile is live. Share your card with customers: open your profile and tap Share. Questions? Call us (817) 344-0807.\n👋 ¡Bienvenido a TexContractor! Tu perfil gratis ya está publicado. Comparte tu tarjeta con tus clientes. — TexContractor Team`},
+ card:{l:'🪪 Your card',pro:true,t:n=>`🪪 ${n}, don't forget your card: open your profile and tap Share to send it to your customers and friends. More shares = more customers.\n🪪 No olvides tu tarjeta: abre tu perfil y toca Compartir. — TexContractor Team`},
+ photos:{l:'📷 Add photos',pro:true,t:n=>`📷 ${n}, customers choose pros with real photos. Add photos of your work here: texcontractor.com/my-photos.html\n📷 Agrega fotos de tu trabajo: los clientes eligen técnicos con fotos reales. — TexContractor Team`},
+ cwelcome:{l:'👋 Welcome',pro:false,t:n=>`👋 Welcome to TexContractor! Need something fixed? Post your request with a photo and local pros send you offers. Questions? Call us (817) 344-0807.\n👋 ¡Bienvenido a TexContractor! Publica lo que necesitas y técnicos cerca de ti te mandan ofertas. — TexContractor Team`}
+};
+const kindOf=k=>k==='cwelcome'?'welcome':k;
+const ago=d=>{const s=(Date.now()-new Date(d))/1000;return s<90?'now':s<3600?Math.round(s/60)+' min ago':Math.round(s/3600)+' h ago'};
+async function load(){
+ try{rows=await rpc('texcontractor_admin_online',{p_minutes:mins})||[]}catch(e){list.textContent=e.message;return}
+ if(!rows.length){list.innerHTML='<div class="card">Nobody online right now. ما في حدا أونلاين هلأ.</div>';return}
+ list.innerHTML=rows.map((r,i)=>{const fresh=(Date.now()-new Date(r.last_seen))<5*60e3;const pro=r.kind==='pro';const sent=r.sent||[];
+  const btns=Object.entries(T).filter(([k,v])=>v.pro===pro).map(([k,v])=>`<button data-i="${i}" data-k="${k}" class="${sent.includes(kindOf(k))?'sent':''} ${pro?'':'cust'}">${v.l}${sent.includes(kindOf(k))?' ✓':''}</button>`).join('')+`<button data-i="${i}" data-k="own">✍️ My message</button>`;
+  return `<div class="card"><div class="top"><span class="dot ${fresh?'':'old'}"></span><b>${esc(r.name)}</b><span class="kind ${pro?'':'c'}">${pro?'Pro · فني':'Customer · زبون'}</span><span class="info">${esc(ago(r.last_seen))}${pro?` · ${r.listings} listing(s) · ${r.has_photo?'photo ✓':'no photo'} · ${r.work_photos} work photos`:''} · joined ${esc(new Date(r.joined).toLocaleDateString())}</span></div><div class="row">${btns}</div></div>`}).join('');
+}
+list.addEventListener('click',async e=>{const b=e.target.closest('button[data-k]');if(!b)return;const r=rows[+b.dataset.i];const k=b.dataset.k;msg.textContent='';
+ let body='';const first=String(r.name||'').split(' ')[0]||'there';
+ if(k==='own'){body=prompt('Message to '+r.name+' (from TexContractor Team):','');if(!body)return;body=body.trim()+' — TexContractor Team'}
+ else{if(b.classList.contains('sent')&&!confirm('Already sent before. Send again?'))return;body=T[k].t(first)}
+ b.disabled=true;
+ try{const c=await TexMessages.ensureConversation(r.user_id);await TexMessages.sendMessage(c.id,me.id,body);msg.style.color='#15803d';msg.textContent='Sent to '+r.name+' ✓';b.classList.add('sent')}
+ catch(err){msg.style.color='#991b1b';msg.textContent=err.message}finally{b.disabled=false}});
+document.getElementById('win').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mins=+b.dataset.m;document.querySelectorAll('#win button').forEach(x=>x.classList.toggle('on',x===b));load()});
+load();setInterval(load,30000);
+})();
+</script>
+</body></html>

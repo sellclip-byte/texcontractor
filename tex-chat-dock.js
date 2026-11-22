@@ -72,6 +72,19 @@
         f.textContent = '🚩 ' + n + ' chat report' + (n > 1 ? 's' : '');
       } catch (_) {}
     }
+    // owner 11-22: green pill for admins: members online now -> online-admin.html
+    async function adminOnline() {
+      try {
+        if ((await rpc('texcontractor_is_admin')) !== 'true') return;
+        var t = await tok(); var r = await fetch(SB + '/rest/v1/rpc/texcontractor_admin_online', { method: 'POST', headers: { apikey: K, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{"p_minutes":5}' });
+        var n = r.ok ? ((await r.json()) || []).length : 0;
+        var g = document.getElementById('tcd-online');
+        if (!n) { if (g) g.remove(); return; }
+        if (!g) { g = document.createElement('a'); g.id = 'tcd-online'; g.href = '/online-admin.html'; g.style.cssText = 'position:fixed;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:2147481000;background:#15803d;color:#fff;border-radius:999px;padding:9px 14px;font:800 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 20px rgba(21,128,61,.35)'; document.body.appendChild(g); }
+        g.textContent = '🟢 ' + n + ' online';
+      } catch (_) {}
+    }
+    setTimeout(adminOnline, 3000); setInterval(adminOnline, 60000);
     setTimeout(adminFlag, 2500); setInterval(adminFlag, 120000);
     window.TexChatDockOpen = open;
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
