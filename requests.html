@@ -391,6 +391,7 @@
   <script src="tex-auth.js?v=20261109fin"></script>
   <script src="tex-notices.js?v=20261025" defer></script>
   <script src="tex-chat.js?v=20261022b"></script>
+  <script src="tex-quick-signup.js?v=20261121c"></script>
   <script>
   (() => {
     const SERVICES = ["Appliance Repair or Maintenance", "Architectural Services", "Babysitting & Childcare Services", "Barber & Hair Styling Services", "Bathroom Remodel", "Carpet Cleaning", "Central Air Conditioning Repair or Maintenance", "Computer Repair", "Concrete Installation", "DJ Services", "Deck or Porch Remodel or Addition", "Dog Grooming", "Dog Training", "Dog Training & Horse Riding Lessons", "Door Installation", "Drywall Repair and Texturing", "Electrical and Wiring Repair", "Event Planning", "Fence and Gate Installation", "Floor Installation or Replacement", "Furniture Assembly", "Furniture Moving and Heavy Lifting", "Garage Door Repair", "General Contracting", "General Labor and Helpers", "Gutter Cleaning and Maintenance", "Handyman", "Heating System Repair or Maintenance", "Home Foundation Repair", "Home Inspection Consulting", "House Cleaning", "In-Home Nursing Care", "Interior Design", "Interior Painting", "Junk Removal", "Lawn Mower, Water Pump & Outdoor Equipment Repair", "Lighting Installation", "Local Moving (under 50 miles)", "Lock Installation and Repair", "Metalwork", "Mobile Auto Detailing", "Mobile Auto Mechanic", "Notarization", "Outdoor Landscaping and Design", "Personal Training", "Pest Control Services", "Plumbing Drain Repair", "Plumbing Pipe Repair", "Pressure Washing", "Private Taxi & Transportation Services", "Roof Repair or Maintenance", "Specialty Meal Preparation & Dietary Cooking", "Swimming Pool Cleaning & Maintenance", "TV Mounting", "Tree Trimming and Removal", "Tutoring & Education Services", "Upholstery and Furniture Cleaning", "Wedding Officiant", "Wedding and Event Makeup", "Wedding and Event Photography", "Window Repair", "Window Tinting"];
@@ -529,7 +530,7 @@
     $('p-cam').addEventListener('change', addPicked); // 11-19 owner: snap a photo straight from the phone camera
     $('p-cam-btn').onclick = () => { if (picked.length < 8) $('p-cam').click(); };
     $('p-pick-btn').onclick = () => { if (picked.length < 8) $('p-photos').click(); };
-    const syncPhone = () => { $('phone-field').hidden = !($('c-text').checked || $('c-call').checked); };
+    const syncPhone = () => { $('phone-field').hidden = !user || !($('c-text').checked || $('c-call').checked); }; // guests: phone asked only at Post
     $('c-text').addEventListener('change', syncPhone); $('c-call').addEventListener('change', syncPhone);
 
     let editing = null;
@@ -558,11 +559,12 @@
       const wantService = new URLSearchParams(location.search).get('service') || '';
       const wantTitle = (new URLSearchParams(location.search).get('title') || '').slice(0, 120);
       const _qp = new URLSearchParams(location.search), wantCity = (_qp.get('city') || '').slice(0, 60), wantState = (_qp.get('state') || '').toUpperCase().slice(0, 2);
-      if (!user) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '') + (wantTitle ? '&title=' + encodeURIComponent(wantTitle) : '') + (wantCity ? '&city=' + encodeURIComponent(wantCity) : '') + (wantState ? '&state=' + wantState : '')); return; }
+      // Owner 11-21: let the customer fill the request first; the phone is asked only when they press Post.
+      if (!user && !window.TexQuickSignup) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '') + (wantTitle ? '&title=' + encodeURIComponent(wantTitle) : '') + (wantCity ? '&city=' + encodeURIComponent(wantCity) : '') + (wantState ? '&state=' + wantState : '')); return; }
       if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-chat','c-call'].forEach((k) => ($(k).checked = false)); $('c-text').checked = true; }
       setMode(null);
       $('post-msg').textContent = '';
-      if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
+      if (user && !$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
       fillCities($('p-state'), $('p-city-list'));
       if (wantService && !$('p-service').value && [...$('p-service').options].some((o) => o.value === wantService)) $('p-service').value = wantService;
       if (wantTitle && !$('p-title').value) $('p-title').value = wantTitle;
@@ -570,12 +572,12 @@
       try { if (wantState && [...$('p-state').options].some((o) => o.value === wantState)) { $('p-state').value = wantState; fillCities($('p-state'), $('p-city-list')); } if (wantCity && !$('p-city').value) $('p-city').value = wantCity; } catch (_) {}
       renderSlots(); syncPhone();
       $('pro-note').hidden = true;
-      C.rpc('texcontractor_my_listing_services', {}, true).then((a) => { $('pro-note').hidden = !(Array.isArray(a) && a.length); }).catch(() => {});
+      if (user) C.rpc('texcontractor_my_listing_services', {}, true).then((a) => { $('pro-note').hidden = !(Array.isArray(a) && a.length); }).catch(() => {});
       $('post-dlg').showModal();
     }
     $('open-post').addEventListener('click', openPost);
     async function openBoom() {
-      if (!user) { signInFor('boom=1'); return; }
+      if (!user && !window.TexQuickSignup) { signInFor('boom=1'); return; }
       await openPost(); setBoom(true);
       try { if (typeof gtag === 'function') gtag('event', 'boom_open'); } catch (_) {}
     }
@@ -619,7 +621,20 @@
       if (v.title.length < 3) return (msg.textContent = 'Add a short title.');
       if (v.body.length < (isBoom ? 5 : 10)) return (msg.textContent = isBoom ? 'Say in a few words what you need.' : 'Describe the job in a few words (at least 10 characters).');
       if (!chat && !text && !call) return (msg.textContent = 'Choose at least one way technicians can contact you.');
-      if ((text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
+      if (user && (text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
+      if (!user) {
+        // Owner 11-21: everything is filled in — now confirm the phone (small window on this page), then post.
+        try { window.texVisit && texVisit('post_needs_phone'); } catch (_) {}
+        $('post-dlg').close();
+        let ok = false; try { ok = await TexQuickSignup.require({ intent: 'customer', post: true, source: isBoom ? 'post_boom' : 'post_request' }); } catch (_) {}
+        user = window.TexAuth ? await TexAuth.getUser().catch(() => null) : null;
+        $('post-dlg').showModal();
+        if (!ok || !user) { msg.textContent = 'Confirm your phone number to post your request.'; return; }
+        if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
+        try { syncPhone(); } catch (_) {}
+        if ((text || call) && !/^\+?\d{10,15}$/.test($('p-phone').value.replace(/[^\d+]/g, ''))) { msg.textContent = 'Enter a valid mobile number for Text or Call.'; return; }
+        setTimeout(() => $('post-submit').click(), 0); return;
+      }
       const btn = $('post-submit'); btn.disabled = true; msg.className = 'msg-line';
       try {
         const paths = [];

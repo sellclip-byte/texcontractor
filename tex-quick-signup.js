@@ -188,7 +188,9 @@
     const es = isEs();
     const who = current.name ? current.name : (es ? 'este técnico' : 'this pro');
     box.querySelector('#tqs-title').textContent = es ? '¡Ya casi! ✓' : "You're almost there ✓";
-    box.querySelector('#tqs-sub').textContent = es ? 'Pon tu número para escribirle a ' + who + ' ahora mismo. Te mandamos un código y abrimos el mensaje.' : 'Add your number to text ' + who + ' right away. We text you a code, then open the message for you.';
+    box.querySelector('#tqs-sub').textContent = current.post
+      ? (es ? 'Último paso: pon tu número para publicar tu pedido. Te mandamos un código y tu pedido sale en línea.' : 'Last step: add your number to post your request. We text you a code, then your request goes online.')
+      : (es ? 'Pon tu número para escribirle a ' + who + '. Te mandamos un código y abrimos el mensaje.' : 'Add your number to text ' + who + '. We text you a code, then open the message for you.');
     const perks = box.querySelector('#tqs-perks'); perks.hidden = true; perks.innerHTML = '';
     box.querySelector('#tqs-hint').hidden = login; box.querySelector('#tqs-hint').textContent = 'At least 6 characters, with a letter and a number.';
     box.querySelector('label[for="tqs-pass"]').textContent = 'Password';
@@ -215,7 +217,7 @@
     if (!window.TexAuth) return false;
     if (!box) build();
     if (pending) finish(false);
-    current = { name: (opts && opts.name) || '', intent: (opts && opts.intent) || '', returnTo: (opts && opts.returnTo) || '' };
+    current = { name: (opts && opts.name) || '', intent: (opts && opts.intent) || '', returnTo: (opts && opts.returnTo) || '', post: !!(opts && opts.post) };
     setMode(false);
     box.querySelector('#tqs-msg').textContent = '';
     box.querySelector('#tqs-phonebox').hidden = false; box.querySelector('#tqs-emailbox').hidden = true;
