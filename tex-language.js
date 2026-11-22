@@ -356,6 +356,7 @@
     'Service': 'Servicio',
     'Title': 'Título',
     'What do you need?': '¿Qué necesitas?',
+    'What do you need fixed?': '¿Qué necesitas arreglar?',
     'Photos (up to 8)': 'Fotos (hasta 8)',
     '📷 Take a photo': '📷 Tomar foto',
     '🖼 Choose photos': '🖼 Escoger fotos',
