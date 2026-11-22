@@ -31,6 +31,13 @@
         '</small><span class="arr">' + (es() ? 'Únete gratis →' : 'Join free →') + '</span></span>';
       var l = np.querySelector('.lab span'); if (l) l.textContent = es() ? 'Nuevos técnicos' : 'New pros';
     };
+    // Owner 11-21: no separate call strip on top; the answer line sits right under the technician banner, joined to it.
+    var call = D.createElement('a'); call.id = 'dk-call'; call.href = 'tel:+18173440807';
+    var callTxt = function () { call.innerHTML = '<span class="ic">📞</span><span class="t">' + (es() ? '¿Preguntas? Llámenos' : 'Questions? Call us') + '</span><b>(817) 344-0807</b>'; };
+    callTxt();
+    call.addEventListener('click', function () { try { window.texVisit && texVisit('call_click_home') } catch (_) {} });
+    if (pro && pro.parentNode) pro.parentNode.insertBefore(call, pro.nextSibling);
+    var txt0 = txt; txt = function () { txt0(); callTxt(); };
     txt();
     var last = es();
     new MutationObserver(function () { if (es() !== last) { last = es(); txt(); } }).observe(H, { attributes: true, attributeFilter: ['lang'] });
