@@ -73,7 +73,7 @@
     <section class="thread" aria-label="Conversation">
       <div class="thread-head"><button class="back-list" id="back-list" type="button">← Chats</button><div><b id="thread-name">Select a chat</b><div class="svc" id="thread-service"></div></div><span class="live" id="live" hidden>● Live</span><button type="button" id="report-btn" class="report-btn" hidden>🚩 Report</button></div>
       <div class="msgs" id="msgs" aria-live="polite"><p class="empty">Choose a conversation to read and reply.</p></div>
-      <p class="note">Keep your conversation here. Never share passwords or payment card numbers in chat.</p>
+      <p class="note" id="chat-note">Be respectful. No links. Never share SSN, bank or card numbers, or passwords. Chats can be reported and checked by our team. <a href="site-guide.html#chat-rules" target="_blank" rel="noopener">Chat rules</a></p>
       <div class="picked" id="picked" hidden></div>
       <form class="compose" id="compose" hidden><button class="attach" id="attach" type="button" title="Add photos" aria-label="Add photos" hidden>📷</button><input id="photo-input" type="file" accept="image/*" hidden><label for="body" class="sr" style="position:absolute;left:-9999px">Message</label><textarea id="body" maxlength="2000" placeholder="Write a message…"></textarea><button type="submit" id="send">Send</button></form>
     </section>
@@ -140,6 +140,7 @@
     // owner 11-21: Report this person -> admin chat page (chat-admin.html)
     const ES = (document.documentElement.lang||'').indexOf('es')===0 || /[?&]lang=es/.test(location.search);
     // owner 11-22: most common problems, one tap, no need to explain
+    if (ES) { const n = document.getElementById('chat-note'); if (n) n.innerHTML = 'Sé respetuoso. Sin enlaces. Nunca compartas tu SSN, números de banco o tarjeta, ni contraseñas. Los chats pueden ser reportados y revisados por nuestro equipo. <a href="site-guide.html#chat-rules" target="_blank" rel="noopener">Reglas del chat</a>'; }
     const RS0 = [['Asked for personal info (SSN, bank, password)','Pidió datos personales (SSN, banco, contraseña)'],['Asked for money first or a gift card','Pidió dinero por adelantado o tarjeta de regalo'],['Scam or fake person','Estafa o persona falsa'],['Rude, insults or threats','Grosero, insultos o amenazas'],['Harassment or keeps bothering me','Acoso o me sigue molestando'],['Spam, ads or links','Spam, publicidad o enlaces'],['Inappropriate photo','Foto inapropiada'],['Pretends to be someone else','Se hace pasar por otra persona'],['Did not show up / bad behavior','No se presentó / mal comportamiento'],['Something else','Otra cosa']];
     const RS = RS0.map((r) => ES ? r : [r[0]]);
     let rpReason = '';
