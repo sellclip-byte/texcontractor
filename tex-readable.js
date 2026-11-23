@@ -256,9 +256,11 @@
     // 11-21: count a page view only for a real person: first scroll/tap/key, or 8 s with the page visible (bots load and leave).
     if (!inFrame) {
       var counted = false, vis = 0, timer;
-      var fire = function () { if (counted) return; counted = true; clearInterval(timer); ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(function (e) { window.removeEventListener(e, fire, true); }); window.texVisit('view'); };
-      ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(function (e) { window.addEventListener(e, fire, { capture: true, passive: true }); });
-      timer = setInterval(function () { if (document.visibilityState === 'visible' && ++vis >= 8) fire(); }, 1000);
+      // 11-22: computers count only after a real mouse move/click/key/wheel. Crawlers rendered ~400 desktop 'views' a day by just staying 8 s (0 actions).
+      var evs = device === 'mobile' ? ['pointerdown', 'scroll', 'keydown', 'touchstart'] : ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'];
+      var fire = function (e) { if (counted) return; if (e && e.isTrusted === false) return; counted = true; clearInterval(timer); evs.forEach(function (n) { window.removeEventListener(n, fire, true); }); window.texVisit('view'); };
+      evs.forEach(function (n) { window.addEventListener(n, fire, { capture: true, passive: true }); });
+      if (device === 'mobile') timer = setInterval(function () { if (document.visibilityState === 'visible' && ++vis >= 8) fire(); }, 1000);
     }
   } catch (_) {}
 })();
