@@ -220,7 +220,7 @@
     .status-note { color:#1e3a8a; background:#eff6ff; }
     nav a:hover { color:#1d4ed8; border-color:#bfdbfe; background:#eff6ff; }
   .ph-btns{display:flex;gap:10px;margin:2px 0 10px}.ph-btn{flex:1;padding:12px 10px;border-radius:12px;border:2px solid #1d4ed8;background:#fff;color:#1d4ed8;font-weight:800;font-size:1rem;cursor:pointer}.ph-btn:first-child{background:#1d4ed8;color:#fff}
-</style>
+.close-btn.got-pro{background:#16a34a!important;color:#fff!important;border-color:#16a34a!important;font-weight:800}</style>
 <script src="/tex-readable.js?v=20261122b" defer></script></head>
 <body>
   <header>
@@ -339,7 +339,7 @@
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-call"> 📞 Phone call<small>shows your number</small></label>
       <div id="phone-field"><label class="f" for="p-phone">Your mobile number</label><input type="tel" id="p-phone" placeholder="(214) 555-0123" autocomplete="tel" maxlength="20"></div>
       <p class="fine">🔒 Your number is shared only with local technicians for your job, never shown to visitors or search engines, and it is hidden when you close your request. Your title, description, city and photos are public.</p>
-      <div class="safe">💬 Offers arrive in your Messages.<br>✓ Close your request when you find the right technician.</div>
+      <div class="safe">💬 Offers arrive in your Messages.<br>✅ Found your pro? Tap <b>Got my pro</b> to close your request.</div>
       <p class="fine" id="alert-note">📱 <b>Text alert when technicians reply:</b> so you don't miss an offer, we send a short text to your mobile number (the one above, or the one on your account): at most once a day and up to 3 times per request. Adding your number is optional, and you choose how technicians contact you. Reply STOP to stop alerts.</p>
       <p class="msg-line" id="post-msg" role="status"></p>
       <button class="btn full" type="submit" id="post-submit">Post request</button>
@@ -354,7 +354,7 @@
         <tr><td>How pros see it</td><td>When they visit</td><td><b>Sent to them now</b></td></tr>
         <tr><td>How many pros</td><td>Up to 5 offers</td><td><b>You pick: 3 · 5 · 10 · all</b></td></tr>
         <tr><td>Stays open</td><td>Until you close it</td><td><b>24 hours</b></td></tr></table>
-      <p class="fine">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or email is fine too. It's your choice. When you find your pro, tap <b>Close request</b>.</p>
+      <p class="fine">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or email is fine too. It's your choice. When you find your pro, tap <b>✅ Got my pro</b>.</p>
       <button class="btn full" type="button" id="boom-start" style="background:linear-gradient(135deg,#f97316,#dc2626)">⚡ Start BOOM</button>
     </div>
   </dialog>
@@ -498,7 +498,7 @@
           const days = Math.max(0, Math.ceil((new Date(r.expires_at) - Date.now()) / 86400000));
           d.className = 'mine-row' + (open ? '' : ' closed');
           d.innerHTML = `<div><b>${esc(r.title)}</b><small>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · ${r.offers_count} offer${r.offers_count === 1 ? '' : 's'} ${r.unread ? `<span class="new">${r.unread} new</span>` : ''} · ${open ? (days > 365 ? 'open until you close it' : (new Date(r.expires_at) - Date.now() < 36 * 3600000) ? `⚡ closes in ${leftTxt(r.expires_at)}` : `closes in ${days} day${days === 1 ? '' : 's'}`) : 'closed'}</small></div>
-            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? `<a class="msgs-link" href="contractor.html?service=${encodeURIComponent(r.service)}&city=${encodeURIComponent(r.city)}&state=${encodeURIComponent(r.state)}">Pros near you</a>` : ''}${open ? '<button class="close-btn" type="button">Close request</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
+            <div class="acts"><button class="edit-btn" type="button" data-v>View</button>${open ? '<button class="edit-btn" type="button" data-e>Edit</button>' : ''}${r.offers_count ? '<a class="msgs-link" href="chat.html">Messages</a>' : ''}${open ? `<a class="msgs-link" href="contractor.html?service=${encodeURIComponent(r.service)}&city=${encodeURIComponent(r.city)}&state=${encodeURIComponent(r.state)}">Pros near you</a>` : ''}${open ? '<button class="close-btn got-pro" type="button">✅ Got my pro · Close</button>' : '<button class="close-btn" type="button" data-h>Remove</button>'}</div>`;
           d.querySelector('[data-v]').addEventListener('click', () => openView(r.id));
           d.querySelector('[data-e]')?.addEventListener('click', () => openEdit(r.id));
           d.querySelector('.close-btn:not([data-h])')?.addEventListener('click', (ev) => closeRequest(r.id, ev.target));
@@ -659,7 +659,7 @@
           const href = 'contractor.html?service=' + encodeURIComponent(v.service) + '&city=' + encodeURIComponent(v.city) + '&state=' + encodeURIComponent(v.state);
           let n = document.getElementById('near-note');
           if (!n) { n = document.createElement('div'); n.id = 'near-note'; n.style.cssText = 'margin:0 0 14px;padding:14px 16px;border-radius:14px;background:#ecf7f3;border:1px solid #b7e0d2;color:#064e3b;font-weight:700;line-height:1.45'; $('mine').prepend(n); }
-          n.innerHTML = boomOk ? ('🚀 BOOM! Your job is on its way to pros near ' + esc(v.city) + '. They will contact you the way you chose. Open for 24 hours. When you find your pro, tap <b>Close request</b>. <a style="color:#075c4b;text-decoration:underline" href="' + href + '">Want to text pros yourself too? →</a>') : ('✅ Your request is posted. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>');
+          n.innerHTML = boomOk ? ('🚀 BOOM! Your job is on its way to pros near ' + esc(v.city) + '. They will contact you the way you chose. Open for 24 hours. When you find your pro, tap <b>Close request</b>. <a style="color:#075c4b;text-decoration:underline" href="' + href + '">Want to text pros yourself too? →</a>') : ('✅ Your request is posted. When a pro fixes it, tap <b>✅ Got my pro</b> on your request. Don\'t wait for offers: <a style="color:#075c4b;text-decoration:underline" href="' + href + '">see ' + esc(v.service) + ' pros near ' + esc(v.city) + ' and text them now →</a>');
           // owner 11-15: DFW Mobile Lawnmower customers who came from the $15 card get a request code to text to DFW
           let promo = ''; try { promo = localStorage.getItem('tc_promo') || ''; } catch (_) {}
           const rid = String(Array.isArray(newReqId) ? newReqId[0] : (newReqId || '')).replace(/[^0-9a-f]/gi, '');
@@ -686,8 +686,9 @@
       } catch (_) {}
       return current.find((x) => x.id === id) || null;
     }
-    async function closeRequest(id, btn) {
-      if (!confirm('Close this request? Technicians will no longer see it, and your phone number will be removed.')) return false;
+    // Owner 11-22: green "Got my pro" button. Ask how it went (tells us if TexContractor pros reached them), then close.
+    function askClose() { return new Promise((res) => { const es = document.documentElement.lang === 'es' || /lang=es/.test(location.search); const d = document.createElement('dialog'); d.style.cssText = 'border:0;border-radius:16px;padding:20px;max-width:380px;width:92%;box-shadow:0 12px 40px rgba(0,0,0,.25)'; const b = (k, txt, bg, fg) => `<button type="button" data-k="${k}" style="display:block;width:100%;margin:8px 0;padding:14px;border-radius:12px;border:0;background:${bg};color:${fg};font-weight:800;font-size:1.02rem;cursor:pointer">${txt}</button>`; d.innerHTML = `<h3 style="margin:0 0 6px;font-size:1.2rem">${es ? '¿Ya resolviste tu trabajo?' : 'Did you get it done?'}</h3><p style="margin:0 0 10px;color:#475569;line-height:1.4">${es ? 'Cerramos tu solicitud para que no te escriban más técnicos, y quitamos tu número.' : "We'll close your request so no more pros contact you, and remove your number."}</p>` + b('tc', es ? '✅ Sí, un técnico de TexContractor' : '✅ Yes, a pro from TexContractor', '#16a34a', '#fff') + b('other', es ? '👍 Lo resolví de otra forma' : '👍 Solved it another way', '#e2e8f0', '#0f172a') + b('', es ? 'Cancelar' : 'Cancel', 'transparent', '#475569'); document.body.append(d); d.addEventListener('click', (e) => { const k = e.target.closest('[data-k]'); if (!k) return; d.close(); d.remove(); res(k.dataset.k || null); }); d.addEventListener('cancel', () => { d.remove(); res(null); }); d.showModal(); }); }
+    async function closeRequest(id, btn) { const how = await askClose(); if (!how) return false; try { window.texVisit && texVisit(how === 'tc' ? 'req_closed_tc' : 'req_closed_other'); } catch (_) {}
       if (btn) btn.disabled = true;
       try { await C.rpc('texcontractor_request_close', { p_request_id: id }, true); await Promise.all([loadMine(), load(true), loadCount()]); return true; }
       catch (e) { alert(e.message); if (btn) btn.disabled = false; return false; }
@@ -726,7 +727,7 @@
       if (r.mine) {
         if (open) {
           const e = document.createElement('button'); e.className = 'btn'; e.type = 'button'; e.textContent = 'Edit request'; e.onclick = () => { $('view-dlg').close(); openEdit(r.id); };
-          const c = document.createElement('button'); c.className = 'close-btn'; c.type = 'button'; c.textContent = 'Close request'; c.onclick = async () => { if (await closeRequest(r.id, c)) $('view-dlg').close(); };
+          const c = document.createElement('button'); c.className = 'close-btn got-pro'; c.type = 'button'; c.textContent = '✅ Got my pro · Close'; c.onclick = async () => { if (await closeRequest(r.id, c)) $('view-dlg').close(); };
           acts.append(e, c);
         }
         if (r.offers_count) { const m = document.createElement('a'); m.className = 'btn ghost'; m.href = 'chat.html'; m.textContent = 'See offers in Messages'; acts.append(m); }
