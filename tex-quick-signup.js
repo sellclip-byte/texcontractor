@@ -149,10 +149,11 @@
       ? (es ? '🔒 Tu número nunca se muestra en público. Sin spam.' : '🔒 Your number is never shown publicly. No spam.')
       : (es ? '🔒 Tu número es privado. Solo es para tu cuenta. Sin spam, sin llamadas.' : "🔒 Your phone stays private. It's only for your account. No spam, no calls.");
     box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
-    box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead';
+    box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead'; // Owner 11-22: posting a request needs a real phone (pros text or call). No email option there.
+    { const sw = box.querySelector('#tqs-useemail'); if (sw && sw.parentElement) sw.parentElement.hidden = !!(current && current.post); }
     // Owner 11-21: in the post-request box, a small note: with a phone, pros can reach you easily; email is still fine.
     const pn = box.querySelector('#tqs-pnote'); pn.hidden = !(current && current.post);
-    pn.innerHTML = es ? '📱 <b>Con tu teléfono</b>, los técnicos cerca de ti te pueden escribir o llamar para ayudarte más fácil. ¿Prefieres email? Tú decides: toca abajo.' : '📱 <b>With your phone</b>, pros near you can text or call you, so it is easier to get help. Prefer email? Your choice: tap below.';
+    pn.innerHTML = es ? '📱 <b>Con tu teléfono</b>, los técnicos cerca de ti te escriben o te llaman con su oferta.' : '📱 <b>With your phone</b>, pros near you text or call you with their offer.';
     if (box.dataset.sent !== '1') box.querySelector('#tqs-pgo').textContent = es ? 'Mándame un código' : 'Text me a code';
     try { document.querySelectorAll('.tex-nospam').forEach((p) => { p.textContent = es ? '🔒 Solo usamos tu número para que entres. Sin spam.' : '🔒 We only use your number to sign you in. No spam.'; }); } catch (_) {}
   }
