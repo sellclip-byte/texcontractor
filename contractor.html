@@ -360,7 +360,7 @@
           }
           textButton.textContent = 'Text this contractor';
           window.TexContactTracking?.record('sms');
-          window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate(provider.display_name, provider.service, true, profileLink('contractor', provider.id, provider.service)))}`;
+          { const _b = messageTemplate(provider.display_name, provider.service, true, profileLink('contractor', provider.id, provider.service)); if (window.texOpenSms) texOpenSms(phone, _b); else window.location.href = `sms:${phone}?body=${encodeURIComponent(_b)}`; }
         } catch (error) {
           textButton.textContent = 'Text this contractor';
           window.alert(error.message);
@@ -476,7 +476,7 @@
                   const phone=await res.json();
                   if(!phone)throw new Error('Phone unavailable');
                   window.TexContactTracking?.record('sms');
-                  window.location.href='sms:'+phone+'?body='+encodeURIComponent(messageTemplate(entry.business_name, entry.service, false, profileLink('imported', entry.id, entry.service)));
+                  { const _b = messageTemplate(entry.business_name, entry.service, false, profileLink('imported', entry.id, entry.service)); if (window.texOpenSms) texOpenSms(phone, _b); else window.location.href='sms:'+phone+'?body='+encodeURIComponent(_b); }
                 }catch(e){alert(e.message);}
               });
               const profile=document.createElement('a');profile.className='profile-button';profile.textContent='View profile';
@@ -654,6 +654,7 @@
 <script src="tex-worktype.js?v=1" defer></script>
 <script src="/tex-nospam.js?v=20261114r" defer></script>
 <script src="tex-call.js?v=20261120wrap" defer></script>
+<script src="tex-sms-open.js?v=20261123"></script>
 </body>
 </html>
 

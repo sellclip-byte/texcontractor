@@ -269,7 +269,8 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
         const phone = String(profile.imported ? (typeof rows==='string'?rows:rows?.phone||'') : rows?.[0]?.phone||'').replace(/[^\d+]/g, '');
         if (!phone) throw new Error('The contractor phone number is not available yet.');
         window.TexContactTracking?.record('sms');
-        window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate())}`;
+        if (window.texOpenSms) { texOpenSms(phone, messageTemplate(), { onClose: () => { textLink.textContent = 'Text this contractor'; } }); if (!/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent)) textLink.textContent = 'Text this contractor'; }
+        else window.location.href = `sms:${phone}?body=${encodeURIComponent(messageTemplate())}`;
       } catch (error) {
         textLink.textContent = 'Text this contractor';
         window.alert(error.message);
@@ -317,6 +318,7 @@ const availBadge=(from,to)=>{const s=document.createElement('span');s.className=
   <script src="tex-side-ads.js?v=20261118noframe"></script>
 <script src="tex-worktype.js?v=1" defer></script>
 <script src="/tex-nospam.js?v=20261114r" defer></script>
+<script src="tex-sms-open.js?v=20261123"></script>
 </body>
 </html>
 
