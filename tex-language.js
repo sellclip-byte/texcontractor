@@ -218,7 +218,7 @@
     'Additional details (optional)': 'Detalles adicionales (opcional)',
     'Tell us what happened.': 'Cuéntanos qué pasó.',
     'Block this contractor on this device': 'Bloquear este contratista en este dispositivo',
-    'To remove your number from every listing right away, use': 'Para quitar tu número de todos los anuncios de inmediato, usa',
+    'To remove your number from every listing, use': 'Para quitar tu número de todos los anuncios, usa',
     'Remove my phone number': 'Quitar mi número de teléfono',
     'Send report': 'Enviar reporte',
     'Cancel': 'Cancelar',

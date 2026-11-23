@@ -14,7 +14,8 @@ code{font-size:1.1rem;font-weight:800;letter-spacing:2px}#msg{font-weight:700;co
 </style><script src="/tex-readable.js?v=20261122b" defer></script></head><body><main>
 <p><a href="contractor-admin.html">← Admin dashboard</a></p>
 <h1>Phone number removal requests</h1>
-<p>When someone asks to remove their number, every listing with it is hidden at once. Text them the code from your phone; when they enter it on the site, the number is removed and blocked. You can also restore a false request or remove the number yourself.<br><span dir="rtl" lang="ar">عند الطلب تختفي الإعلانات فوراً. أرسل الكود من جوالك، وعندما يكتبه صاحب الرقم يُحذف الرقم ويُمنع نهائياً. أو أعد الإعلان إن كان الطلب كاذباً.</span></p>
+<p>Owner 11-23: people report their number on the site, then text <b>REMOVE</b> from that phone to the business line <b>(817) 344-0807</b>. When a REMOVE text arrives, type the number that sent it here and press Enter: every listing with it is removed and the number is blocked. Only numbers that texted you themselves.<br><span dir="rtl" lang="ar">لما توصلك رسالة REMOVE على رقم البزنس، اكتب الرقم اللي بعثها هون واكبس Enter: بتنشال كل إعلاناته وبينحظر الرقم.</span></p>
+<form id="quick" class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="font-weight:800">Number that texted REMOVE: <input id="qphone" type="tel" placeholder="(214) 555-0123" style="font:inherit;font-size:1.1rem;padding:9px;border:2px solid #075c4b;border-radius:8px;width:200px"></label><button class="btn rm" type="submit">Remove &amp; block ⏎</button><span id="qmsg" style="font-weight:800"></span></form>
 <p id="msg" role="status"></p><div id="list">Loading…</div>
 </main>
 <script src="tex-auth.js?v=20261109fin"></script>
@@ -35,12 +36,21 @@ async function load(){
   const found=(x.hidden_submission_ids||[]).length+(x.hidden_import_ids||[]).length;
   c.innerHTML=`<div><strong>${fmt(x.phone_digits)}</strong> <span class="tag ${x.status}">${x.status}</span> · ${new Date(x.created_at).toLocaleString()} · ${found} listing(s) hidden · ${x.lang==='es'?'Español':'English'}</div>
   <div>${x.contact?('From: '+x.contact.replace(/</g,'&lt;')):''}</div><div>${x.details?x.details.replace(/</g,'&lt;'):''}</div>
-  ${x.status==='hidden'?`<div class="row">Code: <code>${x.code}</code><a class="btn sms" href="sms:+1${x.phone_digits}?&body=${encodeURIComponent(smsText(x))}">Text code from my phone</a><button class="btn rm" data-a="remove">Remove &amp; block now</button><button class="btn rs" data-a="restore">Restore (false request)</button></div>`:''}`;
+  ${x.status==='hidden'?`<div class="row">Waiting for a REMOVE text from this number · <button class="btn rm" data-a="remove">Remove &amp; block now</button><button class="btn rs" data-a="restore">Restore (false request)</button></div>`:''}`;
   c.querySelectorAll('button[data-a]').forEach(b=>b.onclick=async()=>{if(!confirm(b.dataset.a==='remove'?'Remove and block this number?':'Restore the hidden listings?'))return;
    const res=await fetch(API+'rpc/texcontractor_admin_resolve_removal',{method:'POST',headers,body:JSON.stringify({p_id:x.id,p_action:b.dataset.a})});
    if(!res.ok){msg.textContent=(await res.json().catch(()=>({}))).message||'Failed';return}load()});
   list.appendChild(c)});
 }
 load();
+document.getElementById('quick').onsubmit=async e=>{e.preventDefault();const qm=document.getElementById('qmsg');const d=document.getElementById('qphone').value.replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'');
+ if(d.length!==10){qm.style.color='#991b1b';qm.textContent='Enter the 10-digit number.';return}
+ const r=await fetch(API+'texcontractor_number_removals?select=id,phone_digits,status,hidden_submission_ids,hidden_import_ids&status=eq.hidden&phone_digits=eq.'+d+'&order=created_at.desc&limit=1',{headers});const rows=await r.json().catch(()=>[]);
+ if(!rows.length){qm.style.color='#991b1b';qm.textContent='No open request from '+fmt(d)+'. They must report it first on remove-number.html.';return}
+ const x=rows[0],n=(x.hidden_submission_ids||[]).length+(x.hidden_import_ids||[]).length;
+ if(!confirm('Remove and block '+fmt(d)+'? ('+n+' listing(s))'))return;
+ const res=await fetch(API+'rpc/texcontractor_admin_resolve_removal',{method:'POST',headers,body:JSON.stringify({p_id:x.id,p_action:'remove'})});
+ if(!res.ok){qm.style.color='#991b1b';qm.textContent=(await res.json().catch(()=>({}))).message||'Failed';return}
+ qm.style.color='#14532d';qm.textContent='✓ '+fmt(d)+' removed and blocked.';document.getElementById('qphone').value='';load()};
 })();
 </script></body></html>
