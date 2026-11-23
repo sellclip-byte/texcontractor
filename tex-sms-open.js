@@ -17,6 +17,7 @@
       '<h3 style="margin:0 0 6px;font-size:1.25rem">' + (es ? 'Escríbele desde tu teléfono' : 'Text this pro from your phone') + '</h3>' +
       '<p style="margin:0 0 12px;color:#475569">' + (es ? 'Estás en una computadora. Envía un mensaje de texto a este número:' : "You're on a computer. Send a text from your phone to:") + '</p>' +
       '<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><a href="tel:' + phone + '" style="font-size:1.6rem;font-weight:900;color:#075c4b;text-decoration:none">' + fmt(phone) + '</a><button type="button" id="tso-cn" style="margin-left:auto;border:1px solid #cbd5e1;background:#f8fafc;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer">' + (es ? 'Copiar número' : 'Copy number') + '</button></div>' +
+      '<div id="tso-qrw" style="display:flex;gap:12px;align-items:center;background:#f1f5f9;border-radius:12px;padding:10px;margin-bottom:12px"><div id="tso-qr" style="width:132px;height:132px;flex:none;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem">QR…</div><div style="font-weight:700;font-size:.95rem">📱 ' + (es ? 'Escanea con la cámara de tu teléfono: se abre tu app de mensajes con el número y el mensaje listos. Solo toca Enviar.' : 'Scan with your phone camera: your texting app opens with the number and message ready. Just tap Send.') + '</div></div>' +
       '<label style="font-weight:700;font-size:.92rem">' + (es ? 'Tu mensaje (puedes cambiarlo):' : 'Your message (you can change it):') + '</label>' +
       '<textarea id="tso-msg" rows="4" style="width:100%;box-sizing:border-box;margin:6px 0 8px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:15px system-ui,sans-serif"></textarea>' +
       '<button type="button" id="tso-cm" style="width:100%;min-height:46px;border:0;border-radius:12px;background:#075c4b;color:#fff;font-weight:900;font-size:1rem;cursor:pointer">' + (es ? 'Copiar mensaje' : 'Copy message') + '</button>' +
@@ -29,6 +30,15 @@
     back.querySelector('#tso-x').addEventListener('click', close);
     back.querySelector('#tso-cn').addEventListener('click', function () { copy(fmt(phone), this, es ? 'Copiado ✓' : 'Copied ✓'); });
     back.querySelector('#tso-cm').addEventListener('click', function () { copy(back.querySelector('#tso-msg').value, this, es ? 'Copiado ✓' : 'Copied ✓'); });
+    // Owner 11-23: QR code (only here, so only signed-in members ever see it — the box opens after sign-in).
+    var drawQr = function () {
+      var box = back.querySelector('#tso-qr'); if (!box || !window.qrcode) return;
+      var d = String(phone).replace(/[^\d+]/g, ''); if (!/^\+/.test(d)) d = '+1' + d.replace(/^1(?=\d{10}$)/, '');
+      var txt = 'SMSTO:' + d + ':' + (back.querySelector('#tso-msg').value || '').slice(0, 300);
+      try { var q = qrcode(0, 'L'); q.addData(unescape(encodeURIComponent(txt))); q.make(); box.innerHTML = q.createImgTag(3, 4); var im = box.querySelector('img'); if (im) { im.style.width = '132px'; im.style.height = '132px'; im.alt = 'QR code to text this pro'; } } catch (_) { back.querySelector('#tso-qrw').hidden = true; }
+    };
+    if (window.qrcode) drawQr(); else { var sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'; sc.onload = drawQr; sc.onerror = function () { var w = back.querySelector('#tso-qrw'); if (w) w.hidden = true; }; document.head.appendChild(sc); }
+    var qt; back.querySelector('#tso-msg').addEventListener('input', function () { clearTimeout(qt); qt = setTimeout(drawQr, 400); });
     var c = back.querySelector('#tso-chat'); if (c) c.addEventListener('click', function () { close(); chatBtn.click(); });
   };
 })();
