@@ -146,7 +146,7 @@
     box.querySelector('#tqs-code-l').textContent = es ? 'Código que te mandamos' : 'Code we texted you';
     box.querySelector('#tqs-priv').hidden = current.intent === 'provider'; // owner 11-14: customers only (pros' phones are shown to customers)
     box.querySelector('#tqs-priv').textContent = (current && current.post)
-      ? (es ? '🔒 Tu número nunca se muestra en público. Sin spam.' : '🔒 Your number is never shown publicly. No spam.')
+      ? (es ? '🔒 Tu número nunca se muestra en público. Al agregarlo, aceptas que los técnicos te escriban o llamen sobre tu pedido. Ver Términos.' : '🔒 Never shown publicly. By adding it, you agree pros may text or call you about your request. See Terms.')
       : (es ? '🔒 Tu número es privado. Solo es para tu cuenta. Sin spam, sin llamadas.' : "🔒 Your phone stays private. It's only for your account. No spam, no calls.");
     box.querySelector('#tqs-phint').textContent = es ? 'Te mandamos un código por mensaje. Sin contraseña. Pueden aplicar cargos.' : 'We text you a one-time code. No password needed. Msg & data rates may apply.';
     box.querySelector('#tqs-useemail').textContent = es ? 'Usar email' : 'Use email instead'; // Owner 11-22: posting a request needs a real phone (pros text or call). No email option there.
