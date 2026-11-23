@@ -444,7 +444,7 @@ if(PHONE_OTP){$('#send').hidden=false;$('#google').classList.add('ghost');$('#go
   T.en.k1='✓ '+st.phone+' confirmed';T.en.h1='What is your trade?';T.en.s1='Fill in your profile, then you are live.';
   T.es.k1='✓ '+st.phone+' confirmado';T.es.h1='¿Cuál es tu oficio?';T.es.s1='Llena tu perfil y listo.';
   render();zipOk()}
- if(u){try{$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
+ if(u){try{/* 11-23: signed-in pros saw a Google 'G' on 'Publish my free profile' and left (#3813b3) — hide it */try{$('#google').firstElementChild.style.display='none'}catch(_){}$('#google').lastChild.textContent=t('googleIn');$('#google').classList.remove('ghost');$('#send').hidden=true;$('#useemail').hidden=true;
    const n=document.createElement('p');n.className='small';n.textContent=(L==='es'?'Ya entraste como ':'Signed in as ')+(u.email||u.phone||'');$('#google').after(n)}catch(_){}}
  const d=q.get('resume')?readDraft():null;
  if(d&&u){st.trade=TRADES.find(x=>x.s===d.trade)||(ALL.find(x=>x[0]===d.trade)?{s:d.trade,i:'',en:d.trade,es:(ALL.find(x=>x[0]===d.trade)||[])[1]}:null);st.zip=d.zip;st.city=d.city;st.state=d.state;st.name=d.name;st.phone=d.phone;if(d.L)L=d.L;if(d.x)Object.assign(st,d.x);const ph=await IDB.get('photos');if(ph){st.photo=ph.photo||st.photo;st.work=ph.work||[];st.ours=!!ph.ours}
