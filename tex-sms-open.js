@@ -21,6 +21,7 @@
       '<label style="font-weight:700;font-size:.92rem">' + (es ? 'Tu mensaje (puedes cambiarlo):' : 'Your message (you can change it):') + '</label>' +
       '<textarea id="tso-msg" rows="4" style="width:100%;box-sizing:border-box;margin:6px 0 8px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:15px system-ui,sans-serif"></textarea>' +
       '<button type="button" id="tso-cm" style="width:100%;min-height:46px;border:0;border-radius:12px;background:#075c4b;color:#fff;font-weight:900;font-size:1rem;cursor:pointer">' + (es ? 'Copiar mensaje' : 'Copy message') + '</button>' +
+      '<p style="margin:10px 0 0;font-size:.82rem;color:#64748b">' + (es ? 'Tú eres responsable de tus mensajes y llamadas. Sé respetuoso con el tiempo del técnico. ' : 'You are responsible for the texts and calls you make. Please be respectful of the pro\'s time. ') + '<a href="terms.html#contact-between-members" target="_blank" rel="noopener" style="color:#64748b">' + (es ? 'Términos' : 'Terms') + '</a></p>' +
       (hasChat ? '<button type="button" id="tso-chat" style="width:100%;min-height:46px;margin-top:8px;border:2px solid #1d4ed8;border-radius:12px;background:#fff;color:#1d4ed8;font-weight:900;font-size:1rem;cursor:pointer">💬 ' + (es ? 'O chatea aquí en TexContractor' : 'Or chat here on TexContractor') + '</button>' : '') +
       '</div>';
     document.body.appendChild(back);
