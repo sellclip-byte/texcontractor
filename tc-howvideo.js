@@ -28,9 +28,15 @@
   }
   function init() {
     var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
-    var spots = [document.querySelector('#rq-head .steps, .steps'), document.querySelector('#cust-hero .ch-trust')].filter(Boolean);
-    spots.forEach(function (s) { if (s.nextElementSibling && s.nextElementSibling.classList && s.nextElementSibling.classList.contains('hv-btn')) return; s.insertAdjacentElement('afterend', make()); });
-    setInterval(function () { document.querySelectorAll('.hv-btn .hv-t').forEach(function (t) { var l = label(); if (t.textContent !== l) t.textContent = l; }); }, 800);
+    // spots: requests page steps row, home hero (desktop), phone home hero (#mh-q is built later by tex-mobile-home.js)
+    function place() {
+      [document.querySelector('.steps'), document.querySelector('#cust-hero .ch-trust'), document.getElementById('mh-q')].filter(Boolean).forEach(function (s) {
+        var n = s.nextElementSibling; if (n && n.classList && n.classList.contains('hv-btn')) return;
+        var b = make(); if (s.id === 'mh-q') b.style.cssText = 'margin:12px 0 0;display:flex'; s.insertAdjacentElement('afterend', b);
+      });
+      document.querySelectorAll('.hv-btn .hv-t').forEach(function (t) { var l = label(); if (t.textContent !== l) t.textContent = l; });
+    }
+    place(); setInterval(place, 800);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
