@@ -331,14 +331,14 @@
       <div id="boom-box" hidden>
         <label class="f" for="p-wanted" style="margin-top:0">How many pros should we send it to?</label>
         <select id="p-wanted"><option value="3">3 pros</option><option value="5">5 pros</option><option value="10" selected>10 pros</option><option value="20">All pros nearby</option></select>
-        <div style="margin-top:8px;font-size:.88rem">💡 Tip: choose <b>Text</b> so pros can reach you fastest. Chat or call is fine too. It's your choice.</div>
+        <div style="margin-top:8px;font-size:.88rem">💡 Tip: choose <b>Text</b> so local pros can reach you. Call is fine too. It's your choice.</div>
       </div>
       <label class="f">How can technicians contact you?</label>
-      <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-chat"> 💬 Chat on TexContractor<small>phone stays private</small></label>
+      <label class="opt" data-tex-readable="1" hidden style="display:none"><input type="checkbox" id="c-chat" checked> 💬 Chat on TexContractor<small>phone stays private</small></label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-text" checked> ✉ Text message<small>shows your number</small></label>
       <label class="opt" data-tex-readable="1"><input type="checkbox" id="c-call"> 📞 Phone call<small>shows your number</small></label>
       <div id="phone-field"><label class="f" for="p-phone">Your mobile number</label><input type="tel" id="p-phone" placeholder="(214) 555-0123" autocomplete="tel" maxlength="20"></div>
-      <p class="fine">🔒 With Chat, your number stays private. If you choose Text or Call, your number is shown only to signed-in technicians, never to visitors or search engines, and it is hidden as soon as you close your request. Your title, description, city and photos are public.</p>
+      <p class="fine">🔒 Your number is shared only with local technicians for your job, never shown to visitors or search engines, and it is hidden when you close your request. Your title, description, city and photos are public.</p>
       <div class="safe">💬 Offers arrive in your Messages.<br>✓ Close your request when you find the right technician.</div>
       <p class="fine" id="alert-note">📱 <b>Text alert when technicians reply:</b> so you don't miss an offer, we send a short text to your mobile number (the one above, or the one on your account): at most once a day and up to 3 times per request. Adding your number is optional, and you choose how technicians contact you. Reply STOP to stop alerts.</p>
       <p class="msg-line" id="post-msg" role="status"></p>
@@ -561,7 +561,7 @@
       const _qp = new URLSearchParams(location.search), wantCity = (_qp.get('city') || '').slice(0, 60), wantState = (_qp.get('state') || '').toUpperCase().slice(0, 2);
       // Owner 11-21: let the customer fill the request first; the phone is asked only when they press Post.
       if (!user && !window.TexQuickSignup) { signInFor('post=1' + (wantService ? '&service=' + encodeURIComponent(wantService) : '') + (wantTitle ? '&title=' + encodeURIComponent(wantTitle) : '') + (wantCity ? '&city=' + encodeURIComponent(wantCity) : '') + (wantState ? '&state=' + wantState : '')); return; }
-      if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; ['c-chat','c-call'].forEach((k) => ($(k).checked = false)); $('c-text').checked = true; }
+      if (editing) { picked.forEach((p) => p.file && URL.revokeObjectURL(p.url)); picked = []; $('p-title').value = ''; $('p-body').value = ''; $('p-city').value = ''; $('c-call').checked = false; $('c-chat').checked = true; $('c-text').checked = true; }
       setMode(null);
       $('post-msg').textContent = '';
       if (user && !$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
@@ -620,7 +620,7 @@
       if (!v.state || v.city.length < 2) return (msg.textContent = 'Choose your state and city.');
       if (v.title.length < 3) return (msg.textContent = 'Add a short title.');
       if (v.body.length < (isBoom ? 5 : 10)) return (msg.textContent = isBoom ? 'Say in a few words what you need.' : 'Describe the job in a few words (at least 10 characters).');
-      if (!chat && !text && !call) return (msg.textContent = 'Choose at least one way technicians can contact you.');
+      if (!text && !call) return (msg.textContent = 'Choose Text or Call so local pros can reach you.');
       if (user && (text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
       if (!user) {
         // Owner 11-21: everything is filled in — now confirm the phone (small window on this page), then post.
@@ -632,7 +632,7 @@
         if (!ok || !user) { msg.textContent = 'Confirm your phone number to post your request.'; return; }
         if (!$('p-phone').value) $('p-phone').value = fmtPhone(user.user_metadata?.contact_phone || user.phone || '') || '';
         try { syncPhone(); } catch (_) {}
-        if ((text || call) && !/^\+?\d{10,15}$/.test($('p-phone').value.replace(/[^\d+]/g, ''))) { msg.textContent = 'You signed in with email. Add your mobile number for Text or Call, or choose Chat only. Then press Post.'; return; }
+        if ((text || call) && !/^\+?\d{10,15}$/.test($('p-phone').value.replace(/[^\d+]/g, ''))) { msg.textContent = 'You signed in with email. Add your mobile number so local pros can text or call you. Then press Post.'; return; }
         setTimeout(() => $('post-submit').click(), 0); return;
       }
       const btn = $('post-submit'); btn.disabled = true; msg.className = 'msg-line';
@@ -832,7 +832,7 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261121nt"></script>
+  <script src="tex-language.js?v=20261122tc"></script>
 <script src="tex-call.js?v=20261120wrap" defer></script>
 </body>
 </html>
