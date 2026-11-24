@@ -37,7 +37,14 @@
     callTxt();
     call.addEventListener('click', function () { try { window.texVisit && texVisit('call_click_home') } catch (_) {} });
     if (pro && pro.parentNode) pro.parentNode.insertBefore(call, pro.nextSibling);
-    var txt0 = txt; txt = function () { txt0(); callTxt(); };
+    // Owner 11-24: same line on WhatsApp, one tap opens a chat.
+    var wa = D.createElement('a'); wa.id = 'dk-wa'; wa.target = '_blank'; wa.rel = 'noopener';
+    var waTxt = function () { wa.href = 'https://wa.me/18173440807?text=' + encodeURIComponent(es() ? 'Hola TexContractor, quisiera más información.' : 'Hi TexContractor, I would like more information.'); wa.textContent = es() ? 'Escríbenos por WhatsApp' : 'Chat with us on WhatsApp'; };
+    waTxt();
+    if (!D.getElementById('dk-wa-css')) { var cs = D.createElement('style'); cs.id = 'dk-wa-css'; cs.textContent = '#dk-call{border-radius:0!important}#dk-wa{display:block;text-align:center;background:#25d366;color:#08331a;text-decoration:none;border-radius:0 0 18px 18px;padding:10px 16px;font:800 16px system-ui,sans-serif;box-shadow:0 12px 30px rgba(15,23,42,.18)}#dk-wa:hover{filter:brightness(1.05)}'; D.head.appendChild(cs); }
+    wa.addEventListener('click', function () { try { window.texVisit && texVisit('wa_click_home') } catch (_) {} });
+    if (call.parentNode) call.parentNode.insertBefore(wa, call.nextSibling);
+    var txt0 = txt; txt = function () { txt0(); callTxt(); waTxt(); };
     txt();
     var last = es();
     new MutationObserver(function () { if (es() !== last) { last = es(); txt(); } }).observe(H, { attributes: true, attributeFilter: ['lang'] });
