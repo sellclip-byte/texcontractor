@@ -23,5 +23,5 @@ const status=document.getElementById('share-status');
 async function copyLink(){try{await navigator.clipboard.writeText('https://texcontractor.com/');status.textContent='Website link copied.';}catch(e){status.textContent='Copy this link: https://texcontractor.com/';}}
 document.getElementById('copy-site').addEventListener('click',copyLink);
 document.getElementById('share-site').addEventListener('click',async()=>{if(!navigator.share){await copyLink();return;}try{await navigator.share({title:'TexContractor',text:'Find local services and contact providers directly.',url:'https://texcontractor.com/'});status.textContent='Share action completed.';}catch(e){if(e.name!=='AbortError')status.textContent='Sharing is unavailable. Use Copy link.';}});
-</script><script src="tex-call.js?v=20261120wrap" defer></script>
+</script><script src="tex-call.js?v=20261124wa" defer></script>
 </body></html>

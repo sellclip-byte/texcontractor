@@ -124,7 +124,7 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(
 ${body}
 </main>
 <footer><div class="wrap">${es ? '<a href="/">TexContractor</a><a href="/es/local/tx/">Buscar por ciudad en Texas</a><a href="/es/servicios/">Todos los servicios</a><span>Los perfiles vienen del directorio de TexContractor y cambian con el tiempo. Confirma los detalles directamente con cada proveedor.</span>' : '<a href="/">TexContractor home</a><a href="/local/">Browse by city</a><a href="/services/">All services</a><span>Listings come from the TexContractor directory and change over time. Confirm details directly with each provider.</span>'}</div></footer>
-<script src="/tex-call.js?v=20261120wrap" defer></script>
+<script src="/tex-call.js?v=20261124wa" defer></script>
 </body></html>
 `;
 }
