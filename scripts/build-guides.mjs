@@ -34,6 +34,10 @@ const SRC = {
   fixrPest: ['Fixr – How Much Does It Cost To Hire An Exterminator?', 'https://www.fixr.com/costs/pest-control'],
   tohPest: ['This Old House – Pest Control Cost', 'https://www.thisoldhouse.com/pest-control/pest-control-cost'],
   hcpPest: ['Housecall Pro – Pest Control Prices', 'https://www.housecallpro.com/resources/pest-control-prices/'],
+  inchFurn: ['Inch Calculator – Cost to Repair a Furnace', 'https://www.inchcalculator.com/furnace-repair-cost-guide/'],
+  fixrFurn: ['Fixr – How Much Does It Cost to Fix a Furnace?', 'https://www.fixr.com/costs/repair-furnace'],
+  tohElec: ['This Old House – Electrician Cost', 'https://www.thisoldhouse.com/electrical/electrician-cost'],
+  inchElec: ['Inch Calculator – Cost to Hire an Electrician', 'https://www.inchcalculator.com/electrical-work-cost-guide/'],
 };
 
 const table = (head, rows) => `<table><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -390,6 +394,88 @@ ${ul(['¿Qué plaga es y cómo la vas a tratar?', '¿La primera visita cuesta di
       ctaBrowse: 'Encontrar control de plagas cerca de ti', ctaReq: 'Publicar una solicitud de control de plagas',
       upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
       srcTitle: 'Fuentes', sources: [SRC.fixrPest, SRC.tohPest, SRC.hcpPest],
+    },
+  },
+  {
+    slugEn: 'furnace-repair-cost', slugEs: 'costo-reparar-calefaccion',
+    service: 'Heating System Repair or Maintenance', svcSlug: 'heating-system-repair-or-maintenance',
+    en: {
+      title: 'How Much Does Furnace Repair Cost?',
+      desc: 'Typical furnace repair prices, labor rates and the cost of common parts like igniters, flame sensors, blower motors and control boards.',
+      body: `<p>When the heat stops working, the repair bill depends on what failed, the type of furnace and the parts it needs. These national figures help you know what to expect before you call heating pros near you.</p>
+<h2>Typical cost</h2>
+<p>One guide puts the national average at about <strong>$485</strong>, with most repairs between <strong>$349 and $650</strong>. Another reports an average of <strong>$450</strong>, with most repairs between <strong>$300 and $1,200</strong>. Labor usually runs about <strong>$87 to $162 per hour</strong>.</p>
+<h2>By part</h2>
+${table(['Part', 'Typical range'], [['Flame sensor', '$68 – $250'], ['Limit switch', '$66 – $122'], ['Thermostat', '$91 – $450'], ['Igniter', '$96 – $300'], ['Control board', '$300 – $725'], ['Blower motor', '$250 – $1,045'], ['Gas valve', '$675 – $1,300'], ['Heat exchanger', '$500 – $3,500']])}
+<h2>By furnace type</h2>
+${table(['Type', 'Typical repair range'], [['Electric', '$50 – $300'], ['Natural gas or propane', '$100 – $1,200'], ['Heat pump', '$300 – $600'], ['Boiler', '$200 – $600'], ['Oil', '$400 – $1,500']])}
+<h2>Repair or replace?</h2>
+<p>Furnaces usually last about <strong>15 to 20 years</strong>, and a new one can cost about <strong>$2,000 to $10,000</strong>. If your furnace is near the end of its life and needs an expensive part like a heat exchanger, ask for a replacement quote too.</p>
+<h2>What to ask before you hire</h2>
+${ul(['What part failed, and can you show me?', 'Is the service call fee included in the repair price?', 'Is the part covered by a warranty?', 'Is this a safety problem, like a cracked heat exchanger or a gas leak?', 'Should I repair it, or is replacing it the better deal at this age?'])}`,
+      ctaBrowse: 'Find heating repair pros near you', ctaReq: 'Post a heating repair request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.fixrFurn, SRC.inchFurn],
+    },
+    es: {
+      title: '¿Cuánto cuesta reparar la calefacción?',
+      desc: 'Precios típicos para reparar un calentador de aire (furnace), tarifas de mano de obra y el costo de piezas comunes como el encendedor, el sensor de llama, el motor del ventilador y la tarjeta de control.',
+      body: `<p>Cuando la calefacción deja de funcionar, el costo depende de qué falló, del tipo de equipo y de las piezas que necesita. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a técnicos de calefacción cerca de ti.</p>
+<h2>Costo típico</h2>
+<p>Una guía indica que el promedio nacional es de unos <strong>$485</strong>, y la mayoría de las reparaciones cuesta entre <strong>$349 y $650</strong>. Otra guía reporta un promedio de <strong>$450</strong>, con la mayoría entre <strong>$300 y $1,200</strong>. La mano de obra suele costar entre <strong>$87 y $162 por hora</strong>.</p>
+<h2>Según la pieza</h2>
+${table(['Pieza', 'Rango típico'], [['Sensor de llama', '$68 – $250'], ['Interruptor de límite', '$66 – $122'], ['Termostato', '$91 – $450'], ['Encendedor', '$96 – $300'], ['Tarjeta de control', '$300 – $725'], ['Motor del ventilador', '$250 – $1,045'], ['Válvula de gas', '$675 – $1,300'], ['Intercambiador de calor', '$500 – $3,500']])}
+<h2>Según el tipo de equipo</h2>
+${table(['Tipo', 'Rango típico de reparación'], [['Eléctrico', '$50 – $300'], ['Gas natural o propano', '$100 – $1,200'], ['Bomba de calor', '$300 – $600'], ['Caldera', '$200 – $600'], ['Aceite (oil)', '$400 – $1,500']])}
+<h2>¿Reparar o cambiar?</h2>
+<p>Un equipo de calefacción suele durar entre <strong>15 y 20 años</strong>, y uno nuevo puede costar entre <strong>$2,000 y $10,000</strong>. Si el tuyo ya es viejo y necesita una pieza cara como el intercambiador de calor, pide también un presupuesto para cambiarlo.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Qué pieza falló y me la puedes mostrar?', '¿El cobro por la visita está incluido en el precio de la reparación?', '¿La pieza tiene garantía?', '¿Es un problema de seguridad, como un intercambiador roto o una fuga de gas?', 'Con la edad que tiene, ¿conviene repararlo o cambiarlo?'])}`,
+      ctaBrowse: 'Encontrar técnicos de calefacción cerca de ti', ctaReq: 'Publicar una solicitud de reparación de calefacción',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.fixrFurn, SRC.inchFurn],
+    },
+  },
+  {
+    slugEn: 'electrician-cost', slugEs: 'costo-electricista',
+    service: 'Electrical and Wiring Repair', svcSlug: 'electrical-and-wiring-repair',
+    en: {
+      title: 'How Much Does an Electrician Cost?',
+      desc: 'Typical electrician hourly rates and prices for common jobs like outlets, GFCI outlets, light fixtures, ceiling fans and panel upgrades.',
+      body: `<p>Electricians charge by the hour or by the job, and the price depends on the work, the electrician's experience and whether a permit is needed. These national figures help you know what to expect before you call electricians near you.</p>
+<h2>Typical cost</h2>
+<p>One guide puts the average electrical job at about <strong>$300</strong>, with most jobs between <strong>$150 and $600</strong>. Bigger projects can run <strong>$2,000 to $10,000</strong>.</p>
+<h2>Hourly rates</h2>
+${table(['Electrician', 'Typical hourly rate'], [['Apprentice', '$40 – $60'], ['Journeyman', '$60 – $90'], ['Master', '$90 – $120']])}
+<p>Some electricians charge a minimum of one to four hours, and an emergency or after-hours call can add at least <strong>$100 to $200</strong>.</p>
+<h2>Common jobs</h2>
+${table(['Job', 'Typical range'], [['Ground an outlet', '$50 – $100'], ['Install a light switch', '$85 – $200'], ['Install a GFCI outlet', '$120 – $200'], ['Add a new outlet', '$150 – $350'], ['Wire a 240-volt outlet', '$200 – $400'], ['Install a ceiling fan', '$100 – $650'], ['Electrical inspection', '$125 – $500'], ['Panel upgrade', '$1,300 – $3,000'], ['Rewire a home', '$6 – $10 per sq ft']])}
+<h2>Permits</h2>
+<p>Bigger jobs like a new panel or new circuits often need a permit, which can cost about <strong>$75 to $900</strong> depending on your city.</p>
+<h2>What to ask before you hire</h2>
+${ul(['Do you charge by the hour or a flat price for this job?', 'Is there a minimum charge or a trip fee?', 'Does this job need a permit, and will you pull it?', 'Is the price for parts and labor together?', 'Do you guarantee your work?'])}`,
+      ctaBrowse: 'Find electricians near you', ctaReq: 'Post an electrical request',
+      upd: 'Updated November 2026. Prices are national estimates from the sources below and change by location and over time.',
+      srcTitle: 'Sources', sources: [SRC.tohElec, SRC.inchElec],
+    },
+    es: {
+      title: '¿Cuánto cuesta un electricista?',
+      desc: 'Tarifas típicas por hora de un electricista y precios de trabajos comunes como contactos, contactos GFCI, lámparas, ventiladores de techo y cambio de panel.',
+      body: `<p>Los electricistas cobran por hora o por trabajo, y el precio depende del trabajo, de la experiencia del electricista y de si se necesita un permiso. Estas cifras nacionales te ayudan a saber qué esperar antes de llamar a electricistas cerca de ti.</p>
+<h2>Costo típico</h2>
+<p>Una guía indica que un trabajo eléctrico promedio cuesta unos <strong>$300</strong>, y la mayoría cuesta entre <strong>$150 y $600</strong>. Los proyectos grandes pueden costar entre <strong>$2,000 y $10,000</strong>.</p>
+<h2>Tarifas por hora</h2>
+${table(['Electricista', 'Tarifa típica por hora'], [['Aprendiz', '$40 – $60'], ['Oficial (journeyman)', '$60 – $90'], ['Maestro electricista', '$90 – $120']])}
+<p>Algunos electricistas cobran un mínimo de una a cuatro horas, y una llamada de emergencia o fuera de horario puede sumar por lo menos <strong>$100 a $200</strong>.</p>
+<h2>Trabajos comunes</h2>
+${table(['Trabajo', 'Rango típico'], [['Conectar a tierra un contacto', '$50 – $100'], ['Instalar un apagador', '$85 – $200'], ['Instalar un contacto GFCI', '$120 – $200'], ['Agregar un contacto nuevo', '$150 – $350'], ['Instalar un contacto de 240 voltios', '$200 – $400'], ['Instalar un ventilador de techo', '$100 – $650'], ['Inspección eléctrica', '$125 – $500'], ['Cambiar el panel eléctrico', '$1,300 – $3,000'], ['Recablear una casa', '$6 – $10 por pie²']])}
+<h2>Permisos</h2>
+<p>Los trabajos grandes, como un panel nuevo o circuitos nuevos, muchas veces necesitan un permiso, que puede costar entre <strong>$75 y $900</strong> según tu ciudad.</p>
+<h2>Qué preguntar antes de contratar</h2>
+${ul(['¿Cobras por hora o un precio fijo por este trabajo?', '¿Hay un cobro mínimo o por la visita?', '¿Este trabajo necesita permiso y tú lo sacas?', '¿El precio incluye piezas y mano de obra?', '¿Garantizas tu trabajo?'])}`,
+      ctaBrowse: 'Encontrar electricistas cerca de ti', ctaReq: 'Publicar una solicitud eléctrica',
+      upd: 'Actualizado en noviembre de 2026. Los precios son estimados nacionales de las fuentes de abajo y cambian según la zona y con el tiempo.',
+      srcTitle: 'Fuentes', sources: [SRC.tohElec, SRC.inchElec],
     },
   },
 ];
