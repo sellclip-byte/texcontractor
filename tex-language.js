@@ -358,6 +358,8 @@
     'What do you need?': '¿Qué necesitas?',
     'What do you need fixed?': '¿Qué necesitas arreglar?',
     'Photos (up to 8)': 'Fotos (hasta 8)',
+    'Photos (at least 1, up to 8)': 'Fotos (mínimo 1, hasta 8)',
+    'Add at least 1 photo. Pros need to see the job to give you a good estimate.': 'Agrega al menos 1 foto. Los técnicos necesitan ver el trabajo para darte un buen presupuesto.',
     '📷 Take a photo': '📷 Tomar foto',
     '🖼 Choose photos': '🖼 Escoger fotos',
     'Photos help technicians give you an accurate offer.': 'Las fotos ayudan a los técnicos a darte una oferta precisa.',

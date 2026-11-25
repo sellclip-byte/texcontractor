@@ -322,12 +322,12 @@
       <input type="text" id="p-title" placeholder="e.g. Leak under the kitchen sink" required maxlength="120">
       <label class="f" for="p-body">What do you need?</label>
       <textarea id="p-body" placeholder="Describe the job, size, and when you need it…" required maxlength="2000"></textarea>
-      <label class="f">Photos (up to 8)</label>
+      <label class="f">Photos (at least 1, up to 8)</label>
       <div class="ph-btns" data-tex-readable="1"><button type="button" class="ph-btn" id="p-cam-btn">📷 Take a photo</button><button type="button" class="ph-btn" id="p-pick-btn">🖼 Choose photos</button></div>
       <div class="slots" id="slots"></div>
       <input type="file" id="p-photos" accept="image/*" multiple hidden>
       <input type="file" id="p-cam" accept="image/*" capture="environment" hidden>
-      <div class="hint">Photos help technicians give you an accurate offer.</div>
+      <div class="hint">Add at least 1 photo. Pros need to see the job to give you a good estimate.</div>
       <div id="boom-box" hidden>
         <label class="f" for="p-wanted" style="margin-top:0">How many pros should we send it to?</label>
         <select id="p-wanted"><option value="3">3 pros</option><option value="5">5 pros</option><option value="10" selected>10 pros</option><option value="20">All pros nearby</option></select>
@@ -637,6 +637,7 @@
       if (!v.state || v.city.length < 2) return (msg.textContent = 'Choose your state and city.');
       if (v.title.length < 3) return (msg.textContent = 'Add a short title.');
       if (v.body.length < (isBoom ? 5 : 10)) return (msg.textContent = isBoom ? 'Say in a few words what you need.' : 'Describe the job in a few words (at least 10 characters).');
+      if (!picked.length) return (msg.textContent = 'Add at least 1 photo. Pros need to see the job to give you a good estimate.');
       if (!text && !call) return (msg.textContent = 'Choose Text or Call so local pros can reach you.');
       if (user && (text || call) && !/^\+?\d{10,15}$/.test(phone)) return (msg.textContent = 'Enter a valid mobile number for Text or Call.');
       if (!user) {
@@ -901,7 +902,7 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261124cd"></script>
+  <script src="tex-language.js?v=20261125ph"></script>
   <script src="tc-howvideo.js?v=20261123b" defer></script>
 <script src="tex-call.js?v=20261124wa" defer></script>
 </body>
