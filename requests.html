@@ -375,6 +375,19 @@
     </form>
   </dialog>
 
+  <dialog id="est-dlg" aria-labelledby="est-title">
+    <form class="dlg" id="est-form" method="dialog" novalidate>
+      <div class="dlg-head"><div><h2 id="est-title">Send your estimate</h2><p class="sub">Your price goes to the customer.</p></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
+      <div class="offer-for" id="est-for"></div>
+      <label class="f" for="e-price">Your price</label>
+      <input id="e-price" maxlength="80" placeholder="Example: $250 including parts" style="width:100%;box-sizing:border-box;font:inherit;padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+      <label class="f" for="e-msg">Details (optional)</label>
+      <textarea id="e-msg" maxlength="1000" placeholder="What is included, what you need to check…"></textarea>
+      <p class="msg-line" id="est-msg" role="status"></p>
+      <button class="btn full" type="submit" id="est-submit">Send your estimate</button>
+    </form>
+  </dialog>
+
   <dialog id="view-dlg" aria-labelledby="view-title">
     <div class="dlg">
       <div class="dlg-head"><div class="top" id="view-top" style="flex:1"></div><button class="x" type="button" data-close aria-label="Close">×</button></div>
@@ -734,10 +747,17 @@
       } else if (r.offered) {
         acts.innerHTML = '<div class="status-note" style="flex:1">✓ You sent an offer. <a href="chat.html">Open Messages</a></div>';
       } else if (open) {
+        // owner 11-24: admin special requests = "Send your estimate" (no contact details shown)
+        let sp = null; try { sp = await C.rpc('texcontractor_request_special', { p_request_id: r.id }, false); } catch (_) {}
+        if (sp && sp.special) {
+          if (sp.estimated) acts.innerHTML = '<div class="status-note" style="flex:1">✓ Your estimate was sent to the customer. If they choose you, they will contact you.</div>';
+          else { const o = document.createElement('button'); o.className = 'btn full'; o.type = 'button'; o.textContent = 'Send your estimate'; o.onclick = () => { $('view-dlg').close(); openEstimate(r); }; acts.append(o); }
+        } else {
         // owner 11-24: normal requests = contact the client directly (no "send an offer")
         if (r.phone && r.contact_text) { const a = document.createElement('a'); a.className = 'btn full'; a.href = 'sms:' + r.phone; a.textContent = '✉ Text the client'; acts.append(a); }
         else if (r.phone && r.contact_call) { const a = document.createElement('a'); a.className = 'btn full'; a.href = 'tel:' + r.phone; a.textContent = '📞 Call the client'; acts.append(a); }
         else { const o = document.createElement('button'); o.className = 'btn full'; o.type = 'button'; o.textContent = 'Contact the client'; o.onclick = () => { $('view-dlg').close(); openOffer(r); }; acts.append(o); }
+        }
       }
       const ob = $('view-offers'); ob.hidden = true; ob.replaceChildren();
       if (r.mine) {
@@ -778,6 +798,38 @@
     }
 
     // Offer dialog
+    let estTarget = null;
+    function openEstimate(r) {
+      if (!user) { signInFor('r=' + r.id); return; }
+      estTarget = r;
+      $('est-for').innerHTML = `<b>${esc(r.title)}</b><br>${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)}`;
+      $('e-price').value = ''; $('e-msg').value = ''; $('est-msg').className = 'msg-line'; $('est-msg').textContent = '';
+      $('est-submit').hidden = false; $('e-price').hidden = false; $('e-msg').hidden = false;
+      $('est-dlg').showModal();
+    }
+    $('est-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const m = $('est-msg'); const price = $('e-price').value.trim();
+      if (!price) { m.className = 'msg-line error'; m.textContent = 'Please enter your price.'; return; }
+      $('est-submit').disabled = true;
+      try {
+        await C.rpc('texcontractor_request_estimate', { p_request_id: estTarget.id, p_price: price, p_message: $('e-msg').value.trim() }, true);
+        m.className = 'msg-line'; m.style.color = '#14532d'; m.style.fontWeight = '800'; m.textContent = 'Your offer was sent to the customer. If they choose you, they will contact you. Thank you!';
+        $('est-submit').hidden = true; $('e-price').hidden = true; $('e-msg').hidden = true;
+      } catch (err) { m.className = 'msg-line error'; m.textContent = err.message || 'Could not send. Please try again.'; }
+      $('est-submit').disabled = false;
+    });
+    async function loadDone() {
+      try {
+        const rows = await C.rpc('texcontractor_requests_done', { p_limit: 6 }, false) || [];
+        let box = $('done-box'); if (box) box.remove();
+        if (!rows.length) return;
+        box = document.createElement('section'); box.id = 'done-box'; box.style.cssText = 'margin:18px 0';
+        box.innerHTML = '<h2 style="font-size:1.15rem;margin:0 0 8px">Recently completed ✅</h2>' + rows.map(r => `<div style="background:#fff;border:1px solid #d1fae5;border-radius:12px;padding:10px 14px;margin:6px 0"><b>${esc(r.title)}</b><br><small style="color:#475569">${esc(r.service)} · ${esc(r.city)}, ${esc(r.state)} · <span style="color:#14532d;font-weight:800">✅ ${esc(r.close_reason || 'Done')}</span></small></div>`).join('');
+        $('grid').parentNode.insertBefore(box, $('grid').nextSibling.nextSibling);
+      } catch (_) {}
+    }
+    loadDone();
     async function openOffer(r) {
       if (!user) { signInFor('offer=' + r.id); return; }
       let state = 'ok';
@@ -835,7 +887,7 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261124cc"></script>
+  <script src="tex-language.js?v=20261124cd"></script>
   <script src="tc-howvideo.js?v=20261123b" defer></script>
 <script src="tex-call.js?v=20261124wa" defer></script>
 </body>
