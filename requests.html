@@ -734,8 +734,10 @@
       } else if (r.offered) {
         acts.innerHTML = '<div class="status-note" style="flex:1">✓ You sent an offer. <a href="chat.html">Open Messages</a></div>';
       } else if (open) {
-        const o = document.createElement('button'); o.className = 'btn full'; o.type = 'button'; o.textContent = 'Send an offer'; o.onclick = () => { $('view-dlg').close(); openOffer(r); };
-        acts.append(o);
+        // owner 11-24: normal requests = contact the client directly (no "send an offer")
+        if (r.phone && r.contact_text) { const a = document.createElement('a'); a.className = 'btn full'; a.href = 'sms:' + r.phone; a.textContent = '✉ Text the client'; acts.append(a); }
+        else if (r.phone && r.contact_call) { const a = document.createElement('a'); a.className = 'btn full'; a.href = 'tel:' + r.phone; a.textContent = '📞 Call the client'; acts.append(a); }
+        else { const o = document.createElement('button'); o.className = 'btn full'; o.type = 'button'; o.textContent = 'Contact the client'; o.onclick = () => { $('view-dlg').close(); openOffer(r); }; acts.append(o); }
       }
       const ob = $('view-offers'); ob.hidden = true; ob.replaceChildren();
       if (r.mine) {
@@ -833,7 +835,7 @@
     })();
   })();
   </script>
-  <script src="tex-language.js?v=20261122tc"></script>
+  <script src="tex-language.js?v=20261124cc"></script>
   <script src="tc-howvideo.js?v=20261123b" defer></script>
 <script src="tex-call.js?v=20261124wa" defer></script>
 </body>
