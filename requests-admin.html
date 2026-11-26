@@ -58,7 +58,7 @@ catch(e){list.textContent='';msg.style.color='#991b1b';msg.textContent=e.message
 async function rpc(name,args){const r=await fetch(API+'rpc/'+name,{method:'POST',headers,body:JSON.stringify(args||{})});const j=await r.json().catch(()=>null);if(!r.ok)throw Error((j&&j.message)||'Failed');return j}
 let rows=[],filter='open';
 const ago=t=>{const h=(Date.now()-new Date(t))/36e5;return h<24?Math.max(1,Math.round(h))+'h':Math.round(h/24)+'d'};
-const REASONS=['Fixed / found a pro','A pro contacted them','No longer needed','Old, no answer'];
+const REASONS=['Fixed — a pro contacted me','A pro contacted them','No longer needed','Old, no answer'];
 function render(){
  const v=rows.filter(r=>filter==='all'||(filter==='open'&&r.status==='open')||(filter==='closed'&&r.status!=='open')||(filter==='special'&&r.admin_special));
  list.replaceChildren();if(!v.length){list.textContent='Nothing here.';return}
