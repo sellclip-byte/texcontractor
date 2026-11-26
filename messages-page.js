@@ -140,7 +140,7 @@
 
   // Owner 11-17: two ready messages for members who signed up but didn't finish — pick one, check, Send.
   const QUICK = {
-    customer: "Hi! Thanks for joining TexContractor 👋 Need help with something at home? Post your job on the Requests page with a photo, and local pros near you will send you offers. You choose who to text.\n\n¡Gracias por unirte! ¿Necesitas ayuda en casa? Publica tu trabajo en la página de Solicitudes con una foto y los técnicos cerca de ti te mandarán ofertas.",
+    customer: "Hi! Thanks for joining TexContractor 👋 Need help with something at home? Post what needs fixing on the Requests page with a photo, and local pros near you will send you offers. You choose who to text.\n\n¡Gracias por unirte! ¿Necesitas ayuda en casa? Publica tu trabajo en la página de Solicitudes con una foto y los técnicos cerca de ti te mandarán ofertas.",
     pro: "Hi! Thanks for joining TexContractor 👋 Your page isn't finished yet. Tap Account → Add my service, pick your trade and city, and add 2-3 photos of your work. Then customers near you can text you directly. It's free, no lead fees.\n\n¡Gracias por unirte! Tu página aún no está lista. Toca Cuenta → Agregar mi servicio, elige tu oficio y ciudad, y sube 2-3 fotos de tu trabajo. Así los clientes cerca de ti te pueden escribir directo. Es gratis."
   };
   const quickBar = (() => {
