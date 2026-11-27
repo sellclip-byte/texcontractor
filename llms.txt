@@ -11,6 +11,7 @@ Key facts:
 - Pages exist for every service in every Texas city, plus other U.S. states.
 
 ## How to find a pro
+- [Questions and answers (FAQ)](https://texcontractor.com/faq.html): how TexContractor works for customers and pros.
 - [Find a pro by service and ZIP](https://texcontractor.com/contractor.html): choose a service, enter a ZIP code, text the pro directly.
 - [Browse by city](https://texcontractor.com/local/): every service in every city. URL pattern: https://texcontractor.com/local/tx/<city>/<service>.html (example: [Plumbers in Dallas, TX](https://texcontractor.com/local/tx/dallas/plumbing-pipe-repair.html)).
 - [Post a free job request](https://texcontractor.com/requests.html): local pros see it and text you.
